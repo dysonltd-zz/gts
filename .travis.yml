@@ -16,10 +16,8 @@ before_install:
   - make install
 
 before_script:
-   - cd
-   - ~/dysonltd/gts
-   - mkdir build
-   - cd build
+   - cd ~/dysonltd/gts
+   - mkdir build && cd build
    - cmake -DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=~/opencv ../
 
 script: make -j25
