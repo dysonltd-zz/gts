@@ -12,11 +12,11 @@ Several additional functions are included that allow for post-processing of the 
 
 __CMake__ (2.8.10.1)
 
-    sudo apt-get install cmake cmake-qt-gui
+    sudo apt-get install cmake
 
 __Qt__ (2.6.0)
 
-    sudo apt-get install qt-sdk libqxt libqt4-dev qt4-doc qt4-dev-tools
+    sudo apt-get install qt-sdk libqt4-dev qt4-dev-tools
 
 __OpenCV__ (2.4)
 
