@@ -4,7 +4,6 @@ compiler: gcc
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libcv-dev
   - sudo apt-get install -qq cmake qt4-dev-tools
   - sudo apt-get install -qq libunicap2-dev
   - git clone https://github.com/Itseez/opencv.git opencv
