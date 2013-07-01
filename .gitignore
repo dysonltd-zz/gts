@@ -52,6 +52,6 @@ install_manifest.txt
 # Temp files
 
 *~
-#*#
+*#
 *.tmp
 
