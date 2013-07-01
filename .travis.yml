@@ -19,7 +19,7 @@ before_install:
 before_script:
    - mkdir build
    - cd build
-   - cmake -DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=~/opencv ..
+   - cmake -DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=~/opencv ../
 
 script: make
 
