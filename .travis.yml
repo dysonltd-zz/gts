@@ -1,8 +1,8 @@
 language: cpp
 
- compiler: gcc
+compiler: gcc
 
- before_install:
+before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libcv-dev
   - sudo apt-get install -qq cmake qt4-dev-tools
@@ -16,15 +16,15 @@ language: cpp
   - make
   - make install
 
- before_script:
+before_script:
    - mkdir build
    - cd build
    - cmake -DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=~/opencv ..
 
- script: make
+script: make
 
- notifications:
-   email:
-     - akram.hussein@dyson.com
-   on_success: change
-   on_failure: always
+notifications:
+  email:
+    - akram.hussein@dyson.com
+  on_success: change
+  on_failure: always
