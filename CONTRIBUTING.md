@@ -49,8 +49,7 @@ A description of the changes in the Pull Request would be ideal so that we can q
 
 Some Unit Tests have been provided, but any additions with respect to your contributions when creating a Pull Request would be most welcome.
 
-Pull requests will only be considered if the author has completed an [Individual Contributor License Agreement](cla/IndividualCLA.pdf). If you work for a corporation, your employer must also complete the [Corporate Contributors Licensing Agreement](cla/CorporateCLA.pdf). This can be attained by emailing akram.hussein@dyson.com.
-
+Pull requests will only be considered if the author has completed an [Individual Contributor License Agreement](cla/IndividualCLA.pdf). If you work for a corporation, your employer must also complete the [Corporate Contributors Licensing Agreement](cla/CorporateCLA.pdf).
 ## Contributors License Agreement ##
 
-Please download, sign, scan and send a copy of the [Individual Contributor License Agreement](cla/IndividualCLA.pdf) to ADDRESS. You will only need to complete this once.
+Please download, sign, scan and send a copy of the [Individual Contributor License Agreement](cla/IndividualCLA.pdf) to akram.hussein@dyson.com. You will only need to complete this once.
