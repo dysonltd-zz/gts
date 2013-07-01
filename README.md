@@ -120,10 +120,6 @@ Bugs and feature requests should be added to the Issues section of this reposito
 
 For contributions to be considered we require that users first read and follow the steps in the [CONTRIBUTING](CONTRIBUTING.md) file.
 
-## Documentation ##
-
-In addition to the __help__ tool that can be compiled alongside the app, the documentation can be found in this wiki.
-
 ## License ##
 
 This application is distributed under the GPLv3 license found in the [LICENSE](LICENSE) file.
