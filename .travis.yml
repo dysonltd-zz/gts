@@ -17,7 +17,7 @@ before_install:
 
 before_script:
    - cd
-   - dysonltd/gts
+   - ~/dysonltd/gts
    - mkdir build
    - cd build
    - cmake -DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=~/opencv ../
