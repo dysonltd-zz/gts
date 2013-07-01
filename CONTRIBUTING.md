@@ -23,7 +23,7 @@ The GTS project welcomes new contributors. Please use this document as a guideli
     `master` branch.
 
 * Add unit tests where possible.
-* Compile with GTS_TESTS=ON and run `gts_tests` the tests to ensure everthing works.
+* Compile with `GTS_TESTS=ON` and run `gts_tests` the tests to ensure everthing works.
 
 ## Submitting Changes ##
 
