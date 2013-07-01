@@ -8,7 +8,7 @@ env:
 before_install:
   - sudo apt-get update -qq > /dev/null
   - sudo apt-get install -qq cmake qt4-dev-tools > /dev/null
-  - sudo apt-get install -qq libunicap2-dev opencv > /dev/null
+  - sudo apt-get install -qq libunicap2-dev libopencv-dev > /dev/null
   
 script:
   - mkdir build
