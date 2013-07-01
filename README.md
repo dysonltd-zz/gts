@@ -1,4 +1,4 @@
-# Ground Truth System #
+# Ground Truth System 
 
 Ground Truth System - A tool for visually tracking a moving target on a calibrated ground plane and recording position and angle in 2-dimensions.
 
@@ -6,9 +6,9 @@ Ground Truth System - A tool for visually tracking a moving target on a calibrat
 
 Several additional functions are included that allow for post-processing of the tracking data to generate [IEC](http://www.iec.ch/) specific results.
 
-## Requirements ##
+## Requirements
 
-### Linux ###
+### Linux
 
 __CMake__ (2.8.10.1)
 
@@ -26,7 +26,7 @@ __Unicap__
 
     sudo apt-get install libunicap2-dev
 
-### Windows ###
+### Windows
 
 * [CMake](http://www.cmake.org/cmake/resources/software.html) (2.8.10.1)
 
@@ -48,7 +48,7 @@ __Visual Studio Only__
 
 * [Microsoft Visual C++ 2010](http://www.microsoft.com/visualstudio/eng/products/visual-studio-2010-express)
 
-## Compiling ##
+## Compiling
 
 __Linux__
 
@@ -62,11 +62,11 @@ From root directory:
 
 __Windows (MinGW)__
 
-    MKDIR build
-    CD build
-    cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" ..   
-    mingw32-make
-    CD ..
+	MKDIR build
+	CD build
+	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" ..   
+	mingw32-make
+
 
 __Windows (VS2010)__
 
@@ -74,7 +74,6 @@ __Windows (VS2010)__
 	CD build
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV ..
 	nmake
-	CD ..
 	
 __CMake Options__
 
@@ -101,26 +100,25 @@ __VS2010__
 	CD build
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" .. 
 	nmake package
-	CD ..
 
-## Unit Tests ##
+## Unit Tests
 
 GTS uses the Google Test Framework for unit testing. A few tests have been included, but we hope to add to these over time and welcome any additions.
 
-## Supported Cameras ##
+## Supported Cameras
 
 The Unicap library on Linux and DirectShow on Windows are used to enumerate cameras. OpenCV is used for recording and tracking of videos.
 Therefore cameras that are supported by these libraries should work on the GTS.
 
-## Issues ##
+## Issues
 
 Bugs and feature requests should be added to the Issues section of this repository. If you have a fix for such, please see below to have it considered to be merged in.
 
-## Contributions ##
+## Contributions
 
 For contributions to be considered we require that users first read and follow the steps in the [CONTRIBUTING](CONTRIBUTING.md) file.
 
-## License ##
+## License
 
 This application is distributed under the GPLv3 license found in the [LICENSE](LICENSE) file.
 
