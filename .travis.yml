@@ -17,6 +17,8 @@ before_install:
   - cmake -DCMAKE_INSTALL_PREFIX=~/opencv ../
   - make -j25
   - make install
+
+before_script:
   - cd && cd dysonltd/gts
   - mkdir build && cd build
   - cmake -DCMAKE_INSTALL_PREFIX=../_install GTS_OPTIONS ../
