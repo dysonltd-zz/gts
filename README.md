@@ -85,7 +85,7 @@ __CMake Options__
 
 ##Windows Installer##
 
-To redistribute this application on Windows, an installer is available. You will first need to download the 2 additional files (Xvid and Microsoft VS2010 Redist package as linked in the [DOWNLOADS](/win_installer/files/DOWNLOADS) file.
+To redistribute this application on Windows, an installer is available. You will first need to download the 2 additional files (Xvid and Microsoft VS2010 Redist package as linked in the [DOWNLOADS](/installer/files/DOWNLOADS) file.
 
 __MinGW__
 	
