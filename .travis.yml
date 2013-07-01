@@ -2,8 +2,13 @@ language: cpp
 
 compiler: gcc
 
+env:
+  - OPTIONS="-DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=~/opencv"
+  
+
 before_install:
-  - sudo apt-get update -qq
+  - cd
+  - sudo apt-get update -qq > /dev/null
   - sudo apt-get install -qq cmake qt4-dev-tools
   - sudo apt-get install -qq libunicap2-dev
   - git clone https://github.com/Itseez/opencv.git opencv
@@ -15,13 +20,19 @@ before_install:
   - make -j25
   - make install
 
-before_script:
-   - cd ~/dysonltd/gts
-   - mkdir build && cd build
-   - cmake -DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=~/opencv ../
+script:
+  - cd ~/dysonltd/gts
+  - mkdir build && cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=../_install $OPTIONS ../
+  - make -j25
 
-script: make -j25
-
+# Run Tests
+after_success:
+branches:
+ only:
+   - master
+   - development
+   
 notifications:
   email:
     - akram.hussein@dyson.com
