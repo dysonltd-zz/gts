@@ -2,8 +2,6 @@
 
 Ground Truth System - A tool for visually tracking a moving target on a calibrated ground plane and recording position and angle in 2-dimensions.
 
-[![Build Status](https://travis-ci.org/akramhussein/gts.png?branch=master)](https://travis-ci.org/akramhussein/gts)
-
 ![Screenshot](help/doc/gts_userguide_files/image034.png?raw=true)
 
 Several additional functions are included that allow for post-processing of the tracking data to generate [IEC](http://www.iec.ch/) specific results.
