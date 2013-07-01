@@ -19,7 +19,6 @@ before_install:
   - make install
 
 before_script:
-  - cd && cd dysonltd/gts
   - mkdir build && cd build
   - cmake -DCMAKE_INSTALL_PREFIX=../_install GTS_OPTIONS ../
   
