@@ -1,0 +1,60 @@
+/*
+ * Copyright (C) 2007-2013 Dyson Technology Ltd, all rights reserved.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef CHESSBOARDIMAGE_H_
+#define CHESSBOARDIMAGE_H_
+
+#include <QtGui/qimage.h>
+
+namespace
+{
+
+    /** @brief Create a chessboard image
+     *
+     * @param rows The number of rows in the board (height)
+     * @param cols The number of columns in the board (width)
+     * @param squareSizePxls The number of pixels along each edge of each square
+     * @return A rows*cols pixel image alternating black & white pixels in both directions.
+     */
+    const QImage ChessboardImage( const int rows, const int cols,
+                                  const int squareSizePxls  = 100 )
+    {
+        QImage img( cols*squareSizePxls, rows*squareSizePxls, QImage::Format_Mono );
+        for ( int r = 0; r < rows; ++r )
+        {
+            bool black = r % 2;
+            for ( int c = 0; c < cols; ++c )
+            {
+                uint colour = black ? 0 : 1;
+                black = !black;
+                for ( int imgX = c*squareSizePxls; imgX < (c+1)*squareSizePxls; ++imgX )
+                {
+                    for ( int imgY = r*squareSizePxls; imgY < (r+1)*squareSizePxls; ++imgY )
+                    {
+                        img.setPixel( imgX, imgY, colour );
+                    }
+                }
+            }
+        }
+        return img;
+    }
+
+}
+
+#endif
+

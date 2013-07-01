@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>testValidChildXmlConfigFile1.xml</file>
+        <file>testValidChildXmlConfigFile1Child.xml</file>
+        <file>testValidChildXmlConfigFile2.xml</file>
+        <file>testValidXmlConfigFile.xml</file>
+    </qresource>
+</RCC>

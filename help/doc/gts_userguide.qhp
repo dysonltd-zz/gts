@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+  <namespace>GTS-UserGuide</namespace>
+  <virtualFolder>doc</virtualFolder>
+  <filterSection>
+    <toc>
+      <section title="GTS User Guide" ref="gts_userguide.htm">
+        <section title="Introduction" ref="gts_userguide.htm#INTRODUCTION">
+        </section>
+        <section title="Using the GTS" ref="gts_userguide.htm#USING_THE_VTS">
+          <section title="Creating a Workbench" ref="gts_userguide.htm#CREATING_A_WORKBENCH"/>
+          <section title="Configuring a Robot" ref="gts_userguide.htm#CONFIGURING_YOUR_ROBOT"/>
+          <section title="Calibrating a Camera" ref="gts_userguide.htm#CALIBRATING_THE_CAMERA"/>
+          <section title="Setting up Camera Positions" ref="gts_userguide.htm#SETTING_UP_THE_CAMERA_POSITIONS"/>
+          <section title="Creating Rooms" ref="gts_userguide.htm#CREATING_ROOMS"/>
+          <section title="Recording a Run" ref="gts_userguide.htm#RECORDING_A_RUN"/>
+          <section title="Tracking the Robot" ref="gts_userguide.htm#TRACKING_THE_ROBOT"/>
+          <section title="Analysing Coverage" ref="gts_userguide.htm#ANALYSING_COVERAGE"/>
+        </section>
+        <section title="IEC Testing" ref="gts_userguide.htm#IEC_TESTING">
+          <section title="Coverage / Navigation Test" ref="gts_userguide.htm#COVERAGE_NAVIGATION_TEST"/>
+          <section title="Average Speed Test" ref="gts_userguide.htm#AVERAGE_SPEED_TEST"/>
+          <section title="Straight Line Test" ref="gts_userguide.htm#STRAIGHT_LINE_TEST"/>
+        </section>
+  	  </section>
+    </toc>
+    <keywords>
+      <keyword id="GTS::GTS" ref="gts_userguide.htm"/>
+      <keyword id="GTS::CALIBRATING_THE_CAMERA" ref="gts_userguide.htm#CALIBRATING_THE_CAMERA"/>
+    </keywords>
+    <files>
+	  <file>*.htm</file>
+	  <file>gts_userguide_files//*.png</file>
+    </files>
+  </filterSection>
+</QtHelpProject>

@@ -1,0 +1,14 @@
+ Volume in drive C is Data
+ Volume Serial Number is 2A54-E7F2
+
+ Directory of C:\Sandbox\Log4Qt\src\log4qt\varia
+
+01/03/2009  16:36             3,497 debugappender.cpp
+01/03/2009  16:36             2,232 denyallfilter.cpp
+01/03/2009  16:36             2,850 levelmatchfilter.cpp
+01/03/2009  16:36             2,915 levelrangefilter.cpp
+01/03/2009  16:36             3,862 listappender.cpp
+01/03/2009  16:36             2,770 nullappender.cpp
+01/03/2009  16:36             2,879 stringmatchfilter.cpp
+               7 File(s)         21,005 bytes
+               0 Dir(s)  73,237,188,608 bytes free

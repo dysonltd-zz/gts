@@ -1,0 +1,6 @@
+<validChildXmlConfigFile1RootTag>
+ <name>Valid Child Xml Config File 1</name>
+ <validChildXmlConfigFile1ChildRootTag>
+  <workbenchConfigFile>testValidChildXmlConfigFile1Child.xml</workbenchConfigFile>
+ </validChildXmlConfigFile1ChildRootTag>
+</validChildXmlConfigFile1RootTag>

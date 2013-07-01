@@ -1,0 +1,4 @@
+To redistribute this application on Windows, the following will need to be downloaded and placed in this folder:
+
+* Xvid-1.3.2-20110601.exe (http://downloads.xvid.org/downloads/xvidcore-1.3.2.zip)
+* vcredist_x86_2010.exe (http://www.microsoft.com/en-gb/download/details.aspx?id=5555)

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<QHelpCollectionProject version="1.0">
+  <assistant>
+    <title>GTS</title>
+    <startPage>qthelp://gts_userguide.htm</startPage>
+    <aboutMenuText>
+      <text>About GTS</text>
+    </aboutMenuText>
+    <enableDocumentationManager>false</enableDocumentationManager>
+    <enableAddressBar>false</enableAddressBar>
+    <enableFilterFunctionality>false</enableFilterFunctionality>
+  </assistant>
+  <docFiles>
+    <generate>
+      <file>
+        <input>.//gts_userguide.qhp</input>
+        <output>.//gts_userguide.qch</output>
+      </file>
+    </generate>
+    <register>
+      <file>.//gts_userguide.qch</file>
+    </register>
+  </docFiles>
+</QHelpCollectionProject>
+

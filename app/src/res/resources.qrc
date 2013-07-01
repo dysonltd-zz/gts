@@ -1,0 +1,45 @@
+<RCC>
+    <qresource prefix="/">
+        <file>recordstop.png</file>
+        <file>stop.png</file>
+        <file>pause.png</file>
+        <file>play.png</file>
+        <file>record.png</file>
+        <file>icon.png</file>
+        <file>step.png</file>
+        <file>scan.png</file>
+        <file>revstep.png</file>
+        <file>revscan.png</file>
+        <file>target1.png</file>
+        <file>target2.png</file>
+        <file>target3.png</file>
+        <file>target4.png</file>
+        <file>target5.png</file>
+        <file>target6.png</file>
+        <file>target7.png</file>
+        <file>target1-print.png</file>
+        <file>target2-print.png</file>
+        <file>target3-print.png</file>
+        <file>target4-print.png</file>
+        <file>target5-print.png</file>
+        <file>target6-print.png</file>
+        <file>target7-print.png</file>
+        <file>help.png</file>
+        <file>flip.png</file>
+        <file>match.png</file>
+        <file>stitch.png</file>
+        <file>rotate.png</file>
+        <file>image_not_found.png</file>
+        <file>search.png</file>
+        <file>apply.png</file>
+        <file>blank.png</file>
+        <file>clear.png</file>
+        <file>display.png</file>
+        <file>forward.png</file>
+        <file>gts_license.txt</file>
+        <file>opensource_licenses.txt</file>
+        <file>pauseTrack.png</file>
+        <file>playTrack.png</file>
+        <file>stepTrack.png</file>
+    </qresource>
+</RCC>
