@@ -2,6 +2,9 @@ language: cpp
 
 compiler: gcc
 
+env:
+  export DISPLAY=:99.0
+
 # get packages
 before_install:
   - sudo apt-get update -qq > /dev/null
@@ -16,7 +19,8 @@ before_install:
   - make -j25
   - sudo make install
   - cd /home/travis/build/dysonltd/gts
-
+  - "sh -e /etc/init.d/xvfb start"
+  
 # compile
 script:
   - mkdir build
