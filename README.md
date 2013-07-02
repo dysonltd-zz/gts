@@ -16,7 +16,7 @@ __CMake__ (2.8.10.1)
 
     sudo apt-get install cmake cmake-qt-gui
 
-__Qt__ (2.6.0)
+__Qt__ (4.8.1)
 
     sudo apt-get install libqt4-dev
 
