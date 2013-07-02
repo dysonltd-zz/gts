@@ -16,7 +16,7 @@ __CMake__ (2.8.10.1)
 
 __Qt__ (2.6.0)
 
-    sudo apt-get install qt-sdk libqxt libqt4-dev qt4-doc qt4-dev-tools
+    sudo apt-get install qt-sdk libqt4-dev qt4-doc qt4-dev-tools
 
 __OpenCV__ (2.4)
 
