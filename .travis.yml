@@ -3,7 +3,7 @@ language: cpp
 compiler: gcc
 
 env:
-  - GTS_OPTIONS="-DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=/~/opencv_install/"
+  - GTS_OPTIONS="-DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=~/opencv_install/"
   
 before_install:
   - sudo apt-get update -qq > /dev/null
@@ -14,7 +14,7 @@ before_install:
   - git checkout 2.4.5
   - mkdir build
   - cd build
-  - cmake -DCMAKE_INSTALL_PREFIX=~/opencv_install ../
+  - cmake -DCMAKE_INSTALL_PREFIX=~/opencv_install/ ../
   - make -j25
   - make install
   - pwd
