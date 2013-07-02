@@ -19,7 +19,7 @@ before_install:
   - make -j25
   - make install
   - pwd
-  - cd /home/travis/dysonltd/gts
+  - cd /home/travis/build/dysonltd/gts
   
 script:
   - pwd
