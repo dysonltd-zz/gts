@@ -22,7 +22,7 @@ after_script:
 
 branches:
   only:
-   - development
+   - develop
    
 notifications:
   email:
