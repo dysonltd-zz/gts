@@ -15,6 +15,10 @@ script:
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=../install $OPTIONS ../
   - cmake --build .
+  
+# run unit tests
+after_script:
+  - ./bin/gts_tests
 
 branches:
   only:
