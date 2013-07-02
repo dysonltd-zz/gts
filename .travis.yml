@@ -3,22 +3,22 @@ language: cpp
 compiler: gcc
 
 env:
-  - GTS_OPTIONS="-DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=/~/opencv/"
+  - GTS_OPTIONS="-DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DOpenCV_ROOT_DIR=/~/opencv_install/"
   
 before_install:
   - sudo apt-get update -qq > /dev/null
   - sudo apt-get install -qq cmake qt4-dev-tools > /dev/null
   - sudo apt-get install -qq libunicap2-dev > /dev/null
-  - git clone https://github.com/Itseez/opencv.git opencv
-  - cd opencv
+  - git clone https://github.com/Itseez/opencv.git ~/opencv
+  - cd ~/opencv
   - git checkout 2.4.5
   - mkdir build
   - cd build
-  - cmake -DCMAKE_INSTALL_PREFIX=~/opencv ../
+  - cmake -DCMAKE_INSTALL_PREFIX=~/opencv_install ../
   - make -j25
   - make install
   - pwd
-  - cd ../../
+  - cd /home/travis/build/dysonltd/gts
   
 script:
   - pwd
