@@ -18,7 +18,7 @@ script:
   
 # run unit tests
 after_script:
-  - ./bin/gts_tests
+  - ./bin/gts_test
 
 branches:
   only:
