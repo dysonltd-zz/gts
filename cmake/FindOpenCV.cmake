@@ -37,64 +37,80 @@ else()
 
 endif()
 
-find_path(OpenCV2_CORE_INCLUDE_DIR
-          NAMES opencv2/core/core_c.h
-		        opencv2/core/core.hpp
-				opencv2/core/wimage.hpp
-				opencv2/core/eigen.hpp
-				opencv2/core/internal.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/core"
-		        "${OpenCV2_ROOT_DIR}/modules/core/include")
-find_path(OpenCV2_IMGPROC_INCLUDE_DIR
-          NAMES opencv2/imgproc/imgproc_c.h
-		        opencv2/imgproc/imgproc.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/imgproc"
-		        "${OpenCV2_ROOT_DIR}/modules/imgproc/include")
-find_path(OpenCV2_FEATURES2D_INCLUDE_DIR
-          NAMES opencv2/features2d/features2d.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/features2d"
-		        "${OpenCV2_ROOT_DIR}/modules/features2d/include")
-find_path(OpenCV2_FLANN_INCLUDE_DIR
-          NAMES opencv2/flann/flann.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/flann"
-		        "${OpenCV2_ROOT_DIR}/modules/flann/include")
-FIND_PATH(OpenCV2_CALIB3D_INCLUDE_DIR
-          NAMES opencv2/calib3d/calib3d.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/calib3d"
-		        "${OpenCV2_ROOT_DIR}/modules/calib3d/include")
-find_path(OpenCV2_OBJDETECT_INCLUDE_DIR
-          NAMES opencv2/objdetect/objdetect.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/objdetect"
-		        "${OpenCV2_ROOT_DIR}/modules/objdetect/include")
-find_path(OpenCV2_LEGACY_INCLUDE_DIR
-          NAMES opencv2/legacy/compat.hpp
-		        opencv2/legacy/legacy.hpp
-				opencv2/legacy/blobtrack.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/legacy"
-		        "${OpenCV2_ROOT_DIR}/modules/legacy/include")
-find_path(OpenCV2_CONTRIB_INCLUDE_DIR
-          NAMES opencv2/contrib/contrib.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/contrib"
-		        "${OpenCV2_ROOT_DIR}/modules/contrib/include")
-find_path(OpenCV2_HIGHGUI_INCLUDE_DIR
-          NAMES   opencv2/highgui/highgui_c.h
-		          opencv2/highgui/highgui.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/highgui"
-		        "${OpenCV2_ROOT_DIR}/modules/highgui/include")
-find_path(OpenCV2_ML_INCLUDE_DIR
-          NAMES opencv2/ml/ml.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/ml"
-		        "${OpenCV2_ROOT_DIR}/modules/ml/include")
-find_path(OpenCV2_VIDEO_INCLUDE_DIR
-          NAMES opencv2/video/tracking.hpp
-		        opencv2/video/background_segm.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/video"
-		        "${OpenCV2_ROOT_DIR}/modules/video/include")
-find_path(OpenCV2_GPU_INCLUDE_DIR
-          NAMES opencv2/gpu/gpu.hpp
-          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/gpu"
-		        "${OpenCV2_ROOT_DIR}/modules/gpu/include")
-		 
+if(WIN32 OR MINGW)
+	
+	find_path(OpenCV2_CORE_INCLUDE_DIR
+	          NAMES opencv2/core/core_c.h
+			        opencv2/core/core.hpp
+					opencv2/core/wimage.hpp
+					opencv2/core/eigen.hpp
+					opencv2/core/internal.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/core"
+			        "${OpenCV2_ROOT_DIR}/modules/core/include")
+	find_path(OpenCV2_IMGPROC_INCLUDE_DIR
+	          NAMES opencv2/imgproc/imgproc_c.h
+			        opencv2/imgproc/imgproc.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/imgproc"
+			        "${OpenCV2_ROOT_DIR}/modules/imgproc/include")
+	find_path(OpenCV2_FEATURES2D_INCLUDE_DIR
+	          NAMES opencv2/features2d/features2d.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/features2d"
+			        "${OpenCV2_ROOT_DIR}/modules/features2d/include")
+	find_path(OpenCV2_FLANN_INCLUDE_DIR
+	          NAMES opencv2/flann/flann.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/flann"
+			        "${OpenCV2_ROOT_DIR}/modules/flann/include")
+	FIND_PATH(OpenCV2_CALIB3D_INCLUDE_DIR
+	          NAMES opencv2/calib3d/calib3d.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/calib3d"
+			        "${OpenCV2_ROOT_DIR}/modules/calib3d/include")
+	find_path(OpenCV2_OBJDETECT_INCLUDE_DIR
+	          NAMES opencv2/objdetect/objdetect.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/objdetect"
+			        "${OpenCV2_ROOT_DIR}/modules/objdetect/include")
+	find_path(OpenCV2_LEGACY_INCLUDE_DIR
+	          NAMES opencv2/legacy/compat.hpp
+			        opencv2/legacy/legacy.hpp
+					opencv2/legacy/blobtrack.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/legacy"
+			        "${OpenCV2_ROOT_DIR}/modules/legacy/include")
+	find_path(OpenCV2_CONTRIB_INCLUDE_DIR
+	          NAMES opencv2/contrib/contrib.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/contrib"
+			        "${OpenCV2_ROOT_DIR}/modules/contrib/include")
+	find_path(OpenCV2_HIGHGUI_INCLUDE_DIR
+	          NAMES   opencv2/highgui/highgui_c.h
+			          opencv2/highgui/highgui.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/highgui"
+			        "${OpenCV2_ROOT_DIR}/modules/highgui/include")
+	find_path(OpenCV2_ML_INCLUDE_DIR
+	          NAMES opencv2/ml/ml.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/ml"
+			        "${OpenCV2_ROOT_DIR}/modules/ml/include")
+	find_path(OpenCV2_VIDEO_INCLUDE_DIR
+	          NAMES opencv2/video/tracking.hpp
+			        opencv2/video/background_segm.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/video"
+			        "${OpenCV2_ROOT_DIR}/modules/video/include")
+	find_path(OpenCV2_GPU_INCLUDE_DIR
+	          NAMES opencv2/gpu/gpu.hpp
+	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/gpu"
+			        "${OpenCV2_ROOT_DIR}/modules/gpu/include")
+else()
+	set( OpenCV2_CORE_INCLUDE_DIR  "${OpenCV2_ROOT_DIR}/include/opencv2/core" )
+	set( OpenCV2_IMGPROC_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/imgproc" )
+	set( OpenCV2_FEATURES2D_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/features2d" )
+	set( OpenCV2_FLANN_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/flann/include" )
+	set( OpenCV2_CALIB3D_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/calib3d" )
+	set( OpenCV2_OBJDETECT_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/objdetect" )
+	set( OpenCV2_LEGACY_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/legacy" )
+	set( OpenCV2_CONTRIB_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/contrib" )
+	set( OpenCV2_HIGHGUI_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/highgui" )
+	set( OpenCV2_ML_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/ml" )
+	set( OpenCV2_VIDEO_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/video" )
+	set( OpenCV2_GPU_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/gpu" )
+endif()
+
 if(WIN32 OR MINGW)
     set(OPENCV2_LIBRARY_SEARCH_PATHS
         "${OpenCV2_ROOT_DIR}/*/lib"
