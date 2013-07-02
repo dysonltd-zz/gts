@@ -3,7 +3,7 @@ language: cpp
 compiler: gcc
 
 env:
-  export DISPLAY=:0.0
+  export DISPLAY=:99.0
 
 # get packages
 before_install:
@@ -19,13 +19,14 @@ before_install:
   - make -j25
   - sudo make install
   - cd /home/travis/build/dysonltd/gts
-
+  - "sh -e /etc/init.d/xvfb start"
+  
 # compile
 script:
   - mkdir build
   - cd build
   - cmake -DGTS_TESTS=ON ../
-  - cmake --build .
+  - make -j25
   
 # run unit tests
 after_script:
