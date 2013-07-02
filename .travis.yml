@@ -17,9 +17,11 @@ before_install:
   - cmake -DCMAKE_INSTALL_PREFIX=~/opencv ../
   - make -j25
   - make install
-  - cd
+  - pwd
+  - cd ../
   
 script:
+  - pwd
   - mkdir build
   - cd build
   - cmake -DCMAKE_INSTALL_PREFIX=../install $OPTIONS ../
