@@ -2,10 +2,6 @@ language: cpp
 
 compiler: gcc
 
-# set cmake options
-env:
-  - GTS_OPTIONS="-DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
-  
 # get packages
 before_install:
   - sudo apt-get update -qq > /dev/null
@@ -25,7 +21,7 @@ before_install:
 script:
   - mkdir build
   - cd build
-  - cmake $OPTIONS ../
+  - cmake -DGTS_TESTS=ON ../
   - cmake --build .
   
 # run unit tests
