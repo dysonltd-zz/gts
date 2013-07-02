@@ -15,7 +15,8 @@ before_install:
   - mkdir ~/opencv/build
   - cd ~/opencv/build
   - cmake ../
-  - make -j25 install
+  - make -j25
+  - sudo make install
   - cd /home/travis/build/dysonltd/gts
   
 script:
