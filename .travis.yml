@@ -2,9 +2,11 @@ language: cpp
 
 compiler: gcc
 
+# set cmake options
 env:
   - GTS_OPTIONS="-DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
   
+# get packages
 before_install:
   - sudo apt-get update -qq > /dev/null
   - sudo apt-get install -qq cmake qt4-dev-tools > /dev/null
@@ -18,7 +20,8 @@ before_install:
   - make -j25
   - sudo make install
   - cd /home/travis/build/dysonltd/gts
-  
+
+# compile
 script:
   - mkdir build
   - cd build
@@ -27,7 +30,7 @@ script:
   
 # run unit tests
 after_script:
-  - ./bin/gts_test
+  - ~/build/dysonltd/gts/build/bin/gts_test
 
 branches:
   only:
