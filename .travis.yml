@@ -18,7 +18,7 @@ before_install:
   - make -j25
   - make install
   - cd ~/opencv_install/
-  - ls -alh
+  - ls -alh lib
   - cd /home/travis/build/dysonltd/gts
   
 script:
