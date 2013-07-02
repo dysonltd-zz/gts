@@ -1,0 +1,27 @@
+language: cpp
+
+compiler: gcc
+
+env:
+  - GTS_OPTIONS="-DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
+  
+before_install:
+  - sudo apt-get update -qq > /dev/null
+  - sudo apt-get install -qq cmake qt4-dev-tools > /dev/null
+  - sudo apt-get install -qq libunicap2-dev libopencv-dev > /dev/null
+  
+script:
+  - mkdir build
+  - cd build
+  - cmake -DCMAKE_INSTALL_PREFIX=../install $OPTIONS ../
+  - cmake --build .
+
+branches:
+  only:
+   - development
+   
+notifications:
+  email:
+    - akram.hussein@dyson.com
+  on_success: change
+  on_failure: always
