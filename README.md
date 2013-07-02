@@ -2,6 +2,8 @@
 
 Ground Truth System - A tool for visually tracking a moving target on a calibrated ground plane and recording position and angle in 2-dimensions.
 
+[![Build Status](https://travis-ci.org/dysonltd/gts.png?branch=master)](https://travis-ci.org/dysonltd/gts)
+
 ![Screenshot](help/doc/gts_userguide_files/image034.png?raw=true)
 
 Several additional functions are included that allow for post-processing of the tracking data to generate [IEC](http://www.iec.ch/) specific results.
@@ -16,11 +18,12 @@ __CMake__ (2.8.10.1)
 
 __Qt__ (2.6.0)
 
-    sudo apt-get install qt-sdk libqt4-dev qt4-dev-tools
+    sudo apt-get install libqt4-dev
 
 __OpenCV__ (2.4)
 
-    git clone https://github.com/Itseez/opencv.git (recommended tag: 2.4.5)
+    git clone https://github.com/Itseez/opencv.git 
+    git checkout 2.4.5
 
 __Unicap__
 
@@ -82,7 +85,7 @@ __CMake Options__
 - `GTS_HELP` - Build GTS Help Assistant (default=ON).
 - `CMAKE_INSTALL_PREFIX` - Location for `make install` to place binary and help files.  
 
-##Windows Installer##
+##Windows Installer
 
 To redistribute this application on Windows, an installer is available. You will first need to download the 2 additional files (Xvid and Microsoft VS2010 Redist package as linked in the [DOWNLOADS](/installer/files/DOWNLOADS) file.
 

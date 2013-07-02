@@ -1,0 +1,44 @@
+language: cpp
+
+compiler: gcc
+
+# set cmake options
+env:
+  - GTS_OPTIONS="-DGTS_TESTS=ON -DCMAKE_BUILD_TYPE=Release"
+  
+# get packages
+before_install:
+  - sudo apt-get update -qq > /dev/null
+  - sudo apt-get install -qq cmake qt4-dev-tools > /dev/null
+  - sudo apt-get install -qq libunicap2-dev > /dev/null
+  - git clone https://github.com/Itseez/opencv.git ~/opencv
+  - cd ~/opencv
+  - git checkout 2.4.5
+  - mkdir ~/opencv/build
+  - cd ~/opencv/build
+  - cmake ../
+  - make -j25
+  - sudo make install
+  - cd /home/travis/build/dysonltd/gts
+
+# compile
+script:
+  - mkdir build
+  - cd build
+  - cmake $OPTIONS ../
+  - cmake --build .
+  
+# run unit tests
+after_script:
+  - ~/build/dysonltd/gts/build/bin/gts_test
+
+branches:
+  only:
+   - develop
+   - master
+   
+notifications:
+  email:
+    - akram.hussein@dyson.com
+  on_success: change
+  on_failure: always
