@@ -2,7 +2,8 @@ language: cpp
 
 compiler: gcc
 
-export DISPLAY=:0.0
+env:
+  export DISPLAY=:0.0
 
 # get packages
 before_install:
