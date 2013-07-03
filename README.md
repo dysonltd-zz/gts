@@ -29,7 +29,7 @@ __Unicap__ (0.9.12)
 
 	sudo apt-get install libunicap2-dev
 
-### Windows ###
+### Windows
 
 * [CMake](http://www.cmake.org/cmake/resources/software.html) (2.8.10.1)
 
@@ -104,7 +104,7 @@ __VS2010__
 
 GTS uses the Google Test Framework for unit testing. A few tests have been included, but we hope to add to these over time and welcome any additions.
 
-## Supported Cameras ##
+## Supported Cameras
 
 The Unicap library on Linux and DirectShow on Windows are used to enumerate cameras. OpenCV is used for recording and tracking of videos.
 Therefore cameras that are supported by these libraries should work on the GTS.
@@ -121,7 +121,7 @@ For contributions to be considered we require that users first read and follow t
 
 In addition to the __help__ tool that can be compiled alongside the app, the documentation can be found in this wiki.
 
-## License ##
+## License
 
 This application is distributed under the GPLv3 license found in the [LICENSE](LICENSE) file.
 
