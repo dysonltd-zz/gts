@@ -27,9 +27,7 @@ script:
   - cd build
   - cmake -DGTS_TESTS=ON ../
   - cmake --build .
-  
 # run unit tests
-after_script:
   - ~/build/dysonltd/gts/build/bin/gts_test
 
 branches:
