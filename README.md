@@ -58,24 +58,21 @@ From root directory:
 	$ mkdir build && cd build
 	$ cmake [options] ../
 	    e.g. cmake -DOpenCV_ROOT_DIR=/home/username/opencv2.4.5/ -DCMAKE_BUILD_TYPE=Debug -DGTS_TESTS=ON -DCMAKE_INSTALL_PREFIX=/home/username/gts/ ../
-	$ make
-	$ make install
+	$ cmake --build . --target install
 
 __Windows (MinGW)__
 
 	MKDIR build
 	CD build
 	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" ..   
-	mingw32-make
-	CD ..
+	$ cmake --build . --target install
 
 __Windows (VS2010)__
 
 	MKDIR build
 	CD build
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV ..
-	nmake
-	CD ..
+	$ cmake --build . --target install
 	
 __CMake Options__
 
@@ -102,7 +99,6 @@ __VS2010__
 	CD build
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" .. 
 	nmake package
-	CD ..
 
 ## Unit Tests
 
