@@ -65,14 +65,14 @@ __Windows (MinGW)__
 	MKDIR build
 	CD build
 	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" ..   
-	$ cmake --build . --target install
+	cmake --build . --target install
 
 __Windows (VS2010)__
 
 	MKDIR build
 	CD build
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV ..
-	$ cmake --build . --target install
+	cmake --build . --target install
 	
 __CMake Options__
 
