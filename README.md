@@ -1,4 +1,4 @@
-# Ground Truth System #
+# Ground Truth System
 
 Ground Truth System - A tool for visually tracking a moving target on a calibrated ground plane and recording position and angle in 2-dimensions.
 
@@ -8,32 +8,30 @@ Ground Truth System - A tool for visually tracking a moving target on a calibrat
 
 Several additional functions are included that allow for post-processing of the tracking data to generate [IEC](http://www.iec.ch/) specific results.
 
-## Requirements ##
+## Requirements
 
-### Linux ###
+### Linux
 
 __CMake__ (2.8.10.1)
-
-    sudo apt-get install cmake cmake-qt-gui
+	
+	sudo apt-get install cmake
 
 __Qt__ (4.8.1)
-
-    sudo apt-get install libqt4-dev
+	
+	sudo apt-get install libqt4-dev
 
 __OpenCV__ (2.4)
 
-    git clone https://github.com/Itseez/opencv.git 
-    git checkout 2.4.5
+	git clone https://github.com/Itseez/opencv.git 
+	git checkout 2.4.5
 
-__Unicap__
+__Unicap__ (0.9.12)
 
-    sudo apt-get install libunicap2-dev
+	sudo apt-get install libunicap2-dev
 
 ### Windows ###
 
 * [CMake](http://www.cmake.org/cmake/resources/software.html) (2.8.10.1)
-
-* [Qt Creator](http://qt-project.org/downloads) (2.6.0)
 
 * [Xvid](http://www.xvid.org/) (1.3.2)
 
@@ -51,33 +49,30 @@ __Visual Studio Only__
 
 * [Microsoft Visual C++ 2010](http://www.microsoft.com/visualstudio/eng/products/visual-studio-2010-express)
 
-## Compiling ##
+## Compiling
 
 __Linux__
 
 From root directory:
 
-    $ mkdir build && cd build
-    $ cmake [options] ../
+	$ mkdir build && cd build
+	$ cmake [options] ../
 	    e.g. cmake -DOpenCV_ROOT_DIR=/home/username/opencv2.4.5/ -DCMAKE_BUILD_TYPE=Debug -DGTS_TESTS=ON -DCMAKE_INSTALL_PREFIX=/home/username/gts/ ../
-    $ make
-    $ make install
+	$ cmake --build . --target install
 
 __Windows (MinGW)__
 
-    MKDIR build
-    CD build
-    cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" ..   
-    mingw32-make
-    CD ..
+	MKDIR build
+	CD build
+	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" ..   
+	cmake --build . --target install
 
 __Windows (VS2010)__
 
 	MKDIR build
 	CD build
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV ..
-	nmake
-	CD ..
+	cmake --build . --target install
 	
 __CMake Options__
 
@@ -86,7 +81,7 @@ __CMake Options__
 - `GTS_HELP` - Build GTS Help Assistant (default=ON).
 - `CMAKE_INSTALL_PREFIX` - Location for `make install` to place binary and help files.  
 
-##Windows Installer##
+##Windows Installer
 
 To redistribute this application on Windows, an installer is available. You will first need to download the 2 additional files (Xvid and Microsoft VS2010 Redist package as linked in the [DOWNLOADS](/installer/files/DOWNLOADS) file.
 
@@ -104,9 +99,8 @@ __VS2010__
 	CD build
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" .. 
 	nmake package
-	CD ..
 
-## Unit Tests ##
+## Unit Tests
 
 GTS uses the Google Test Framework for unit testing. A few tests have been included, but we hope to add to these over time and welcome any additions.
 
@@ -115,15 +109,15 @@ GTS uses the Google Test Framework for unit testing. A few tests have been inclu
 The Unicap library on Linux and DirectShow on Windows are used to enumerate cameras. OpenCV is used for recording and tracking of videos.
 Therefore cameras that are supported by these libraries should work on the GTS.
 
-## Issues ##
+## Issues
 
 Bugs and feature requests should be added to the Issues section of this repository. If you have a fix for such, please see below to have it considered to be merged in.
 
-## Contributions ##
+## Contributions
 
 For contributions to be considered we require that users first read and follow the steps in the [CONTRIBUTING](CONTRIBUTING.md) file.
 
-## Documentation ##
+## Documentation 
 
 In addition to the __help__ tool that can be compiled alongside the app, the documentation can be found in this wiki.
 
