@@ -116,6 +116,8 @@ public:
 private:
     int m_id;
 
+    double m_fps;
+
     CameraCalibration*   m_calScaled;
     CameraCalibration*   m_calNormal;
     RobotTracker*        m_tracker;

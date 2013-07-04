@@ -53,7 +53,7 @@ public:
     void Clear();
 
 public slots:
-     void updateImage( int id, const QImage& image );
+     void updateImage( int id, const QImage& image, double fps );
 
 protected:
     virtual void resizeEvent( QResizeEvent* );

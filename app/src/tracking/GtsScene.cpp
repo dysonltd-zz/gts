@@ -151,7 +151,7 @@ bool GtsScene::LoadCameraConfig( const KeyId               camPosId,
     status = m_view[m_ln].SetupTracker( tracker,
                                         //m_view[m_ln].GetMetrics(),
                                         *m_metrics,
-                                        m_targetFile.toAscii().data(),//->fileName().toAscii().data(),
+                                        m_targetFile.toAscii().data(),
                                         trackCfg.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::biLevelThreshold).ToInt() );
     if ( !status )
     {
@@ -280,9 +280,9 @@ void GtsScene::SetupThread( TrackRobotToolWidget* tool )
     // Note, thread "runs" on creation)!
 
     QObject::connect((QObject*)m_thread,
-                     SIGNAL( paused() ),
+                     SIGNAL( paused( bool ) ),
                      (QObject*)tool,
-                     SLOT( ThreadPaused() ),
+                     SLOT( ThreadPaused( bool ) ),
                      Qt::AutoConnection );
 
     QObject::connect((QObject*)m_thread,

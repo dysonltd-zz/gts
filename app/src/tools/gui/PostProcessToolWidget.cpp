@@ -115,19 +115,19 @@ void PostProcessToolWidget::LoadDataButtonClicked()
 
     m_selectionModel = m_ui->m_trackResults->selectionModel();
 
-    QObject::connect( m_selectionModel,
-                      SIGNAL( currentChanged ( const QModelIndex&,
-                                               const QModelIndex& ) ),
-                      m_ui->m_trackView,
-                      SLOT( currentChanged( const QModelIndex&,
-                                            const QModelIndex& ) ) );
+    //QObject::connect( m_resultsModel,
+    //                  SIGNAL( dataChanged ( const QModelIndex&,
+    //                                        const QModelIndex& ) ),
+    //                  m_ui->m_trackView,
+    //                  SLOT( dataChanged ( const QModelIndex&,
+    //                                      const QModelIndex& ) ) );
 
-    QObject::connect( m_resultsModel,
-                      SIGNAL( dataChanged ( const QModelIndex&,
-                                            const QModelIndex& ) ),
+    QObject::connect( m_selectionModel,
+                      SIGNAL( selectionChanged ( const QItemSelection&,
+                                                 const QItemSelection& ) ),
                       m_ui->m_trackView,
-                      SLOT( dataChanged ( const QModelIndex&,
-                                          const QModelIndex& ) ) );
+                      SLOT( selectionChanged( const QItemSelection&,
+                                              const QItemSelection& ) ) );
 
     QAction* const toggleAction = new QAction( tr( "Toggle" ), m_ui->m_trackResults );
     toggleAction->setShortcut( QKeySequence( QKeySequence::Delete ) );
@@ -147,10 +147,12 @@ void PostProcessToolWidget::LoadDataButtonClicked()
 void PostProcessToolWidget::ToggleItemTriggered()
 {
     QModelIndexList list = m_selectionModel->selectedRows();
-    foreach (QModelIndex index, list)
+
+    foreach (QModelIndex idx, list)
     {
-        bool value = m_resultsModel->data(m_resultsModel->index(index.row(), 0), Qt::UserRole).toBool();
-        m_resultsModel->setData(index, QVariant(!value), Qt::UserRole);
+        bool value = m_resultsModel->data(m_resultsModel->index(idx.row(), 0), TrackModel::IS_DELETED).toBool();
+
+        m_resultsModel->setData(idx, QVariant(!value), TrackModel::IS_DELETED);
     }
 }
 
@@ -410,7 +412,7 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
             // Create a fake tracker - only to compute brushbar dimensions
             LOG_INFO("TRACKER WARNINGS WHICH FOLLOW CAN BE SAFELY IGNORED.");
 
-            const RobotTracker* tracker = new KltTracker( 0, &metrics, 0, 0, 0 );
+            const RobotTracker* tracker = new KltTracker( 0, &metrics, 0, 0 );
 
             float travelledDistance = 0.f;
             double lastIncTime = 0.0;
@@ -486,7 +488,8 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
 
             LOG_TRACE("Done.");
 
-            LOG_INFO(QObject::tr("Total distance travelled := %1(cm)\n").arg(travelledDistance / metrics.GetScaleFactor()));
+            LOG_INFO(QObject::tr("Total distance travelled := %1(cm)\n")
+                         .arg(travelledDistance / metrics.GetScaleFactor()));
 
             int missCount = coverage.MissedMask( coverageMissedFile );
 

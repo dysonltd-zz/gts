@@ -55,7 +55,7 @@ public slots:
     void Execute();
 
 signals:
-	void paused();
+	void paused( bool );
     void finished();
 
 	void position( double position );

@@ -48,7 +48,7 @@ void AboutDialog::UpdateAboutText(QTextEdit* const aboutTextBox)
 {
     QString text(aboutTextBox->toHtml());
     text.replace("%buildDate%", GTS_BUILD_DATE);
-    text.replace("%revId%", GTS_GIT_REVID);
+    text.replace("%revId%", GTS_BUILD_REVN);
 
     // gts license
     QFile licenseFile(":/gts_license.txt");
@@ -65,5 +65,4 @@ void AboutDialog::UpdateAboutText(QTextEdit* const aboutTextBox)
     QString opensource_license(opensourceLicenseStream.readAll().replace("\n", "<br/>"));
     text.replace("%opensource_licenses%", opensource_license);
     aboutTextBox->setHtml(text);
-
 }

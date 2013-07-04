@@ -27,6 +27,7 @@
 #endif
 
 #include <QTextStream>
+#include <QFile>
 
 /** @brief Class to write AVI files.
  *
@@ -42,10 +43,10 @@ public:
     };
 
 public:
-    AviWriter( const char* const fileName,
+    AviWriter( const codecType   codec,
                const int         aviWidth,
                const int         aviHeight,
-               const codecType   codec,
+               const char* const videoFileName,
                const char* const timestampFileName);
     ~AviWriter();
 
@@ -70,6 +71,7 @@ private:
     IplImage*      m_img; ///< @brief The OpenCV image to use for appending to the AVI
                           ///(to ensure we maintain the frame size/format).
 
+    QFile          m_timestampFile;
     QTextStream    m_timestampStream;
 };
 

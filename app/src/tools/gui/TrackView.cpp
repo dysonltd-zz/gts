@@ -51,8 +51,7 @@
 #include <opencv/highgui.h>
 
 #include <QGridLayout>
-
-#include<QtGlobal>
+#include <QtGlobal>
 
 TrackView::TrackView( QWidget *parent )
 {
@@ -113,23 +112,12 @@ void TrackView::setModel(QAbstractItemModel *model)
 {
     m_model = model;
 
-    updateView( -1 );
-}
-
-void TrackView::currentChanged ( const QModelIndex& current,
-                                 const QModelIndex& previous )
-{
-    Q_UNUSED(previous);
-
-    if (m_model->data(m_model->index(current.row(), 0), Qt::UserRole).toBool())
-        updateView( current.row() );
-    else
-        updateView( -1 );
+    updateView();
 }
 
 void TrackView::rowsRemoved ( )
 {
-    updateView( -1 );
+    updateView();
 }
 
 void TrackView::dataChanged ( const QModelIndex& topLeft,
@@ -138,10 +126,30 @@ void TrackView::dataChanged ( const QModelIndex& topLeft,
     Q_UNUSED(topLeft);
     Q_UNUSED(bottomRight);
 
-    updateView( -1 );
+    updateView();
 }
 
-void TrackView::updateView( int idx )
+void TrackView::selectionChanged ( const QItemSelection& selected,
+                                   const QItemSelection& deselected )
+{
+    QModelIndexList selectedList = selected.indexes();
+
+    foreach (QModelIndex idx, selectedList)
+    {
+        m_model->setData(idx, QVariant(true), TrackModel::IS_SELECTED);
+    }
+
+    QModelIndexList deselectedList = deselected.indexes();
+
+    foreach (QModelIndex idx, deselectedList)
+    {
+        m_model->setData(idx, QVariant(false), TrackModel::IS_SELECTED);
+    }
+
+    updateView();
+}
+
+void TrackView::updateView()
 {
     IplImage* compImg = 0;
     IplImage* compImgCol = 0;
@@ -163,10 +171,10 @@ void TrackView::updateView( int idx )
 
     for (int row = 0; row < m_model->rowCount(); ++row)
     {
-        if (m_model->data(m_model->index(row, 0), Qt::UserRole).toBool())
+        if (m_model->data(m_model->index(row, 0), TrackModel::IS_DELETED).toBool())
         {
             avg.push_back( TrackEntry( cvPoint2D32f( m_model->data(m_model->index(row, TrackModel::COLUMN_POSX)).toFloat(),
-                                                     m_model->data(m_model->index(row, TrackModel::COLUMN_POSY)).toFloat()),
+                                                     m_model->data(m_model->index(row, TrackModel::COLUMN_POSY)).toFloat() * -1.0),
                                                      m_model->data(m_model->index(row, TrackModel::COLUMN_HEADING)).toFloat(),
                                                      m_model->data(m_model->index(row, TrackModel::COLUMN_ERROR)).toFloat(),
                                                      m_model->data(m_model->index(row, TrackModel::COLUMN_TIME)).toDouble(),
@@ -174,29 +182,10 @@ void TrackView::updateView( int idx )
         }
     }
 
-    LogSwapHandedness( avg );
-
 #if 0
-    TrackHistory avgPx;
-    LogCmToPx( avg, avgPx, m_metricsScaleFactor, offset );
-    PlotLog( avgPx,
-             compImgCol,
-             colours[0],
-             cvRect( 0, 0, 0, 0 ),
-             0,
-             1,
-             timeThresh );
+    LogSwapHandedness( avg );
+#endif
 
-    if ( idx > 0 )
-    {
-        PlotPoint( avgPx[idx],
-                   compImgCol,
-                   colours[2],
-                   cvRect( 0, 0, 0, 0 ),
-                   0,
-                   1 );
-    }
-#else
     PlotLog( avg,
              compImgCol,
              colours[0],
@@ -205,16 +194,24 @@ void TrackView::updateView( int idx )
              1,
              timeThresh );
 
-    if ( idx > 0 )
+    for (int row = 0; row < m_model->rowCount(); ++row)
     {
-        PlotPoint( avg[idx],
-                   compImgCol,
-                   colours[2],
-                   cvRect( 0, 0, 0, 0 ),
-                   0,
-                   1 );
+        if (m_model->data(m_model->index(row, 0), TrackModel::IS_SELECTED).toBool())
+        {
+            TrackEntry pt( cvPoint2D32f( m_model->data(m_model->index(row, TrackModel::COLUMN_POSX)).toFloat(),
+                                         m_model->data(m_model->index(row, TrackModel::COLUMN_POSY)).toFloat() * -1.0),
+                                         m_model->data(m_model->index(row, TrackModel::COLUMN_HEADING)).toFloat(),
+                                         m_model->data(m_model->index(row, TrackModel::COLUMN_ERROR)).toFloat(),
+                                         m_model->data(m_model->index(row, TrackModel::COLUMN_TIME)).toDouble(),
+                                         m_model->data(m_model->index(row, TrackModel::COLUMN_WGM)).toFloat() );
+            PlotPoint( pt,
+                       compImgCol,
+                       colours[2],
+                       cvRect( 0, 0, 0, 0 ),
+                       0,
+                       1 );
+        }
     }
-#endif
 
     QImage qimage;
 

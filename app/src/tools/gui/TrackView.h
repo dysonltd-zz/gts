@@ -21,6 +21,7 @@
 
 #include <QScrollArea>
 #include <QAbstractItemModel>
+#include <QItemSelectionModel>
 
 #include "ImageView.h"
 
@@ -44,16 +45,16 @@ public:
     QAbstractItemModel *model() const { return m_model; }
 
 public slots:
-    void currentChanged (const QModelIndex& current,
-                         const QModelIndex& previous);
-
     void rowsRemoved ();
 
     void dataChanged ( const QModelIndex& topLeft,
                        const QModelIndex& bottomRight );
 
+    void selectionChanged ( const QItemSelection& selected,
+                            const QItemSelection& deselected );
+
 private:
-    void updateView( int idx );
+    void updateView();
 
     IplImage*           m_baseImg;
 

@@ -88,7 +88,7 @@ void TrackThread::Execute()
         {
             m_paused = true;
 
-            emit paused();
+            emit paused( trackingLost );
         }
 
 		while ( m_paused )

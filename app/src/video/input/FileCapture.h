@@ -41,32 +41,34 @@ public:
 	FileCapture( const char* filenameBase );
 	~FileCapture();
 
-	bool IsRewindable()	 const  { return true; };
-	bool IsForwardable() const  { return true; };
-	bool IsWindable()	 const  { return true; };
-	bool IsLive()		 const  { return false;  };
+	virtual bool IsRewindable()	 const  { return true; };
+	virtual bool IsForwardable() const  { return true; };
+	virtual bool IsWindable()	 const  { return true; };
+	virtual bool IsLive()		 const  { return false;  };
 
-	bool ReadyNextFrame();
-	bool ReadyNextFrame( double msec );
+	virtual bool ReadyNextFrame();
+	virtual bool ReadyNextFrame( double msec );
 
-	const IplImage* RetrieveNextFrame() const { return m_img; };
+	virtual const IplImage* RetrieveNextFrame() const { return m_img; };
 
-	double GetTimeStamp()	const;
-	double GetFrameIndex()	const { return (double)(m_index-1); };
-	double GetNumFrames()	const { return m_numFrames; };
+	virtual double GetTimeStamp()	const;
+	virtual double GetFrameIndex()	const { return (double)(m_index-1); };
+	virtual double GetNumFrames()	const { return m_numFrames; };
 
-	int GetFrameWidth() const  { return (int)m_img->width; };
-	int GetFrameHeight() const  { return (int)m_img->height; };
+	virtual int GetFrameWidth() const  { return (int)m_img->width; };
+	virtual int GetFrameHeight() const  { return (int)m_img->height; };
 
-    void SetFrameRate( const double fps ) { Q_UNUSED(fps); };
+    virtual void SetFrameRate( const double fps ) { Q_UNUSED(fps); };
 
-	bool IsSetup() const { return m_IsSetup; };
-	int Flip() const { return 0; };
+    virtual double GetFrameRate() { return 0.0; };
 
-	void PrintInfo() const;
+	virtual bool IsSetup() const { return m_IsSetup; };
+	virtual int Flip() const { return 0; };
 
-	void ReadyFrame() {};
-	bool TakeFrame() { return true; };
+	virtual void PrintInfo() const;
+
+	virtual void ReadyFrame() {};
+	virtual bool TakeFrame() { return true; };
 
 private:
 

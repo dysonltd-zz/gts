@@ -29,8 +29,7 @@ namespace
     class FakeVideoSequence : public VideoSequence
     {
     public:
-        FakeVideoSequence()
-        :
+        FakeVideoSequence() :
             m_image( cvCreateImage(cvSize(600, 400), IPL_DEPTH_8U, 1) )
         {
         }
@@ -148,10 +147,15 @@ namespace
             Q_UNUSED(fps);
         }
 
-        int Flip() const { return 0; };
+        virtual double GetFrameRate()
+        {
+            return 0.0;
+        }
 
-        void ReadyFrame() {};
-        bool TakeFrame() { return true; };
+        virtual int Flip() const { return 0; };
+
+        virtual void ReadyFrame() {};
+        virtual bool TakeFrame() { return true; };
 
     private:
         void GenerateRandomImage()

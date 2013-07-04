@@ -199,14 +199,26 @@ bool CaptureVideoToolWidget::AnyViewIsRecording() const
     return false;
 }
 
-void CaptureVideoToolWidget::AddVideoFileConfigKey(const QString& videoFileName, const KeyId& camPosId, const QString& timestampFileName)
+void CaptureVideoToolWidget::AddVideoFileConfigKey(const KeyId& camPosId,
+                                                   const QString& videoFileName,
+                                                   const QString& timestampFileName)
 {
     WbConfig config(GetCurrentConfig());
-    const KeyId keyId = config.AddKeyValue(VideoCaptureSchema::videoFileNameKey, KeyValue::from(videoFileName));
-    config.SetKeyValue(VideoCaptureSchema::cameraPositionIdKey, KeyValue::from(camPosId), keyId);
-    config.SetKeyValue(VideoCaptureSchema::timestampFileNameKey, KeyValue::from(timestampFileName), keyId);
-}
 
+    const KeyId keyId = config.AddKeyValue(VideoCaptureSchema::cameraPositionIdKey, KeyValue::from(camPosId));
+
+    WbConfigTools::SetFileName( config,
+                                videoFileName,
+                                VideoCaptureSchema::videoFileNameKey,
+                                WbConfigTools::FileNameMode_RelativeInsideWorkbench,
+                                keyId );
+
+    WbConfigTools::SetFileName( config,
+                                timestampFileName,
+                                VideoCaptureSchema::timestampFileNameKey,
+                                WbConfigTools::FileNameMode_RelativeInsideWorkbench,
+                                keyId );
+}
 
 void CaptureVideoToolWidget::StartRecordingInDirectory( const QString& outputDirectoryName )
 {
@@ -238,30 +250,22 @@ void CaptureVideoToolWidget::StartRecordingInDirectory( const QString& outputDir
         /// a stray file named video0.avi already in the capture directory. Are we ok
         /// with this?
         const QString videoFileName(FileNameUtils::GetUniqueFileName(
-                                     outputDirectory.relativeFilePath(m_fname)));
+                                     outputDirectory.absoluteFilePath(m_fname)));
 
         const QString timestampFileName(FileNameUtils::GetUniqueFileName(
-                                            outputDirectory.relativeFilePath("timestamps%1.txt")));
+                                            outputDirectory.absoluteFilePath("timestamps%1.txt")));
 
-        AddVideoFileConfigKey(videoFileName, (*videoSource)->cameraPositionId, timestampFileName);
+        AddVideoFileConfigKey((*videoSource)->cameraPositionId, videoFileName, timestampFileName);
 
         const QFileInfo fileInfo( videoFileName );
         if ( !fileInfo.exists() || fileInfo.isWritable() )
         {
             (*videoSource)->videoSource->RecordTo(
-                        std::unique_ptr< AviWriter >(new AviWriter( videoFileName.toAscii(),
+                        std::unique_ptr< AviWriter >(new AviWriter( m_codec,
                                                                     imageSize.width(),
                                                                     imageSize.height(),
-                                                                    m_codec,
-                                                                    timestampFileName.toAscii()
-                                                                   )
-                                                     )
-                        );
-#if defined(__MINGW32__) || defined(__GNUC__)
-
-#else
-
-#endif
+                                                                    videoFileName.toAscii(),
+                                                                    timestampFileName.toAscii() )));
         }
         else
         {
@@ -278,7 +282,7 @@ void CaptureVideoToolWidget::StartRecordingInDirectory( const QString& outputDir
 
 void CaptureVideoToolWidget::TryToGetOutputDirectoryAndStartRecording()
 {
-    StartRecordingInDirectory(GetCurrentConfig().GetAbsoluteFileNameFor("capturedVideos/"));
+    StartRecordingInDirectory( GetCurrentConfig().GetAbsoluteFileNameFor("capturedVideos/") );
 }
 
 namespace
@@ -292,8 +296,8 @@ namespace
         bool operator() ( const CameraDescription& description ) const
         {
             for (auto videoSource = m_videoSources.begin();
-                 videoSource != m_videoSources.end();
-                 ++videoSource)
+                      videoSource != m_videoSources.end();
+                      ++videoSource)
             {
                 if ((*videoSource)->videoSource->IsFrom( description ))
                 {
@@ -320,16 +324,20 @@ void CaptureVideoToolWidget::RemovePreviouslyChosenCameras( CameraApi::CameraLis
 void CaptureVideoToolWidget::RemoveAllVideoSources()
 {
     StopUpdatingImages();
+
     m_videoSources.clear();
     m_ui->m_imageGrid->Clear();
     m_ui->m_videoTable->clear();
     m_ui->m_videoTable->setRowCount(0);
+
     m_ui->m_recordBtn->setEnabled(false);
 
-
+#if 0
     WbConfig config(GetCurrentConfig());
-    config.RemoveOldKeys(VideoCaptureSchema::videoFileNameKey);
     config.RemoveOldKeys(VideoCaptureSchema::cameraPositionIdKey);
+    config.RemoveOldKeys(VideoCaptureSchema::videoFileNameKey);
+    config.RemoveOldKeys(VideoCaptureSchema::timestampFileNameKey);
+#endif
 }
 
 void CaptureVideoToolWidget::ShowNoRoomError()
@@ -478,8 +486,10 @@ void CaptureVideoToolWidget::CaptureLiveConnectDisconnectButtonClicked()
         }
     }
 
-    else {
+    else
+    {
         StopVideoSources();
+
         m_ui->m_captureLiveConnectDisconnectBtn->setText("&Connect");
         m_ui->m_time->setText( QString("00:00:00:000") );
     }
@@ -510,14 +520,17 @@ void CaptureVideoToolWidget::StartVideoSources()
 
     m_ui->m_recordBtn->setEnabled(true);
     m_ui->m_captureLoadResetBtn->setEnabled(false);
+
     m_videoSourcesOpen = true;
 }
 
 /*
  * @brief Stop live feed in window but do not remove loaded cameras from list
  */
-void CaptureVideoToolWidget::StopVideoSources(){
+void CaptureVideoToolWidget::StopVideoSources()
+{
     StopUpdatingImages();
+
     m_ui->m_recordBtn->setEnabled(false);
     m_ui->m_captureLoadResetBtn->setEnabled(true);
 
@@ -568,7 +581,9 @@ const WbSchema CaptureVideoToolWidget::CreateSchema()
 
     schema.AddKeyGroup( capturedVideoGroup,
                         WbSchemaElement::Multiplicity::Many,
-                        KeyNameList() << videoFileNameKey << cameraPositionIdKey );
+                        KeyNameList() << cameraPositionIdKey
+                                      << videoFileNameKey
+                                      << timestampFileNameKey );
 
     return schema;
 }

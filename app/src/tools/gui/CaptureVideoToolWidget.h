@@ -135,7 +135,7 @@ private:
 #else
     void SetUpVideoSources(GetVideoSourcesForCallback getVideoSourcesFor);
 #endif
-    void AddVideoFileConfigKey(const QString& videoFileName, const KeyId& camPosId, const QString &timestampFileName);
+    void AddVideoFileConfigKey(const KeyId& camPosId, const QString& videoFileName, const QString &timestampFileName);
     void AddTableRow(QTableWidgetItem* tableItem);
     void RemovePreviouslyChosenCameras( CameraApi::CameraList& connectedCameras );
     void RemoveAllVideoSources();

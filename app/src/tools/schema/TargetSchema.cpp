@@ -20,7 +20,7 @@
 
 namespace TargetSchema
 {
-    const KeyName schemaName  ( "params" );
+    const KeyName schemaName  ( "targetParams" );
 
     const KeyName targetGroup ( "images" );
     const KeyName trackImgKey ( "trackImg" );

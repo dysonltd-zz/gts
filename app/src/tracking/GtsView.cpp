@@ -72,7 +72,8 @@ GtsView::GtsView() :
     m_imgFrame    ( 0 ),
     m_imgGrey     ( 0 ),
     m_thumbnail   ( 0 ),
-    m_imgIndex    ( 0 )
+    m_imgIndex    ( 0 ),
+    m_fps         (0.0)
 {
     m_imgWarp[0] = 0;
     m_imgWarp[1] = 0;
@@ -231,6 +232,8 @@ bool GtsView::SetupTracker( RobotTracker::trackerType type,
                             const char*               targetFile,
                             int                       thresh )
 {
+    bool success = false;
+
     switch ( type )
     {
         case RobotTracker::KLT_TRACKER:
@@ -238,8 +241,8 @@ bool GtsView::SetupTracker( RobotTracker::trackerType type,
             m_tracker = new KltTracker( m_calScaled,
                                         &metrics,
                                         m_imgWarp[m_imgIndex],
-                                        targetFile,
                                         thresh );
+            success = m_tracker->LoadTargetImage( targetFile );
             break;
 
         default:
@@ -247,7 +250,7 @@ bool GtsView::SetupTracker( RobotTracker::trackerType type,
             break;
     }
 
-    return true;
+    return success;
 }
 
 /**
@@ -303,6 +306,8 @@ bool GtsView::SetupVideo( const char* const videoFile, const char* const timesta
             return false;
         }
     }
+
+    m_fps = m_sequencer->GetFrameRate();
 
     LoadTimestampFile( timestampFile );
 
@@ -571,7 +576,7 @@ void GtsView::StepTracker( bool forward, CoverageSystem* coverage )
 
         qimage = showRobotTrack( m_tracker, tracking );
 
-        m_tool->ImageUpdate( m_id, qimage.rgbSwapped() );
+        m_tool->ImageUpdate( m_id, qimage.rgbSwapped(), m_fps );
 
         m_imgIndex = 1 - m_imgIndex;
     }
@@ -581,7 +586,7 @@ void GtsView::ShowRobotTrack()
 {
     QImage qimage = showRobotTrack( m_tracker, true );
 
-    m_tool->ImageSet( m_id, qimage.rgbSwapped() );
+    m_tool->ImageSet( m_id, qimage.rgbSwapped(), m_fps );
 }
 
 void GtsView::SetTrackerParam( RobotTracker::paramType param, float value )
@@ -606,14 +611,14 @@ void GtsView::SetupView( TrackRobotToolWidget* tool, ImageGrid* imageGrid )
                       Qt::AutoConnection );
 
     QObject::connect( (QObject*)tool,
-                      SIGNAL( UpdateImage( int, const QImage& ) ),
+                      SIGNAL( UpdateImage( int, const QImage&, double ) ),
                       (QObject*)imageGrid,
-                      SLOT( updateImage( int, const QImage& ) ),
+                      SLOT( updateImage( int, const QImage&, double ) ),
                       Qt::BlockingQueuedConnection );
 
     QObject::connect( (QObject*)tool,
-                      SIGNAL( SetImage( int, const QImage& ) ),
+                      SIGNAL( SetImage( int, const QImage&, double ) ),
                       (QObject*)imageGrid,
-                      SLOT( updateImage( int, const QImage& ) ),
+                      SLOT( updateImage( int, const QImage&, double ) ),
                       Qt::AutoConnection );
 }

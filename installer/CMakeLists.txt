@@ -58,19 +58,19 @@ add_definitions( ${QT_DEFINITIONS} )
 # ----------------------------------------------------------------------------
 
 if(MSVC)
-    install( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/../build/bin/GTS.exe"
+    install( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/../build/bin/gts.exe"
              DESTINATION bin
 		     COMPONENT Application )
 elseif(MINGW)
-    install( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/../build/bin/GTS"
+    install( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/../build/bin/gts"
              DESTINATION bin
 		     COMPONENT Application )
 endif()
 
 install( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE"
 				  "${CMAKE_CURRENT_SOURCE_DIR}/../OPENSOURCE_LICENSES"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/../help/doc/GTS-UserGuide.qch"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/../help/doc/GTS-UserGuide.qhc"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/../help/doc/gts_userguide.qch"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/../help/doc/gts_userguide.qhc"
          DESTINATION doc
 		 COMPONENT Application )
 
@@ -146,7 +146,7 @@ set( CPACK_PACKAGE_VENDOR "Ground Truth System" )
 set( CPACK_PACKAGE_DESCRIPTION_SUMMARY "GTS - Ground Truth System" )
 set( CPACK_PACKAGE_VERSION_MAJOR "0" )
 set( CPACK_PACKAGE_VERSION_MINOR "1" )
-set( CPACK_PACKAGE_VERSION_PATCH "0" )
+set( CPACK_PACKAGE_VERSION_PATCH "1" )
 set( CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}" )
 set( CPACK_PACKAGE_INSTALL_DIRECTORY "GTS" )
 

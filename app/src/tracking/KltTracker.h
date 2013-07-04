@@ -41,7 +41,6 @@ public:
     KltTracker( const CameraCalibration* cal,
                 const RobotMetrics* metrics,
                 const IplImage* currentImage,
-                const char* targetFile,
                 int thresh );
     ~KltTracker();
 

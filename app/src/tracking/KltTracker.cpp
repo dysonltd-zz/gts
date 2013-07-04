@@ -44,7 +44,6 @@
 KltTracker::KltTracker( const CameraCalibration* cal,
                         const RobotMetrics* metrics,
                         const IplImage* currentImage,
-                        const char* targetFile,
                         int thresh ) :
     RobotTracker    (),
     m_pos           ( cvPoint2D32f( 0.f, 0.f ) ),
@@ -73,11 +72,6 @@ KltTracker::KltTracker( const CameraCalibration* cal,
     LOG_INFO(QObject::tr("Bi-level threshold: %1.").arg(m_thresh1));
 
     SetCurrentImage( currentImage );
-
-    if ( !LoadTargetImage( targetFile ) )
-    {
-        // should set an error condition here
-    }
 }
 
 KltTracker::~KltTracker()

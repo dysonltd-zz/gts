@@ -45,6 +45,9 @@ public:
         COLUMN_WGM
     };
 
+    static const int IS_DELETED = Qt::UserRole;
+    static const int IS_SELECTED = Qt::UserRole+1;
+
 public:
     TrackModel(QObject *parent = 0);
     explicit TrackModel(QIODevice *file, QObject *parent = 0, bool withHeader = false, QChar separator = ',');
@@ -77,7 +80,8 @@ public:
 
 private:
     QStringList csvData;
-    QList<bool> usrData;
+    QList<bool> delData;
+    QList<bool> selData;
     QStringList header;
     int         maxColumn;
 };

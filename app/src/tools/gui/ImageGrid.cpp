@@ -257,9 +257,10 @@ void ImageGrid::wheelEvent( QWheelEvent* event )
     }
 }
 
-void ImageGrid::updateImage( int id, const QImage& image )
+void ImageGrid::updateImage( int id, const QImage& image, double fps )
 {
     m_imageViews[id].get()->SetImage( image );
+    m_imageViews[id].get()->SetCaption( QString( "FPS: %1" ).arg( fps, 5, 'f', 2 ) );
     m_imageViews[id].get()->update();
 }
 

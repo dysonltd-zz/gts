@@ -169,12 +169,12 @@ void TargetsToolWidget::TargetTypeChanged()
 	trackImageName = trackImageName.remove(':');
 	printImageName = printImageName.remove(':');
 
-    if (DirectoryExists( GetCurrentConfig().GetAbsoluteFileNameFor("targetImage/") ))
+    if (DirectoryExists( GetCurrentConfig().GetAbsoluteFileNameFor("targetImages/") ))
     {
         const QString trackImageFile(
-            GetCurrentConfig().GetAbsoluteFileNameFor( "targetImage/" + trackImageName ) );
+            GetCurrentConfig().GetAbsoluteFileNameFor( "targetImages/" + trackImageName ) );
         const QString printImageFile(
-            GetCurrentConfig().GetAbsoluteFileNameFor( "targetImage/" + printImageName ) );
+            GetCurrentConfig().GetAbsoluteFileNameFor( "targetImages/" + printImageName ) );
 
         successful = successful && trackImage.save( trackImageFile.toAscii().data() );
         successful = successful && printImage.save( printImageFile.toAscii().data() );

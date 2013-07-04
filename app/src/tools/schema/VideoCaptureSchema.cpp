@@ -22,8 +22,8 @@ namespace VideoCaptureSchema
 {
     const KeyName schemaName( "capturedVideos" );
 
-    const KeyName capturedVideoGroup ( "capturedVideo" );
-    const KeyName videoFileNameKey   ( "videoFileName" );
-    const KeyName cameraPositionIdKey( "cameraPositionId" );
+    const KeyName capturedVideoGroup  ( "capturedVideo" );
+    const KeyName videoFileNameKey    ( "videoFileName" );
+    const KeyName cameraPositionIdKey ( "cameraPositionId" );
     const KeyName timestampFileNameKey( "timestampFileName" );
 }

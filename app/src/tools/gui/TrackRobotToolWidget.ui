@@ -146,7 +146,7 @@
      <item>
       <widget class="VideoPositionBar" name="m_videoPositionBar" native="true">
        <property name="enabled">
-        <bool>false</bool>
+        <bool>true</bool>
        </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
@@ -170,6 +170,16 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="m_loadBtn">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Load</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="m_resetBtn">
        <property name="enabled">
         <bool>false</bool>
@@ -185,7 +195,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>&amp;Save Data</string>
+        <string>&amp;Save</string>
        </property>
       </widget>
      </item>
@@ -412,9 +422,6 @@ p, li { white-space: pre-wrap; }
           <property name="bottomMargin">
            <number>3</number>
           </property>
-         </layout>
-        </widget>
-       </item>
        <item>
         <widget class="QTableWidget" name="m_videoTable">
          <property name="sizePolicy">
@@ -456,26 +463,19 @@ p, li { white-space: pre-wrap; }
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
          </attribute>
-         <row>
-          <property name="text">
-           <string>1</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>2</string>
-          </property>
-         </row>
          <column>
           <property name="text">
-           <string>Room Position</string>
+           <string>Position</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Video File</string>
+           <string>Source</string>
           </property>
          </column>
+        </widget>
+       </item>
+         </layout>
         </widget>
        </item>
       </layout>

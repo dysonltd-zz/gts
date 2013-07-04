@@ -26,7 +26,8 @@
 TrackModel::TrackModel(QObject* parent) :
     QAbstractTableModel(parent),
     csvData(),
-    usrData(),
+    delData(),
+    selData(),
     header(),
     maxColumn(0)
 {
@@ -39,7 +40,8 @@ TrackModel::TrackModel(QIODevice* file,
                        QChar      separator) :
     QAbstractTableModel(parent),
     csvData(),
-    usrData(),
+    delData(),
+    selData(),
     header(),
     maxColumn(0)
 {
@@ -57,7 +59,8 @@ TrackModel::TrackModel(const QString filename,
                        QChar         separator) :
     QAbstractTableModel(parent),
     csvData(),
-    usrData(),
+    delData(),
+    selData(),
     header(),
     maxColumn(0)
 {
@@ -100,17 +103,22 @@ QVariant TrackModel::data(const QModelIndex& idx, int role) const
         return csvData[idx.row()].section(QChar(1), idx.column(), idx.column());
     }
 
-    if (role == Qt::UserRole)
-    {
-        return usrData[idx.row()];
-    }
-
     if (role == Qt::BackgroundRole)
     {
-        if (!usrData[idx.row()])
+        if (!delData[idx.row()])
         {
             return QVariant(Qt::red);
         }
+    }
+
+    if (role == IS_DELETED)
+    {
+        return delData[idx.row()];
+    }
+
+    if (role == IS_SELECTED)
+    {
+        return selData[idx.row()];
     }
 
     return QVariant();
@@ -120,7 +128,7 @@ QVariant TrackModel::headerData(int section, Qt::Orientation orientation, int ro
 {
     if (section < header.count() && orientation == Qt::Horizontal && (role == Qt::DisplayRole ||
                                                                       role == Qt::EditRole ||
-                                                                      role == Qt::UserRole))
+                                                                      role == IS_DELETED))
     {
         return header[section];
     }
@@ -161,7 +169,8 @@ void TrackModel::setSource(QIODevice *file, bool withHeader, QChar separator)
         maxColumn = header.size();
 
 	csvData.clear();
-	usrData.clear();
+	delData.clear();
+	selData.clear();
 
     while (!file->atEnd())
     {
@@ -195,7 +204,8 @@ void TrackModel::setSource(QIODevice *file, bool withHeader, QChar separator)
         else
         {
             csvData.append(l);
-            usrData.append(true);
+            delData.append(true);
+            selData.append(false);
         }
     }
 
@@ -235,14 +245,28 @@ bool TrackModel::setData(const QModelIndex& index, const QVariant& data, int rol
         return true;
     }
 
-    if (role == Qt::UserRole)
+    if (role == IS_DELETED)
     {
         if (index.row() >= rowCount() ||
             index.row() < 0 ||
             index.column() >= columnCount() ||
             index.column() < 0) return false;
 
-        usrData[index.row()] = data.toBool();
+        delData[index.row()] = data.toBool();
+
+        emit dataChanged(index, index);
+
+        return true;
+    }
+
+    if (role == IS_SELECTED)
+    {
+        if (index.row() >= rowCount() ||
+            index.row() < 0 ||
+            index.column() >= columnCount() ||
+            index.column() < 0) return false;
+
+        selData[index.row()] = data.toBool();
 
         emit dataChanged(index, index);
 
@@ -268,7 +292,8 @@ bool TrackModel::insertRows(int row, int count, const QModelIndex& parent)
         for (int i = 0;i < count;i++)
         {
             csvData << "";
-            usrData << true;
+            delData << true;
+            selData << false;
         }
     }
     else
@@ -276,7 +301,8 @@ bool TrackModel::insertRows(int row, int count, const QModelIndex& parent)
         for (int i = 0;i < count;i++)
         {
             csvData.insert(row, "");
-            usrData.insert(row, true);
+            delData.insert(row, true);
+            selData.insert(row, false);
         }
     }
 
@@ -303,7 +329,8 @@ bool TrackModel::removeRows(int row, int count, const QModelIndex& parent)
     for (int i = 0;i < count;i++)
     {
         csvData.removeAt(row);
-        usrData.removeAt(row);
+        delData.removeAt(row);
+        selData.removeAt(row);
     }
 
     emit endRemoveRows();
@@ -411,7 +438,7 @@ void TrackModel::toCSV(QIODevice* dest, bool withHeader, QChar separator)
 
     for (row = 0; row < rows; ++row)
     {
-        if (usrData[row])
+        if (delData[row])
         {
             data = "";
 

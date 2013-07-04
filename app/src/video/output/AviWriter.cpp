@@ -34,15 +34,15 @@ const int AviWriter::FMP4_COMPRESSION_CODEC = CV_FOURCC( 'F', 'M', 'P', '4' );  
  *  @param aviWidth     The width of the generated AVI.
  *  @param aviHeight    The height of the generated AVI.
  */
-AviWriter::AviWriter( const char* const fileName,
+AviWriter::AviWriter( const codecType   codec,
                       const int         aviWidth,
                       const int         aviHeight,
-                      const codecType   codec,
+                      const char* const videoFileName,
                       const char* const timestampFileName ) :
-    m_aviWidth       ( aviWidth ),
-    m_aviHeight      ( aviHeight ),
-    m_numChannels    ( DEFAULT_NUM_CHANNELS ),
-    m_timestampStream( timestampFileName )
+    m_aviWidth      ( aviWidth ),
+    m_aviHeight     ( aviHeight ),
+    m_numChannels   ( DEFAULT_NUM_CHANNELS ),
+    m_timestampFile (timestampFileName)
 {
     static const double DEFAULT_FRAME_RATE = 7.5;
 
@@ -51,14 +51,14 @@ AviWriter::AviWriter( const char* const fileName,
     switch (codec)
     {
         case CODEC_XVID:
-            m_avi = cvCreateVideoWriter( fileName,
+            m_avi = cvCreateVideoWriter( videoFileName,
                                          AviWriter::XVID_COMPRESSION_CODEC,
                                          newFrameRate,
                                          cvSize( aviWidth, aviHeight ) );
             break;
 
         case CODEC_FMP4:
-            m_avi = cvCreateVideoWriter( fileName,
+            m_avi = cvCreateVideoWriter( videoFileName,
                                          AviWriter::FMP4_COMPRESSION_CODEC,
                                          newFrameRate,
                                          cvSize( aviWidth, aviHeight ) );
@@ -66,6 +66,11 @@ AviWriter::AviWriter( const char* const fileName,
     }
 
     m_img = CreateImage( aviWidth, aviHeight );
+
+    if (m_timestampFile.open(QFile::WriteOnly))
+    {
+        m_timestampStream.setDevice(&m_timestampFile);
+    }
 }
 
 /** @brief Destructor.
@@ -77,6 +82,8 @@ AviWriter::~AviWriter()
     cvReleaseImage( &m_img );
     // shut down the video writer
     cvReleaseVideoWriter( &m_avi );
+
+    m_timestampFile.close();
 }
 
 /** @brief Create an @a IplImage of the appropriate size.
@@ -132,6 +139,6 @@ void AviWriter::addFrame( const char* const data,
     cvWriteFrame( m_avi, m_img );
 
     // Write the corresponding timestamp to the timestamp file:
-    m_timestampStream << stamp.tv_sec << " " << stamp.tv_nsec << endl;
+    m_timestampStream << stamp.tv_sec << ' ' << stamp.tv_nsec << '\n';
 }
 

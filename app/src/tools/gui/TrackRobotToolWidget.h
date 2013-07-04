@@ -28,6 +28,7 @@
 #include "ImageGrid.h"
 #include "RobotTracker.h"
 #include "AlgorithmInterface.h"
+#include "GtsScene.h"
 
 #include "WbConfigTools.h"
 
@@ -48,43 +49,39 @@ public:
 
     virtual const QString Name() const { return tr( "Track Robot" ); }
 
+    void ReloadCurrentConfigToolSpecific();
+
     void Playing();
     void Paused();
     void Stopped();
 
     void UpdatePosition( long position );
-    void ImageUpdate( int id, const QImage& image );
-    void ImageSet( int id, const QImage& image );
-
+    void ImageUpdate( int id, const QImage& image, double fps );
+    void ImageSet( int id, const QImage& image, double fps );
 
 signals:
-     void UpdateImage( int id, const QImage& image );
-     void SetImage( int id, const QImage& image );
+     void UpdateImage( int id, const QImage& image, double fps );
+     void SetImage( int id, const QImage& image, double fps );
 
 public slots:
      void ViewClicked( int id, int x, int y );
 
-     void ThreadPaused();
+     void ThreadPaused( bool trackingLost );
      void ThreadFinished();
 
      void VideoPosition( double position );
-
-protected:
-     void Activated();
 
 private:
     void SetupUi();
     void ResetUi();
     void ConnectSignals();
-    void PopUpAllButtons();
 
-    void SetIcon(QToolButton* button, QString iconImage);
+    void SetButtonIcon(QToolButton* button, QString iconImage);
 
     const KeyId GetRoomIdToCapture() const;
     const WbConfig GetRoomLayoutConfig(const KeyId &roomIdToCapture);
     const WbKeyValues::ValueIdPairList GetCameraPositionPairList(const KeyId& roomIdToCapture);
     const QStringList GetCameraPositionIds(const KeyId& roomIdToCapture);
-    void CreateSceneForRobot( std::unique_ptr<GtsScene>& scenePtr, const WbConfig &trackConfig, const WbConfig &firstCamPosConfig );
 
     typedef QPair< QStringList, QString > VideoCaptureEntry;
     void AddVideoFileConfigKey(const QString& videoFileName, const KeyId& camPosId);
@@ -122,22 +119,25 @@ private:
     const ExitStatus::Flags TrackReset( ImageGrid* imageGrid );
 
 private slots:
-    void LoadTracking();
     void PlayPauseTrackButtonClicked();
     void StepButtonClicked();
     void StepBackButtonClicked();
     void ScanBackButtonClicked();
     void StopButtonClicked();
+
+    void LoadButtonClicked();
     void SaveButtonClicked();
     void ResetButtonClicked();
 
 private:
     Ui::TrackRobotToolWidget* m_ui;
-    QMap< QString, VideoCaptureEntry > m_mapPositionsToFiles;
-    std::unique_ptr<GtsScene> m_scene;
 
-    bool m_running; // thread running?
-    bool m_playing; // video playing or paused
+    GtsScene m_scene;
+
+    QMap< QString, VideoCaptureEntry > m_mapPositionsToFiles;
+
+    bool m_running;  // thread running
+    bool m_playing;  // video playing / paused
     bool m_tracking; // tracking
     bool m_loaded;
 };

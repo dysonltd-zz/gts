@@ -57,7 +57,7 @@ int main( int argc, char** argv )
 
     LOG_TRACE("Application starting...");
 
-    LOG_INFO(QObject::tr("Version: %1 Date: %2.").arg(GTS_GIT_REVID)
+    LOG_INFO(QObject::tr("Version: %1 Date: %2.").arg(GTS_BUILD_REVN)
                                                  .arg(GTS_BUILD_DATE));
     return app.exec();
 }

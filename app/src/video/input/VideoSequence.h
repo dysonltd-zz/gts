@@ -94,6 +94,8 @@ public:
      */
     virtual void SetFrameRate( const double fps ) = 0;
 
+    virtual double GetFrameRate() = 0;
+
     virtual int Flip() const = 0;
 
     virtual void ReadyFrame() = 0;
