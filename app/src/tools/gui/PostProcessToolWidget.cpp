@@ -140,13 +140,13 @@ void PostProcessToolWidget::LoadDataButtonClicked()
 
 void PostProcessToolWidget::ToggleItemTriggered()
 {
-    QModelIndexList list = m_selectionModel->selectedRows();
+    QModelIndexList indexList = m_selectionModel->selectedRows();
 
-    foreach (QModelIndex idx, list)
+    foreach (QModelIndex index, indexList)
     {
-        bool value = m_resultsModel->data(m_resultsModel->index(idx.row(), 0), TrackModel::IS_DELETED).toBool();
+        bool value = m_resultsModel->data(m_resultsModel->index(index.row(), 0), TrackModel::IS_DELETED).toBool();
 
-        m_resultsModel->setData(idx, QVariant(!value), TrackModel::IS_DELETED);
+        m_resultsModel->setData(index, QVariant(!value), TrackModel::IS_DELETED);
     }
 }
 
