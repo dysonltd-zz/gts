@@ -74,6 +74,18 @@ PostProcessToolWidget::PostProcessToolWidget( QWidget* parent ) :
                       SIGNAL( clicked() ),
                       this,
                       SLOT( PostProcessButtonClicked() ) );
+
+    // set up delete button
+    QAction* const toggleAction = new QAction( tr( "Toggle" ), m_ui->m_trackResults );
+    toggleAction->setShortcut( QKeySequence( QKeySequence::Delete ) );
+    toggleAction->setShortcutContext( Qt::WidgetShortcut );
+    QObject::connect( toggleAction,
+             SIGNAL( triggered() ),
+             this,
+             SLOT( ToggleItemTriggered() ) );
+
+    m_ui->m_trackResults->addAction( toggleAction );
+    m_ui->m_trackResults->setContextMenuPolicy( Qt::ActionsContextMenu );
 }
 
 PostProcessToolWidget::~PostProcessToolWidget()
@@ -121,17 +133,6 @@ void PostProcessToolWidget::LoadDataButtonClicked()
                       m_ui->m_trackView,
                       SLOT( selectionChanged( const QItemSelection&,
                                               const QItemSelection& ) ) );
-
-    QAction* const toggleAction = new QAction( tr( "Toggle" ), m_ui->m_trackResults );
-    toggleAction->setShortcut( QKeySequence( QKeySequence::Delete ) );
-    toggleAction->setShortcutContext( Qt::WidgetShortcut );
-    connect( toggleAction,
-             SIGNAL( triggered() ),
-             this,
-             SLOT( ToggleItemTriggered() ) );
-
-    m_ui->m_trackResults->addAction( toggleAction );
-    m_ui->m_trackResults->setContextMenuPolicy( Qt::ActionsContextMenu );
 
     m_ui->m_trackResults->show();
     m_ui->m_trackView->show();
