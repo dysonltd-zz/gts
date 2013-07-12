@@ -52,7 +52,10 @@
          <normaloff>:/search.png</normaloff>:/search.png</iconset>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
       </widget>
      </item>
@@ -75,7 +78,7 @@
          <normaloff>:/clear.png</normaloff>:/clear.png</iconset>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>
@@ -122,7 +125,10 @@
          <normaloff>:/search.png</normaloff>:/search.png</iconset>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
       </widget>
      </item>
@@ -145,7 +151,7 @@
          <normaloff>:/clear.png</normaloff>:/clear.png</iconset>
        </property>
        <property name="checkable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="popupMode">
         <enum>QToolButton::InstantPopup</enum>
@@ -299,6 +305,7 @@
    <class>TrackView</class>
    <extends>QWidget</extends>
    <header>TrackView.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
