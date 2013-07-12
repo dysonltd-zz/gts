@@ -3,9 +3,10 @@
 
 #include "windows.h"
 
-    /* On Windows, the timespec struct is not defined. However, note that the
-    timespec struct is also defined in the pthread.h header on Windows, so the
-    guard symbols must match here to avoid a duplicate declaration. */
+/** On Windows, the timespec struct is not defined. However, note that the
+    timespec struct is also defined in the pthread.h header on Windows, so
+    the guard symbols must match here to avoid a duplicate declaration.
+ **/
 
 #ifndef HAVE_STRUCT_TIMESPEC
 #define HAVE_STRUCT_TIMESPEC 1
@@ -15,12 +16,6 @@
         long tv_sec;
         long tv_nsec;
     };
-
-    //typedef struct timeval
-    //{
-    //  long tv_sec;
-    //  long tv_usec;
-    //};
 
 #endif /* HAVE_STRUCT_TIMESPEC */
 

@@ -115,13 +115,6 @@ void PostProcessToolWidget::LoadDataButtonClicked()
 
     m_selectionModel = m_ui->m_trackResults->selectionModel();
 
-    //QObject::connect( m_resultsModel,
-    //                  SIGNAL( dataChanged ( const QModelIndex&,
-    //                                        const QModelIndex& ) ),
-    //                  m_ui->m_trackView,
-    //                  SLOT( dataChanged ( const QModelIndex&,
-    //                                      const QModelIndex& ) ) );
-
     QObject::connect( m_selectionModel,
                       SIGNAL( selectionChanged ( const QItemSelection&,
                                                  const QItemSelection& ) ),
@@ -162,10 +155,10 @@ void PostProcessToolWidget::PostProcessButtonClicked()
 
     LOG_TRACE("Post Process...");
 
-    const QString fileName(
+    const QString csvFileName(
          config.GetAbsoluteFileNameFor( "results/track_result_out.csv" ) );
 
-    m_resultsModel->toCSV(fileName, true, ',');
+    m_resultsModel->toCSV(csvFileName, true, ',');
 
     bool successful = true;
 
@@ -190,10 +183,9 @@ void PostProcessToolWidget::PostProcessButtonClicked()
                     roomLayoutConfig.GetAbsoluteFileNameFor( "floor_mask.png" ) );
 
         const QString trackerResultsName(
-                    runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.txt" ) );
+                    runConfig.GetAbsoluteFileNameFor( "results/track_result_out.csv" ) );
         const QString pixelOffsetsName(
                     runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets.txt" ) );
-
 
         const QString coverageMissedName(
                     runConfig.GetAbsoluteFileNameFor( "results/coverage_missed.png" ) );
@@ -212,6 +204,9 @@ void PostProcessToolWidget::PostProcessButtonClicked()
         const QString trackHeadingName(
                     runConfig.GetAbsoluteFileNameFor( "results/track_heading.png" ) );
 
+        const QString trackerResultsImgFile(
+                    runConfig.GetAbsoluteFileNameFor( "results/track_result_img_out.png" ) );
+
         if ( successful )
         {
             UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
@@ -219,6 +214,7 @@ void PostProcessToolWidget::PostProcessButtonClicked()
 
             ExitStatus::Flags exitCode = PostProcess( config,
                                                       trackerResultsName.toAscii().data(),       // trackerResultsName
+                                                      trackerResultsImgFile.toAscii().data(),
                                                       coverageIncrementName.toAscii().data(),    // coverageFile
                                                       floorPlanName.toAscii().data(),            // floorPlanFile
                                                       floorMaskName.toAscii().data(),            // floorMaskFile
@@ -257,6 +253,7 @@ void PostProcessToolWidget::PostProcessButtonClicked()
 
 const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& postProcConfig,
                                                             char*           trackerResultsFile,    // -log
+                                                            char*           trackerResultsImgFile,
                                                             char*           coverageFile,          // -inc
                                                             char*           floorPlanFile,
                                                             char*           floorMaskFile,         // -flr
@@ -332,7 +329,7 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
         // and pixel offsets.
 
         RobotMetrics metrics;
-        TrackHistory avg;
+        TrackHistory::TrackLog avg;
         CvPoint2D32f offset;
         float tx;
         float ty;
@@ -365,20 +362,20 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
             return ExitStatus::ERRORS_OCCURRED;
         }
 
-        if ( !ReadHistoryLog( trackerResultsFile, avg ) )
+        if ( !TrackHistory::ReadHistoryCsv( trackerResultsFile, avg ) )
         {
             LOG_ERROR(QObject::tr("Could not load track log from '%s'!").arg(trackerResultsFile));
 
             return ExitStatus::ERRORS_OCCURRED;
         }
 
-        LogSwapHandedness( avg );
+        ScanUtility::LogSwapHandedness( avg );
 
         if ( relativeLogFile )
         {
-            TrackHistory rel;
-            ConvertToRelativeLog( avg, rel );
-            WriteHistoryLog( relativeLogFile, rel);
+            TrackHistory::TrackLog rel;
+            ScanUtility::ConvertToRelativeLog( avg, rel );
+            TrackHistory::WriteHistoryLog( relativeLogFile, rel);
         }
 
         IplImage* compImgCol = cvLoadImage( floorPlanFile );
@@ -393,7 +390,7 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
         LOG_TRACE("Successfully read all inputs, processing...");
 
         // Segmentation and coverage
-        TrackHistory avgPx = avg;
+        TrackHistory::TrackLog avgPx = avg;
 
         // Setup floor-coverage system
         CoverageSystem coverage( cvSize( compImg->width, compImg->height ) );
@@ -529,8 +526,55 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
         cvReleaseImage( &headingImg );
         cvReleaseImage( &compImgCol );
 
+
+        PlotTrackLog( avg, floorPlanFile, trackerResultsImgFile );
+
+
         LOG_TRACE("Finished.");
     }
 
     return exitStatus;
+}
+
+// ----------------------------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------------------------
+
+void PostProcessToolWidget::PlotTrackLog( TrackHistory::TrackLog& log,
+                                          char*                   floorPlanFile,
+                                          char*                   trackerResultsImgFile )
+{
+    // Seconds - prob not discts within half sec. using
+    const float timeThresh = 0.5f; // 2.0f / (float)m_fps;
+
+    IplImage* compImg = 0;
+    IplImage* compImgCol = 0;
+
+    CvScalar colours[4] = { CV_RGB( 0,   0,   255 ),
+                            CV_RGB( 0,   255, 0   ),
+                            CV_RGB( 255, 255, 0   ),
+                            CV_RGB( 0,   255, 255 ) };
+
+    IplImage* baseImg = cvLoadImage(floorPlanFile, CV_LOAD_IMAGE_GRAYSCALE);
+
+    compImg = cvCloneImage( baseImg );
+
+    // Plot logs - colour copy of composite image
+    compImgCol = cvCreateImage( cvSize( compImg->width,
+                                        compImg->height ), compImg->depth, 3 );
+    cvConvertImage( compImg, compImgCol );
+
+    ScanUtility::PlotLog( log,
+                          compImgCol,
+                          colours[0],
+                          cvRect( 0, 0, 0, 0 ),
+                          0,
+                          1,
+                          timeThresh );
+
+    // Write composite image to file
+    cvSaveImage( trackerResultsImgFile, compImgCol );
+
+    // Clean up...
+    cvReleaseImage( &compImg );
+    cvReleaseImage( &compImgCol );
 }

@@ -21,22 +21,24 @@
 #include "log4qt/logger.h"
 #include "log4qt/logmanager.h"
 #include "log4qt/rollingfileappender.h"
-#include "log4qt/simplelayout.h" 
+#include "log4qt/simplelayout.h"
 #include "log4qt/level.h"
 
-void setupLogging()
+namespace Logging
 {
-    // Create a layout
-    Log4Qt::LogManager::rootLogger();
-    Log4Qt::SimpleLayout *p_layout = new Log4Qt::SimpleLayout();
-    p_layout->activateOptions();
+    void SetupLogging()
+    {
+        // Create a layout
+        Log4Qt::LogManager::rootLogger();
+        Log4Qt::SimpleLayout *p_layout = new Log4Qt::SimpleLayout();
+        p_layout->activateOptions();
 
-    // Create an appender
-    Log4Qt::RollingFileAppender *p_appender = new Log4Qt::RollingFileAppender(p_layout, "gts.log");
-    p_appender->activateOptions();
+        // Create an appender
+        Log4Qt::RollingFileAppender *p_appender = new Log4Qt::RollingFileAppender(p_layout, "gts.log");
+        p_appender->activateOptions();
 
-    // Set appender on root logger
-    Log4Qt::Logger::rootLogger()->addAppender(p_appender);
-	Log4Qt::Logger::rootLogger()->setLevel(Log4Qt::Level::ALL_INT);
+       // Set appender on root logger
+        Log4Qt::Logger::rootLogger()->addAppender(p_appender);
+	    Log4Qt::Logger::rootLogger()->setLevel(Log4Qt::Level::ALL_INT);
+    }
 }
-

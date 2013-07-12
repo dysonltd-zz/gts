@@ -23,7 +23,7 @@
 #include "UnknownLengthProgressDlg.h"
 
 #include "FileDialogs.h"
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 
 #include "TrackRobotSchema.h"
 #include "CameraPositionSchema.h"
@@ -55,11 +55,11 @@
 #include <sstream>
 
 TrackRobotToolWidget::TrackRobotToolWidget( QWidget* parent ) :
-    Tool  ( parent, CreateSchema() ),
-    m_ui  ( new Ui::TrackRobotToolWidget ),
-    m_playing( false ),
-    m_tracking( false ),
-    m_loaded( false )
+    Tool       ( parent, CreateSchema() ),
+    m_ui       ( new Ui::TrackRobotToolWidget ),
+    m_playing  ( false ),
+    m_tracking ( false ),
+    m_loaded   ( false )
 {
     SetupUi();
     ConnectSignals();
@@ -84,8 +84,7 @@ void TrackRobotToolWidget::ResetUi()
     m_ui->m_stepBackBtn->setEnabled(false);
     m_ui->m_scanBackBtn->setEnabled(false);
     m_ui->m_stopBtn->setEnabled(false);
-
-    m_ui->m_videoPositionBar->setEnabled(true);
+    m_ui->m_videoPositionBar->setEnabled(false);
 }
 
 void TrackRobotToolWidget::ConnectSignals()
@@ -246,7 +245,10 @@ void TrackRobotToolWidget::ReloadCurrentConfigToolSpecific()
         AddTableRow( position, videos );
     }
 
-    ResetUi();
+    if ( !m_loaded )
+    {
+        ResetUi();
+    }
 }
 
 void TrackRobotToolWidget::AddVideoFileConfigKey( const QString& videoFileName,
@@ -496,7 +498,7 @@ void TrackRobotToolWidget::PlayPauseTrackButtonClicked()
             SetButtonIcon(m_ui->m_stepBtn, QString::fromUtf8(":/step.png"));
         }
 
-        // pause tracking
+        // pause tracking even if not tracking or jus rewinding
         TrackPause();
 
         // enable << |< >| >> []
@@ -521,7 +523,6 @@ void TrackRobotToolWidget::StepButtonClicked()
 void TrackRobotToolWidget::StopButtonClicked()
 {
     TrackStop();
-
     ResetUi();
 }
 
@@ -565,9 +566,10 @@ void TrackRobotToolWidget::LoadButtonClicked()
     if (successful)
     {
         m_ui->m_loadBtn->setEnabled(false);
-
         m_ui->m_playBtn->setEnabled(true);
         m_ui->m_stepBtn->setEnabled(true);
+        m_ui->m_videoPositionBar->setEnabled(true);
+        m_loaded = true;
     }
 }
 
@@ -597,7 +599,7 @@ void TrackRobotToolWidget::SaveButtonClicked()
     const QString trackerResultsCsvName(
          runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.csv" ) );
     const QString trackerResultsImgName(
-         runConfig.GetAbsoluteFileNameFor( "results/track_result_img.png" ) );
+         runConfig.GetAbsoluteFileNameFor( "results/track_result_img_raw.png" ) );
 
     const QString pixelOffsetsName(
          runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets.txt" ) );
@@ -653,6 +655,7 @@ void TrackRobotToolWidget::Paused()
     m_ui->m_playBtn->setEnabled(true);
     m_ui->m_stepBtn->setEnabled(true);
     m_ui->m_stopBtn->setEnabled(true);
+    m_ui->m_videoPositionBar->setEnabled(true);
 
     if (m_tracking)
     {
@@ -670,9 +673,11 @@ void TrackRobotToolWidget::Paused()
 
 void TrackRobotToolWidget::Stopped()
 {
+    // tracking finished
     m_ui->m_stopBtn->setEnabled(false);
     m_ui->m_resetBtn->setEnabled(true);
     m_ui->m_saveBtn->setEnabled(true);
+    m_ui->m_videoPositionBar->setEnabled(true);
 
     // switch to (non-tracking) icons
     SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/play.png"));
@@ -712,6 +717,7 @@ void TrackRobotToolWidget::ThreadPaused( bool trackingLost )
 {
     m_running = false;
     m_playing = false;
+
     m_tracking = m_tracking && !trackingLost;
 
     Paused();
@@ -947,7 +953,7 @@ bool TrackRobotToolWidget::CreateRunResultDirectory(const WbConfig& config)
             return false;
         }
 
-        FileNameUtils::DeleteDirectory( resultDirParent.absoluteFilePath(resultDirName) );
+        FileUtilities::DeleteDirectory( resultDirParent.absoluteFilePath(resultDirName) );
     }
 
     if ( !resultDirParent.mkdir( resultDirName ) || !resultDirParent.cd( resultDirName ))

@@ -28,12 +28,13 @@
 class GtsScene;
 
 /** @brief A class to manage video tracking using a separate thread.
- *
- *  This allows to deal easily with APIs that block until an image is ready.
- */
+
+    This allows to deal easily with APIs that block until an image is ready.
+ **/
 class TrackThread : public QObject
 {
     Q_OBJECT
+
 public:
     explicit TrackThread( GtsScene& scene );
     ~TrackThread();
@@ -92,6 +93,7 @@ private:
     bool m_forward;
 
     std::unique_ptr<QThread> m_thread;
+
     mutable QMutex m_mutex;
 
 };

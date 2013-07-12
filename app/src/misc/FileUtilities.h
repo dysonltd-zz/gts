@@ -16,21 +16,29 @@
  *
  */
 
-#ifndef  FILENAMEUTILS_H
-#define  FILENAMEUTILS_H
-
-#include <QtCore/QString>
+#ifndef  FILEUTILITIES_H
+#define  FILEUTILITIES_H
 
 #include "WbConfig.h"
 
-namespace FileNameUtils
+#include <QtCore/QString>
+
+#include <stdio.h>
+
+namespace FileUtilities
 {
     const QString GetUniqueFileName( const QString& fileNameFormat );
 
     bool DeleteDirectory( const QString& dirName );
 
     bool FileIsExternal( const QString& fileName, const WbConfig& config );
+
+    void LineSkip( FILE* f );
+
+	int LineCount( FILE* fp );
+
+	bool FileExists( const char* file );
 }
 
-#endif // FILENAMEUTILS_H
+#endif // FILEUTILITIES_H
 

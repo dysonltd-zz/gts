@@ -23,8 +23,6 @@
 
 #include <QObject>
 
-extern void setupLogging();
-
 #define LOG_DEBUG Log4Qt::Logger::rootLogger()->debug
 #define LOG_ERROR Log4Qt::Logger::rootLogger()->error
 #define LOG_FATAL Log4Qt::Logger::rootLogger()->fatal
@@ -32,5 +30,10 @@ extern void setupLogging();
 #define LOG_LOG   Log4Qt::Logger::rootLogger()->log
 #define LOG_TRACE Log4Qt::Logger::rootLogger()->trace
 #define LOG_WARN  Log4Qt::Logger::rootLogger()->warn
+
+namespace Logging
+{
+    void SetupLogging();
+}
 
 #endif // LOGGING_H

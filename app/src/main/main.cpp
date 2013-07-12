@@ -45,7 +45,7 @@ int main( int argc, char** argv )
     QCoreApplication::setOrganizationName("GTS");
     QCoreApplication::setApplicationName("Ground Truth System");
 
-    setupLogging();
+    Logging::SetupLogging();
 
     qRegisterMetaType<CameraDescription>("CameraDescription");
 

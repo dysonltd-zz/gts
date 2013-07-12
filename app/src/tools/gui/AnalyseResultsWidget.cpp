@@ -32,7 +32,7 @@
 
 #include "OpenCvTools.h"
 
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 #include "FileDialogs.h"
 #include "Message.h"
 
@@ -100,7 +100,9 @@ namespace
                 comparisonOp = CV_CMP_GE;
             }
 
-            int nPixels = GetPixelCoverageCount( totalCoverageImg, numTimesCovered, comparisonOp );
+            int nPixels = OpenCvTools::GetPixelCoverageCount( totalCoverageImg,
+                                                              numTimesCovered,
+                                                              comparisonOp );
             float percent = nPixels * (100.f / nFloorPixels);
             fprintf(fp, ", %f", percent);
 
@@ -419,7 +421,7 @@ const ExitStatus::Flags AnalyseResultsWidget::AnalyseResults( char* floorPlanNam
 
     if ( floorMaskName )
     {
-        floorMaskImg = LoadSingleChannelImage( floorMaskName );
+        floorMaskImg = OpenCvTools::LoadSingleChannelImage( floorMaskName );
     }
 
     std::vector<std::string> fileNames;
@@ -481,7 +483,10 @@ const ExitStatus::Flags AnalyseResultsWidget::AnalyseResults( char* floorPlanNam
     if ( floorPlanImg )
     {
         // overlay floor-mask onto floor image
-        DrawColouredOverlay( floorPlanImg, floorMaskImg, CV_RGB(100,0,0), std::bind2nd(std::equal_to<int>(), 255) );
+        OpenCvTools::DrawColouredOverlay( floorPlanImg,
+                                          floorMaskImg,
+                                          CV_RGB(100,0,0),
+                                          std::bind2nd(std::equal_to<int>(), 255) );
     }
 
     // keep track of total coverage counts in a separate map
@@ -500,7 +505,7 @@ const ExitStatus::Flags AnalyseResultsWidget::AnalyseResults( char* floorPlanNam
                                                    .arg(i->c_str()));
 
         // load the coverage-mask, limit it to the floor-mask area
-        IplImage* coverageMaskImg = LoadSingleChannelImage( i->c_str() );
+        IplImage* coverageMaskImg = OpenCvTools::LoadSingleChannelImage( i->c_str() );
 
         if ((coverageMaskImg->height != floorMaskImg->height) ||
             (coverageMaskImg->width != floorMaskImg->width))
@@ -528,18 +533,16 @@ const ExitStatus::Flags AnalyseResultsWidget::AnalyseResults( char* floorPlanNam
     {
         for (int level = 1; level < maxLevel; ++level)
         {
-            DrawColouredOverlay( floorPlanImg,
-                                 totalCoverageImg,
-                                 CV_RGB(0,level*40,0),
-                                 std::bind2nd(std::equal_to<int>(),
-                                 level) );
+            OpenCvTools::DrawColouredOverlay( floorPlanImg,
+                                              totalCoverageImg,
+                                              CV_RGB(0,level*40,0),
+                                              std::bind2nd(std::equal_to<int>(), level) );
         }
 
-        DrawColouredOverlay( floorPlanImg,
-                             totalCoverageImg,
-                             CV_RGB(0,255,0),
-                             std::bind2nd(std::greater_equal<int>(),
-                             maxLevel) );
+        OpenCvTools::DrawColouredOverlay( floorPlanImg,
+                                          totalCoverageImg,
+                                          CV_RGB(0,255,0),
+                                          std::bind2nd(std::greater_equal<int>(), maxLevel) );
     }
 
     // clean up...
@@ -594,7 +597,7 @@ bool AnalyseResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
             return false;
         }
 
-        FileNameUtils::DeleteDirectory( resultDirParent.absoluteFilePath(resultDirName) );
+        FileUtilities::DeleteDirectory( resultDirParent.absoluteFilePath(resultDirName) );
     }
 
     if ( !resultDirParent.mkdir( resultDirName ) || !resultDirParent.cd( resultDirName ))
@@ -608,4 +611,3 @@ bool AnalyseResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
 
     return true;
 }
-

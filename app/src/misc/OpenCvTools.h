@@ -16,51 +16,54 @@
  *
  */
 
-#ifndef OPENCVTOOLS_H_
-#define OPENCVTOOLS_H_
+#ifndef OPENCVTOOLS_H
+#define OPENCVTOOLS_H
 
 #include "Logging.h"
 
 #include <opencv/cv.h>
 
-bool IsValid( const IplImage* const iplImage );
-
-/**
- * Draws a coloured overlay of the @a mask into the @a img using the
- * supplied @a colour.
- * @param img The image to draw into.
- * @param mask The mask to be overlaid into the @a img.
- * @param colour The colour to use for the overlay.
- * @param predicate Tests whether the pixel in the mask is a match.
- */
-template <typename Pred>
-void DrawColouredOverlay( IplImage* img, const IplImage* mask, CvScalar colour, Pred predicate )
+namespace OpenCvTools
 {
-    if (mask->nChannels != 1)
-    {
-        LOG_ERROR("Too many channels in mask!");
+    bool IsValid( const IplImage* const iplImage );
 
-        return;
-    }
-
-    for ( int j = 0; j < mask->height; ++j )
+    /**
+        Draws a coloured overlay of the @a mask into the @a img using the
+        supplied @a colour.
+        @param img The image to draw into.
+        @param mask The mask to be overlaid into the @a img.
+        @param colour The colour to use for the overlay.
+        @param predicate Tests whether the pixel in the mask is a match.
+     **/
+    template <typename Pred>
+    void DrawColouredOverlay( IplImage* img, const IplImage* mask, CvScalar colour, Pred predicate )
     {
-        for ( int i = 0; i < mask->width; ++i )
+        if (mask->nChannels != 1)
         {
-            int val = (int)cvGet2D( mask, j, i ).val[0];
+            LOG_ERROR("Too many channels in mask!");
 
-            if (predicate( val ))
+            return;
+        }
+
+        for ( int j = 0; j < mask->height; ++j )
+        {
+            for ( int i = 0; i < mask->width; ++i )
             {
-                cvSet2D( img, j, i, colour );
+                int val = (int)cvGet2D( mask, j, i ).val[0];
+
+                if (predicate( val ))
+                {
+                    cvSet2D( img, j, i, colour );
+                }
             }
         }
     }
+
+    IplImage* LoadSingleChannelImage(const std::string& fileName);
+
+    int GetPixelCoverageCount( const IplImage* rawCoverageImg,
+                               const int nTimes,
+                               const int cmp );
 }
 
-IplImage* LoadSingleChannelImage(const std::string& fileName);
-
-int GetPixelCoverageCount(const IplImage* rawCoverageImg,
-                          const int nTimes,
-                          const int cmp);
-
-#endif // OPENCVTOOLS_H_
+#endif // OPENCVTOOLS_H

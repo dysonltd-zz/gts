@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef COVERAGE_SYSTEM_H
-#define COVERAGE_SYSTEM_H
+#ifndef COVERAGESYSTEM_H
+#define COVERAGESYSTEM_H
 
 #include <opencv/cv.h>
 #include <stdio.h>
@@ -41,7 +41,7 @@ public:
 			CvPoint2D32f cl, CvPoint2D32f cr
 		);
 
-	
+
 	void DrawMask( IplImage* img, CvScalar colour ) const;
 	void SaveMask( const char* filename );
 	void DrawMap( IplImage* img ) const;
@@ -50,7 +50,7 @@ public:
 	float EstimateCoverage( const IplImage* floormask ) const;
 	float EstimateCoverage() const;
 	float EstimateRepeatCoverage() const;
-	void CoverageHistogram( const char* file_name ) const;	
+	void CoverageHistogram( const char* file_name ) const;
 
 	bool LoadFloorMask( const char* filename );
 	void SetFloorMask( const IplImage* mask );
@@ -76,4 +76,4 @@ private:
 	IplImage* m_colMap;
 };
 
-#endif
+#endif // COVERAGESYSTEM_H

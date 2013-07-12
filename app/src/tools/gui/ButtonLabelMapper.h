@@ -30,8 +30,7 @@ public:
                        const QString& keyIndependentLabel,
                        const QString& nonNullKeyLabelSuffixFormat,
                        const KeyName& firstKeyName,
-                       const KeyName& secondKeyName )
-    :
+                       const KeyName& secondKeyName ) :
         ConfigKeyMapper( firstKeyName ),
         m_button( button ),
         m_keyIndependentLabel( keyIndependentLabel ),

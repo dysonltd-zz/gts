@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>VideoPositionBar</class>
  <widget class="QWidget" name="VideoPositionBar">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -35,7 +38,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Rate:</string>
+      <string>Rate (ms):</string>
      </property>
     </widget>
    </item>
@@ -51,13 +54,13 @@
       </sizepolicy>
      </property>
      <property name="suffix">
-      <string>ms</string>
+      <string/>
      </property>
      <property name="minimum">
       <number>10</number>
      </property>
      <property name="maximum">
-      <number>500</number>
+      <number>999</number>
      </property>
      <property name="singleStep">
       <number>10</number>

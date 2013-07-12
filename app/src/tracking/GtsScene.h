@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef GTS_SCENE_H
-#define GTS_SCENE_H
+#ifndef GTSSCENE_H
+#define GTSSCENE_H
 
 #include <QFile>
 
@@ -95,14 +95,6 @@ public:
 
     void SetRate( double rate );
 
-#ifdef MULTI_THREAD
-    void SetupThreads();
-    void StartThreads();
-    void PauseThreads();
-    void StopThreads();
-    void JoinThreads();
-#endif
-
     void PostProcess( char* floorPlanFile,
                       char* trackerResultsTxtFile,
                       char* trackerResultsCsvFile,
@@ -112,14 +104,14 @@ public:
     void SetTrackPosition( int id, int x, int y );
 
 private:
-    int OrganiseLogs( TrackHistory* log );
+    int OrganiseLogs( TrackHistory::TrackLog* log );
 
-    void PostProcessMultiCamera( TrackHistory& avg,
-                                 CvPoint2D32f& offset,
-                                 IplImage**    compImgCol,
-                                 float         timeThresh,
-                                 char*         floorPlanName,
-                                 unsigned int  baseIndex );
+    void PostProcessMultiCamera( TrackHistory::TrackLog& avg,
+                                 CvPoint2D32f&           offset,
+                                 IplImage**              compImgCol,
+                                 float                   timeThresh,
+                                 char*                   floorPlanName,
+                                 unsigned int            baseIndex );
 
     static const unsigned int kMaxCameras = GTS_MAX_CAMERAS;
 
@@ -128,10 +120,6 @@ private:
 
     GtsView m_view[GtsScene::kMaxCameras];
 
-#ifdef MULTI_THREAD
-    TrackThread* m_thread[GtsScene::kMaxCameras];
-#endif
-
     CvSize m_boardsize;
     QString m_targetFile;
 
@@ -139,8 +127,8 @@ private:
     double m_fps;
     unsigned int m_nPairs;
     int m_matchPairs[GtsScene::kMaxCameras][2];
-    TrackHistory m_log[GtsScene::kMaxCameras];
-    TrackHistory m_logPx[GtsScene::kMaxCameras];
+    TrackHistory::TrackLog m_log[GtsScene::kMaxCameras];
+    TrackHistory::TrackLog m_logPx[GtsScene::kMaxCameras];
     const IplImage* m_gpImg[GtsScene::kMaxCameras];
     CvPoint2D32f m_origin[GtsScene::kMaxCameras];
 
@@ -155,4 +143,4 @@ private:
 
 #undef GTS_MAX_CAMERAS
 
-#endif // GTS_SCENE_H
+#endif // GTSSCENE_H

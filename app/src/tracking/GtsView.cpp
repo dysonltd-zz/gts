@@ -65,6 +65,7 @@
 
 GtsView::GtsView() :
     m_id          ( -1 ),
+    m_fps         ( 0.0 ),
     m_calScaled   ( 0 ),
     m_calNormal   ( 0 ),
     m_tracker     ( 0 ),
@@ -72,8 +73,7 @@ GtsView::GtsView() :
     m_imgFrame    ( 0 ),
     m_imgGrey     ( 0 ),
     m_thumbnail   ( 0 ),
-    m_imgIndex    ( 0 ),
-    m_fps         (0.0)
+    m_imgIndex    ( 0 )
 {
     m_imgWarp[0] = 0;
     m_imgWarp[1] = 0;
@@ -319,19 +319,20 @@ void GtsView::LoadTimestampFile( const char* const fileName )
     if ( fileName )
     {
         QTextStream stream( fileName );
-        //std::string line;
-        while(!stream.atEnd())//( QString line = stream.readLine() ) // std::getline( stream, line ) )
+
+        while(!stream.atEnd())
         {
             QString line = stream.readLine();
             QStringList fields = line.split(' ');
 
-            //std::stringstream lineStream( line );
-            timespec t;
-            t.tv_sec = fields.takeFirst().toInt();
-            t.tv_nsec = fields.takeFirst().toInt();
+            if (fields.size() >= 2)
+            {
+                timespec t;
+                t.tv_sec = fields.takeFirst().toLong();
+                t.tv_nsec = fields.takeFirst().toLong();
 
-            //lineStream >> t.tv_sec >> t.tv_nsec;
-            m_timestamps.push_back(t);
+                m_timestamps.push_back(t);
+            }
         }
     }
 }
@@ -574,7 +575,7 @@ void GtsView::StepTracker( bool forward, CoverageSystem* coverage )
             }
         }
 
-        qimage = showRobotTrack( m_tracker, tracking );
+        qimage = GroundTruthUI::showRobotTrack( m_tracker, tracking );
 
         m_tool->ImageUpdate( m_id, qimage.rgbSwapped(), m_fps );
 
@@ -584,7 +585,7 @@ void GtsView::StepTracker( bool forward, CoverageSystem* coverage )
 
 void GtsView::ShowRobotTrack()
 {
-    QImage qimage = showRobotTrack( m_tracker, true );
+    QImage qimage = GroundTruthUI::showRobotTrack( m_tracker, true );
 
     m_tool->ImageSet( m_id, qimage.rgbSwapped(), m_fps );
 }

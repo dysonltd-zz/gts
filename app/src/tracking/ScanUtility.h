@@ -20,24 +20,57 @@
 #define SCANUTILITY_H
 
 #include "ScanMatch.h"
+#include "TrackHistory.h"
 
 class CameraCalibration;
 
-double AverageFpsSec( const TrackHistory& in );
+namespace ScanUtility
+{
+    double AverageFpsSec( const TrackHistory::TrackLog& in );
 
-void PlotLog( const TrackHistory& log, IplImage* img, CvScalar col, CvRect rect, int margin, int scale, double timeThresh );
-void PlotPoint( const TrackEntry& entry, IplImage* img, CvScalar col, CvRect rect, int margin, int scale );
+    void PlotLog( const TrackHistory::TrackLog& log,
+                  IplImage* img,
+                  CvScalar col,
+                  CvRect rect,
+                  int margin,
+                  int scale,
+                  double timeThresh );
 
-void TransformLog( const TrackHistory& log, TrackHistory& newlog, const CvMat* H );
+    void PlotPoint( const TrackEntry& entry,
+                    IplImage* img,
+                    CvScalar col,
+                    CvRect rect,
+                    int margin,
+                    int scale );
 
-void LogCmToPx( const TrackHistory& in, TrackHistory& out, float scale, CvPoint2D32f offset );
-void LogPxToCm( const TrackHistory& in, TrackHistory& out, float scale, CvPoint2D32f offset );
+    void TransformLog( const TrackHistory::TrackLog& log,
+                       TrackHistory::TrackLog& newlog,
+                       const CvMat* H );
 
-void LogPxToImage( const TrackHistory& in, TrackHistory& out, const CameraCalibration* cal, const CvPoint2D32f* offset );
-void LogImageToPx( const TrackHistory& in, TrackHistory& out, const CameraCalibration* cal, const CvPoint2D32f* offset );
+    void LogCmToPx( const TrackHistory::TrackLog& in,
+                    TrackHistory::TrackLog& out,
+                    float scale,
+                    CvPoint2D32f offset );
 
-void LogSwapHandedness( TrackHistory& log );
+    void LogPxToCm( const TrackHistory::TrackLog& in,
+                    TrackHistory::TrackLog& out,
+                    float scale,
+                    CvPoint2D32f offset );
 
-void ConvertToRelativeLog( const TrackHistory& in, TrackHistory& out );
+    void LogPxToImage( const TrackHistory::TrackLog& in,
+                       TrackHistory::TrackLog& out,
+                       const CameraCalibration* cal,
+                       const CvPoint2D32f* offset );
+
+    void LogImageToPx( const TrackHistory::TrackLog& in,
+                       TrackHistory::TrackLog& out,
+                       const CameraCalibration* cal,
+                       const CvPoint2D32f* offset );
+
+    void LogSwapHandedness( TrackHistory::TrackLog& log );
+
+    void ConvertToRelativeLog( const TrackHistory::TrackLog& in,
+                               TrackHistory::TrackLog& out );
+}
 
 #endif // SCANUTILITY_H

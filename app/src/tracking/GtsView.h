@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef GTS_VIEW_H
-#define GTS_VIEW_H
+#ifndef GTSVIEW_H
+#define GTSVIEW_H
 
 #include <string>
 
@@ -146,4 +146,4 @@ private:
     const GtsView& operator = (const GtsView&);
 };
 
-#endif // GTS_VIEW_H
+#endif // GTSVIEW_H

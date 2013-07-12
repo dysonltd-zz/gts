@@ -34,8 +34,6 @@
 
 #include <stdio.h>
 
-using namespace std;
-
 FileCapture::FileCapture( const char* filename ) :
 	m_path		(""),
 	m_sequence	(0),
@@ -45,23 +43,23 @@ FileCapture::FileCapture( const char* filename ) :
 	m_IsSetup (false)
 {
 	// load in a file name sequence
-	ifstream file( filename );
+	std::ifstream file( filename );
 
 	if ( file.is_open() )
 	{
-		string line;
+		std::string line;
 
 		// First line of file is path
 		getline( file, line );
 
 		if ( line.length()>0 )
 		{
-			m_path = string( line.begin(), line.end() );
+			m_path = std::string( line.begin(), line.end() );
 
 			// Strip off tag
-			if ( m_path.find( "PATH=" ) != string::npos )
+			if ( m_path.find( "PATH=" ) != std::string::npos )
 			{
-				m_path = string( m_path.begin()+5 , m_path.end() );
+				m_path = std::string( m_path.begin()+5 , m_path.end() );
 			}
 			else
 			{
@@ -72,24 +70,25 @@ FileCapture::FileCapture( const char* filename ) :
 
 			// Strip off any end-space from path
 			size_t pos = m_path.find( " " );
-			if ( pos != string::npos )
+			if ( pos != std::string::npos )
 			{
-				m_path = string( m_path.begin(), m_path.begin() + pos );
+				m_path = std::string( m_path.begin(), m_path.begin() + pos );
 			}
 		}
 
 		// Remaining lines contain file names then timestamps
-		string name;
-		string time;
+		std::string name;
+		std::string time;
 		while ( !file.eof() )
 		{
 			getline( file, line );
 			if ( line.length()>0 )
 			{
-				name = string( line.begin(), line.begin() + line.find(" ") );
-				time = string( line.begin() + line.find(" ") + 1, line.end() );
+				name = std::string( line.begin(), line.begin() + line.find(" ") );
+				time = std::string( line.begin() + line.find(" ") + 1, line.end() );
 
-				istringstream num( time );
+				std::istringstream num( time );
+
 				double t;
 				num >> t;
 				m_sequence.push_back( FileCapture::Frame( name, t ) );
@@ -101,7 +100,6 @@ FileCapture::FileCapture( const char* filename ) :
 		{
 			m_IsSetup = true;
 		}
-
 	}
 	else
 	{
@@ -124,7 +122,7 @@ bool FileCapture::ReadyNextFrame()
 
 	cvReleaseImage(&m_img);
 
-	string file = m_path + m_sequence[m_index++].file;
+	std::string file = m_path + m_sequence[m_index++].file;
 
 	m_img = cvLoadImage( file.c_str() );
 
@@ -168,7 +166,7 @@ void FileCapture::PrintInfo() const
 
 	for ( unsigned int i=0; i<m_sequence.size(); ++i )
 	{
-	    string file = m_path + m_sequence[i].file;
+	    std::string file = m_path + m_sequence[i].file;
 
 	    LOG_INFO(QObject::tr("File %1 with timestamp %2.").arg(file.c_str())
                                                           .arg(m_sequence[i].time));

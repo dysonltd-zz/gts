@@ -21,71 +21,74 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
-bool IsValid( const IplImage* const iplImage )
+namespace OpenCvTools
 {
-    if ( !iplImage ) return false;
-    if ( iplImage->width  <= 0 ) return false;
-    if ( iplImage->height <= 0 ) return false;
-
-    return true;
-}
-
-/**
- * Loads the given image file, converting it (if necessary) to a
- * single-channel (B&W) image.
- * @param fileName the name of the image-file to load.
- * @return A single-channel (B&W) image, or NULL if it cannot be
- * loaded or converted for some reason.
- */
-IplImage* LoadSingleChannelImage(const std::string& fileName)
-{
-    IplImage* img = cvLoadImage( fileName.c_str(), CV_LOAD_IMAGE_GRAYSCALE );
-
-    if (!img)
+    bool IsValid( const IplImage* const iplImage )
     {
-        LOG_ERROR(QObject::tr("Could not load image %1!").arg(fileName.c_str()));
+        if ( !iplImage ) return false;
+        if ( iplImage->width  <= 0 ) return false;
+        if ( iplImage->height <= 0 ) return false;
 
-        return 0;
+        return true;
     }
 
-    if (img->nChannels > 1)
+    /**
+        Loads the given image file, converting it (if necessary) to a
+        single-channel (B&W) image.
+        @param fileName the name of the image-file to load.
+        @return A single-channel (B&W) image, or NULL if it cannot be
+        loaded or converted for some reason.
+     **/
+    IplImage* LoadSingleChannelImage(const std::string& fileName)
     {
-        LOG_INFO(QObject::tr("Converting %1 to single-channel.").arg(fileName.c_str()));
+        IplImage* img = cvLoadImage( fileName.c_str(), CV_LOAD_IMAGE_GRAYSCALE );
 
-        IplImage* tmp = cvCreateImage( cvSize( img->width, img->height), IPL_DEPTH_8U, 1 );
+        if (!img)
+        {
+            LOG_ERROR(QObject::tr("Could not load image %1!").arg(fileName.c_str()));
 
-        cvConvertImage( img, tmp );
-        cvReleaseImage( &img );
+            return 0;
+        }
 
-        img = tmp;
+        if (img->nChannels > 1)
+        {
+            LOG_INFO(QObject::tr("Converting %1 to single-channel.").arg(fileName.c_str()));
+
+            IplImage* tmp = cvCreateImage( cvSize( img->width, img->height), IPL_DEPTH_8U, 1 );
+
+            cvConvertImage( img, tmp );
+            cvReleaseImage( &img );
+
+            img = tmp;
+        }
+
+        return img;
     }
 
-    return img;
-}
+    /**
+        Counts the number of pixels in @a rawCoverageImg, where the pixel
+        value compares to @a nTimes using the @a cmp operation.
 
-/**
- * Counts the number of pixels in @a rawCoverageImg, where the pixel
- * value compares to @a nTimes using the @a cmp operation.
- *
- * @param rawCoverageImg An image containing raw-coverage data, with
- * the coverage count as the absolute pixel-value.
- * @param nTimes The number of coverage times (i.e. the pixel-value)
- * to count within the @a rawCoverageImg
- * @param cmp the comparison operator for locating pixels of interest
- */
-int GetPixelCoverageCount(const IplImage* rawCoverageImg,
-                          const int nTimes,
-                          const int cmp)
-{
-    // first make a copy of the raw-coverage mask, and another one to
-    // count with
-    IplImage* mask = cvCloneImage( rawCoverageImg );
+        @param rawCoverageImg An image containing raw-coverage data, with
+        the coverage count as the absolute pixel-value.
+        @param nTimes The number of coverage times (i.e. the pixel-value)
+        to count within the @a rawCoverageImg
+        @param cmp the comparison operator for locating pixels of interest
+     **/
+    int GetPixelCoverageCount( const IplImage* rawCoverageImg,
+                               const int nTimes,
+                               const int cmp )
+    {
+        // first make a copy of the raw-coverage mask, and another one to
+        // count with
+        IplImage* mask = cvCloneImage( rawCoverageImg );
 
-    // Find all pixels that were covered exactly 'nTimes' times...
-    cvCmpS( rawCoverageImg, nTimes, mask, cmp );
-    const int nPixels = cvCountNonZero( mask );
+        // Find all pixels that were covered exactly 'nTimes' times...
+        cvCmpS( rawCoverageImg, nTimes, mask, cmp );
+        const int nPixels = cvCountNonZero( mask );
 
-    cvReleaseImage( &mask );
+        cvReleaseImage( &mask );
 
-    return nPixels;
+        return nPixels;
+    }
 }

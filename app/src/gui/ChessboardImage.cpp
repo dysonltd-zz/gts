@@ -17,3 +17,34 @@
  */
 
 #include "ChessboardImage.h"
+
+namespace ChessboardImage
+{
+    const QImage CreateImage( const int rows,
+                              const int cols,
+                              const int squareSizePxls )
+    {
+        QImage img( cols*squareSizePxls, rows*squareSizePxls, QImage::Format_Mono );
+
+        for ( int r = 0; r < rows; ++r )
+        {
+            bool black = r % 2;
+
+            for ( int c = 0; c < cols; ++c )
+            {
+                uint colour = black ? 0 : 1;
+                black = !black;
+
+                for ( int imgX = c*squareSizePxls; imgX < (c+1)*squareSizePxls; ++imgX )
+                {
+                    for ( int imgY = r*squareSizePxls; imgY < (r+1)*squareSizePxls; ++imgY )
+                    {
+                        img.setPixel( imgX, imgY, colour );
+                    }
+                }
+            }
+        }
+
+        return img;
+    }
+}

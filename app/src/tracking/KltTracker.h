@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef KLT_TRACKER_H
-#define KLT_TRACKER_H
+#ifndef KLTTRACKER_H
+#define KLTTRACKER_H
 
 #include "RobotTracker.h"
 
@@ -74,7 +74,7 @@ public:
 
     void SetParam( paramType param, float value );
 
-    const TrackHistory& GetHistory() const
+    const TrackHistory::TrackLog& GetHistory() const
     {
         return m_history;
     }
@@ -162,7 +162,7 @@ private:
     IplImage* m_filtered; // filtered motion image
 
     // History stores the position, orientation, tracker error and time stamp.
-    TrackHistory m_history;
+    TrackHistory::TrackLog m_history;
 
     // Pointers to camera parameters (this tracker needs to know the camera calibration):
     const CameraCalibration* m_cal;
@@ -183,4 +183,4 @@ private:
     void InitialiseRecoverySystem();
 };
 
-#endif // KLT_TRACKER_H
+#endif // KLTTRACKER_H

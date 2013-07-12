@@ -338,34 +338,12 @@ void GtsScene::SetRate( double rate )
     m_rate = rate;
 }
 
-#ifdef MULTI_THREAD
-void GtsScene::SetupThreads()
-{
-}
-
-void GtsScene::StartThreads()
-{
-}
-
-void GtsScene::PauseThreads()
-{
-}
-
-void GtsScene::StopThreads()
-{
-}
-
-void GtsScene::JoinThreads()
-{
-}
-#endif
-
-void GtsScene::PostProcessMultiCamera( TrackHistory& avg,
-                                       CvPoint2D32f& offset,
-                                       IplImage**    compImgCol,
-                                       float         timeThresh,
-                                       char*         floorPlanFile,
-                                       unsigned int  baseIndex )
+void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
+                                       CvPoint2D32f&           offset,
+                                       IplImage**              compImgCol,
+                                       float                   timeThresh,
+                                       char*                   floorPlanFile,
+                                       unsigned int            baseIndex )
 {
     IplImage* compImg;
 
@@ -393,34 +371,34 @@ void GtsScene::PostProcessMultiCamera( TrackHistory& avg,
             offset.y = -m_origin[i].y;
 
             // Reverse effect of previous call to ConvertTrackToCm()...
-            LogCmToPx( m_log[i],
-                       m_logPx[i],
-                       m_metrics->GetScaleFactor(),
-                       //m_view[i].GetMetrics()->GetScaleFactor(),
-                       offset );
+            ScanUtility::LogCmToPx( m_log[i],
+                                    m_logPx[i],
+                                    m_metrics->GetScaleFactor(),
+                                    //m_view[i].GetMetrics()->GetScaleFactor(),
+                                    offset );
 
-            TrackHistory m_logImage;
+            TrackHistory::TrackLog m_logImage;
 
             // Map px to image using scaled calibration parameters...
-            LogPxToImage( m_logPx[i], m_logImage, m_view[i].GetScaledCalibration(),
-                                                  m_view[i].GetScaledCalibration()->GetUnwarpOffset() );
+            ScanUtility::LogPxToImage( m_logPx[i], m_logImage, m_view[i].GetScaledCalibration(),
+                                                               m_view[i].GetScaledCalibration()->GetUnwarpOffset() );
 
             // Map image (back) to px using non-scaled calibration parameters...
-            LogImageToPx( m_logImage, m_logPx[i], m_view[i].GetNormalCalibration(),
-                                                  m_view[i].GetNormalCalibration()->GetUnwarpOffset() );
+            ScanUtility::LogImageToPx( m_logImage, m_logPx[i], m_view[i].GetNormalCalibration(),
+                                                               m_view[i].GetNormalCalibration()->GetUnwarpOffset() );
 
-            TrackHistory tlog;
+            TrackHistory::TrackLog tlog;
             // Transform then overwrite old log with transformed log...
-            TransformLog( m_logPx[i], tlog, m_view[i].GetTracker()->GetCalibration()->GetCameraTransform() );
+            ScanUtility::TransformLog( m_logPx[i], tlog, m_view[i].GetTracker()->GetCalibration()->GetCameraTransform() );
             m_logPx[i] = tlog;
 
-            PlotLog( m_logPx[i],
-                     *compImgCol,
-                     colours[(i + 1) % 4],
-                     cvRect( 0, 0, 0, 0 ),
-                     0,
-                     1,
-                     timeThresh );
+            ScanUtility::PlotLog( m_logPx[i],
+                                 *compImgCol,
+                                 colours[(i + 1) % 4],
+                                 cvRect( 0, 0, 0, 0 ),
+                                 0,
+                                 1,
+                                 timeThresh );
         }
     }
 
@@ -430,21 +408,21 @@ void GtsScene::PostProcessMultiCamera( TrackHistory& avg,
     {
         if (m_view[i].IsSetup())
         {
-            TrackHistory tmpLog;
+            TrackHistory::TrackLog tmpLog;
 
-            scan_average( avg, m_logPx[i], 7.5f, tmpLog );
+            ScanMatch::ScanAverage( avg, m_logPx[i], 7.5f, tmpLog );
 
             avg = tmpLog;
         }
     }
 
-    PlotLog( avg,
-             *compImgCol,
-             colours[0],
-             cvRect( 0, 0, 0, 0 ),
-             0,
-             1,
-             timeThresh );
+    ScanUtility::PlotLog( avg,
+                          *compImgCol,
+                          colours[0],
+                          cvRect( 0, 0, 0, 0 ),
+                          0,
+                          1,
+                          timeThresh );
 
     cvReleaseImage( &compImg );
     cvReleaseImage( &baseImg );
@@ -466,7 +444,7 @@ void GtsScene::PostProcess( char* floorPlanFile,
     IplImage* compImg = 0;
     IplImage* compImgCol = 0;
     CvPoint2D32f offset;
-    TrackHistory avg;
+    TrackHistory::TrackLog avg;
     float tx = 0.f;
     float ty = 0.f;
 
@@ -487,12 +465,12 @@ void GtsScene::PostProcess( char* floorPlanFile,
     // Write average log to file
     if ( trackerResultsTxtFile )
     {
-        WriteHistoryLog( trackerResultsTxtFile, avg );
+        TrackHistory::WriteHistoryLog( trackerResultsTxtFile, avg );
     }
 
     if ( trackerResultsCsvFile )
     {
-        WriteHistoryCsv( trackerResultsCsvFile, avg );
+        TrackHistory::WriteHistoryCsv( trackerResultsCsvFile, avg );
     }
 
     // Write origin-offset to file...
@@ -521,7 +499,7 @@ void GtsScene::PostProcess( char* floorPlanFile,
  *
  * Also computes average frame-rate over all logs.
  **/
-int GtsScene::OrganiseLogs( TrackHistory* log )
+int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log )
 {
     int baseLog = -1;
     bool first = true;
@@ -551,7 +529,7 @@ int GtsScene::OrganiseLogs( TrackHistory* log )
 
                 m_gpImg[i] = m_view[i].GetTracker()->GetCalibration()->GetWarpedCalibrationImage();
 
-                m_fps += AverageFpsSec( log[i] );
+                m_fps += ScanUtility::AverageFpsSec( log[i] );
 
                 // Do some checks!
                 assert( m_gpImg[i] != 0 );

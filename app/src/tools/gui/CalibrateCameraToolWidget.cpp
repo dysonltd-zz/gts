@@ -34,14 +34,13 @@
 #include "ButtonLabelMapper.h"
 #include "PrintCalibrationGrid.h"
 #include "UnknownLengthProgressDlg.h"
-#include "CalibrationToolboxMapper.h"
 #include "CalibrateCameraResultsMapper.h"
 
 #include <QtGui/QCheckBox>
 #include <QtGui/qfiledialog.h>
 #include <QtGui/QRegExpValidator>
 
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 #include "FileDialogs.h"
 
 #include "WbConfigTools.h"
@@ -96,13 +95,11 @@ CalibrateCameraToolWidget::CalibrateCameraToolWidget( CameraHardware& cameraHard
     m_imageGridMapper = new CalibrationImageGridMapper( *m_ui->m_imageGrid );
     AddMapper( m_imageGridMapper );
 
-    AddMapper( new CalibrationToolBoxMapper( *m_ui->m_calibrationToolBox ) );
     AddMapper( new CalibrateCameraResultsMapper( *m_ui->m_resultsTextBrowser ) );
 
     QDoubleValidator* validator = new QDoubleValidator;
     m_ui->m_aspectRatioLineEdit->setValidator( validator );
 
-    m_ui->m_calibrationToolBox->setCurrentIndex( 0 );
     m_ui->m_optionsTabs->setCurrentIndex( 0 );
 
     QObject::connect( m_ui->m_fromFileBtn,
@@ -187,7 +184,7 @@ void CalibrateCameraToolWidget::FromFileClicked()
         {
             WbConfigTools::FileNameMode mode = WbConfigTools::FileNameMode_RelativeInsideWorkbench;
 
-            if ( FileNameUtils::FileIsExternal( imageName, GetCurrentConfig() ) )
+            if ( FileUtilities::FileIsExternal( imageName, GetCurrentConfig() ) )
             {
                 if ( fileDialog.CopyFileSelected() )
                 {

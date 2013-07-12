@@ -19,14 +19,14 @@
 #ifndef SWEEPER_H
 #define SWEEPER_H
 
+#include "MathsConstants.h"
+#include "RobotMetrics.h"
+#include "FileUtilities.h"
+
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
 #include <stdio.h>
-
-#include "MathsConstants.h"
-#include "RobotMetrics.h"
-#include "OpenCvUtility.h"
 
 /**
     Facilitate specification of robot sweepers.
@@ -44,13 +44,13 @@ struct Sweeper
         if ( fp )
         {
             fscanf( fp, "x_offset: %f", &x );
-            lineSkip( fp );
+            FileUtilities::LineSkip( fp );
             fscanf( fp, "y_offset: %f", &y );
-            lineSkip( fp );
+            FileUtilities::LineSkip( fp );
             fscanf( fp, "angle: %f", &a );
-            lineSkip( fp );
+            FileUtilities::LineSkip( fp );
             fscanf( fp, "width: %f", &w );
-            lineSkip( fp );
+            FileUtilities::LineSkip( fp );
 
             fclose( fp );
         }
@@ -87,7 +87,7 @@ struct Sweeper
 
     CvPoint2D32f GetRight( const RobotMetrics& metrics, CvPoint2D32f position, float heading ) const
     {
-        heading += F_PI/2.f;
+        heading += MathsConstants::F_PI/2.f;
 
         // convert to pixels from cm
         float sf = metrics.GetScaleFactor();

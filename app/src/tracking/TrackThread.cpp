@@ -84,10 +84,9 @@ void TrackThread::Execute()
 
         emit position( status.videoPosition );
 
-        if ( ShouldPause() || ( ShouldTrack() && trackingLost) )
+        if ( ShouldPause() || (ShouldTrack() && trackingLost) )
         {
             m_paused = true;
-
             emit paused( trackingLost );
         }
 

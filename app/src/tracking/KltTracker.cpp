@@ -92,7 +92,7 @@ KltTracker::~KltTracker()
  **/
 CvPoint2D32f KltTracker::GetBrushBarLeft( CvPoint2D32f position, float heading ) const
 {
-    heading += F_PI / 2.f;
+    heading += MathsConstants::F_PI / 2.f;
 
     float w = GetMetrics()->GetBrushBarWidthPx(); // brush bar width (pixels)
 
@@ -225,6 +225,7 @@ void KltTracker::Activate()
  **/
 void KltTracker::DoInactiveProcessing( double timeStamp )
 {
+    Q_UNUSED( timeStamp );
     if ( WasJustLost() )
     {
         Lost();
@@ -379,7 +380,7 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
     // Compute tracker error using normalised-cross-correlation
     // of appearance image (at robots old position which is where the appearance was generated)
     // with current image
-    float ncc1 = ncc2dRadial( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, newPos.x, newPos.y, 2 * r, 2 * r );
+    float ncc1 = CrossCorrelation::Ncc2dRadial( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, newPos.x, newPos.y, 2 * r, 2 * r );
 
     // Predict again with opposite orientation so we can disambiguate heading
     PredictTargetAppearance( 180 );
@@ -398,7 +399,7 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
                             kltFlags );
 
     // Compute tracker error using normalised-cross-correlation
-    float ncc2 = ncc2dRadial( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, newPos.x, newPos.y, 2 * r, 2 * r );
+    float ncc2 = CrossCorrelation::Ncc2dRadial( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, newPos.x, newPos.y, 2 * r, 2 * r );
 
     if (found1)
     {
@@ -415,14 +416,14 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
         if (!found1 || (error2 <= error1))
         {
             m_pos = newPos2;
-            m_angle += F_PI;
+            m_angle += MathsConstants::F_PI;
             m_error = ncc2;
         }
     }
 
     if (found1 || found2)
     {
-        m_angle = norm_angle(m_angle); // puts angle in range -pi to pi
+        m_angle = Angles::NormAngle(m_angle); // puts angle in range -pi to pi
 
         if (flipCorrect)
         {
@@ -543,8 +544,8 @@ float KltTracker::ComputeHeading( CvPoint2D32f pos ) const
     cvSVD( &C, &W, &U, 0, CV_SVD_MODIFY_A );
 
     // Store heading angle
-    float angle = (float)(atan2( u[0], u[2] ) + (.25f * F_PI));
-    angle = (F_PI / 2.0f) - angle;
+    float angle = (float)(atan2( u[0], u[2] ) + (.25f * MathsConstants::F_PI));
+    angle = (MathsConstants::F_PI / 2.0f) - angle;
 
     cvResetImageROI( img );
     cvReleaseImage( &img );
@@ -567,9 +568,9 @@ bool KltTracker::LoadTargetImage( const char* targetFilename )
         return false;
     }
 
-    m_targetImg = cvLoadImage( targetFilename, 0 );
+    IplImage* img = cvLoadImage( targetFilename, 0 );
 
-    if ( m_targetImg )
+    if ( img )
     {
         LOG_INFO(QObject::tr("Opened target image: %1.")
                     .arg(targetFilename));
@@ -577,19 +578,9 @@ bool KltTracker::LoadTargetImage( const char* targetFilename )
         // now transform the image
         float radius = m_metrics->GetRadiusPx();
         float size = ((2.f * radius) / sqrtf( 2.f ));
-        IplImage* img = cvCreateImage( cvSize( (int)(size + .5f),
-                                               (int)(size + .5f) ), IPL_DEPTH_8U, 1 );
-        cvResize( m_targetImg, img );
-        cvSet( m_targetImg, cvScalar( 255, 255, 255 ) );
-
-        int x = m_targetImg->width / 2 - img->width / 2;
-        int y = m_targetImg->height / 2 - img->height / 2;
-        float R[6];
-        CvMat rot = cvMat( 2, 3, CV_32F, R );
-        cv2DRotationMatrix( cvPoint2D32f( img->width / 2, img->height / 2 ), 180, 1, &rot );
-        R[2] += x;
-        R[5] += y;
-        cvWarpAffine( img, m_targetImg, &rot, CV_INTER_LINEAR + CV_WARP_FILL_OUTLIERS, cvScalar( 255 ) );
+        m_targetImg = cvCreateImage( cvSize( (int)(size + .5f),
+                                             (int)(size + .5f) ), IPL_DEPTH_8U, 1 );
+        cvResize( img, m_targetImg );
 
         cvReleaseImage( &img );
 
@@ -636,7 +627,7 @@ void KltTracker::PredictTargetAppearance( float offsetAngle )
 
     float angle = GetHeading();
 
-    angle = (float)((180 + R2D * angle) + offsetAngle);
+    angle = (float)((180 + MathsConstants::R2D * angle) + offsetAngle);
 
     int smoothing = 5;
     assert( smoothing % 2 ); // smoothing parameter must be odd
@@ -704,7 +695,7 @@ void KltTracker::LossRecovery()
     cvThreshold(m_diff, m_diff, 15, 255, CV_THRESH_BINARY);
 
     cvSetZero(m_filtered);
-    motionFilter(m_diff, m_filtered, 24, 24);
+    OpenCvUtility::MotionFilter(m_diff, m_filtered, 24, 24);
 
     cvConvertScale(m_filtered, m_avg, 1, 0.0);
 
@@ -753,7 +744,7 @@ void KltTracker::TargetSearch( const IplImage* mask )
             if ( *pMask )
             {
                 //ComputeHeading( cvPoint2D32f(i,j) );
-                float val = ncc2d/*Radial*/( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, i, j, ws, ws );
+                float val = CrossCorrelation::Ncc2d/*Radial*/( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, i, j, ws, ws );
 
                 *pNcc = val;
                 if ( val > maxVal )
@@ -789,17 +780,17 @@ void KltTracker::TargetSearch( const IplImage* mask )
  **/
 float KltTracker::flipCorrection( float angle, float oldAngle )
 {
-    float diff = diff_angle( angle, oldAngle );
+    float diff = Angles::DiffAngle( angle, oldAngle );
 
     if ( diff > 2.f )
     {
-        angle -= F_PI;
+        angle -= MathsConstants::F_PI;
     }
     if ( diff < -2.f )
     {
-        angle += F_PI;
+        angle += MathsConstants::F_PI;
     }
-    angle = norm_angle( angle );
+    angle = Angles::NormAngle( angle );
 
     return angle;
 }

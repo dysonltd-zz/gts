@@ -19,18 +19,19 @@
 #ifndef PRINTCALIBRATIONGRID_H_
 #define PRINTCALIBRATIONGRID_H_
 
-#include "ImagePrintPreviewDlg.h"
 #include "ChessboardImage.h"
-#include <QtGui/qfiledialog.h>
+#include "ImagePrintPreviewDlg.h"
 #include "Message.h"
 
+#include <QtGui/qfiledialog.h>
 
 namespace
 {
     inline void PrintCalibrationGrid( const int rows, const int columns )
     {
-        ImagePrintPreviewDlg dialog( ChessboardImage( rows, columns ) );
+        ImagePrintPreviewDlg dialog( ChessboardImage::CreateImage( rows, columns ) );
         const int choice = dialog.exec();
+
         if ( choice == QDialog::Accepted )
         {
             Message::Show( 0,

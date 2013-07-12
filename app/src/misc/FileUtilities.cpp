@@ -16,13 +16,13 @@
  *
  */
 
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
 
-namespace FileNameUtils
+namespace FileUtilities
 {
     const QString GetUniqueFileName( const QString& fileNameFormat )
     {
@@ -84,5 +84,46 @@ namespace FileNameUtils
 
         return topLevelDir.relativeFilePath( absoluteFileName ).startsWith( ".." );
     }
-}
 
+    void LineSkip(FILE* f)
+    {
+        char c;
+
+        do
+        {
+            c = (char)( fgetc(f) );
+        }
+        while (c!='\n' && c!=EOF);
+    }
+
+    int LineCount(FILE* fp)
+    {
+        int n = 0;
+        char c;
+
+        do
+        {
+            c = (char)( fgetc(fp) );
+            if (c=='\n') n++;
+        }
+        while (c!=EOF);
+
+        //fseek( fp, 0, SEEK_SET ); // rewind file
+        rewind(fp);
+
+        return n;
+    }
+
+    bool FileExists( const char* file )
+    {
+        FILE* fp = fopen( file, "r" );
+
+        if (fp)
+        {
+            fclose( fp );
+            return true;
+        }
+
+        return false;
+    }
+}

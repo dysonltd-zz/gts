@@ -25,7 +25,7 @@
 #include "CameraDescription.h"
 #include "VideoSource.h"
 #include "CameraTools.h"
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 
 #include <QtCore/QDir>
 
@@ -192,7 +192,7 @@ const QString CaptureLiveDualController::CaptureImage( const QImage capturedImag
     QString capturedFileName;
 
     const QString fileNameToCapture(
-                    FileNameUtils::GetUniqueFileName( newImageFileNameFormat ) );
+                    FileUtilities::GetUniqueFileName( newImageFileNameFormat ) );
 
     const QFileInfo fileInfo( fileNameToCapture );
     const QString fileDirPath( fileInfo.absolutePath() );

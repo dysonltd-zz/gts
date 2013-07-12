@@ -46,7 +46,7 @@
 #include "CameraPositionsCollection.h"
 #include "CameraTools.h"
 
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 #include "FileDialogs.h"
 
 #include "WbConfigTools.h"
@@ -249,10 +249,10 @@ void CaptureVideoToolWidget::StartRecordingInDirectory( const QString& outputDir
         /// timestamps for video1.avi could be in the file timestamps0.txt if there was
         /// a stray file named video0.avi already in the capture directory. Are we ok
         /// with this?
-        const QString videoFileName(FileNameUtils::GetUniqueFileName(
+        const QString videoFileName(FileUtilities::GetUniqueFileName(
                                      outputDirectory.absoluteFilePath(m_fname)));
 
-        const QString timestampFileName(FileNameUtils::GetUniqueFileName(
+        const QString timestampFileName(FileUtilities::GetUniqueFileName(
                                             outputDirectory.absoluteFilePath("timestamps%1.txt")));
 
         AddVideoFileConfigKey((*videoSource)->cameraPositionId, videoFileName, timestampFileName);

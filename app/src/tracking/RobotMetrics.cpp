@@ -25,6 +25,7 @@
 #include "RobotMetricsSchema.h"
 #include "ExtrinsicCalibrationSchema.h"
 #include "TrackRobotSchema.h"
+#include "FileUtilities.h"
 
 #include "Logging.h"
 
@@ -71,7 +72,7 @@ namespace
             assert(result == 0);
             if (fgetc(fp) == '#')
             {
-                lineSkip(fp);
+                FileUtilities::LineSkip(fp);
             }
             else
             {
@@ -109,7 +110,7 @@ bool RobotMetrics::LoadMetrics( const WbConfig& metricsCfg,
     m_resolution = trackCfg.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::resolution).ToDouble();
 
     m_targetRotationRad /= 180.f;
-    m_targetRotationRad *= F_PI;
+    m_targetRotationRad *= MathsConstants::F_PI;
 
 #ifdef SCALED_PIXELS
     ComputePixelMetrics( m_squarePx );

@@ -112,13 +112,13 @@ bool CameraCalibration::LoadIntrinsicCalibration( const WbConfig& cameraCalCfg )
                                                               arg(m_imageHeight));
 
         LOG_INFO("Camera matrix:");
-        logCvMat32F(&m_intrinsic);
+        OpenCvUtility::LogCvMat32F(&m_intrinsic);
 
         LOG_INFO("Distortion coefficients:");
-        logCvMat32F(&m_distortion);
+        OpenCvUtility::LogCvMat32F(&m_distortion);
 
         LOG_INFO("Inverse coefficients:");
-        logCvMat32F(&m_inverse);
+        OpenCvUtility::LogCvMat32F(&m_inverse);
     }
 
     return successful;
@@ -145,7 +145,7 @@ bool CameraCalibration::LoadCameraTransform( const KeyId camPosId, const WbConfi
                              FloorPlanSchema::transformKey, itt->id).ToCvMat(m_transform);
 
             LOG_INFO("Camera transform:");
-            logCvMat32F(&m_transform);
+            OpenCvUtility::LogCvMat32F(&m_transform);
 
             break;
         }
@@ -179,7 +179,7 @@ bool CameraCalibration::PerformExtrinsicCalibration( CvSize        boardSize,
         IplImage* viewGrey = cvCreateImage( cvGetSize(view), IPL_DEPTH_8U, 1 );
         cvCvtColor( view, viewGrey, CV_BGR2GRAY );
 
-        CvMat* imagePoints = findChessBoard( view, viewGrey, boardSize, 1 );
+        CvMat* imagePoints = GroundPlaneUtility::findChessBoard( view, viewGrey, boardSize, 1 );
 
         if ( imagePoints )
         {
@@ -196,43 +196,43 @@ bool CameraCalibration::PerformExtrinsicCalibration( CvSize        boardSize,
             CvMat* objectPoints;
             if (scaled)
             {
-                objectPoints = createCalibrationObject( boardSize.width,
-                                                        boardSize.height,
+                objectPoints = GroundPlaneUtility::createCalibrationObject( boardSize.width,
+                                                                            boardSize.height,
 #ifdef SCALED_PIXELS
-                                                        squarePx * metrics->GetResolution() );
+                                                                            squarePx * metrics->GetResolution() );
 #else
-                                                        metrics.GetSquareSizePx() );
+                                                                            metrics.GetSquareSizePx() );
 #endif
             }
             else
             {
-                objectPoints = createCalibrationObject( boardSize.width,
-                                                        boardSize.height,
-                                                        metrics.GetSquareSizeCm() );
+                objectPoints = GroundPlaneUtility::createCalibrationObject( boardSize.width,
+                                                                            boardSize.height,
+                                                                            metrics.GetSquareSizeCm() );
             }
 
             LOG_TRACE("Computing extrinsic params...");
             ComputeExtrinsicParams( objectPoints, imagePoints );
 
             LOG_INFO("Camera rotation:");
-            logCvMat32F(&m_rot);
+            OpenCvUtility::LogCvMat32F(&m_rot);
 
             LOG_INFO("Camera translation:");
-            logCvMat32F(&m_trans);
+            OpenCvUtility::LogCvMat32F(&m_trans);
 
             LOG_TRACE("Computing warp...");
 
             // Compute undistortion maps for the ground plane
             // (these will be used to undistort entire sequence)
-            *viewWarp = computeGroundPlaneWarpBatch( viewGrey,
-                                                     GetIntrinsicParams(),
-                                                     GetDistortionParams(),
-                                                     GetUndistortionParams(),
-                                                     GetRotationParams(),
-                                                     GetTranslationParams(),
-                                                     &m_mapx,
-                                                     &m_mapy,
-                                                     &m_offset );
+            *viewWarp = GroundPlaneUtility::computeGroundPlaneWarpBatch( viewGrey,
+                                                                         GetIntrinsicParams(),
+                                                                         GetDistortionParams(),
+                                                                         GetUndistortionParams(),
+                                                                         GetRotationParams(),
+                                                                         GetTranslationParams(),
+                                                                         &m_mapx,
+                                                                         &m_mapy,
+                                                                         &m_offset );
 
             LOG_TRACE("Warping ground plane image...");
 
@@ -283,8 +283,8 @@ float CameraCalibration::ComputeSquareSize(CvMat* imagePoints)
 
 void CameraCalibration::ComputeWarpGradientMagnitude()
 {
-    m_mapDx = GradientMagCv32fc1( m_mapx );
-    m_mapDy = GradientMagCv32fc1( m_mapy );
+    m_mapDx = OpenCvUtility::GradientMagCv32fc1( m_mapx );
+    m_mapDy = OpenCvUtility::GradientMagCv32fc1( m_mapy );
     m_mapGM = cvCloneMat( m_mapDy );
 
     cvAdd( m_mapDx, m_mapDy, m_mapGM );
@@ -305,10 +305,10 @@ void CameraCalibration::ComputeExtrinsicParams( const CvMat* objectPoints,
                                   &m_trans );
 
     LOG_INFO("Object points:");
-    logCvMat32F(objectPoints);
+    OpenCvUtility::LogCvMat32F(objectPoints);
 
     LOG_INFO("Image points:");
-    logCvMat32F(imagePoints);
+    OpenCvUtility::LogCvMat32F(imagePoints);
 
     cvRodrigues2(&rot,&m_rot);
 

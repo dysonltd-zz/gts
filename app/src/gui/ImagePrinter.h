@@ -23,29 +23,29 @@
 #include <QtGui/qprinter.h>
 #include <QtGui/qimage.h>
 #include <QtCore/qdebug.h>
+
 /** @brief A QObject to handle printing of a QImage
- *
- *  Designed to work directly or with a QPrintPreviewDialog.
- */
+
+    Designed to work directly or with a QPrintPreviewDialog.
+ **/
 class ImagePrinter: public QObject
 {
     Q_OBJECT
 
 public:
-    ImagePrinter( const QImage& image )
-        :
-          m_image( image )
+    ImagePrinter( const QImage& image ) :
+      m_image( image )
     {
     }
 
 public slots:
     /** @brief actually perform the printing.
-     *
-     *  Takes the page size from the printer and scales the image to the maximum
-     *  size to fit the page whilst maintaining its aspect ratio.
-     *
-     *  @param printer The QPrinter object on which to print.
-     */
+
+        Takes the page size from the printer and scales the image to the maximum
+        size to fit the page whilst maintaining its aspect ratio.
+
+        @param printer The QPrinter object on which to print.
+     **/
     void doPrinting( QPrinter* printer )
     {
         if ( printer )
@@ -58,36 +58,41 @@ public slots:
             const QSizeF pageSizeF( pageRect.size() );
             const QSize pageSize( Truncate( pageSizeF ) );
             const QImage scaledImage( m_image.scaled( pageSize,
-                    Qt::KeepAspectRatio, Qt::FastTransformation ) );
+                                                      Qt::KeepAspectRatio,
+                                                      Qt::FastTransformation ) );
+
             const QSizeF offset( ( pageSize - scaledImage.size() ) / 2.0 );
 
             painter.drawImage( QPoint( offset.width(), offset.height() ),
-                scaledImage, scaledImage.rect() );
+                               scaledImage,
+                               scaledImage.rect() );
             painter.end();
         }
     }
+
 private:
 
     /** @brief Truncate a size to the nearest integer-based equivalent
-     *
-     *  To prevent image going off edge of page if toSize() function rounds up.
-     * @param pageSizeF The QSizeF to truncate
-     * @return The QSize equivalent to @a pageSizeF with each component rounded @em down
-     * to the nearest integer.
-     */
+
+        To prevent image going off edge of page if toSize() function rounds up.
+       @param pageSizeF The QSizeF to truncate
+       @return The QSize equivalent to @a pageSizeF with each component rounded @em down
+       to the nearest integer.
+     **/
     const QSize Truncate( const QSizeF& pageSizeF )
     {
-        const QSize pageSize( static_cast< int >( pageSizeF.width() ), static_cast<int>( pageSizeF.height() ) );
+        const QSize pageSize( static_cast< int >( pageSizeF.width() ),
+                              static_cast< int >( pageSizeF.height() ) );
         return pageSize;
     }
 
     /** @brief Ensure at least 1 mm margin all around due to odd image
-     *  issues otherwise
-     *
-     *  @bug image truncation with zero margins requires this hack
-     *
-     *  @param printer the QPrinter to modify
-     */
+        issues otherwise
+
+        @bug image truncation with zero margins requires this hack
+
+        @param printer the QPrinter to modify
+     **/
     void FixMargins( QPrinter& printer )
     {
         const qreal minPageMarginMm = 1.0;

@@ -98,7 +98,8 @@ QVariant TrackModel::data(const QModelIndex& idx, int role) const
 {
     if (idx.parent() != QModelIndex()) return QVariant();
 
-    if (role == Qt::DisplayRole || role == Qt::EditRole)
+    if (role == Qt::DisplayRole ||
+        role == Qt::EditRole)
     {
         return csvData[idx.row()].section(QChar(1), idx.column(), idx.column());
     }
@@ -180,7 +181,7 @@ void TrackModel::setSource(QIODevice *file, bool withHeader, QChar separator)
         size = l.length();
         isQuoted = false;
 
-        for (int i = 0;i < size;i++)
+        for (int i = 0; i < size; i++)
         {
             if (i > 0)
             {
@@ -225,7 +226,8 @@ bool TrackModel::setData(const QModelIndex& index, const QVariant& data, int rol
 
     QString before, after;
 
-    if (role == Qt::DisplayRole || role == Qt::EditRole)
+    if (role == Qt::DisplayRole ||
+        role == Qt::EditRole)
     {
         if (index.row() >= rowCount() ||
             index.row() < 0 ||
@@ -289,7 +291,7 @@ bool TrackModel::insertRows(int row, int count, const QModelIndex& parent)
 
     if (row >= rowCount())
     {
-        for (int i = 0;i < count;i++)
+        for (int i = 0; i < count; i++)
         {
             csvData << "";
             delData << true;
@@ -298,7 +300,7 @@ bool TrackModel::insertRows(int row, int count, const QModelIndex& parent)
     }
     else
     {
-        for (int i = 0;i < count;i++)
+        for (int i = 0; i < count; i++)
         {
             csvData.insert(row, "");
             delData.insert(row, true);
@@ -326,7 +328,7 @@ bool TrackModel::removeRows(int row, int count, const QModelIndex& parent)
 
     emit beginRemoveRows(parent, row, row + count);
 
-    for (int i = 0;i < count;i++)
+    for (int i = 0; i < count; i++)
     {
         csvData.removeAt(row);
         delData.removeAt(row);
@@ -352,7 +354,7 @@ bool TrackModel::insertColumns(int col, int count, const QModelIndex& parent)
     if (col < columnCount())
     {
         QString before, after;
-        for (int i = 0;i < rowCount();i++)
+        for (int i = 0; i < rowCount(); i++)
         {
             if (col > 0)
                 before = csvData[i].section(QChar(1), 0, col - 1) + QChar(1);
@@ -364,7 +366,7 @@ bool TrackModel::insertColumns(int col, int count, const QModelIndex& parent)
         }
     }
 
-    for (int i = 0;i < count;i++)
+    for (int i = 0; i < count; i++)
         header.insert(col, "");
 
     maxColumn += count;
@@ -390,7 +392,7 @@ bool TrackModel::removeColumns(int col, int count, const QModelIndex& parent)
 
     QString before, after;
 
-    for (int i = 0;i < rowCount();i++)
+    for (int i = 0; i < rowCount(); i++)
     {
         if (col > 0)
             before = csvData[i].section(QChar(1), 0, col - 1) + QChar(1);
@@ -401,7 +403,7 @@ bool TrackModel::removeColumns(int col, int count, const QModelIndex& parent)
         csvData[i] = before + after;
     }
 
-    for (int i = 0;i < count;i++)
+    for (int i = 0; i < count; i++)
         header.removeAt(col);
 
     emit endRemoveColumns();
@@ -420,19 +422,21 @@ void TrackModel::toCSV(QIODevice* dest, bool withHeader, QChar separator)
     cols = columnCount();
     QString data;
 
-    if (!dest->isOpen()) dest->open(QIODevice::WriteOnly | QIODevice::Truncate);
+    if (!dest->isOpen()) dest->open(QIODevice::WriteOnly |
+                                    QIODevice::Truncate);
 
     if (withHeader)
     {
         data = "";
+
         for (col = 0; col < cols; ++col)
         {
-            data += '"' + header.at(col) + '"';
+            data += header.at(col);
 
             if (col < cols - 1) data += separator;
         }
 
-        data += QChar(10);
+        data += '\n';
         dest->write(data.toLatin1());
     }
 
@@ -444,12 +448,12 @@ void TrackModel::toCSV(QIODevice* dest, bool withHeader, QChar separator)
 
             for (col = 0; col < cols; ++col)
             {
-                data += '"' + csvData[row].section(QChar(1), col, col) + '"';
+                data += csvData[row].section(QChar(1), col, col);
 
                 if (col < cols - 1) data += separator;
             }
 
-            data += QChar(10);
+            data += '\n';
             dest->write(data.toLatin1());
         }
     }

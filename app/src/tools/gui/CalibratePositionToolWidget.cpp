@@ -34,7 +34,7 @@
 #include "CalibratePositionResultsMapper.h"
 #include "UnknownLengthProgressDlg.h"
 
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 #include "FileDialogs.h"
 
 #if defined(__MINGW32__) || defined(__GNUC__)
@@ -165,7 +165,7 @@ void CalibratePositionToolWidget::FromFileBtnClicked()
         {
             WbConfigTools::FileNameMode mode = WbConfigTools::FileNameMode_RelativeInsideWorkbench;
 
-            if ( FileNameUtils::FileIsExternal( calImageName, GetCurrentConfig() ) )
+            if ( FileUtilities::FileIsExternal( calImageName, GetCurrentConfig() ) )
             {
                 if ( fileDialog.CopyFileSelected() )
                 {

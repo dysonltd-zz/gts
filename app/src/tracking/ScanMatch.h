@@ -21,66 +21,99 @@
 
 #include "RobotTracker.h"
 
-/**
-	Simple struct for storing results of scan matching process
-**/
-struct ScanPose
+namespace ScanMatch
 {
-	ScanPose() {};
-	ScanPose( float x, float y, float th, float e ) : dx(x),dy(y),dth(th),error(e) {};
-	float dx; ///< Translational offset in x-axis
-	float dy; ///< Translational offset in y-axis.
-	float dth; ///< Rotation angle in radians.
-	float error; ///< Error in alignment resulting from this pose
-};
+    /**
+	    Simple struct for storing results of scan matching process
+    **/
+    struct ScanPose
+    {
+    	ScanPose()
+    	{
+    	};
 
-void scan_remove_stationary_points( const TrackHistory& a, TrackHistory& r, float thresh );
-void scan_remove_bad_points( const TrackHistory& a, TrackHistory& r, float thresh );
+	    ScanPose( float x, float y, float th, float e ) :
+	      dx(x),
+	      dy(y),
+	      dth(th),
+	      error(e)
+        {
+        };
 
-void scan_association_nearest(
-						  const TrackHistory& a1, const TrackHistory& b1,
-						  TrackHistory& a2, TrackHistory& b2,
-						  float thresh, float timeOffset
-						  );
+	    float dx;    ///< Translational offset in x-axis
+	    float dy;    ///< Translational offset in y-axis.
+	    float dth;   ///< Rotation angle in radians.
+	    float error; ///< Error in alignment resulting from this pose
+    };
 
-void scan_association_interpolated(
-							const TrackHistory& a1, const TrackHistory& b1,
-							TrackHistory& a2, TrackHistory& b2,
-							float thresh, float timeOffset
-							);
+    void ScanRemoveStationaryPoints( const TrackHistory::TrackLog& a,
+                                     TrackHistory::TrackLog& r,
+                                     float thresh );
 
-ScanPose scan_compute_pose(const TrackHistory& a, const TrackHistory& b);
-ScanPose scan_compute_pose_weighted(const TrackHistory& a, const TrackHistory& b);
+    void ScanRemoveBadPoints( const TrackHistory::TrackLog& a,
+                              TrackHistory::TrackLog& r,
+                              float thresh );
 
-float scan_compute_error( ScanPose pose, const TrackHistory& a, const TrackHistory& b );
+    void ScanAssociationNearest( const TrackHistory::TrackLog& a1,
+                                 const TrackHistory::TrackLog& b1,
+						         TrackHistory::TrackLog& a2,
+						         TrackHistory::TrackLog& b2,
+						         float thresh,
+						         float timeOffset );
 
-ScanPose scan_match(
-				const TrackHistory& a, const TrackHistory& b,
-				TrackHistory& asc_a, TrackHistory& asc_b,
-				float thresh, float dt
-				);
+    void ScanAssociationInterpolated( const TrackHistory::TrackLog& a1,
+                                      const TrackHistory::TrackLog& b1,
+							          TrackHistory::TrackLog& a2,
+							          TrackHistory::TrackLog& b2,
+							          float thresh,
+							          float timeOffset );
 
-float scan_match_temporal(
-					const TrackHistory& a, const TrackHistory& b,
-					TrackHistory& asc_a, TrackHistory& asc_b,
-					ScanPose& pose, float timeThresh
-					);
+    ScanPose ScanComputePose( const TrackHistory::TrackLog& a,
+                              const TrackHistory::TrackLog& b );
 
-void scan_combine(
-				  const TrackHistory& a1, const TrackHistory& b1, double timeThresh,
-				  TrackHistory& avg
-				  );
+    ScanPose ScanComputePoseWeighted( const TrackHistory::TrackLog& a,
+                                      const TrackHistory::TrackLog& b );
 
-void scan_merge_and_remove(const TrackHistory& a1, const TrackHistory& b1, double timeThresh,
-				  TrackHistory& avg);
+    float ScanComputeError( ScanPose pose,
+                            const TrackHistory::TrackLog& a,
+                            const TrackHistory::TrackLog& b );
 
-void scan_average(
-				  const TrackHistory& a1, const TrackHistory& b1, double fps,
-				  TrackHistory& avg
-				  );
+    ScanPose ScanMatches( const TrackHistory::TrackLog& a,
+                          const TrackHistory::TrackLog& b,
+				          TrackHistory::TrackLog& asc_a,
+				          TrackHistory::TrackLog& asc_b,
+				          float thresh,
+    				      float dt );
 
-void scan_time_shift( const TrackHistory& in, TrackHistory& out, double offset );
+    float ScanMatchTemporal( const TrackHistory::TrackLog& a,
+                             const TrackHistory::TrackLog& b,
+                             TrackHistory::TrackLog& asc_a,
+                             TrackHistory::TrackLog& asc_b,
+                             ScanMatch::ScanPose& pose,
+					         float timeThresh );
 
-float scan_overlap( const TrackHistory& a, const TrackHistory& b, float thresh );
+    void ScanCombine( const TrackHistory::TrackLog& a1,
+                      const TrackHistory::TrackLog& b1,
+                      double timeThresh,
+				      TrackHistory::TrackLog& avg );
+
+    void ScanMergeAndRemove( const TrackHistory::TrackLog& a1,
+                             const TrackHistory::TrackLog& b1,
+                             double timeThresh,
+				             TrackHistory::TrackLog& avg );
+
+    void ScanAverage( const TrackHistory::TrackLog& a1,
+                      const TrackHistory::TrackLog& b1,
+                      double fps,
+				      TrackHistory::TrackLog& avg );
+
+    void ScanTimeShift( const TrackHistory::TrackLog& in,
+                        TrackHistory::TrackLog& out,
+                        double offset );
+
+    float ScanOverlap( const TrackHistory::TrackLog& a,
+                       const TrackHistory::TrackLog& b,
+                       float thresh );
+}
 
 #endif // SCANMATCH_H

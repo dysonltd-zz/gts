@@ -23,19 +23,37 @@
 
 #define PATCH_SIZE 256
 
-struct tPatch
+namespace CrossCorrelation
 {
-	int width;
-	int height;
-	unsigned char pData[PATCH_SIZE];
-};
+    struct Patch
+    {
+	    int width;
+	    int height;
 
-float ncc2d( const IplImage*, const IplImage*, int x1, int y1, int x2, int y2, int w, int h);
+	    unsigned char pData[PATCH_SIZE];
+    };
 
-float ncc2dRadial( const IplImage*, const IplImage*, int x1, int y1, int x2, int y2, int w, int h);
+    float Ncc2d( const IplImage*,
+                 const IplImage*,
+                 int x1,
+                 int y1,
+                 int x2,
+                 int y2,
+                 int w,
+                 int h);
 
-void getPatch(tPatch* patch);
+    float Ncc2dRadial( const IplImage*,
+                       const IplImage*,
+                       int x1,
+                       int y1,
+                       int x2,
+                       int y2,
+                       int w,
+                       int h);
 
-float nccPatch( const IplImage* img, int x1, int y1, const unsigned char* patch, int width, int height);
+    void GetPatch(Patch* patch);
+
+    float NccPatch( const IplImage* img, int x1, int y1, const unsigned char* patch, int width, int height);
+}
 
 #endif // CROSSCORRELATION_H

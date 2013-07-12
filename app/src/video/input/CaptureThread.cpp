@@ -113,7 +113,7 @@ void CaptureThread::run()
  */
 void CaptureThread::UpdateQImage()
 {
-    if ( IsValid( m_internalImage ) )
+    if ( OpenCvTools::IsValid( m_internalImage ) )
     {
         const QSize internalImageSize( m_internalImage->width,
                                        m_internalImage->height );

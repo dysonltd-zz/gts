@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef CAMERA_CALIBRATION_H
-#define CAMERA_CALIBRATION_H
+#ifndef CAMERACALIBRATION_H
+#define CAMERACALIBRATION_H
 
 #include "WbConfig.h"
 
@@ -135,4 +135,4 @@ private:
     IplImage*   m_calWarpImg;
 };
 
-#endif
+#endif // CAMERACALIBRATION_H

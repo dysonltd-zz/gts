@@ -23,6 +23,7 @@
 
 #include "Tool.h"
 #include "AlgorithmInterface.h"
+#include "RobotTracker.h"
 
 class TrackModel;
 class QItemSelectionModel;
@@ -50,6 +51,7 @@ private:
 private:
     const ExitStatus::Flags PostProcess( const WbConfig& postProcConfig,
                                          char*           trackerResultsFile,
+                                         char*           trackerResultsImgFile,
                                          char*           coverageFile,
                                          char*           floorPlanFile,
                                          char*           floorMaskFile,
@@ -61,6 +63,10 @@ private:
                                          char*           coverageRawFile,
                                          char*           headingFile,
                                          double          incTimeStep );
+
+    void PlotTrackLog( TrackHistory::TrackLog& log,
+                       char*                   floorPlanFile,
+                       char*                   trackerResultsImgFile );
 
 private slots:
     void LoadDataButtonClicked();

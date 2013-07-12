@@ -23,13 +23,12 @@ const QString KeyValue::trueString ( "true" );
 const QString KeyValue::falseString( "false" );
 
 KeyValue::KeyValue() :
-    m_elementList()
+  m_elementList()
 {
 }
 
-KeyValue::KeyValue( const ElementType& firstElement )
-:
-m_elementList( firstElement )
+KeyValue::KeyValue( const ElementType& firstElement ) :
+  m_elementList( firstElement )
 {
 }
 
@@ -42,6 +41,7 @@ KeyValue& KeyValue::operator <<( const ElementType& newElement )
 const QString KeyValue::ToQString() const
 {
     QString qstring;
+
     for ( int i = 0; i < m_elementList.size(); ++i )
     {
         qstring.append( m_elementList.at( i ) );
@@ -97,12 +97,13 @@ bool KeyValue::IsNull() const
 }
 
 bool KeyValue::IsEqualTo( const KeyValue& other,
-                                const Qt::CaseSensitivity& caseSensitive ) const
+                          const Qt::CaseSensitivity& caseSensitive ) const
 {
     if ( m_elementList.size() != other.m_elementList.size() )
     {
         return false;
     }
+
     for ( int i = 0; i < other.m_elementList.size(); ++i )
     {
         if ( m_elementList.at( i )
@@ -111,6 +112,7 @@ bool KeyValue::IsEqualTo( const KeyValue& other,
             return false;
         }
     }
+
     return true;
 }
 
@@ -126,11 +128,9 @@ const std::wstring KeyValue::ToWString() const
 
 bool KeyValue::TocvMat( cv::Mat& matrix ) const
 {
-#if defined(__MINGW32__) || defined(__GNUC__)
-    return ToCvMat( reinterpret_cast<CvMat&>( matrix ) );
-#else
-    return ToCvMat( static_cast<CvMat>( matrix ) );
-#endif
+    CvMat mat = static_cast<CvMat>( matrix );
+
+    return ToCvMat( mat );
 }
 
 bool KeyValue::ToCvMat( CvMat& matrix ) const
@@ -139,7 +139,9 @@ bool KeyValue::ToCvMat( CvMat& matrix ) const
     {
         return false;
     }
+
     KeyValue newValue;
+
     for ( int r = 0; r < matrix.rows; ++r )
     {
         for ( int c = 0; c < matrix.cols; ++c )
@@ -147,8 +149,8 @@ bool KeyValue::ToCvMat( CvMat& matrix ) const
             cvmSet( &matrix, r, c, m_elementList.at( r*matrix.cols+c ).toDouble() );
         }
     }
-    return true;
 
+    return true;
 }
 
 /**
@@ -160,11 +162,14 @@ bool KeyValue::ToStdVectorOfCvPoint2f( std::vector< cv::Point2f >& vector ) cons
 {
     vector.clear();
     const int numDimensions = 2;
+
     if ( m_elementList.size()%numDimensions != 0 )
     {
         return false;
     }
+
     const int vectorLength = m_elementList.size()/numDimensions;
+
     for ( int i = 0; i < vectorLength; ++i )
     {
         const int thisOffset = i*numDimensions;
@@ -175,6 +180,7 @@ bool KeyValue::ToStdVectorOfCvPoint2f( std::vector< cv::Point2f >& vector ) cons
 
         vector.push_back( cv::Point2f( x, y ) );
     }
+
     return true;
 }
 
@@ -250,6 +256,7 @@ const KeyValue KeyValue::from( const bool& firstElement )
 const KeyValue KeyValue::from( const CvMat& matrix )
 {
     KeyValue newValue;
+
     for ( int r = 0; r < matrix.rows; ++r )
     {
         for ( int c = 0; c < matrix.cols; ++c )
@@ -257,6 +264,7 @@ const KeyValue KeyValue::from( const CvMat& matrix )
             newValue << elemFromFloatingPoint( cvmGet( &matrix, r, c ) );
         }
     }
+
     return newValue;
 }
 
@@ -268,12 +276,14 @@ const KeyValue KeyValue::from( const cv::Mat& matrix )
 const KeyValue KeyValue::from( const std::vector< cv::Point2f >& vec )
 {
     KeyValue newKeyValue;
+
     for ( size_t i = 0; i < vec.size(); ++i )
     {
         const cv::Point2f thisPoint( vec.at( i ) );
         newKeyValue << elemFromFloatingPoint( thisPoint.x );
         newKeyValue << elemFromFloatingPoint( thisPoint.y );
     }
+
     return newKeyValue;
 }
 

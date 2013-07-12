@@ -52,7 +52,7 @@
 #include "ImageGrid.h"
 #include "ImageView.h"
 
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 #include "FileDialogs.h"
 
 #include "Message.h"
@@ -579,13 +579,13 @@ bool CreateFloorPlanToolWidget::LoadFile( KeyId cameraPosition, IplImage** camIm
         // Load file...
         IplImage* imgGrey = cvLoadImage( fileName.toAscii(), CV_LOAD_IMAGE_GRAYSCALE );
 
-        *camImg = unwarpGroundPlane( imgGrey,
-                                     cameraMtx,
-                                     distortionCoeffs,
-                                     inverseCoeffs,
-                                     rot,
-                                     trans,
-                                     offset );
+        *camImg = GroundPlaneUtility::unwarpGroundPlane( imgGrey,
+                                                         cameraMtx,
+                                                         distortionCoeffs,
+                                                         inverseCoeffs,
+                                                         rot,
+                                                         trans,
+                                                         offset );
 
         cvReleaseImage( &imgGrey );
     }
@@ -763,7 +763,7 @@ void CreateFloorPlanToolWidget::DisplayStitched()
     CvMat* I = cvCreateMat( 3, 3, CV_32F );
     cvSetIdentity(I);
 
-    Rect32f cmpBox;
+    GroundPlaneUtility::Rect32f cmpBox;
     cmpBox.pos.x = 0;
     cmpBox.pos.y = 0;
     cmpBox.dim.x = (float)m_cam1Img->width;
@@ -771,7 +771,7 @@ void CreateFloorPlanToolWidget::DisplayStitched()
 
     CvMat matH = m_homography;
 
-    compositeImageBoundingBox( &matH, m_cam2Img, &cmpBox );
+    GroundPlaneUtility::compositeImageBoundingBox( &matH, m_cam2Img, &cmpBox );
 
     // Now we know the dimensions and origin of the composite
     // image so we can allocate it and transform all images.
@@ -785,16 +785,16 @@ void CreateFloorPlanToolWidget::DisplayStitched()
 
     // Align image.
     cvZero( compImg );
-    alignGroundPlane( &matH, m_cam2Img, compImg );
+    GroundPlaneUtility::alignGroundPlane( &matH, m_cam2Img, compImg );
     IplImage *img1 = cvCloneImage( compImg );
 
     // Align root.
     cvZero( compImg );
-    alignGroundPlane( I, m_cam1Img, compImg );
+    GroundPlaneUtility::alignGroundPlane( I, m_cam1Img, compImg );
     IplImage *img2 = cvCloneImage( compImg );
 
-    createCompositeImage( img1, compImg, compImg );
-    createCompositeImage( img2, compImg, compImg );
+    GroundPlaneUtility::createCompositeImage( img1, compImg, compImg );
+    GroundPlaneUtility::createCompositeImage( img2, compImg, compImg );
 
     ImageViewer(compImg, this).exec();
 
@@ -1355,7 +1355,7 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
                         KeyValue::from(camRoot),
                         transformId );
 
-    Rect32f cmpBox;
+    GroundPlaneUtility::Rect32f cmpBox;
     cmpBox.pos.x = 0;
     cmpBox.pos.y = 0;
     cmpBox.dim.x = (float)rootImg->width;
@@ -1417,7 +1417,7 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
             LoadFile( camPosId, &camImg, camFileName, &offset );
 
             // Stitch the images together...
-            compositeImageBoundingBox( transform, camImg, &cmpBox );
+            GroundPlaneUtility::compositeImageBoundingBox( transform, camImg, &cmpBox );
 
             LOG_INFO(QObject::tr("Composite bounding box is %1 %2 %3 %4.").arg(cmpBox.dim.x)
                                                                           .arg(cmpBox.dim.y)
@@ -1472,16 +1472,16 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
 
             // Align the image.
             cvZero( imgComposite );
-            alignGroundPlane( transform, camImg, imgComposite );
+            GroundPlaneUtility::alignGroundPlane( transform, camImg, imgComposite );
             IplImage *img1 = cvCloneImage( imgComposite );
 
             // Align root image.
             cvZero( imgComposite );
-            alignGroundPlane( identity, rootImg, imgComposite );
+            GroundPlaneUtility::alignGroundPlane( identity, rootImg, imgComposite );
             IplImage *img2 = cvCloneImage( imgComposite );
 
-            createCompositeImage( img1, imgComposite, imgComposite );
-            createCompositeImage( img2, imgComposite, imgComposite );
+            GroundPlaneUtility::createCompositeImage( img1, imgComposite, imgComposite );
+            GroundPlaneUtility::createCompositeImage( img2, imgComposite, imgComposite );
 
             cvReleaseImage( &img1 );
             cvReleaseImage( &img2 );
@@ -1657,7 +1657,7 @@ void CreateFloorPlanToolWidget::FromFileBtnClicked()
 
             if ( !m_camera1FileName.isEmpty() )
             {
-                if ( FileNameUtils::FileIsExternal( m_camera1FileName, config ) )
+                if ( FileUtilities::FileIsExternal( m_camera1FileName, config ) )
                 {
                     if ( fileDialog.CopyFileSelected() )
                     {
@@ -1681,7 +1681,7 @@ void CreateFloorPlanToolWidget::FromFileBtnClicked()
 
             if ( !m_camera2FileName.isEmpty() )
             {
-                if ( FileNameUtils::FileIsExternal( m_camera2FileName, config ) )
+                if ( FileUtilities::FileIsExternal( m_camera2FileName, config ) )
                 {
                     if ( fileDialog.CopyFileSelected() )
                     {

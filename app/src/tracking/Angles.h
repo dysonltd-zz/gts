@@ -19,16 +19,27 @@
 #ifndef ANGLES_H
 #define ANGLES_H
 
-#include "RobotTracker.h"
+#include "TrackHistory.h"
 
-// Calculates poses of th2 at the times of th1 - dt, returns poses at res
-void interpolate_pose(double dt,TrackHistory *th1, TrackHistory *th2,TrackHistory *res);
+namespace Angles
+{
+    // Calculates poses of th2 at the times of th1 - dt, returns poses at res
+    void InterpolatePose( double dt,
+                          TrackHistory::TrackLog *th1,
+                          TrackHistory::TrackLog *th2,
+                          TrackHistory::TrackLog *res );
 
-double norm_angle(double fi);///< normalize angle to (-pi,pi>
+    double NormAngle( double fi );///< normalize angle to (-pi,pi>
 
-double diff_angle(double a, double b);///< calculate the shorter difference between 2 angles
+    double DiffAngle( double a, double b );///< calculate the shorter difference between 2 angles
 
-//interpolate; set angle=true for angles
-double interpolate(double t1,double v1,double t2, double v2, double t, bool angle);
+    //interpolate; set angle=true for angles
+    double Interpolate( double t1,
+                        double v1,
+                        double t2,
+                        double v2,
+                        double t,
+                        bool angle );
+}
 
 #endif // ANGLES_H

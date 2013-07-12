@@ -151,13 +151,13 @@ private:
                                                  CV_LOAD_IMAGE_GRAYSCALE );
                 if ( imgGrey )
                 {
-                    IplImage* imgWarp = unwarpGroundPlane( imgGrey,
-                                                           intrinsicMatrix,
-                                                           distortionCoeffs,
-                                                           inverseCoeffs,
-                                                           rotMat,
-                                                           trans,
-                                                           &m_offset );
+                    IplImage* imgWarp = GroundPlaneUtility::unwarpGroundPlane( imgGrey,
+                                                                               intrinsicMatrix,
+                                                                               distortionCoeffs,
+                                                                               inverseCoeffs,
+                                                                               rotMat,
+                                                                               trans,
+                                                                               &m_offset );
 
                     QImage qimage;
 

@@ -21,47 +21,70 @@
 
 #include <opencv/cv.h>
 
-struct ScanPose;
+#include "ScanMatch.h"
 
-struct Rect32f
+namespace GroundPlaneUtility
 {
-	CvPoint2D32f pos; ///< Position of rectangle (x and y coords).
-	CvPoint2D32f dim; ///< Dimension of rectangle (width and height).
-};
+    struct Rect32f
+    {
+    	CvPoint2D32f pos; ///< Position of rectangle (x and y coords).
+    	CvPoint2D32f dim; ///< Dimension of rectangle (width and height).
+    };
 
-CvMat* createCalibrationObject(int width, int height, float squareSize);
+    CvMat* createCalibrationObject( int width,
+                                    int height,
+                                    float squareSize );
 
-void computeExtrinsicParameters(const CvMat* objectPoints, const CvMat* imagePoints,
-			const CvMat* intrinsicMatrix, const CvMat* distortionCoeffs,
-			CvMat* rotMat, CvMat* trans);
+    void computeExtrinsicParameters( const CvMat* objectPoints,
+                                     const CvMat* imagePoints,
+                                     const CvMat* intrinsicMatrix,
+                                     const CvMat* distortionCoeffs,
+                                     CvMat* rotMat,
+                                     CvMat* trans );
 
-IplImage* computeGroundPlaneWarpBatch(
-	const IplImage* viewGrey, const CvMat* intrinsicMatrix,
-	const CvMat* distortionCoeffs, const CvMat* inverseCoeffs,
-	const CvMat* rotMat, const CvMat* trans,
-	CvMat** mapx, CvMat** mapy, CvPoint2D32f* offset
-);
+    IplImage* computeGroundPlaneWarpBatch( const IplImage* viewGrey,
+                                           const CvMat* intrinsicMatrix,
+                                           const CvMat* distortionCoeffs,
+                                           const CvMat* inverseCoeffs,
+                                           const CvMat* rotMat,
+                                           const CvMat* trans,
+                                           CvMat** mapx,
+                                           CvMat** mapy,
+                                           CvPoint2D32f* offset );
 
-IplImage* unwarpGroundPlane(
-	const IplImage* viewGrey, const CvMat* intrinsicMatrix,
-	const CvMat* distortionCoeffs, const CvMat* inverseCoeffs,
-	const CvMat* rotMat, const CvMat* trans, CvPoint2D32f* offset
-);
+    IplImage* unwarpGroundPlane( const IplImage* viewGrey,
+                                 const CvMat* intrinsicMatrix,
+                                 const CvMat* distortionCoeffs,
+                                 const CvMat* inverseCoeffs,
+                                 const CvMat* rotMat,
+                                 const CvMat* trans,
+                                 CvPoint2D32f* offset );
 
-CvMat* findChessBoard(IplImage* view, const IplImage* viewGrey, CvSize boardSize, int draw=0);
-CvMat* findChessBoard( IplImage* viewGrey, CvSize boardSize );
+    CvMat* findChessBoard( IplImage* view,
+                           const IplImage* viewGrey,
+                           CvSize boardSize,
+                           int draw=0 );
 
-void alignGroundPlane( ScanPose pose, const IplImage* src, IplImage* dst,
-                       CvPoint2D32f imgOrigin, CvPoint2D32f cmpOrigin);
+    CvMat* findChessBoard( IplImage* viewGrey, CvSize boardSize );
 
-void alignGroundPlane( const CvMat* transform, const IplImage* src, IplImage* dst );
+    void alignGroundPlane( ScanMatch::ScanPose pose,
+                           const IplImage* src,
+                           IplImage* dst,
+                           CvPoint2D32f imgOrigin,
+                           CvPoint2D32f cmpOrigin );
 
-void compositeImageBoundingBox( ScanPose pose, const IplImage* src,
-						        CvPoint2D32f srcOrigin, CvPoint2D32f dstOrigin,
-						        CvPoint2D32f* newOrigin, Rect32f* bbox );
+    void alignGroundPlane( const CvMat* transform, const IplImage* src, IplImage* dst );
 
-void compositeImageBoundingBox( const CvMat* transform, const IplImage* src, Rect32f* bbox );
+    void compositeImageBoundingBox( ScanMatch::ScanPose pose,
+                                    const IplImage* src,
+						            CvPoint2D32f srcOrigin,
+						            CvPoint2D32f dstOrigin,
+						            CvPoint2D32f* newOrigin,
+						            Rect32f* bbox );
 
-void createCompositeImage( const IplImage* src1, const IplImage* src2, IplImage* dst);
+    void compositeImageBoundingBox( const CvMat* transform, const IplImage* src, Rect32f* bbox );
+
+    void createCompositeImage( const IplImage* src1, const IplImage* src2, IplImage* dst);
+}
 
 #endif // GROUND_PLANE_UTILITY_H

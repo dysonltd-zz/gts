@@ -16,45 +16,24 @@
  *
  */
 
-#ifndef CHESSBOARDIMAGE_H_
-#define CHESSBOARDIMAGE_H_
+#ifndef CHESSBOARDIMAGE_H
+#define CHESSBOARDIMAGE_H
 
 #include <QtGui/qimage.h>
 
-namespace
+namespace ChessboardImage
 {
-
     /** @brief Create a chessboard image
-     *
-     * @param rows The number of rows in the board (height)
-     * @param cols The number of columns in the board (width)
-     * @param squareSizePxls The number of pixels along each edge of each square
-     * @return A rows*cols pixel image alternating black & white pixels in both directions.
-     */
-    const QImage ChessboardImage( const int rows, const int cols,
-                                  const int squareSizePxls  = 100 )
-    {
-        QImage img( cols*squareSizePxls, rows*squareSizePxls, QImage::Format_Mono );
-        for ( int r = 0; r < rows; ++r )
-        {
-            bool black = r % 2;
-            for ( int c = 0; c < cols; ++c )
-            {
-                uint colour = black ? 0 : 1;
-                black = !black;
-                for ( int imgX = c*squareSizePxls; imgX < (c+1)*squareSizePxls; ++imgX )
-                {
-                    for ( int imgY = r*squareSizePxls; imgY < (r+1)*squareSizePxls; ++imgY )
-                    {
-                        img.setPixel( imgX, imgY, colour );
-                    }
-                }
-            }
-        }
-        return img;
-    }
 
+        @param rows The number of rows in the board (height)
+        @param cols The number of columns in the board (width)
+        @param squareSizePxls The number of pixels along each edge of each square
+        @return A rows*cols pixel image alternating black & white pixels in both directions.
+     **/
+    const QImage CreateImage( const int rows,
+                              const int cols,
+                              const int squareSizePxls  = 100 );
 }
 
-#endif
+#endif // CHESSBOARDIMAGE_H
 

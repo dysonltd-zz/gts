@@ -25,7 +25,7 @@
 #include "CameraDescription.h"
 #include "VideoSource.h"
 #include "CameraTools.h"
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 
 #include <QtCore/qdir.h>
 
@@ -171,7 +171,7 @@ const QString CaptureLiveBtnController::CaptureImageAndStopStreamingLiveSource(
     {
         const QImage capturedImage = m_liveView->GetCurrentImage();
         const QString fileNameToCapture(
-                        FileNameUtils::GetUniqueFileName( newImageFileNameFormat ) );
+                        FileUtilities::GetUniqueFileName( newImageFileNameFormat ) );
 
         const QFileInfo fileInfo( fileNameToCapture );
         const QString fileDirPath( fileInfo.absolutePath() );

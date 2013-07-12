@@ -18,9 +18,6 @@
 
 #include "CalibrationAlgorithm.h"
 
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -32,14 +29,15 @@
 #include "LevenbergMarquardt.h"
 #include "Message.h"
 
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
+
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qobject.h>
 #include <QtCore/QTime>
 #include <QtGui/qapplication.h>
 
 #include "Debugging.h"
-
-using namespace std;
 
 namespace
 {

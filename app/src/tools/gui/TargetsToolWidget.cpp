@@ -25,7 +25,7 @@
 
 #include "WbConfigTools.h"
 
-#include "FileNameUtils.h"
+#include "FileUtilities.h"
 #include "FileDialogs.h"
 
 #include "TargetRegistry.h"
@@ -225,7 +225,7 @@ void TargetsToolWidget::BrowseTargetImage( const KeyName& keyName )
         {
             WbConfigTools::FileNameMode mode = WbConfigTools::FileNameMode_RelativeInsideWorkbench;
 
-            if ( FileNameUtils::FileIsExternal( imageName, GetCurrentConfig() ) )
+            if ( FileUtilities::FileIsExternal( imageName, GetCurrentConfig() ) )
             {
                 if ( fileDialog.CopyFileSelected() )
                 {

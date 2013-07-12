@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef ROBOT_METRICS_H
-#define ROBOT_METRICS_H
+#ifndef ROBOTMETRICS_H
+#define ROBOTMETRICS_H
 
 #include "WbConfig.h"
 
@@ -93,4 +93,4 @@ private:
     bool  m_valid;
 };
 
-#endif // ROBOT_METRICS_H
+#endif // ROBOTMETRICS_H

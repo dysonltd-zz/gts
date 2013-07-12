@@ -16,9 +16,8 @@
  *
  */
 
-#ifndef DEBUGGING_H_
-#define DEBUGGING_H_
-
+#ifndef DEBUGGING_H
+#define DEBUGGING_H
 
 #include <cstdio>
 #include <QtCore/QDebug>
@@ -69,10 +68,10 @@ namespace Debugging
     class DestructorPrinter
     {
     public:
-        explicit DestructorPrinter( const QString& qstring )
-        :
+        explicit DestructorPrinter( const QString& qstring ) :
             m_string( qstring )
-        {}
+        {
+        }
 
         ~DestructorPrinter()
         {
@@ -112,4 +111,4 @@ namespace Debugging
 
 #endif
 
-#endif // DEBUGGING_H_
+#endif // DEBUGGING_H

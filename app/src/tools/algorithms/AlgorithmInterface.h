@@ -16,13 +16,9 @@
  *
  */
 
-#ifndef _ALG_INTERFACE_
-#define _ALG_INTERFACE_
+#ifndef ALGORITHMINTERFACE_H
+#define ALGORITHMINTERFACE_H
 
-#include <string>
-using namespace std;
-
-// Exit Codes
 namespace ExitStatus
 {
     enum
@@ -35,14 +31,4 @@ namespace ExitStatus
     typedef int Flags;
 }
 
-// standard parameters passed to each "algorithm"
-struct AlgPar
-{
-    bool    bInt;    ///<interactive mode
-    bool    bDeb;    ///<debug mode
-    bool    bDisp;   ///<display mode
-    bool    bHelp;   ///<show help
-    string  parFile; //file containing parameters, "" if none
-};
-
-#endif // _ALG_INTERFACE_
+#endif // ALGORITHMINTERFACE_H

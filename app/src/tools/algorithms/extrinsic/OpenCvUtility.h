@@ -23,51 +23,50 @@
 
 #include <opencv/cv.h>
 
-void boundingBox( int nPts, const CvPoint2D32f* pts, CvPoint2D32f* min, CvPoint2D32f* dim, float margin = 0.f );
-void translateCvMat2D( CvMat* in, CvMat* out, float tx, float ty );
+namespace OpenCvUtility
+{
+    void BoundingBox( int nPts, const CvPoint2D32f* pts, CvPoint2D32f* min, CvPoint2D32f* dim, float margin = 0.f );
+    void TranslateCvMat2D( CvMat* in, CvMat* out, float tx, float ty );
 
-bool intersectLines( CvPoint2D32f a1, CvPoint2D32f a2, CvPoint2D32f b1, CvPoint2D32f b2, double* s, double* t );
-bool intersectLines( CvPoint2D32f a1, CvPoint2D32f a2, CvPoint2D32f b1, CvPoint2D32f b2, CvPoint2D32f* ip );
-bool intersectLineSegmentWithPolygon( int nPts, const CvPoint2D32f* poly, CvPoint2D32f a1, CvPoint2D32f a2, CvPoint2D32f* ip );
-bool pointInPolygon( int nPts, const CvPoint2D32f* poly, CvPoint2D32f pt );
+    bool IntersectLines( CvPoint2D32f a1, CvPoint2D32f a2, CvPoint2D32f b1, CvPoint2D32f b2, double* s, double* t );
+    bool IntersectLines( CvPoint2D32f a1, CvPoint2D32f a2, CvPoint2D32f b1, CvPoint2D32f b2, CvPoint2D32f* ip );
+    bool IntersectLineSegmentWithPolygon( int nPts, const CvPoint2D32f* poly, CvPoint2D32f a1, CvPoint2D32f a2, CvPoint2D32f* ip );
+    bool PointInPolygon( int nPts, const CvPoint2D32f* poly, CvPoint2D32f pt );
 
-void computeGroundPlaneWarp( const CvMat* intrinsicMatrix, const CvMat* rot, const CvMat* trans,
-                             const CvMat* distortion,
-                             const CvPoint2D32f* offset,
-                             CvMat* mapx,
-                             CvMat* mapy );
-void computePerspectiveWarp( const CvMat* H, CvMat* mapx, CvMat* mapy );
-void projectPointsSimple( CvMat* intrinsicMatrix, CvMat* rot, CvMat* trans,
-                          int cornerCount, CvPoint3D32f* pObj3D, CvPoint2D32f* pPts2D );
+    void ComputeGroundPlaneWarp( const CvMat* intrinsicMatrix, const CvMat* rot, const CvMat* trans,
+                                 const CvMat* distortion,
+                                 const CvPoint2D32f* offset,
+                                 CvMat* mapx,
+                                 CvMat* mapy );
+    void ComputePerspectiveWarp( const CvMat* H, CvMat* mapx, CvMat* mapy );
+    void ProjectPointsSimple( CvMat* intrinsicMatrix, CvMat* rot, CvMat* trans,
+                              int cornerCount, CvPoint3D32f* pObj3D, CvPoint2D32f* pPts2D );
 
-void logCvMat32F(const CvMat* mat);
+    void LogCvMat32F(const CvMat* mat);
 
-void postTranslateCvMat2D( CvMat* in, CvMat* out, float tx, float ty );
-void applyHomography( CvMat* H, unsigned int numPoints, CvPoint3D32f* pObject, CvPoint2D32f* pImg );
-void extractCvHomography( const CvMat* intrinsic, const CvMat* R, const CvMat* T, CvMat* H );
-void invertCvIntrinsicMatrix( const CvMat* intrinsicMatrix, CvMat* inv );
-void extractInverseCvHomography( const CvMat* intrinsic, const CvMat* R, const CvMat* T, CvMat* H );
-void invertGroundPlanePoints( const CvMat* inverseCoeffs, const CvMat* intrinsic, const CvMat* R, const CvMat* T,
-                              unsigned int numPoints, CvPoint3D32f* pObject, CvPoint2D32f* pImg );
+    void PostTranslateCvMat2D( CvMat* in, CvMat* out, float tx, float ty );
+    void ApplyHomography( CvMat* H, unsigned int numPoints, CvPoint3D32f* pObject, CvPoint2D32f* pImg );
+    void ExtractCvHomography( const CvMat* intrinsic, const CvMat* R, const CvMat* T, CvMat* H );
+    void InvertCvIntrinsicMatrix( const CvMat* intrinsicMatrix, CvMat* inv );
+    void ExtractInverseCvHomography( const CvMat* intrinsic, const CvMat* R, const CvMat* T, CvMat* H );
+    void InvertGroundPlanePoints( const CvMat* inverseCoeffs, const CvMat* intrinsic, const CvMat* R, const CvMat* T,
+                                  unsigned int numPoints, CvPoint3D32f* pObject, CvPoint2D32f* pImg );
 
-CvPoint2D32f  img2norm( CvPoint2D32f p, const CvMat* intrinsic, const CvMat* distortion );
-CvPoint2D32f  norm2img( CvPoint2D32f p, const CvMat* intrinsic, const CvMat* distortion );
-CvPoint2D32f plane2image( CvPoint2D32f p, const CvMat* intrinsic, const CvMat* distortion, const CvMat* Rot, const CvMat* Trans );
-CvPoint2D32f image2plane( CvPoint2D32f p, const CvMat* intrinsic, const CvMat* distortion, const CvMat* Rot, const CvMat* Trans );
+    CvPoint2D32f Img2norm( CvPoint2D32f p, const CvMat* intrinsic, const CvMat* distortion );
+    CvPoint2D32f Norm2img( CvPoint2D32f p, const CvMat* intrinsic, const CvMat* distortion );
+    CvPoint2D32f Plane2image( CvPoint2D32f p, const CvMat* intrinsic, const CvMat* distortion, const CvMat* Rot, const CvMat* Trans );
+    CvPoint2D32f Image2plane( CvPoint2D32f p, const CvMat* intrinsic, const CvMat* distortion, const CvMat* Rot, const CvMat* Trans );
 
-IplImage* VisualiseCvMatrix32fc1( const CvMat* mat );
-IplImage* LogNormaliseCvImage( const IplImage* img );
-CvMat* GradientMagCv32fc1( const CvMat* mat );
+    IplImage* VisualiseCvMatrix32fc1( const CvMat* mat );
+    IplImage* LogNormaliseCvImage( const IplImage* img );
+    CvMat* GradientMagCv32fc1( const CvMat* mat );
 
-void FillCvImageWithRawBytes( IplImage* img, const unsigned char* pImgData );
-void GetRawBytesFromCvImage( const IplImage* img, unsigned char* pImgData );
+    void FillCvImageWithRawBytes( IplImage* img, const unsigned char* pImgData );
+    void GetRawBytesFromCvImage( const IplImage* img, unsigned char* pImgData );
 
-void mouseCvMat32fc1Query(int event, int x, int y, void* params );
+    void MouseCvMat32fc1Query(int event, int x, int y, void* params );
 
-void lineSkip( FILE* f );
-int lineCount( FILE* fp );
-bool fileExists( const char* file );
-
-void motionFilter( const IplImage* src, IplImage* dst, int windowWidth, int windowHeight );
+    void MotionFilter( const IplImage* src, IplImage* dst, int windowWidth, int windowHeight );
+}
 
 #endif // OPENCV_UTILITY_H

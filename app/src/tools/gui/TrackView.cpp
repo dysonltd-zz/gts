@@ -167,7 +167,7 @@ void TrackView::updateView()
 
     float timeThresh = 0.5f;
 
-    TrackHistory avg;
+    TrackHistory::TrackLog avg;
 
     for (int row = 0; row < m_model->rowCount(); ++row)
     {
@@ -186,13 +186,13 @@ void TrackView::updateView()
     LogSwapHandedness( avg );
 #endif
 
-    PlotLog( avg,
-             compImgCol,
-             colours[0],
-             cvRect( 0, 0, 0, 0 ),
-             0,
-             1,
-             timeThresh );
+    ScanUtility::PlotLog( avg,
+                          compImgCol,
+                          colours[0],
+                          cvRect( 0, 0, 0, 0 ),
+                          0,
+                          1,
+                          timeThresh );
 
     for (int row = 0; row < m_model->rowCount(); ++row)
     {
@@ -204,12 +204,12 @@ void TrackView::updateView()
                                          m_model->data(m_model->index(row, TrackModel::COLUMN_ERROR)).toFloat(),
                                          m_model->data(m_model->index(row, TrackModel::COLUMN_TIME)).toDouble(),
                                          m_model->data(m_model->index(row, TrackModel::COLUMN_WGM)).toFloat() );
-            PlotPoint( pt,
-                       compImgCol,
-                       colours[2],
-                       cvRect( 0, 0, 0, 0 ),
-                       0,
-                       1 );
+            ScanUtility::PlotPoint( pt,
+                                    compImgCol,
+                                    colours[2],
+                                    cvRect( 0, 0, 0, 0 ),
+                                    0,
+                                    1 );
         }
     }
 

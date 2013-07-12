@@ -71,7 +71,7 @@ bool ExtrinsicCalibrationAlgorithm::DetectChessBoardPattern( const CvSize& gridS
     bool successful = true;
 
     // Chess board pattern detection
-    m_imagePoints = findChessBoard( m_inputImageAsGrey, gridSize );
+    m_imagePoints = GroundPlaneUtility::findChessBoard( m_inputImageAsGrey, gridSize );
 
     if ( !m_imagePoints )
     {
@@ -171,28 +171,28 @@ bool ExtrinsicCalibrationAlgorithm::CalibrateCamera( const CvSize& gridSize,
 {
     bool successful = true; /// @todo Shouldn't assume success here!
 
-    CvMat* objectPoints = createCalibrationObject( gridSize.width,
-                                                   gridSize.height,
-                                                   squareSizeInCm );
+    CvMat* objectPoints = GroundPlaneUtility::createCalibrationObject( gridSize.width,
+                                                                       gridSize.height,
+                                                                       squareSizeInCm );
 
     // Compute extrinsic camera parameters
     m_rot = cvCreateMat( 3, 3, CV_32F );
-    m_trans  = cvCreateMat( 1, 3, CV_32F );
+    m_trans = cvCreateMat( 1, 3, CV_32F );
 
     LOG_TRACE("Computing extrinsic params...");
 
-    computeExtrinsicParameters( objectPoints,
-                                m_imagePoints,
-                                m_intrinsicMatrix,
-                                m_distortionCoeffs,
-                                m_rot,
-                                m_trans );
+    GroundPlaneUtility::computeExtrinsicParameters( objectPoints,
+                                                    m_imagePoints,
+                                                    m_intrinsicMatrix,
+                                                    m_distortionCoeffs,
+                                                    m_rot,
+                                                    m_trans );
 
     LOG_INFO("Rotation matrix:");
-    logCvMat32F(m_rot);
+    OpenCvUtility::LogCvMat32F(m_rot);
 
     LOG_INFO("Translation matrix:");
-    logCvMat32F(m_trans);
+    OpenCvUtility::LogCvMat32F(m_trans);
 
     cvReleaseMat( &objectPoints );
 
