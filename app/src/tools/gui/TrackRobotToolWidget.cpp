@@ -59,7 +59,9 @@ TrackRobotToolWidget::TrackRobotToolWidget( QWidget* parent ) :
     m_ui       ( new Ui::TrackRobotToolWidget ),
     m_playing  ( false ),
     m_tracking ( false ),
-    m_loaded   ( false )
+    m_loaded   ( false ),
+    m_fpsSet   ( false ),
+    m_fps      ( 10 ) // arbitrary value but typically a decent value
 {
     SetupUi();
     ConnectSignals();
@@ -109,7 +111,6 @@ void TrackRobotToolWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( StopButtonClicked() ) );
-
     QObject::connect( m_ui->m_loadBtn,
                       SIGNAL( clicked() ),
                       this,
@@ -637,6 +638,7 @@ void TrackRobotToolWidget::ResetButtonClicked()
     m_ui->m_loadBtn->setEnabled(true);
     m_ui->m_saveBtn->setEnabled(false);
     m_ui->m_resetBtn->setEnabled(false);
+    m_fpsSet = false;
 }
 
 void TrackRobotToolWidget::Playing()
@@ -738,6 +740,14 @@ void TrackRobotToolWidget::VideoPosition( double position )
 
 void TrackRobotToolWidget::ImageUpdate( int id, const QImage& image, double fps )
 {
+    // set optimum fps rate if not already set or new fps is less than old
+    // smaller > larger
+    if ( (fps > 0 && !m_fpsSet) || (m_fpsSet && fps < m_fps) )
+    {
+        m_fps = fps;
+        m_ui->m_videoPositionBar->SetRate( (int) (1000/m_fps) );
+        m_fpsSet = true;
+    }
     emit UpdateImage( id, image, fps );
 }
 
@@ -846,6 +856,7 @@ const ExitStatus::Flags TrackRobotToolWidget::TrackLoad( const WbConfig&        
         m_scene.SetupViewWindows( this, imageGrid );
 
         m_scene.SetupThread( this );
+
     }
 
     if (!successful)

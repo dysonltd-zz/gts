@@ -140,6 +140,8 @@ private:
     bool m_playing;  // video playing / paused
     bool m_tracking; // tracking
     bool m_loaded;
+    bool m_fpsSet;
+    double m_fps;
 };
 
 #endif // TRACKROBOTTOOLWIDGET_H

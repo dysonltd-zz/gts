@@ -33,6 +33,7 @@ public:
 
     void SetPosition( double position );
     double GetRate();
+    void SetRate(const double rate);
 
 private:
     Ui::VideoPositionBar ui;

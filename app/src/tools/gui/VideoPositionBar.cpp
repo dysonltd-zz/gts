@@ -44,3 +44,8 @@ double VideoPositionBar::GetRate()
 {
     return (double)(ui.m_rateSpinBox->value());
 }
+
+void VideoPositionBar::SetRate(const double rate)
+{
+    ui.m_rateSpinBox->setValue(rate);
+}
