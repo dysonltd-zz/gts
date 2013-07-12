@@ -549,8 +549,7 @@ void TrackRobotToolWidget::LoadButtonClicked()
 
         if ( successful )
         {
-            progressDialog->Complete( tr( "Tracking Ready" ),
-                                      tr( "Settings have been loaded.\n" ) );
+            progressDialog->ForceClose();
         }
         else
         {
@@ -558,7 +557,7 @@ void TrackRobotToolWidget::LoadButtonClicked()
 
             Message::Show( 0,
                            tr( "Track Robot Tool" ),
-                           tr( "Error - Please see log for details!" ),
+                           tr( "Error - Settings did not successfully load.\nPlease see log for details!" ),
                            Message::Severity_Critical );
         }
     }
