@@ -41,7 +41,7 @@
      </widget>
      <widget class="QFrame" name="m_calibrationFrame">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>1</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -63,7 +63,7 @@
         <widget class="QTabWidget" name="m_optionsTabs">
          <property name="maximumSize">
           <size>
-           <width>220</width>
+           <width>16777215</width>
            <height>16777215</height>
           </size>
          </property>

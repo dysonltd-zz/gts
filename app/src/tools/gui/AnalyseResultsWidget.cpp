@@ -287,6 +287,7 @@ void AnalyseResultsWidget::AnalyseResultsButtonClicked()
 
     if (successful)
     {
+
         QTemporaryFile tmpFile( QDir::tempPath() + "/files.txt");
 
         successful = tmpFile.open();

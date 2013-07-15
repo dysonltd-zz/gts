@@ -29,9 +29,6 @@ namespace Ui
     class AnalyseResultsWidget;
 }
 
-/** @brief A class.
- *
- */
 class AnalyseResultsWidget : public Tool
 {
     Q_OBJECT
