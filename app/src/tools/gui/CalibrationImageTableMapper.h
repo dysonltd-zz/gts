@@ -26,6 +26,7 @@
 #include <QtGui/QAction>
 #include <QtCore/qlist.h>
 #include <QtGui/QMessageBox>
+#include <QFile>
 
 class CalibrationImageTableMapper: public ConfigKeyMapper
 {
@@ -92,6 +93,9 @@ private slots:
             int userConfirmation = ComfirmDeletion(currentRow);
             if (userConfirmation == QMessageBox::Yes)
             {
+                const QString imageFileName(m_table.item(currentRow,
+                                                         nameColumn)->data(absoluteFileNameRoleOnName).toString());
+                QFile::remove(imageFileName); // delete actual file
                 m_table.removeRow(currentRow);
                 DataChanged();
             }
