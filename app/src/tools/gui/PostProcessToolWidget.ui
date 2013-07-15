@@ -37,15 +37,21 @@
        </widget>
        <widget class="QFrame" name="frame">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
           <horstretch>1</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="minimumSize">
          <size>
-          <width>260</width>
+          <width>0</width>
           <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>420</width>
+          <height>16777215</height>
          </size>
         </property>
         <property name="frameShape">
@@ -71,8 +77,14 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>260</width>
+             <width>0</width>
              <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>420</width>
+             <height>16777215</height>
             </size>
            </property>
            <property name="editTriggers">

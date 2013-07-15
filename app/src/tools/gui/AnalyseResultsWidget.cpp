@@ -262,6 +262,8 @@ void AnalyseResultsWidget::LoadResultsButtonClicked()
         tableModel->setItem(n, TABLE_COL_ROOM, new QStandardItem(roomName));
     }
 
+    // resize header column
+    m_ui->m_runsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     // Set model...
     m_ui->m_runsTable->setModel( tableModel );
 

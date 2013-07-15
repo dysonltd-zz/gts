@@ -134,6 +134,7 @@ void PostProcessToolWidget::LoadDataButtonClicked()
                       SLOT( selectionChanged( const QItemSelection&,
                                               const QItemSelection& ) ) );
 
+    m_ui->m_trackResults->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     m_ui->m_trackResults->show();
     m_ui->m_trackView->show();
 }
