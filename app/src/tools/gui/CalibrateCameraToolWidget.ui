@@ -185,7 +185,7 @@
                     <bool>true</bool>
                    </property>
                    <property name="text">
-                    <string>Print Default Grid</string>
+                    <string>Print Checkerboard</string>
                    </property>
                   </widget>
                  </item>
@@ -402,7 +402,7 @@
                     <bool>true</bool>
                    </property>
                    <property name="text">
-                    <string>F&amp;ile</string>
+                    <string>F&amp;ile(s)</string>
                    </property>
                   </widget>
                  </item>
