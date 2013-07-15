@@ -60,11 +60,7 @@ private:
 private slots:
     void LoadResultsButtonClicked();
     void AnalyseResultsButtonClicked();
-
-    void ClearFloorPlanClicked();
     void BrowseForFloorPlanClicked();
-
-    void ClearFloorMaskClicked();
     void BrowseForFloorMaskClicked();
 
 private:

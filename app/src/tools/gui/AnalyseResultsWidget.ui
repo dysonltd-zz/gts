@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="floor_plan_file_label">
        <property name="text">
-        <string>&amp;Floor Plan File</string>
+        <string>&amp;Floor Plan File  </string>
        </property>
        <property name="buddy">
         <cstring>m_floorPlanFileNameEdit</cstring>
@@ -50,32 +50,6 @@
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
          <normaloff>:/search.png</normaloff>:/search.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="m_clearPlanBtn">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../res/resources.qrc">
-         <normaloff>:/clear.png</normaloff>:/clear.png</iconset>
        </property>
        <property name="checkable">
         <bool>false</bool>
@@ -123,32 +97,6 @@
        <property name="icon">
         <iconset resource="../../res/resources.qrc">
          <normaloff>:/search.png</normaloff>:/search.png</iconset>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="popupMode">
-        <enum>QToolButton::InstantPopup</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="m_clearMaskBtn">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../res/resources.qrc">
-         <normaloff>:/clear.png</normaloff>:/clear.png</iconset>
        </property>
        <property name="checkable">
         <bool>false</bool>

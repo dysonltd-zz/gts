@@ -129,24 +129,14 @@ AnalyseResultsWidget::AnalyseResultsWidget( QWidget* parent ) :
                       SIGNAL( clicked() ),
                       this,
                       SLOT( AnalyseResultsButtonClicked() ) );
-
     QObject::connect( m_ui->m_browsePlanBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BrowseForFloorPlanClicked() ) );
-    QObject::connect( m_ui->m_clearPlanBtn,
-                      SIGNAL( clicked() ),
-                      this,
-                      SLOT( ClearFloorPlanClicked() ) );
-
     QObject::connect( m_ui->m_browseMaskBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BrowseForFloorMaskClicked() ) );
-    QObject::connect( m_ui->m_clearMaskBtn,
-                      SIGNAL( clicked() ),
-                      this,
-                      SLOT( ClearFloorMaskClicked() ) );
 
     AddMapper( KeyName( "floorPlanName" ), m_ui->m_floorPlanFileNameEdit );
     AddMapper( KeyName( "floorMaskName" ), m_ui->m_floorMaskFileNameEdit );
@@ -175,11 +165,6 @@ const WbSchema AnalyseResultsWidget::CreateSchema()
     return schema;
 }
 
-void AnalyseResultsWidget::ClearFloorPlanClicked()
-{
-    m_ui->m_floorPlanFileNameEdit->clear();
-}
-
 void AnalyseResultsWidget::BrowseForFloorPlanClicked()
 {
     FileDialogs::ExtendedFileDialog fileDialog( this,
@@ -197,11 +182,6 @@ void AnalyseResultsWidget::BrowseForFloorPlanClicked()
             m_ui->m_floorPlanFileNameEdit->setText( floorPlanName );
         }
     }
-}
-
-void AnalyseResultsWidget::ClearFloorMaskClicked()
-{
-    m_ui->m_floorMaskFileNameEdit->clear();
 }
 
 void AnalyseResultsWidget::BrowseForFloorMaskClicked()
