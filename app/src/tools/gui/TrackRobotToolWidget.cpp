@@ -61,7 +61,7 @@ TrackRobotToolWidget::TrackRobotToolWidget( QWidget* parent ) :
     m_tracking ( false ),
     m_loaded   ( false ),
     m_fpsSet   ( false ),
-    m_fps      ( 10 ) // arbitrary value but typically a decent value
+    m_fps      ( 10 ) // arbitrary but typically a decent value
 {
     SetupUi();
     ConnectSignals();
@@ -151,7 +151,6 @@ void TrackRobotToolWidget::ConnectSignals()
              SIGNAL( activated() ),
              this,
              SLOT( StopButtonClicked() ) );
-
 }
 
 void TrackRobotToolWidget::CreateGlobalParamMappers()
@@ -699,19 +698,16 @@ void TrackRobotToolWidget::UpdatePosition( long position )
 
 void TrackRobotToolWidget::ViewClicked( int id, int x, int y )
 {
-    if (!m_running)
+    m_scene.SetTrackPosition( id, x, y );
+
+    if (!m_tracking)
     {
-        m_scene.SetTrackPosition( id, x, y );
-
-        if (!m_tracking)
-        {
-            // switch to tracking icons
-            SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/playTrack.png"));
-            SetButtonIcon(m_ui->m_stepBtn,QString::fromUtf8(":/stepTrack.png"));
-        }
-
-        m_tracking = true;
+        // switch to tracking icons
+        SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/playTrack.png"));
+        SetButtonIcon(m_ui->m_stepBtn,QString::fromUtf8(":/stepTrack.png"));
     }
+
+    m_tracking = true;
 }
 
 void TrackRobotToolWidget::ThreadPaused( bool trackingLost )
