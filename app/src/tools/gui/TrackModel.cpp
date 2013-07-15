@@ -205,7 +205,7 @@ void TrackModel::setSource(QIODevice *file, bool withHeader, QChar separator)
         else
         {
             csvData.append(l);
-            delData.append(true);
+            l.contains(QRegExp("[a-Z]")) ? delData.append(false) : delData.append(true);
             selData.append(false);
         }
     }
