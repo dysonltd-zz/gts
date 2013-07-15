@@ -48,7 +48,6 @@
           </sizepolicy>
          </property>
         </widget>
-
         <widget class="QFrame" name="m_calibrationFrame">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -69,7 +68,6 @@
           <property name="margin">
            <number>0</number>
           </property>
-
           <item>
            <widget class="QTabWidget" name="m_optionsTabs">
             <property name="minimumSize">
@@ -79,7 +77,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="m_standardOptionsPage">
              <attribute name="title">
@@ -255,15 +253,27 @@
                  <bool>true</bool>
                 </property>
                 <attribute name="horizontalHeaderVisible">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="horizontalHeaderCascadingSectionResizes">
                  <bool>false</bool>
                 </attribute>
                 <attribute name="horizontalHeaderDefaultSectionSize">
-                 <number>100</number>
+                 <number>110</number>
                 </attribute>
-                <attribute name="horizontalHeaderStretchLastSection">
+                <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
                  <bool>false</bool>
                 </attribute>
+                <attribute name="horizontalHeaderStretchLastSection">
+                 <bool>true</bool>
+                </attribute>
                 <attribute name="verticalHeaderVisible">
+                 <bool>false</bool>
+                </attribute>
+                <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="verticalHeaderStretchLastSection">
                  <bool>false</bool>
                 </attribute>
                 <row>
@@ -454,151 +464,151 @@
               </item>
              </layout>
             </widget>
-             <widget class="QWidget" name="m_advancedOptionsPage">
-              <attribute name="title">
-               <string>&amp;Advanced</string>
-              </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_3">
-               <property name="margin">
-                <number>6</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="m_zeroTangentialCheckBox">
-                 <property name="toolTip">
-                  <string>&lt;p&gt;Assume zero tangential distortion.  This is usually best set on unless very many images are used.&lt;/p&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>No &amp;Tangential Distortion</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="m_fixPrincipalPtCheckBox">
-                 <property name="toolTip">
-                  <string>&lt;p&gt;Fix the principal point at the centre of the image&lt;/p&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>Fix &amp;Principal Point</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="m_flipCheckBox">
-                 <property name="toolTip">
-                  <string>&lt;p&gt;Flip the captured images around the horizontal axis before calibration&lt;/p&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Flip Images</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QGroupBox" name="m_fixAspectRatioGroup">
-                 <property name="title">
-                  <string>Fix Aspect &amp;Ratio</string>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                 <layout class="QHBoxLayout" name="horizontalLayout_3">
-                  <item>
-                   <widget class="QLabel" name="m_aspectRatioLabel">
-                    <property name="text">
-                     <string>&amp;Value</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>m_aspectRatioLineEdit</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="m_aspectRatioLineEdit">
-                    <property name="toolTip">
-                     <string>&lt;p&gt;Fix the aspect ratio (fx/fy)&lt;/p&gt;</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <spacer name="verticalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>287</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="tab">
-              <attribute name="title">
-               <string>&amp;Results</string>
-              </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_5">
-               <item>
-                <widget class="QTextBrowser" name="m_resultsTextBrowser">
-                 <property name="palette">
-                  <palette>
-                   <active>
-                    <colorrole role="Base">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="0">
-                       <red>255</red>
-                       <green>255</green>
-                       <blue>255</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </active>
-                   <inactive>
-                    <colorrole role="Base">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="0">
-                       <red>255</red>
-                       <green>255</green>
-                       <blue>255</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </inactive>
-                   <disabled>
-                    <colorrole role="Base">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>236</red>
-                       <green>233</green>
-                       <blue>216</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </disabled>
-                  </palette>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::NoFrame</enum>
-                 </property>
-                 <property name="html">
-                  <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+            <widget class="QWidget" name="m_advancedOptionsPage">
+             <attribute name="title">
+              <string>&amp;Advanced</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <property name="margin">
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="m_zeroTangentialCheckBox">
+                <property name="toolTip">
+                 <string>&lt;p&gt;Assume zero tangential distortion.  This is usually best set on unless very many images are used.&lt;/p&gt;</string>
+                </property>
+                <property name="text">
+                 <string>No &amp;Tangential Distortion</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="m_fixPrincipalPtCheckBox">
+                <property name="toolTip">
+                 <string>&lt;p&gt;Fix the principal point at the centre of the image&lt;/p&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Fix &amp;Principal Point</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="m_flipCheckBox">
+                <property name="toolTip">
+                 <string>&lt;p&gt;Flip the captured images around the horizontal axis before calibration&lt;/p&gt;</string>
+                </property>
+                <property name="text">
+                 <string>&amp;Flip Images</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="m_fixAspectRatioGroup">
+                <property name="title">
+                 <string>Fix Aspect &amp;Ratio</string>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                 <item>
+                  <widget class="QLabel" name="m_aspectRatioLabel">
+                   <property name="text">
+                    <string>&amp;Value</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>m_aspectRatioLineEdit</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="m_aspectRatioLineEdit">
+                   <property name="toolTip">
+                    <string>&lt;p&gt;Fix the aspect ratio (fx/fy)&lt;/p&gt;</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>287</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab">
+             <attribute name="title">
+              <string>&amp;Results</string>
+             </attribute>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QTextBrowser" name="m_resultsTextBrowser">
+                <property name="palette">
+                 <palette>
+                  <active>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="0">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                  </active>
+                  <inactive>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="0">
+                      <red>255</red>
+                      <green>255</green>
+                      <blue>255</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                  </inactive>
+                  <disabled>
+                   <colorrole role="Base">
+                    <brush brushstyle="SolidPattern">
+                     <color alpha="255">
+                      <red>236</red>
+                      <green>233</green>
+                      <blue>216</blue>
+                     </color>
+                    </brush>
+                   </colorrole>
+                  </disabled>
+                 </palette>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="html">
+                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Droid Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
-           </item>
-          </layout>
-         </widget>
+           </widget>
+          </item>
+         </layout>
         </widget>
+       </widget>
       </item>
      </layout>
     </widget>
