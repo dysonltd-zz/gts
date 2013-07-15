@@ -227,6 +227,7 @@ void CreateFloorPlanToolWidget::FillOutCameraCombo( QComboBox& comboBox )
     {
         comboBox.addItem( WbConfigTools::DisplayNameOf(camPosCollection.ElementById(*camPosId)), QVariant( *camPosId ) );
     }
+
 }
 
 void CreateFloorPlanToolWidget::ReloadCurrentConfigToolSpecific()
@@ -248,7 +249,7 @@ void CreateFloorPlanToolWidget::ReloadCurrentConfigToolSpecific()
         m_ui->m_camera2Combo->setEnabled(true);
 
         m_ui->m_camera1Combo->setCurrentIndex( 0 );
-        m_ui->m_camera2Combo->setCurrentIndex( 0 );
+        m_ui->m_camera2Combo->setCurrentIndex( 1 );
     }
     else
     {

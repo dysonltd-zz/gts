@@ -277,7 +277,7 @@ const WbSchema CalibratePositionToolWidget::CreateSchema()
                                       << gridRowsKey
                                       << gridColumnsKey,
                         DefaultValueMap().WithDefault( gridSquareSizeInCmKey,
-                                                       KeyValue::from( 1.0 ) )
+                                                       KeyValue::from( 10.0 ) )
                                          .WithDefault( gridRowsKey,
                                                        KeyValue::from( 6 ) )
                                          .WithDefault( gridColumnsKey,
