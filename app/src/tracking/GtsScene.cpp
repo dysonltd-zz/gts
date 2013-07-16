@@ -30,6 +30,7 @@
 #include "RobotMetricsSchema.h"
 #include "ExtrinsicCalibrationSchema.h"
 #include "TrackRobotSchema.h"
+#include "FloorPlanSchema.h"
 #include "TargetSchema.h"
 
 #include "TrackRobotToolWidget.h"
@@ -56,7 +57,6 @@
 
 GtsScene::GtsScene( ) :
     m_thread      ( 0 ),
-	m_metrics     ( 0 ),
 	m_msec        ( 0.0 ),
 	m_rate        ( 0.0 ),
 	m_ln          ( 0 )
@@ -69,7 +69,6 @@ GtsScene::~GtsScene()
 
 void GtsScene::Reset()
 {
-    delete m_metrics;
     delete m_thread;
 
     for ( unsigned int i = 0; i < GetNumMaxCameras(); ++i )
@@ -84,12 +83,6 @@ void GtsScene::Reset()
     m_ln = 0;
 }
 
-void GtsScene::SetBoardsize( const WbConfig& camPosCalCfg )
-{
-    m_boardsize = cvSize( camPosCalCfg.GetKeyValue(ExtrinsicCalibrationSchema::gridColumnsKey).ToInt(),
-                          camPosCalCfg.GetKeyValue(ExtrinsicCalibrationSchema::gridRowsKey).ToInt() );
-}
-
 bool GtsScene::LoadTarget( const WbConfig& targetCfg )
 {
     bool successful = true;
@@ -100,45 +93,68 @@ bool GtsScene::LoadTarget( const WbConfig& targetCfg )
     return successful;
 }
 
-/**
- Allocate a RobotMetrics object and read data into it.
- **/
-bool GtsScene::LoadMetrics( const WbConfig& metricsCfg,
-                            const WbConfig& camPosCalCfg,
-                            const WbConfig& trackCfg )
-{
-    m_metrics = new RobotMetrics();
-
-    return m_metrics->LoadMetrics( metricsCfg, camPosCalCfg, trackCfg );
-}
-
 bool GtsScene::LoadCameraConfig( const KeyId               camPosId,
                                  const char* const         selectedVideoFileName,
                                  const char* const         timestampFileName,
-                                 const WbConfig&           cameraCfg,
-                                 const WbConfig&           camPosCfg,
-                                 const WbConfig&           floorPlanCfg,
-                                 const WbConfig&           trackCfg,
+                                 const WbConfig&           cameraConfig,
+                                 const WbConfig&           camPosConfig,
+                                 const WbConfig&           roomConfig,
+                                 const WbConfig&           robotConfig,
+                                 const WbConfig&           trackConfig,
                                  RobotTracker::trackerType tracker )
 {
-    if ( !m_metrics )
-    {
-        LOG_ERROR("Robot metrics must be loaded!");
+    LOG_INFO(QObject::tr("Getting camera parameters %1.").arg(m_ln));
 
-        return false;
+    const WbKeyValues::ValueIdPairList cameraMappingIds =
+        trackConfig.GetKeyValues( TrackRobotSchema::PerCameraTrackingParams::positionIdKey );
+
+    int biLevelThreshold = trackConfig.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::biLevelThreshold).ToInt();
+    double nccThreshold = trackConfig.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::nccThreshold).ToDouble();
+    int resolution = trackConfig.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::resolution).ToInt();
+
+    for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
+    {
+        const KeyId keyId( trackConfig.GetKeyValue( TrackRobotSchema::PerCameraTrackingParams::positionIdKey, it->id ).ToKeyId() );
+
+        if (keyId == camPosId)
+        {
+            bool useGlobalParams = trackConfig.GetKeyValue(TrackRobotSchema::PerCameraTrackingParams::useGlobalParams, it->id).ToBool();
+
+            if (!useGlobalParams)
+            {
+                biLevelThreshold = trackConfig.GetKeyValue(TrackRobotSchema::PerCameraTrackingParams::biLevelThreshold, it->id).ToInt();
+                nccThreshold = trackConfig.GetKeyValue(TrackRobotSchema::PerCameraTrackingParams::nccThreshold, it->id).ToDouble();
+                resolution = trackConfig.GetKeyValue(TrackRobotSchema::PerCameraTrackingParams::resolution, it->id).ToInt();
+            }
+
+            break;
+        }
     }
+
+    // Get the floor plan configuration...
+    const WbConfig& floorPlanConfig = roomConfig.GetSubConfig( FloorPlanSchema::schemaName );
+
+    // Get the robot metrics configuration...
+    const WbConfig& metricsConfig = robotConfig.GetSubConfig( RobotMetricsSchema::schemaName );
+
+    const WbConfig& camPosCalConfig = camPosConfig.GetSubConfig( ExtrinsicCalibrationSchema::schemaName );
 
     LOG_INFO(QObject::tr("Configuring camera %1.").arg(m_ln));
 
+    LOG_INFO(QObject::tr("Tracking param - biLevel: %1.").arg(biLevelThreshold));
+    LOG_INFO(QObject::tr("Tracking param - ncc: %1.").arg(nccThreshold));
+    LOG_INFO(QObject::tr("Tracking param - resolution: %1.").arg(resolution));
+
     m_view[m_ln].SetId( m_ln );
 
+    m_view[m_ln].LoadMetrics ( metricsConfig, camPosCalConfig, resolution );
+
     bool status = m_view[m_ln].SetupCalibration( camPosId,
-                                                 cameraCfg,
-                                                 camPosCfg,
-                                                 floorPlanCfg,
-                                                 m_boardsize,
-                                                 //m_view[m_ln].GetMetrics(),
-                                                 *m_metrics );
+                                                 cameraConfig,
+                                                 camPosConfig,
+                                                 floorPlanConfig,
+                                                 camPosCalConfig,
+                                                 m_view[m_ln].GetMetrics() );
     if ( !status )
     {
         LOG_ERROR("Calibration setup failed!");
@@ -149,16 +165,18 @@ bool GtsScene::LoadCameraConfig( const KeyId               camPosId,
     LOG_INFO(QObject::tr("Configuring tracker %1.").arg(m_ln));
 
     status = m_view[m_ln].SetupTracker( tracker,
-                                        //m_view[m_ln].GetMetrics(),
-                                        *m_metrics,
+                                        m_view[m_ln].GetMetrics(),
+                                        //*m_metrics,
                                         m_targetFile.toAscii().data(),
-                                        trackCfg.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::biLevelThreshold).ToInt() );
+                                        biLevelThreshold );
     if ( !status )
     {
         LOG_ERROR("Tracker setup failed!");
 
         return false;
     };
+
+    m_view[m_ln].SetTrackerParam( RobotTracker::PARAM_NCC_THRESHOLD, nccThreshold );
 
     float shutter = 411;
     float gain = 75;
@@ -167,14 +185,13 @@ bool GtsScene::LoadCameraConfig( const KeyId               camPosId,
     {
         case RobotTracker::KLT_TRACKER :
         {
-            shutter = -1; // 411;
-            gain = -1; // 75;
+            shutter = -1;
+            gain = -1;
         }
         break;
     }
 
     LOG_INFO(QObject::tr("Setting up video %1.").arg(m_ln));
-
 
     status = m_view[m_ln].SetupVideo( selectedVideoFileName, timestampFileName, shutter, gain );
     if ( !status )
@@ -215,20 +232,6 @@ void GtsScene::DestroyViewWindows( ImageGrid* imageGrid )
 }
 
 /**
- Set the normalised cross-correlation threshold for declaring tracking failure.
- **/
-void GtsScene::SetTrackerThreshold( float nccThresh )
-{
-    for ( unsigned int i = 0; i < GetNumMaxCameras(); ++i )
-    {
-        if ( m_view[i].IsSetup() )
-        {
-            m_view[i].SetTrackerParam( RobotTracker::PARAM_NCC_THRESHOLD, nccThresh );
-        }
-    }
-}
-
-/**
   @return a TrackResult indicating how many trackers are currently active,
   and how many of those are lost.
  **/
@@ -246,9 +249,9 @@ GtsScene::TrackStatus GtsScene::StepTrackers( bool forward )
 
                 m_view[i].StepTracker( forward );
 
-                const RobotTracker* const tracker = m_view[i].GetTracker();
+                RobotTracker& tracker = m_view[i].GetTracker();
 
-                if (tracker->IsLost())
+                if (tracker.IsLost())
                 {
                     status.numTrackersLost++;
 
@@ -257,7 +260,7 @@ GtsScene::TrackStatus GtsScene::StepTrackers( bool forward )
 
                     status.numTrackersActive++;
                 }
-                else if (tracker->IsActive())
+                else if (tracker.IsActive())
                 {
                     status.numTrackersActive++;
                 }
@@ -308,7 +311,7 @@ void GtsScene::StartThread( double rate, bool trackingActive,
         {
             if ( m_view[i].IsSetup() )
             {
-                m_view[i].GetTracker()->Deactivate();
+                m_view[i].GetTracker().Deactivate();
             }
         }
     }
@@ -373,8 +376,7 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
             // Reverse effect of previous call to ConvertTrackToCm()...
             ScanUtility::LogCmToPx( m_log[i],
                                     m_logPx[i],
-                                    m_metrics->GetScaleFactor(),
-                                    //m_view[i].GetMetrics()->GetScaleFactor(),
+                                    m_view[i].GetMetrics().GetScaleFactor(),
                                     offset );
 
             TrackHistory::TrackLog m_logImage;
@@ -389,7 +391,7 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
 
             TrackHistory::TrackLog tlog;
             // Transform then overwrite old log with transformed log...
-            ScanUtility::TransformLog( m_logPx[i], tlog, m_view[i].GetTracker()->GetCalibration()->GetCameraTransform() );
+            ScanUtility::TransformLog( m_logPx[i], tlog, m_view[i].GetTracker().GetCalibration()->GetCameraTransform() );
             m_logPx[i] = tlog;
 
             ScanUtility::PlotLog( m_logPx[i],
@@ -510,7 +512,7 @@ int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log )
     {
         if ( m_view[i].IsSetup() )
         {
-            m_view[i].GetTracker()->ConvertLogForProcessing( log[i], false );
+            m_view[i].GetTracker().ConvertLogForProcessing( log[i], false );
 
             // Ignore empty logs!
             if ( log[i].size() > 1 )
@@ -522,12 +524,12 @@ int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log )
                 }
 
                 // Organise ground plane images and origins too
-                m_origin[i] = *(m_view[i].GetTracker()->GetCalibration()->GetUnwarpOffset());
+                m_origin[i] = *(m_view[i].GetTracker().GetCalibration()->GetUnwarpOffset());
 
                 m_origin[i].x = -m_origin[i].x;
                 m_origin[i].y = -m_origin[i].y;
 
-                m_gpImg[i] = m_view[i].GetTracker()->GetCalibration()->GetWarpedCalibrationImage();
+                m_gpImg[i] = m_view[i].GetTracker().GetCalibration()->GetWarpedCalibrationImage();
 
                 m_fps += ScanUtility::AverageFpsSec( log[i] );
 
@@ -551,8 +553,8 @@ int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log )
 
 void GtsScene::SetTrackPosition( int id, int x, int y )
 {
-    m_view[id].GetTracker()->SetPosition( cvPoint2D32f(x, y) );
-    m_view[id].GetTracker()->Activate();
+    m_view[id].GetTracker().SetPosition( cvPoint2D32f(x, y) );
+    m_view[id].GetTracker().Activate();
 
     m_view[id].ShowRobotTrack();
 }

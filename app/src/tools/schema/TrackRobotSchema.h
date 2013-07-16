@@ -42,7 +42,7 @@ namespace TrackRobotSchema
     namespace PerCameraTrackingParams
     {
         extern const KeyName group;
-        extern const KeyName showImage;
+        extern const KeyName positionIdKey;
         extern const KeyName useGlobalParams;
         extern const KeyName biLevelThreshold;
         extern const KeyName nccThreshold;

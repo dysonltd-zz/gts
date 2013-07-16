@@ -357,7 +357,7 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
             return ExitStatus::ERRORS_OCCURRED;
         }
 
-        if ( !metrics.LoadMetrics( metricsConfig, firstCamPosCalConfig, trackConfig ) )
+        if ( !metrics.LoadMetrics( metricsConfig, firstCamPosCalConfig, 1 ) )
         {
             LOG_ERROR("Could not load robot metrics!");
 

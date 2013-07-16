@@ -50,24 +50,17 @@ public:
 
     void Reset();
 
-    void SetBoardsize( const WbConfig& camPosCalCfg );
-
     bool LoadTarget( const WbConfig& targetCfg );
-
-    bool LoadMetrics( const WbConfig& metricsCfg,
-                      const WbConfig& camPosCalCfg,
-                      const WbConfig& trackCfg );
 
     bool LoadCameraConfig( const KeyId               camPosId,
                            const char* const         selectedVideoFileName,
                            const char* const         timestampFileName,
-                           const WbConfig&           cameraCfg,
-                           const WbConfig&           camPosCfg,
-                           const WbConfig&           floorPlanCfg,
-                           const WbConfig&           trackCfg,
+                           const WbConfig&           cameraConfig,
+                           const WbConfig&           camPosConfig,
+                           const WbConfig&           roomConfig,
+                           const WbConfig&           robotConfig,
+                           const WbConfig&           trackConfig,
                            RobotTracker::trackerType tracker );
-
-    void SetTrackerThreshold( float nccThresh );
 
     unsigned int GetNumMaxCameras() const { return GtsScene::kMaxCameras; }
 
@@ -116,11 +109,9 @@ private:
     static const unsigned int kMaxCameras = GTS_MAX_CAMERAS;
 
     TrackThread* m_thread;
-    RobotMetrics* m_metrics;
 
     GtsView m_view[GtsScene::kMaxCameras];
 
-    CvSize m_boardsize;
     QString m_targetFile;
 
     // post processing variables

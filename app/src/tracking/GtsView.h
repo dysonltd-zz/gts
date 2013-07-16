@@ -66,21 +66,33 @@ public:
     void SetId( int id );
     bool IsSetup() const { return m_id>=0; }
 
-    //bool LoadMetrics( const char* filename );
+    bool LoadMetrics( const WbConfig& metricsConfig,
+                      const WbConfig& camPosCalConfig,
+                      float trackingResolution );
 
     bool SetupCalibration( const KeyId     camPosId,
-                           const WbConfig& cameraCfg,
-                           const WbConfig& camPosCfg,
-                           const WbConfig& floorPlanCfg,
-                           CvSize          boardSize,
-                           RobotMetrics&   met );
+                           const WbConfig& cameraConfig,
+                           const WbConfig& camPosConfig,
+                           const WbConfig& floorPlanConfig,
+                           const WbConfig& camPosCalConfig,
+                           RobotMetrics&   metrics );
 
-    bool SetupTracker( RobotTracker::trackerType type, const RobotMetrics& met, const char* targetFile, int thresh );
-    bool SetupVideo( const char* const videoFile, const char* const timestampFile, float shutter, float gain );
-    void SetTrackerParam( RobotTracker::paramType param, float nccThresh );
+    bool SetupTracker( RobotTracker::trackerType type,
+                       const RobotMetrics& met,
+                       const char* targetFile,
+                       int biLevelThreshold );
+
+    bool SetupVideo( const char* const videoFile,
+                     const char* const timestampFile,
+                     float shutter,
+                     float gain );
+
     void SetupView( TrackRobotToolWidget* tool, ImageGrid* imageGrid );
 
-    CvSize GetWarpImageSize() const { assert(m_imgWarp[0]); return cvSize(m_imgWarp[0]->width,m_imgWarp[0]->height); }
+    void SetTrackerParam( RobotTracker::paramType param, float value );
+
+    CvSize GetWarpImageSize() const { assert(m_imgWarp[0]); return cvSize(m_imgWarp[0]->width,
+                                                                          m_imgWarp[0]->height); }
 
     void LoadTimestampFile( const char* const fileName );
 
@@ -90,8 +102,8 @@ public:
     const IplImage* GetCurrentImage() const { return m_imgFrame; }
     const IplImage* GetGroundPlaneImage() const { return m_imgWarp[m_imgIndex]; }
 
-    RobotTracker* GetTracker() const { return m_tracker; }
-    //RobotMetrics* GetMetrics() const { return m_metrics; }
+    RobotTracker& GetTracker() const { return *m_tracker; }
+    RobotMetrics& GetMetrics() const { return *m_metrics; }
 
     void StepTracker( bool forward, CoverageSystem* coverage=0 );
 
@@ -114,30 +126,32 @@ public:
     }
 
 private:
-    int m_id;
+    int                   m_id;
 
-    double m_fps;
+    double                m_fps;
 
-    CameraCalibration*   m_calScaled;
-    CameraCalibration*   m_calNormal;
-    RobotTracker*        m_tracker;
+    CameraCalibration*    m_calScaled;
+    CameraCalibration*    m_calNormal;
+    RobotTracker*         m_tracker;
+
+    RobotMetrics*         m_metrics;
 
     std::vector<timespec> m_timestamps;
-    VideoSequence*       m_sequencer;
-    IplImage*            m_imgFrame;
-    IplImage*            m_imgGrey;
-    IplImage*            m_thumbnail;
+    VideoSequence*        m_sequencer;
+    IplImage*             m_imgFrame;
+    IplImage*             m_imgGrey;
+    IplImage*             m_thumbnail;
 
-    ImageView*           m_viewer;
+    ImageView*            m_viewer;
 
-    unsigned int         m_imgIndex;
-    IplImage*            m_imgWarp[2];
-    IplImage*            m_imgWarp_[2];
+    unsigned int          m_imgIndex;
+    IplImage*             m_imgWarp[2];
+    IplImage*             m_imgWarp_[2];
 
-    std::string m_name;
+    std::string           m_name;
 
-	std::string m_trackView;
-    std::string m_aviView;
+	std::string           m_trackView;
+    std::string           m_aviView;
 
     TrackRobotToolWidget* m_tool;
 

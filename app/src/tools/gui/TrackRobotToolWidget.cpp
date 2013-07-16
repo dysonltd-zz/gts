@@ -54,6 +54,10 @@
 
 #include <sstream>
 
+static const int BI_LEVEL_DEFAULT = 128;
+static const double NCC_DEFAULT = 0.3;
+static const double RESOLUTION_DEFAULT = 15.0;
+
 TrackRobotToolWidget::TrackRobotToolWidget( QWidget* parent ) :
     Tool       ( parent, CreateSchema() ),
     m_ui       ( new Ui::TrackRobotToolWidget ),
@@ -61,13 +65,12 @@ TrackRobotToolWidget::TrackRobotToolWidget( QWidget* parent ) :
     m_tracking ( false ),
     m_loaded   ( false ),
     m_fpsSet   ( false ),
-    m_fps      ( 10 ) // arbitrary but typically a decent value
+    m_fps      ( 1 )
 {
     SetupUi();
     ConnectSignals();
 
-    CreateGlobalParamMappers();
-    CreatePerCameraParamMappers();
+    CreateMappers();
 
     RegisterCollectionCombo(m_ui->m_robotCombo, RobotsCollection());
 }
@@ -79,6 +82,37 @@ void TrackRobotToolWidget::SetupUi()
     m_ui->m_videoTable->setSortingEnabled( false );
 }
 
+void TrackRobotToolWidget::FillOutCameraCombo( QComboBox& comboBox )
+{
+    WbConfig config = GetCurrentConfig();
+
+    Collection camPosCollection( CameraPositionsCollection() );
+    Collection rooms ( RoomsCollection() );
+
+    camPosCollection.SetConfig( config );
+    rooms.SetConfig( config );
+
+    comboBox.clear();
+
+    // Get the run configuration...
+    const WbConfig& runConfig = config.GetParent();
+
+    // Get the room configuration (for this run)...
+    const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
+    const WbConfig roomConfig = rooms.ElementById( roomId );
+
+    // Get the room configuration...
+    const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
+    const QStringList camPosIds( roomLayoutConfig
+            .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
+             .ToQStringList() );
+
+    for (auto camPosId = camPosIds.begin(); camPosId != camPosIds.end(); ++camPosId)
+    {
+        comboBox.addItem( WbConfigTools::DisplayNameOf(camPosCollection.ElementById(*camPosId)), QVariant( *camPosId ) );
+    }
+}
+
 void TrackRobotToolWidget::ResetUi()
 {
     m_ui->m_playBtn->setEnabled(false);
@@ -86,7 +120,8 @@ void TrackRobotToolWidget::ResetUi()
     m_ui->m_stepBackBtn->setEnabled(false);
     m_ui->m_scanBackBtn->setEnabled(false);
     m_ui->m_stopBtn->setEnabled(false);
-    m_ui->m_videoPositionBar->setEnabled(false);
+
+    m_ui->m_videoPositionBar->setEnabled(true);
 }
 
 void TrackRobotToolWidget::ConnectSignals()
@@ -94,7 +129,7 @@ void TrackRobotToolWidget::ConnectSignals()
     QObject::connect( m_ui->m_playBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( PlayPauseTrackButtonClicked() ) );
+                      SLOT( PlayPauseButtonClicked() ) );
     QObject::connect( m_ui->m_stepBtn,
                       SIGNAL( clicked() ),
                       this,
@@ -111,19 +146,36 @@ void TrackRobotToolWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( StopButtonClicked() ) );
+
     QObject::connect( m_ui->m_loadBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( LoadButtonClicked() ) );
+                      SLOT( TrackLoadButtonClicked() ) );
     QObject::connect( m_ui->m_saveBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( SaveButtonClicked() ) );
+                      SLOT( TrackSaveButtonClicked() ) );
     QObject::connect( m_ui->m_resetBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( ResetButtonClicked() ) );
+                      SLOT( TrackResetButtonClicked() ) );
 
+    QObject::connect( m_ui->m_positionCombo,
+                      SIGNAL( currentIndexChanged (int) ),
+                      this,
+                      SLOT( CameraComboChanged() ) );
+
+    QObject::connect( m_ui->m_useGlobal,
+                      SIGNAL( clicked() ),
+                      this,
+                      SLOT( UseGlobalBtnClicked() ) );
+
+    QObject::connect( m_ui->btnSave,
+                      SIGNAL( clicked() ),
+                      this,
+                      SLOT( SaveBtnClicked() ) );
+
+#if 0
     // Keyboard shorcuts
     QShortcut *playPauseTrackKey = new QShortcut(Qt::Key_Space, this);
     QShortcut *stepBackKey = new QShortcut(Qt::Key_Left, this);
@@ -151,9 +203,10 @@ void TrackRobotToolWidget::ConnectSignals()
              SIGNAL( activated() ),
              this,
              SLOT( StopButtonClicked() ) );
+#endif
 }
 
-void TrackRobotToolWidget::CreateGlobalParamMappers()
+void TrackRobotToolWidget::CreateMappers()
 {
     AddMapper( TrackRobotSchema::robotIdKey, m_ui->m_robotCombo );
 
@@ -164,9 +217,16 @@ void TrackRobotToolWidget::CreateGlobalParamMappers()
     AddMapper(resolution,       m_ui->m_resolutionSpinBox);
 }
 
-void TrackRobotToolWidget::CreatePerCameraParamMappers()
+const QString TrackRobotToolWidget::GetCameraId() const
 {
-    /// @todo per camera tracking params
+    QComboBox* const cameraCombo = m_ui->m_positionCombo;
+    const int newTargetIndex = cameraCombo->currentIndex();
+    const QString cameraId( cameraCombo->itemData( newTargetIndex ).toString() );
+    return cameraId;
+}
+
+void TrackRobotToolWidget::PopulateCameraParams()
+{
 }
 
 TrackRobotToolWidget::~TrackRobotToolWidget()
@@ -190,6 +250,8 @@ void TrackRobotToolWidget::ReloadCurrentConfigToolSpecific()
     }
 #endif
 
+    FillOutCameraCombo( *m_ui->m_positionCombo );
+
     // Get the selected room name...
     const WbConfig& runConfig = config.GetParent();
     const WbConfig& videoConfig = runConfig.GetSubConfig( VideoCaptureSchema::schemaName );
@@ -203,6 +265,7 @@ void TrackRobotToolWidget::ReloadCurrentConfigToolSpecific()
     m_ui->m_videoTable->clear();
     m_ui->m_videoTable->setRowCount(0);
     m_mapPositionsToFiles.clear();
+
     for (auto p = positions.begin(); p != positions.end(); ++p)
     {
         WbKeyValues::ValueIdPair const &key = *p;
@@ -224,6 +287,7 @@ void TrackRobotToolWidget::ReloadCurrentConfigToolSpecific()
                     // If it was add it to the map of position -> videoFiles
                     QString videoFilename = videoConfig.GetKeyValue( VideoCaptureSchema::videoFileNameKey, v.id ).ToQString();
                     QString timestampFilename = videoConfig.GetKeyValue( VideoCaptureSchema::timestampFileNameKey, v.id ).ToQString();
+
                     m_mapPositionsToFiles[ positionString ].first << videoFilename;
                     m_mapPositionsToFiles[ positionString ].second = timestampFilename;
                 }
@@ -249,6 +313,151 @@ void TrackRobotToolWidget::ReloadCurrentConfigToolSpecific()
     {
         ResetUi();
     }
+}
+
+void TrackRobotToolWidget::CameraComboChanged()
+{
+    const WbConfig& config = GetCurrentConfig();
+
+    const KeyId cameraId = KeyId(GetCameraId());
+
+    const WbKeyValues::ValueIdPairList cameraMappingIds =
+        config.GetKeyValues( TrackRobotSchema::PerCameraTrackingParams::positionIdKey );
+
+    bool useGlobalParams = true;
+    int biLevelThreshold = config.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::biLevelThreshold).ToInt();
+    double nccThreshold = config.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::nccThreshold).ToDouble();
+    int resolution = config.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::resolution).ToInt();
+
+    for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
+    {
+        const KeyId keyId( config.GetKeyValue( TrackRobotSchema::PerCameraTrackingParams::positionIdKey, it->id ).ToKeyId() );
+
+        if (keyId == cameraId)
+        {
+            useGlobalParams = config.GetKeyValue(TrackRobotSchema::PerCameraTrackingParams::useGlobalParams, it->id).ToBool();
+
+            if (!useGlobalParams)
+            {
+                biLevelThreshold = config.GetKeyValue(TrackRobotSchema::PerCameraTrackingParams::biLevelThreshold, it->id).ToInt();
+                nccThreshold = config.GetKeyValue(TrackRobotSchema::PerCameraTrackingParams::nccThreshold, it->id).ToDouble();
+                resolution = config.GetKeyValue(TrackRobotSchema::PerCameraTrackingParams::resolution, it->id).ToInt();
+            }
+
+            break;
+        }
+    }
+
+    m_ui->m_useGlobal->setChecked(useGlobalParams);
+
+    m_ui->m_camTrackerThresholdSpinBox->setValue(biLevelThreshold);
+    m_ui->m_camNccThresholdSpinBox->setValue(nccThreshold);
+    m_ui->m_camResolutionSpinBox->setValue(resolution);
+
+    m_ui->m_camTrackerThresholdSpinBox->setEnabled(!useGlobalParams);
+    m_ui->m_camNccThresholdSpinBox->setEnabled(!useGlobalParams);
+    m_ui->m_camResolutionSpinBox->setEnabled(!useGlobalParams);
+}
+
+void TrackRobotToolWidget::UseGlobalBtnClicked()
+{
+    if ( m_ui->m_useGlobal->isChecked() )
+	{
+	    WbConfig config = GetCurrentConfig();
+
+	    m_ui->m_camTrackerThresholdSpinBox->setValue
+	        (config.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::biLevelThreshold).ToInt());
+	    m_ui->m_camNccThresholdSpinBox->setValue
+	        (config.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::nccThreshold).ToDouble());
+	    m_ui->m_camResolutionSpinBox->setValue
+	        (config.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::resolution).ToInt());
+
+	    m_ui->m_camTrackerThresholdSpinBox->setEnabled(false);
+	    m_ui->m_camNccThresholdSpinBox->setEnabled(false);
+	    m_ui->m_camResolutionSpinBox->setEnabled(false);
+	}
+	else
+	{
+	    m_ui->m_camTrackerThresholdSpinBox->setValue(BI_LEVEL_DEFAULT);
+	    m_ui->m_camNccThresholdSpinBox->setValue(NCC_DEFAULT);
+	    m_ui->m_camResolutionSpinBox->setValue(RESOLUTION_DEFAULT);
+
+	    m_ui->m_camTrackerThresholdSpinBox->setEnabled(true);
+	    m_ui->m_camNccThresholdSpinBox->setEnabled(true);
+	    m_ui->m_camResolutionSpinBox->setEnabled(true);
+	}
+}
+
+void TrackRobotToolWidget::SaveBtnClicked()
+{
+    WbConfig config = GetCurrentConfig();
+
+    const KeyId cameraId = KeyId(GetCameraId());
+
+    using namespace TrackRobotSchema::PerCameraTrackingParams;
+
+    Collection camPosCollection( CameraPositionsCollection() );
+    Collection rooms ( RoomsCollection() );
+
+    camPosCollection.SetConfig( config );
+    rooms.SetConfig( config );
+
+    std::vector< KeyId > idsToKeep;
+
+    // Get the run configuration...
+    const WbConfig& runConfig = config.GetParent();
+
+    // Get the room configuration (for this run)...
+    const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
+    const WbConfig roomConfig = rooms.ElementById( roomId );
+
+    // Get the room configuration...
+    const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
+    const QStringList camPosIds( roomLayoutConfig
+            .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
+             .ToQStringList() );
+
+    for (auto camPosId = camPosIds.begin(); camPosId != camPosIds.end(); ++camPosId)
+    {
+        if ( KeyId(*camPosId) != cameraId )
+        {
+
+            const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( positionIdKey );
+
+            for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
+            {
+                const KeyId positionId( config.GetKeyValue( positionIdKey, it->id ).ToKeyId() );
+
+                if (positionId == KeyId(*camPosId))
+                {
+                    idsToKeep.push_back( it->id );
+                    break;
+                }
+            }
+        }
+    }
+
+    config.RemoveOldKeys( positionIdKey, idsToKeep );
+    config.RemoveOldKeys( useGlobalParams, idsToKeep );
+    config.RemoveOldKeys( biLevelThreshold, idsToKeep );
+    config.RemoveOldKeys( nccThreshold, idsToKeep );
+    config.RemoveOldKeys( resolution, idsToKeep );
+
+    const KeyId cameraKeyId = config.AddKeyValue( positionIdKey,
+                                                  KeyValue::from( cameraId ) );
+
+    config.SetKeyValue( useGlobalParams,
+                        KeyValue::from( m_ui->m_useGlobal->isChecked() ),
+                        cameraKeyId );
+    config.SetKeyValue( biLevelThreshold,
+                        KeyValue::from( QString().setNum( m_ui->m_camTrackerThresholdSpinBox->value() ) ),
+                        cameraKeyId );
+    config.SetKeyValue( nccThreshold,
+                        KeyValue::from( QString().setNum( m_ui->m_camNccThresholdSpinBox->value() ) ),
+                        cameraKeyId );
+    config.SetKeyValue( resolution,
+                        KeyValue::from( QString().setNum( m_ui->m_camResolutionSpinBox->value() ) ),
+                        cameraKeyId );
 }
 
 void TrackRobotToolWidget::AddVideoFileConfigKey( const QString& videoFileName,
@@ -377,13 +586,10 @@ const WbSchema TrackRobotToolWidget::CreateSchema()
 
     WbSchema schema( CreateWorkbenchSubSchema( schemaName, tr( "Tracked Runs" ) ) );
 
-    const KeyValue BI_LEVEL_DEFAULT = KeyValue::from(128);
-    const KeyValue NCC_DEFAULT = KeyValue::from(0.3);
-    const KeyValue RESOLUTION_DEFAULT = KeyValue::from(15.0);
-
     schema.AddSingleValueKey( robotIdKey, WbSchemaElement::Multiplicity::One );
 
-    { using namespace GlobalTrackingParams;
+    {
+        using namespace GlobalTrackingParams;
 
         schema.AddKeyGroup(group,
                            WbSchemaElement::Multiplicity::One,
@@ -392,27 +598,22 @@ const WbSchema TrackRobotToolWidget::CreateSchema()
                                nccThreshold <<
                                resolution,
                            DefaultValueMap()
-                               .WithDefault(biLevelThreshold, BI_LEVEL_DEFAULT)
-                               .WithDefault(nccThreshold,     NCC_DEFAULT)
-                               .WithDefault(resolution,       RESOLUTION_DEFAULT));
+                               .WithDefault(biLevelThreshold, KeyValue::from(BI_LEVEL_DEFAULT))
+                               .WithDefault(nccThreshold,     KeyValue::from(NCC_DEFAULT))
+                               .WithDefault(resolution,       KeyValue::from(RESOLUTION_DEFAULT)));
     }
 
-    { using namespace PerCameraTrackingParams;
+    {
+        using namespace PerCameraTrackingParams;
 
         schema.AddKeyGroup(group,
                            WbSchemaElement::Multiplicity::Many,
                            KeyNameList() <<
-                               showImage <<
+                               positionIdKey <<
                                useGlobalParams <<
                                biLevelThreshold <<
                                nccThreshold <<
-                               resolution,
-                           DefaultValueMap()
-                               .WithDefault(showImage, KeyValue::from(true))
-                               .WithDefault(useGlobalParams, KeyValue::from(true))
-                               .WithDefault(biLevelThreshold, BI_LEVEL_DEFAULT)
-                               .WithDefault(nccThreshold,     NCC_DEFAULT)
-                               .WithDefault(resolution,       RESOLUTION_DEFAULT));
+                               resolution);
     }
 
     return schema;
@@ -452,13 +653,10 @@ void TrackRobotToolWidget::ScanBackButtonClicked()
     m_playing = true;
 }
 
-void TrackRobotToolWidget::PlayPauseTrackButtonClicked()
+void TrackRobotToolWidget::PlayPauseButtonClicked()
 {
     if (!m_playing) // play pressed
     {
-        // switch to pause icon
-        SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
-
         if ( m_tracking )
         {
             // play video AND track
@@ -471,6 +669,9 @@ void TrackRobotToolWidget::PlayPauseTrackButtonClicked()
         {
             // just play video
             TrackRun( m_ui->m_videoPositionBar->GetRate(), false, false, true );
+
+            // switch to pause icon
+            SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
         }
 
         // disable << |<< >>| []
@@ -488,6 +689,9 @@ void TrackRobotToolWidget::PlayPauseTrackButtonClicked()
         {
             // switch to tracking/record icon
             SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/playTrack.png"));
+
+            // switch to step icon
+            SetButtonIcon(m_ui->m_stepBtn, QString::fromUtf8(":/stepTrack.png"));
         }
         else
         {
@@ -498,7 +702,7 @@ void TrackRobotToolWidget::PlayPauseTrackButtonClicked()
             SetButtonIcon(m_ui->m_stepBtn, QString::fromUtf8(":/step.png"));
         }
 
-        // pause tracking even if not tracking or jus rewinding
+        // pause tracking
         TrackPause();
 
         // enable << |< >| >> []
@@ -523,10 +727,11 @@ void TrackRobotToolWidget::StepButtonClicked()
 void TrackRobotToolWidget::StopButtonClicked()
 {
     TrackStop();
+
     ResetUi();
 }
 
-void TrackRobotToolWidget::LoadButtonClicked()
+void TrackRobotToolWidget::TrackLoadButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
@@ -557,7 +762,7 @@ void TrackRobotToolWidget::LoadButtonClicked()
 
             Message::Show( 0,
                            tr( "Track Robot Tool" ),
-                           tr( "Error - Settings did not successfully load.\nPlease see log for details!" ),
+                           tr( "Error - Please see log for details!" ),
                            Message::Severity_Critical );
         }
     }
@@ -567,12 +772,14 @@ void TrackRobotToolWidget::LoadButtonClicked()
         m_ui->m_loadBtn->setEnabled(false);
         m_ui->m_playBtn->setEnabled(true);
         m_ui->m_stepBtn->setEnabled(true);
+
         m_ui->m_videoPositionBar->setEnabled(true);
+
         m_loaded = true;
     }
 }
 
-void TrackRobotToolWidget::SaveButtonClicked()
+void TrackRobotToolWidget::TrackSaveButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
@@ -626,7 +833,7 @@ void TrackRobotToolWidget::SaveButtonClicked()
     }
 }
 
-void TrackRobotToolWidget::ResetButtonClicked()
+void TrackRobotToolWidget::TrackResetButtonClicked()
 {
     m_loaded = false;
 
@@ -637,6 +844,7 @@ void TrackRobotToolWidget::ResetButtonClicked()
     m_ui->m_loadBtn->setEnabled(true);
     m_ui->m_saveBtn->setEnabled(false);
     m_ui->m_resetBtn->setEnabled(false);
+
     m_fpsSet = false;
 }
 
@@ -736,14 +944,16 @@ void TrackRobotToolWidget::VideoPosition( double position )
 
 void TrackRobotToolWidget::ImageUpdate( int id, const QImage& image, double fps )
 {
-    // set optimum fps rate if not already set or new fps is less than old
-    // smaller > larger
+    // Set optimum fps rate if not already set or
+    // new fps is less than old smaller > larger.
+
     if ( (fps > 0 && !m_fpsSet) || (m_fpsSet && fps < m_fps) )
     {
         m_fps = fps;
         m_ui->m_videoPositionBar->SetRate( (int) (1000/m_fps) );
         m_fpsSet = true;
     }
+
     emit UpdateImage( id, image, fps );
 }
 
@@ -782,9 +992,6 @@ const ExitStatus::Flags TrackRobotToolWidget::TrackLoad( const WbConfig&        
     const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
     const WbConfig roomConfig = rooms.ElementById( roomId );
 
-    // Get the floor plan configuration...
-    const WbConfig& floorPlanConfig = roomConfig.GetSubConfig( FloorPlanSchema::schemaName );
-
     // Get the robot configuration (for this run)...
     const KeyId robotId = trackConfig.GetKeyValue( TrackRobotSchema::robotIdKey ).ToKeyId();
     const WbConfig& robotConfig = robots.ElementById( robotId );
@@ -799,25 +1006,14 @@ const ExitStatus::Flags TrackRobotToolWidget::TrackLoad( const WbConfig&        
     // Get the target params configuration...
     const WbConfig& paramsConfig = targetConfig.GetSubConfig( TargetSchema::schemaName );
 
-    // Get the first camera (position) configuration...
-    std::vector<WbConfig> camPosConfigs = GetCameraPositionsConfigs(roomConfig);
-
-    const WbConfig firstCamPosConfig(camPosConfigs.at(0));
-    const WbConfig& firstCamPosCalConfig = firstCamPosConfig.GetSubConfig( ExtrinsicCalibrationSchema::schemaName );
-
     // Get the room configuration...
     const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds( roomLayoutConfig
             .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
              .ToQStringList() );
 
-    /** @todo should allow for different grid size for each camera,
-              but currently just overwrite m_gridSize each time */
-
     // Multi-camera ground truth system
-    m_scene.SetBoardsize( firstCamPosCalConfig );
-    m_scene.LoadTarget  ( paramsConfig );
-    m_scene.LoadMetrics ( metricsConfig, firstCamPosCalConfig, trackConfig );
+    m_scene.LoadTarget( paramsConfig );
 
     for ( int i = 0; i < cameraPositionIds.size() && successful; ++i )
     {
@@ -840,19 +1036,17 @@ const ExitStatus::Flags TrackRobotToolWidget::TrackLoad( const WbConfig&        
                                                timestampFileName.toAscii().data(),
                                                cameraConfig,
                                                camPosConfig,
-                                               floorPlanConfig,
+                                               roomConfig,
+                                               robotConfig,
                                                trackConfig,
                                                tracker );
     }
 
     if (successful)
     {
-        m_scene.SetTrackerThreshold( trackConfig.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::nccThreshold).ToInt() );
-
         m_scene.SetupViewWindows( this, imageGrid );
 
         m_scene.SetupThread( this );
-
     }
 
     if (!successful)

@@ -38,7 +38,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Rate (ms):</string>
+      <string>Rate:</string>
      </property>
     </widget>
    </item>
@@ -54,7 +54,7 @@
       </sizepolicy>
      </property>
      <property name="suffix">
-      <string/>
+      <string>ms</string>
      </property>
      <property name="minimum">
       <number>10</number>

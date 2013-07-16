@@ -76,6 +76,8 @@ private:
     void ResetUi();
     void ConnectSignals();
 
+    void FillOutCameraCombo( QComboBox& comboBox );
+
     void SetButtonIcon(QToolButton* button, QString iconImage);
 
     const KeyId GetRoomIdToCapture() const;
@@ -93,8 +95,11 @@ private:
     void ShowMissingCameraError(const QString& cameraPosDisplayName);
 
     virtual const QString GetSubSchemaDefaultFileName() const;
-    void CreateGlobalParamMappers();
-    void CreatePerCameraParamMappers();
+
+    void CreateMappers();
+
+    const QString GetCameraId() const;
+    void PopulateCameraParams();
 
     const WbSchema CreateSchema();
 
@@ -119,15 +124,19 @@ private:
     const ExitStatus::Flags TrackReset( ImageGrid* imageGrid );
 
 private slots:
-    void PlayPauseTrackButtonClicked();
+    void CameraComboChanged();
+    void UseGlobalBtnClicked();
+    void SaveBtnClicked();
+
+    void PlayPauseButtonClicked();
     void StepButtonClicked();
     void StepBackButtonClicked();
     void ScanBackButtonClicked();
     void StopButtonClicked();
 
-    void LoadButtonClicked();
-    void SaveButtonClicked();
-    void ResetButtonClicked();
+    void TrackLoadButtonClicked();
+    void TrackSaveButtonClicked();
+    void TrackResetButtonClicked();
 
 private:
     Ui::TrackRobotToolWidget* m_ui;

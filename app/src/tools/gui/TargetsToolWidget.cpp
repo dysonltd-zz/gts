@@ -140,7 +140,6 @@ void TargetsToolWidget::UseStandardBtnClicked()
 	}
 }
 
-
 bool TargetsToolWidget::DirectoryExists( const QString& outputDirectoryName )
 {
     QDir outputDirectory( outputDirectoryName );

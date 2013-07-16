@@ -35,7 +35,7 @@ public:
 
     bool LoadMetrics( const WbConfig& metricsCfg,
                       const WbConfig& camPosCalConfig,
-                      const WbConfig& trackConfig );
+                      float trackingResolution );
 
 #ifdef SCALED_PIXELS
     void ComputePixelMetrics( float m_squarePx );

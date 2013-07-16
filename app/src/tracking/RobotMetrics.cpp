@@ -90,7 +90,7 @@ namespace
 **/
 bool RobotMetrics::LoadMetrics( const WbConfig& metricsCfg,
                                 const WbConfig& camPosCalCfg,
-                                const WbConfig& trackCfg )
+                                float trackingResolution )
 {
     m_valid = false;
 
@@ -107,7 +107,7 @@ bool RobotMetrics::LoadMetrics( const WbConfig& metricsCfg,
     m_squareCm = camPosCalCfg.GetKeyValue( ExtrinsicCalibrationSchema::gridSquareSizeInCmKey ).ToDouble();
     m_squarePx = camPosCalCfg.GetKeyValue( ExtrinsicCalibrationSchema::gridSquareSizeInPxKey ).ToDouble();
 
-    m_resolution = trackCfg.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::resolution).ToDouble();
+    m_resolution = trackingResolution;
 
     m_targetRotationRad /= 180.f;
     m_targetRotationRad *= MathsConstants::F_PI;

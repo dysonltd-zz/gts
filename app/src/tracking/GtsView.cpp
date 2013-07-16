@@ -73,7 +73,8 @@ GtsView::GtsView() :
     m_imgFrame    ( 0 ),
     m_imgGrey     ( 0 ),
     m_thumbnail   ( 0 ),
-    m_imgIndex    ( 0 )
+    m_imgIndex    ( 0 ),
+    m_metrics     ( 0 )
 {
     m_imgWarp[0] = 0;
     m_imgWarp[1] = 0;
@@ -97,7 +98,7 @@ void GtsView::Reset()
     delete m_calScaled;
     delete m_calNormal;
     delete m_sequencer;
-    //delete m_metrics;
+    delete m_metrics;
 
     m_id = -1;
 }
@@ -154,37 +155,39 @@ void GtsView::SaveThumbnail()
 /**
  Allocate a RobotMetrics object and read data into it.
  **/
-//bool GtsView::LoadMetrics( const char* filename )
-//{
-//    m_metrics = new RobotMetrics();
+bool GtsView::LoadMetrics( const WbConfig& metricsConfig,
+                           const WbConfig& camPosCalConfig,
+                           float trackingResolution )
+{
+    m_metrics = new RobotMetrics();
 
-//    return m_metrics->LoadMetrics( filename );
-//}
+    return m_metrics->LoadMetrics( metricsConfig, camPosCalConfig, trackingResolution );
+}
 
 /**
     Pass in the names for the calibration-image and calibration-data files.
     GtsView will then load/compute the calibration data.
 **/
-bool GtsView::SetupCalibration( const KeyId      camPosId,
-                                const WbConfig&  cameraCfg,
-                                const WbConfig&  camPosCfg,
-                                const WbConfig&  floorPlanCfg,
-                                CvSize           boardSize,
-                                RobotMetrics&    metrics )
+bool GtsView::SetupCalibration( const KeyId     camPosId,
+                                const WbConfig& cameraConfig,
+                                const WbConfig& camPosConfig,
+                                const WbConfig& floorPlanConfig,
+                                const WbConfig& camPosCalConfig,
+                                RobotMetrics&   metrics )
 {
     // first load calibration config
-    const WbConfig cameraIntrisicCfg( cameraCfg.GetSubConfig( CalibrationSchema::schemaName ) );
-    const WbConfig cameraExtrisicCfg( camPosCfg.GetSubConfig( ExtrinsicCalibrationSchema::schemaName ));
+    const WbConfig cameraIntrisicConfig( cameraConfig.GetSubConfig( CalibrationSchema::schemaName ) );
+    const WbConfig cameraExtrisicConfig( camPosConfig.GetSubConfig( ExtrinsicCalibrationSchema::schemaName ));
 
-    const KeyValue fileNameKeyValue( cameraExtrisicCfg.GetKeyValue( ExtrinsicCalibrationSchema::calibrationImageKey ) );
+    const KeyValue fileNameKeyValue( cameraExtrisicConfig.GetKeyValue( ExtrinsicCalibrationSchema::calibrationImageKey ) );
     const QString fileName( fileNameKeyValue.ToQString() );
-    QString calibImageFileName = cameraExtrisicCfg.GetAbsoluteFileNameFor( fileName );
+    QString calibImageFileName = cameraExtrisicConfig.GetAbsoluteFileNameFor( fileName );
 
     m_calScaled = new CameraCalibration();
     m_calNormal = new CameraCalibration();
 
-    if ( !m_calScaled->LoadIntrinsicCalibration( cameraIntrisicCfg ) ||
-         !m_calNormal->LoadIntrinsicCalibration( cameraIntrisicCfg ) )
+    if ( !m_calScaled->LoadIntrinsicCalibration( cameraIntrisicConfig ) ||
+         !m_calNormal->LoadIntrinsicCalibration( cameraIntrisicConfig ) )
     {
         LOG_ERROR("Load intrinsic calibration failed!");
 
@@ -192,12 +195,18 @@ bool GtsView::SetupCalibration( const KeyId      camPosId,
         return false;
     }
 
-    if ( !m_calScaled->PerformExtrinsicCalibration( boardSize,
+    CvSize m_boardsize = cvSize( camPosCalConfig.GetKeyValue(ExtrinsicCalibrationSchema::gridColumnsKey).ToInt(),
+                                 camPosCalConfig.GetKeyValue(ExtrinsicCalibrationSchema::gridRowsKey).ToInt() );
+
+    LOG_INFO(QObject::tr("Board size: %1,%2.").arg(m_boardsize.width)
+                                              .arg(m_boardsize.height));
+
+    if ( !m_calScaled->PerformExtrinsicCalibration( m_boardsize,
                                                     metrics,
                                                     &m_imgWarp[m_imgIndex],
                                                     true,
                                                     calibImageFileName.toAscii().data() ) ||
-         !m_calNormal->PerformExtrinsicCalibration( boardSize,
+         !m_calNormal->PerformExtrinsicCalibration( m_boardsize,
                                                     metrics,
                                                     &m_imgWarp_[m_imgIndex],
                                                     false,
@@ -209,7 +218,7 @@ bool GtsView::SetupCalibration( const KeyId      camPosId,
         return false;
     }
 
-    if ( !m_calScaled->LoadCameraTransform( camPosId, floorPlanCfg ) )
+    if ( !m_calScaled->LoadCameraTransform( camPosId, floorPlanConfig ) )
     {
         LOG_ERROR("Load camera transform failed!");
 
@@ -230,7 +239,7 @@ bool GtsView::SetupCalibration( const KeyId      camPosId,
 bool GtsView::SetupTracker( RobotTracker::trackerType type,
                             const RobotMetrics&       metrics,
                             const char*               targetFile,
-                            int                       thresh )
+                            int                       biLevelThreshold )
 {
     bool success = false;
 
@@ -241,7 +250,7 @@ bool GtsView::SetupTracker( RobotTracker::trackerType type,
             m_tracker = new KltTracker( m_calScaled,
                                         &metrics,
                                         m_imgWarp[m_imgIndex],
-                                        thresh );
+                                        biLevelThreshold );
             success = m_tracker->LoadTargetImage( targetFile );
             break;
 
@@ -256,7 +265,10 @@ bool GtsView::SetupTracker( RobotTracker::trackerType type,
 /**
     Initialise the video source so that it is ready to supply frames.
 **/
-bool GtsView::SetupVideo( const char* const videoFile, const char* const timestampFile, float shutter, float gain )
+bool GtsView::SetupVideo( const char* const videoFile,
+                          const char* const timestampFile,
+                          float shutter,
+                          float gain )
 {
     Q_UNUSED(shutter);
     Q_UNUSED(gain);

@@ -83,8 +83,6 @@ private:
 
     void Release();
 
-    GtsScene& m_scene;
-
     bool m_step;
     bool m_stop;
     bool m_pause;
@@ -92,10 +90,11 @@ private:
     bool m_paused;
     bool m_forward;
 
-    std::unique_ptr<QThread> m_thread;
+    GtsScene& m_scene;
 
     mutable QMutex m_mutex;
 
+    std::unique_ptr<QThread> m_thread;
 };
 
 #endif // TRACKTHREAD_H
