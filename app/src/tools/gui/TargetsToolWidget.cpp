@@ -194,22 +194,36 @@ void TargetsToolWidget::TargetTypeChanged()
         else
         {
             Message::Show( this,
-                           tr( "Targets Tool" ),
-                           tr( "Error - Failed to save image(s)!" ),
+                           tr( "Target Settings Tool" ),
+                           tr( "Error - Failed to save)!" ),
                            Message::Severity_Critical );
         }
     }
     else
     {
         Message::Show( this,
-                       tr( "Targets Tool" ),
-                       tr( "Error - Save Workbench First!" ),
+                       tr( "Target Settings Tool" ),
+                       tr( "Error - Save Workbench!" ),
                        Message::Severity_Critical );
     }
 }
 
 void TargetsToolWidget::BrowseTargetImage( const KeyName& keyName )
 {
+    // Make sure folder is there before adding file...
+    const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "targetImage/" ) );
+    const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
+
+    if (!mkPathSuccessful)
+    {
+        Message::Show( this,
+                       tr( "Target Settings Tool" ),
+                       tr( "Error - Missing folder!"),
+                       Message::Severity_Critical );
+        return;
+    }
+
+    // Display file selection dialog...
     FileDialogs::ExtendedFileDialog fileDialog( this,
                                                 tr( "Select Target File" ),
                                                 GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),
