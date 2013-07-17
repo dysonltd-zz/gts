@@ -132,6 +132,7 @@ private slots:
     void StepButtonClicked();
     void StepBackButtonClicked();
     void ScanBackButtonClicked();
+    void ScanForwardButtonClicked();
     void StopButtonClicked();
 
     void TrackLoadButtonClicked();
