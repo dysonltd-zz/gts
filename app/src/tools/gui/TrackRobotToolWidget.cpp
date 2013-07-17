@@ -996,6 +996,7 @@ void TrackRobotToolWidget::ThreadFinished()
 {
     m_running = false;
     m_playing = false;
+
     m_tracking = false;
 
     Stopped();
@@ -1194,21 +1195,19 @@ bool TrackRobotToolWidget::CreateRunResultDirectory(const WbConfig& config)
 
     if ( !resultDirParent.cdUp() )
     {
-        QMessageBox::critical( 0,
-                               QObject::tr( "Error" ),
-                               QObject::tr( "Run directory (%1) does not exist - "
-                                            "please save your workbench first." )
-                                        .arg(resultDirParent.absolutePath()));
+        Message::Show( this,
+                       tr( "Robot Tracking Tool" ),
+                       tr( "Error - Save Workbench!" ),
+                       Message::Severity_Critical );
+
         return false;
     }
 
     if (resultDirParent.exists( resultDirName ))
     {
         QMessageBox mb;
-        mb.setText(QObject::tr("Warning"));
-        mb.setInformativeText(QObject::tr( "You have already performed analysis for this workbench -- "
-                                           "if you continue, you will overwrite the previous data (%1)")
-                                       .arg(resultDirParent.absoluteFilePath(resultDirName)));
+        mb.setText(QObject::tr("Robot Tracking Tool"));
+        mb.setInformativeText(QObject::tr( "Query - Overwrite data?"));
         mb.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         int ret = mb.exec();
 
@@ -1222,10 +1221,11 @@ bool TrackRobotToolWidget::CreateRunResultDirectory(const WbConfig& config)
 
     if ( !resultDirParent.mkdir( resultDirName ) || !resultDirParent.cd( resultDirName ))
     {
-        QMessageBox::critical( 0,
-                               QObject::tr( "Error" ),
-                               QObject::tr( "Could not create results directory %1" )
-                                        .arg(resultDirParent.absoluteFilePath(resultDirName)));
+        Message::Show( this,
+                       tr( "Robot Tracking Tool" ),
+                       tr( "Error - Missing folder!" ),
+                       Message::Severity_Critical );
+
         return false;
     }
 

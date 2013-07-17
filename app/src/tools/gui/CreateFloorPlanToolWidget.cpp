@@ -1633,6 +1633,19 @@ void CreateFloorPlanToolWidget::CaptureCancelBtnClicked()
 
 void CreateFloorPlanToolWidget::FromFileBtnClicked()
 {
+    // Make sure folder is there before adding file...
+    const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImage/" ) );
+    const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
+
+    if (!mkPathSuccessful)
+    {
+        Message::Show( this,
+                       tr( "Create Floor Plan Tool" ),
+                       tr( "Error - Missing folder!"),
+                       Message::Severity_Critical );
+        return;
+    }
+
     WbConfig config = GetCurrentConfig();
 
     m_camPosId1 = KeyId(GetCamera1Id());
@@ -1646,6 +1659,7 @@ void CreateFloorPlanToolWidget::FromFileBtnClicked()
     if ( !m_camPosId1.isEmpty() &&
          !m_camPosId2.isEmpty() )
     {
+        // Display file selection dialog...
         FileDialogs::ExtendedFileDialog fileDialog( this,
                                                     tr( "Select Image File" ),
                                                     config.GetAbsoluteFileInfo().absolutePath(),

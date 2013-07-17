@@ -151,6 +151,20 @@ void CalibratePositionToolWidget::SetCalibrationImage( const QString& imageName,
 
 void CalibratePositionToolWidget::FromFileBtnClicked()
 {
+    // Make sure folder is there before adding file...
+    const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImage/" ) );
+    const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
+
+    if (!mkPathSuccessful)
+    {
+        Message::Show( this,
+                       tr( "Calibrate Position Tool" ),
+                       tr( "Error - Missing folder!"),
+                       Message::Severity_Critical );
+        return;
+    }
+
+    // Display file selection dialog...
     FileDialogs::ExtendedFileDialog fileDialog( this,
                                                 tr( "Select Image File" ),
                                                 GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),

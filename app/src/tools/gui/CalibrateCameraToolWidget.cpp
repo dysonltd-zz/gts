@@ -170,6 +170,20 @@ void CalibrateCameraToolWidget::ImageTableItemChanged(QTableWidgetItem* current,
 
 void CalibrateCameraToolWidget::FromFileClicked()
 {
+    // Make sure folder is there before adding file...
+    const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImages/" ) );
+    const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
+
+    if (!mkPathSuccessful)
+    {
+        Message::Show( this,
+                       tr( "Calibrate Camera Tool" ),
+                       tr( "Error - Missing folder!"),
+                       Message::Severity_Critical );
+        return;
+    }
+
+    // Display file selection dialog...
     FileDialogs::ExtendedFileDialog fileDialog( this,
                                                 tr( "Select Image(s) to Add" ),
                                                 GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),
