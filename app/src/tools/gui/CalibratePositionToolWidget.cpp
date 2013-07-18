@@ -121,7 +121,7 @@ void CalibratePositionToolWidget::CalibrateBtnClicked()
 
     if ( calibrationSuccessful )
     {
-        progressDialog->Complete( tr( "Calibration Successful" ),
+        progressDialog->Complete( tr( "Position Calibration Successful" ),
                                   tr( "The position has been calibrated." ) );
     }
     else
@@ -129,8 +129,8 @@ void CalibratePositionToolWidget::CalibrateBtnClicked()
         progressDialog->ForceClose();
 
         Message::Show( 0,
-                       tr( "Calibrate Position Tool" ),
-                       tr( "Error - Please see log for details!" ),
+                       tr( "Position Calibration Tool" ),
+                       tr( "See the log for details!" ),
                        Message::Severity_Critical );
     }
 }
@@ -158,8 +158,8 @@ void CalibratePositionToolWidget::FromFileBtnClicked()
     if (!mkPathSuccessful)
     {
         Message::Show( this,
-                       tr( "Calibrate Position Tool" ),
-                       tr( "Error - Missing folder!"),
+                       tr( "Position Calibration Tool" ),
+                       tr( "Error - Folder is missing!"),
                        Message::Severity_Critical );
         return;
     }

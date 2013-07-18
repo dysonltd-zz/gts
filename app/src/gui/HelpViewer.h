@@ -19,16 +19,8 @@
 #ifndef HELPVIEWER_H
 #define HELPVIEWER_H
 
-#include <QtGui/QWidget>
-#include <QtGui/QToolButton>
-
 #include <QObject>
 #include <QProcess>
-
-namespace Ui
-{
-    class HelpViewer;
-}
 
 enum HelpBookmark
 {
@@ -72,17 +64,13 @@ const QString helpBookmark[ NumHelpBookmarks ] =
 /**
  *  @todo Write help text for each Tool.
  */
-class HelpViewer : public QWidget
+class HelpViewer : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit HelpViewer( QWidget* parent = 0 );
+    explicit HelpViewer();
     ~HelpViewer();
-
-    void SetUiWidget( QWidget* const widget );
-
-    QToolButton* const GetShowHelpBtn() const;
 
     void showPage( const QString &page );
 
@@ -105,15 +93,11 @@ private:
     void showPage( HelpBookmark bookmark );
 
 private:
-	bool             m_help_exec;
-
-    Ui::HelpViewer*  m_ui;
-
-    QToolButton*     m_showHelpBtn;
-
     HelpBookmark     m_pendingBookmark;
 
     QProcess*        m_process_help;
+
+	bool             m_help_exec;
 };
 
 #endif // HELPVIEWER_H

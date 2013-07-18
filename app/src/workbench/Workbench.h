@@ -21,9 +21,10 @@
 
 #include <memory>
 
-#include <QtGui/qtreewidget.h>
-
 #include "WbConfig.h"
+#include "Listener.h"
+
+#include <QtGui/qtreewidget.h>
 #include <QtCore/qfileinfo.h>
 
 class ToolContainer;
@@ -50,6 +51,8 @@ public:
 
     const WbSchema Schema() const;
 
+    const Listener* GetConfigListener() const;
+
 private:
     bool TryWriteConfig( const WbConfig& config );
     void SwitchConfig( const WbConfig& newConfig );
@@ -61,6 +64,7 @@ private:
 
     WbSchema m_schema;
     WbConfig m_workbenchConfig;
+    Listener m_configListener;
 };
 
 #endif // WORKBENCH_H_

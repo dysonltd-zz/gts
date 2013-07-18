@@ -211,7 +211,7 @@ const QString CaptureLiveDualController::CaptureImage( const QImage capturedImag
     else
     {
         Message::Show( &m_toolWidget,
-                       tr( "Capture Live" ),
+                       tr( "Capture Live (Dual) Controller" ),
                        tr( "Error - Cannot write to: %1!")
                            .arg( fileNameToCapture ),
                        Message::Severity_Critical );

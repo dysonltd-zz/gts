@@ -41,5 +41,6 @@
         <file>pauseTrack.png</file>
         <file>playTrack.png</file>
         <file>stepTrack.png</file>
+        <file>save.png</file>
     </qresource>
 </RCC>

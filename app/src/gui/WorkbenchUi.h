@@ -19,16 +19,19 @@
 #ifndef WORKBENCHUI_H
 #define WORKBENCHUI_H
 
+#include "WbPath.h"
+
 #include <QtGui/QWidget>
-#include <memory>
 #include <QtGui/QMenu>
 #include <QtGui/qtreewidget.h>
-#include "WbPath.h"
+
+#include <memory>
 
 namespace Ui
 {
     class WorkbenchUiClass;
 }
+
 class Workbench;
 class CameraHardware;
 class MainWindow;
@@ -47,7 +50,8 @@ public:
     void Reload( const bool updateWorkbench = true );
     void MergeWithActivePath( const WbPath& desiredPath );
     void SetCornerWidget( QWidget* const widget );
-    void SetHelpViewer( HelpViewer& helpViewer );
+
+    QWidget* GetCornerWidget();
 
     bool HasOpenModifiedWorkbench() const;
 
@@ -56,8 +60,11 @@ public slots:
     void NewWorkbench();
     void SaveWorkbench();
 
+    void ConfigChanged();
+
 private slots:
-    void TreeCurrentItemChanged( QTreeWidgetItem *current, QTreeWidgetItem *previous );
+    void TreeCurrentItemChanged( QTreeWidgetItem *current,
+                                 QTreeWidgetItem *previous );
     void TreeSelectionChanged();
 
 private:
@@ -78,11 +85,10 @@ private:
     const QString TryToGetWorkbenchFromInPlaceConfigFile() const;
 
     std::auto_ptr< Ui::WorkbenchUiClass > m_ui;
-    std::auto_ptr< Workbench >            m_workbench;
-    std::auto_ptr< CameraHardware >       m_cameraHardware;
+    std::auto_ptr< Workbench > m_workbench;
+    std::auto_ptr< CameraHardware > m_cameraHardware;
 
     QMenu* m_toolMenu;
-    HelpViewer* m_helpViewer;
     ToolTabsContainerWidget* m_toolTabs;
     QTreeWidgetItem* m_itemToSwitchBackTo;
     WbPath m_activePath;

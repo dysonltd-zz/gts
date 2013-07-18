@@ -1640,8 +1640,8 @@ void CreateFloorPlanToolWidget::FromFileBtnClicked()
     if (!mkPathSuccessful)
     {
         Message::Show( this,
-                       tr( "Create Floor Plan Tool" ),
-                       tr( "Error - Missing folder!"),
+                       tr( "Floor Plan Creation Tool" ),
+                       tr( "Error - Folder is missing!"),
                        Message::Severity_Critical );
         return;
     }

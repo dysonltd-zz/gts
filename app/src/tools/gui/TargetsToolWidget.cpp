@@ -194,7 +194,7 @@ void TargetsToolWidget::TargetTypeChanged()
         else
         {
             Message::Show( this,
-                           tr( "Target Settings Tool" ),
+                           tr( "Target Configuration Tool" ),
                            tr( "Error - Failed to save)!" ),
                            Message::Severity_Critical );
         }
@@ -202,7 +202,7 @@ void TargetsToolWidget::TargetTypeChanged()
     else
     {
         Message::Show( this,
-                       tr( "Target Settings Tool" ),
+                       tr( "Target Configuration Tool" ),
                        tr( "Error - Save Workbench!" ),
                        Message::Severity_Critical );
     }
@@ -217,8 +217,8 @@ void TargetsToolWidget::BrowseTargetImage( const KeyName& keyName )
     if (!mkPathSuccessful)
     {
         Message::Show( this,
-                       tr( "Target Settings Tool" ),
-                       tr( "Error - Missing folder!"),
+                       tr( "Target Configuration Tool" ),
+                       tr( "Error - Folder is missing!"),
                        Message::Severity_Critical );
         return;
     }

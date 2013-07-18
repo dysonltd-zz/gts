@@ -157,11 +157,6 @@ void PostProcessToolWidget::PostProcessButtonClicked()
 
     LOG_TRACE("Post Process...");
 
-    const QString csvFileName(
-         config.GetAbsoluteFileNameFor( "results/track_result_out.csv" ) );
-
-    m_resultsModel->toCSV(csvFileName, true, ',');
-
     bool successful = true;
 
     Collection m_rooms = RoomsCollection();
@@ -209,6 +204,8 @@ void PostProcessToolWidget::PostProcessButtonClicked()
         const QString trackerResultsImgFile(
                     runConfig.GetAbsoluteFileNameFor( "results/track_result_img_out.png" ) );
 
+        m_resultsModel->toCSV(trackerResultsName, true, ',');
+
         if ( successful )
         {
             UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
@@ -220,7 +217,6 @@ void PostProcessToolWidget::PostProcessButtonClicked()
                                                       coverageIncrementName.toAscii().data(),    // coverageFile
                                                       floorPlanName.toAscii().data(),            // floorPlanFile
                                                       floorMaskName.toAscii().data(),            // floorMaskFile
-//                                                    ex.GetRobotMetricsFile().toAscii().data(), // robotMetricsFile
                                                       coverageRelativeName.toAscii().data(),     // relativeLogFile
                                                       pixelOffsetsName.toAscii().data(),         // pixelOffsetsFile
                                                       coverageMissedName.toAscii().data(),
@@ -234,16 +230,16 @@ void PostProcessToolWidget::PostProcessButtonClicked()
 
             if ( successful )
             {
-                progressDialog->Complete( tr( "Processing Successful" ),
-                                          tr( "Results have been computed.\n" ) );
+                progressDialog->Complete( tr( "Post Processing Successful" ),
+                                          tr( "Results have been computed." ) );
             }
             else
             {
                 progressDialog->ForceClose();
 
                 Message::Show( 0,
-                               tr( "Post-Processing" ),
-                               tr( "Error - Please see log for details!" ),
+                               tr( "Post Processing Failed" ),
+                               tr( "See the log for details!" ),
                                Message::Severity_Critical );
             }
         }
@@ -316,8 +312,8 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
             Sweeper newSweeper( sweeperFile );
             sweepers.push_back( newSweeper );
 
-            LOG_INFO(QObject::tr("Read sweeper (%1) data from '%2'.").arg(sweepers.size())
-                                                                     .arg(sweeperName));
+            LOG_INFO(QObject::tr("Read sweeper (%1) data from %2.").arg(sweepers.size())
+                                                                   .arg(sweeperName));
 
             LOG_INFO(QObject::tr("x = %1, y = %2, angle = %3, width = %4.").arg(newSweeper.x)
                                                                            .arg(newSweeper.y)
@@ -366,7 +362,7 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
 
         if ( !TrackHistory::ReadHistoryCsv( trackerResultsFile, avg ) )
         {
-            LOG_ERROR(QObject::tr("Could not load track log from '%s'!").arg(trackerResultsFile));
+            LOG_ERROR(QObject::tr("Could not load track log from %1!").arg(trackerResultsFile));
 
             return ExitStatus::ERRORS_OCCURRED;
         }
@@ -380,35 +376,46 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
             TrackHistory::WriteHistoryLog( relativeLogFile, rel);
         }
 
-        IplImage* compImgCol = cvLoadImage( floorPlanFile );
+        IplImage* compImgCol = NULL;
+
+        if ( floorPlanFile )
+        {
+            compImgCol = cvLoadImage( floorPlanFile );
+        }
+
+        if ( !compImgCol )
+        {
+            LOG_ERROR("Could not load floor plan image!");
+
+            return ExitStatus::ERRORS_OCCURRED;
+        }
+
         IplImage* compImg = cvCreateImage( cvSize( compImgCol->width,
                                                    compImgCol->height), IPL_DEPTH_8U, 1 );
-        cvConvertImage( compImgCol, compImg ); // colour copy of composite image
+        // Colour copy of composite image.
+        cvConvertImage( compImgCol, compImg );
 
         IplImage* headingImg = cvCreateImage( cvSize( compImgCol->width,
                                                       compImgCol->height), IPL_DEPTH_8U, 1 );
-        cvConvertImage( compImgCol, headingImg ); // colour copy of composite image
+        // Colour copy of composite image.
+        cvConvertImage( compImgCol, headingImg );
 
         LOG_TRACE("Successfully read all inputs, processing...");
 
-        // Segmentation and coverage
+        // Segmentation and coverage.
         TrackHistory::TrackLog avgPx = avg;
 
-        // Setup floor-coverage system
+        // Setup floor-coverage system...
         CoverageSystem coverage( cvSize( compImg->width, compImg->height ) );
 
         if ( floorMaskFile )
         {
             coverage.LoadFloorMask( floorMaskFile );
         }
-        else
-        {
-            assert( false );
-        }
 
         if ( coverage.GetFloorMask() )
         {
-            // Create a fake tracker - only to compute brushbar dimensions
+            // Create a fake tracker - only to compute brush bar dimensions
             LOG_INFO("TRACKER WARNINGS WHICH FOLLOW CAN BE SAFELY IGNORED.");
 
             const RobotTracker* tracker = new KltTracker( 0, &metrics, 0, 0 );
@@ -432,10 +439,13 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
                 float dy = curr.y - prev.y;
                 travelledDistance += sqrtf( dx*dx + dy*dy );
 
+                // Time in seconds at this point...
                 double dt = avgPx[p].GetTimeStamp() -
-                            avgPx[p-1].GetTimeStamp(); // in seconds at this point
+                            avgPx[p-1].GetTimeStamp();
 
-                if ( std::abs(dt) < 0.75 ) // Pairs must be close enough that there was no track loss between them
+                 // Pairs must be close enough that there
+                 // was no loss of tracking between them.
+                if ( std::abs(dt) < 0.75 )
                 {
                     // Compute brush bar position in the previous and current frames
                     float heading = avgPx[p-1].GetOrientation();
@@ -455,7 +465,7 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
                             3,
                             CV_AA );
 
-                    // Do coverage updates for any sweepers:
+                    // Do coverage updates for any sweepers...
                     for ( unsigned int i=0 ;i<sweepers.size(); ++i )
                     {
                         heading = avgPx[p-1].GetOrientation();
@@ -472,7 +482,8 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
 
                 if ( incCoverageFile )
                 {
-                    // only write incremental time if enough enough time has elasped since the last update
+                    // Only write incremental time if enough
+                    // time has elasped since the last update
                     double tDelta = avgPx[p].GetTimeStamp() - lastIncTime;
 
                     if ( tDelta >= incTimeStep )
@@ -494,8 +505,9 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
 
             LOG_INFO(QObject::tr("Missed pixels: %d.").arg(missCount));
 
-            // Create a coloured map indicating repeated coverage:
-            cvConvertImage( compImg, compImgCol ); // reset colour copy of composite image
+            // Create a coloured map to
+            // indicate repeated coverage.
+            cvConvertImage( compImg, compImgCol );
             coverage.CreateColouredMap();
             coverage.DrawMap( compImgCol );
 
@@ -504,9 +516,9 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
 
             coverage.CoverageHistogram( coverageHistogramFile );
 
-            // save the raw coverage-mask as a file, where each pixel
-            // value represents the number of passes made over that
-            // location in this run...
+            // Save the raw coverage-mask as a file, where
+            // each pixel value represents the number of
+            // passes made over that location in this run...
 #if 0
             char maskName[MAX_PATH] = "";
             sprintf( maskName, coverageRawFile, time(0) );
@@ -523,14 +535,16 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
 
             delete tracker;
         }
+        else
+        {
+            LOG_WARN("No coverage results computed!");
+        }
 
         cvReleaseImage( &compImg );
         cvReleaseImage( &headingImg );
         cvReleaseImage( &compImgCol );
 
-
         PlotTrackLog( avg, floorPlanFile, trackerResultsImgFile );
-
 
         LOG_TRACE("Finished.");
     }
@@ -573,7 +587,7 @@ void PostProcessToolWidget::PlotTrackLog( TrackHistory::TrackLog& log,
                           1,
                           timeThresh );
 
-    // Write composite image to file
+    // Write composite image to file...
     cvSaveImage( trackerResultsImgFile, compImgCol );
 
     // Clean up...

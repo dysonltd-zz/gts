@@ -20,10 +20,13 @@
 #define WBCONFIG_H
 
 #include "WbSchema.h"
+#include "Listener.h"
+
 #include <QtCore/qstringlist.h>
 #include <QtCore/qfileinfo.h>
 #include <QtCore/qsharedpointer.h>
 #include <QtGui/qtreewidget.h>
+
 #include <memory>
 #include <map>
 
@@ -109,6 +112,8 @@ public:
     const KeyId FindSubConfigId( const WbConfig& subconfig ) const;
     const WbConfig GetFromPath( const WbPath& path ) const;
 
+    void SetListener( Listener* listener );
+
 private:
     void SetParent( WbConfig& parent );
     void Clear();
@@ -139,6 +144,7 @@ private:
         mutable QTreeWidgetItem*   m_treeWidgetItem;
         mutable bool               m_modified;
         const GloballyUniqueId     m_id;
+        std::auto_ptr< Listener >  m_listener;
 
     private:
         WbConfigData( const WbConfigData& );

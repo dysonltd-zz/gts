@@ -254,7 +254,7 @@ void AnalyseResultsWidget::AnalyseResultsButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Analyse Results...");
+    LOG_TRACE("Analysing Results...");
 
     bool successful = true;
 
@@ -287,7 +287,6 @@ void AnalyseResultsWidget::AnalyseResultsButtonClicked()
 
     if (successful)
     {
-
         QTemporaryFile tmpFile( QDir::tempPath() + "/files.txt");
 
         successful = tmpFile.open();
@@ -358,16 +357,16 @@ void AnalyseResultsWidget::AnalyseResultsButtonClicked()
 
                     if ( successful )
                     {
-                        progressDialog->Complete( tr( "Analysis Successful" ),
-                                                  tr( "Results have been computed.\n" ) );
+                        progressDialog->Complete( tr( "Results Analysis Successful" ),
+                                                  tr( "Results have been computed." ) );
                     }
                     else
                     {
                         progressDialog->ForceClose();
 
                         Message::Show( 0,
-                                       tr( "Analyse Results Tool" ),
-                                       tr( "Error - Please see log for details!" ),
+                                       tr( "Results Analysis Failed" ),
+                                       tr( "See the log for details!" ),
                                        Message::Severity_Critical );
                     }
                 }
@@ -376,15 +375,15 @@ void AnalyseResultsWidget::AnalyseResultsButtonClicked()
 	    else
         {
 		    QMessageBox::critical(this,
-                                  tr( "Ground Truth System" ),
-                                  tr( "Failed to create temporary file!" ));
+                                  tr( "Results Analysis Failed" ),
+                                  tr( "Temporary file missing!" ));
         }
     }
     else
     {
         QMessageBox::critical(this,
-                              tr( "Ground Truth System" ),
-                              tr( "Runs must have same room!" ));
+                              tr( "Results Analysis Failed" ),
+                              tr( "Runs must common room!" ));
     }
 }
 
@@ -407,6 +406,39 @@ const ExitStatus::Flags AnalyseResultsWidget::AnalyseResults( char* floorPlanNam
         floorMaskImg = OpenCvTools::LoadSingleChannelImage( floorMaskName );
     }
 
+    if ( !floorMaskImg )
+    {
+        LOG_ERROR("Could not load floor mask image!");
+
+        return ExitStatus::ERRORS_OCCURRED;
+    }
+
+    IplImage* floorPlanImg = NULL;
+
+    if ( floorPlanName )
+    {
+        floorPlanImg = cvLoadImage( floorPlanName );
+    }
+
+    if ( !floorPlanImg )
+    {
+        LOG_ERROR("Could not load floor plan image!");
+
+        cvReleaseImage( &floorMaskImg );
+
+        return ExitStatus::ERRORS_OCCURRED;
+    }
+    else if ((floorPlanImg->width != floorMaskImg->width) ||
+             (floorPlanImg->height != floorMaskImg->height))
+    {
+        LOG_ERROR("Floor plan and mask sizes differ!");
+
+        cvReleaseImage( &floorMaskImg );
+        cvReleaseImage( &floorPlanImg );
+
+        return ExitStatus::ERRORS_OCCURRED;
+    }
+
     std::vector<std::string> fileNames;
 
     FILE* f = fopen( overlayListFileName, "r" );
@@ -416,63 +448,33 @@ const ExitStatus::Flags AnalyseResultsWidget::AnalyseResults( char* floorPlanNam
         char fileName[MAX_PATH];
         if ( fgets( fileName, sizeof(fileName), f ) )
         {
-            // strip trailing newline
+            // Strip trailing newline
             const size_t len = strlen( fileName );
             fileName[len-1] = '\0';
             fileNames.push_back(fileName);
         }
     }
 
-    if ( !floorPlanName )
-    {
-        LOG_ERROR("No floor-plan image supplied!");
-        return false;
-    }
-
-    if ( !floorMaskImg )
-    {
-        LOG_ERROR("No floor-mask image supplied!");
-        return false;
-    }
-
     if ( fileNames.size() == 0 )
     {
-        LOG_ERROR("No raw-coverage images supplied!");
-        return false;
+        LOG_WARN("No coverage images supplied!");
     }
 
-    // number of non-zero pixels in floor-mask is total number of
-    // pixels of 'interest' i.e. the area we are looking at
+    // Number of non-zero pixels in floor mask is total number of
+    // pixels of interest - the size of the area we are looking at.
     const int nTotalPixels = floorMaskImg->width * floorMaskImg->height;
     const int nFloorPixels = cvCountNonZero( floorMaskImg );
 
-    LOG_INFO(QObject::tr("Total pixels (WxH) = %1, Total floor pixels = %2.").arg(nTotalPixels)
-                                                                             .arg(nFloorPixels));
+    LOG_INFO(QObject::tr("Total pixels (WxH) = %1.").arg(nTotalPixels));
+    LOG_INFO(QObject::tr("Total floor pixels = %2.").arg(nFloorPixels));
 
-    IplImage* floorPlanImg = cvLoadImage( floorPlanName );
+    // Overlay floor mask onto floor image...
+    OpenCvTools::DrawColouredOverlay( floorPlanImg,
+                                      floorMaskImg,
+                                      CV_RGB(100,0,0),
+                                      std::bind2nd(std::equal_to<int>(), 255) );
 
-    if ( !floorPlanImg )
-    {
-        LOG_ERROR("Could not load floor-plan image!");
-    }
-    else if ((floorPlanImg->width != floorMaskImg->width) ||
-             (floorPlanImg->height != floorMaskImg->height))
-    {
-        LOG_ERROR("Floor-plan and floor-mask sizes differ!");
-
-        cvReleaseImage( &floorPlanImg );
-    }
-
-    if ( floorPlanImg )
-    {
-        // overlay floor-mask onto floor image
-        OpenCvTools::DrawColouredOverlay( floorPlanImg,
-                                          floorMaskImg,
-                                          CV_RGB(100,0,0),
-                                          std::bind2nd(std::equal_to<int>(), 255) );
-    }
-
-    // keep track of total coverage counts in a separate map
+    // Keep track of total coverage counts in a separate map...
     IplImage* totalCoverageImg = cvCreateImage( cvSize( floorMaskImg->width,
                                                         floorMaskImg->height), IPL_DEPTH_8U, 1 );
     cvZero( totalCoverageImg );
@@ -487,62 +489,55 @@ const ExitStatus::Flags AnalyseResultsWidget::AnalyseResults( char* floorPlanNam
         LOG_INFO(QObject::tr("Run: %1 (file: %2).").arg(++run)
                                                    .arg(i->c_str()));
 
-        // load the coverage-mask, limit it to the floor-mask area
+        // Load the coverage mask, limit it to the floor mask area...
         IplImage* coverageMaskImg = OpenCvTools::LoadSingleChannelImage( i->c_str() );
 
         if ((coverageMaskImg->height != floorMaskImg->height) ||
             (coverageMaskImg->width != floorMaskImg->width))
         {
-            LOG_ERROR(QObject::tr("Image %1 is different size to floor-mask!").arg(i->c_str()));
+            LOG_ERROR(QObject::tr("Coverage image (%1) and floor mask sizes differ!").arg(i->c_str()));
 
             cvReleaseImage( &coverageMaskImg );
             continue;
         }
 
-        // constrain coverage to floor-mask area
+        // Constrain coverage to the floor mask area...
         cvAnd( coverageMaskImg, floorMaskImg, coverageMaskImg );
 
-        // add this coverage to the total
+        // Add this coverage to the total...
         cvAdd( coverageMaskImg, totalCoverageImg, totalCoverageImg );
 
         PrintCsvLineForCurrentPass(fp, run, totalCoverageImg, maxLevel, nFloorPixels);
 
-        // clean up...
+        // Clean up...
         cvReleaseImage( &coverageMaskImg );
     }
 
-    // update floor-plan image with total coverage
-    if ( floorPlanImg )
-    {
-        for (int level = 1; level < maxLevel; ++level)
-        {
-            OpenCvTools::DrawColouredOverlay( floorPlanImg,
-                                              totalCoverageImg,
-                                              CV_RGB(0,level*40,0),
-                                              std::bind2nd(std::equal_to<int>(), level) );
-        }
+    // Update floor plan image with total coverage.
 
+    for (int level = 1; level < maxLevel; ++level)
+    {
         OpenCvTools::DrawColouredOverlay( floorPlanImg,
                                           totalCoverageImg,
-                                          CV_RGB(0,255,0),
-                                          std::bind2nd(std::greater_equal<int>(), maxLevel) );
+                                          CV_RGB(0,level*40,0),
+                                          std::bind2nd(std::equal_to<int>(), level) );
     }
 
-    // clean up...
+    OpenCvTools::DrawColouredOverlay( floorPlanImg,
+                                      totalCoverageImg,
+                                      CV_RGB(0,255,0),
+                                      std::bind2nd(std::greater_equal<int>(), maxLevel) );
+
+    // Clean up...
     if ( f ) { fclose( f ); }
     if ( fp ) { fclose( fp ); }
 
-    if ( floorPlanImg )
-    {
-        cvSaveImage( totalCoverageImgName, floorPlanImg );
+    cvSaveImage( totalCoverageImgName, floorPlanImg );
 
-        cvReleaseImage( &floorPlanImg );
-    }
+    cvReleaseImage( &floorMaskImg );
+    cvReleaseImage( &floorPlanImg );
 
-    if ( floorMaskImg )
-    {
-        cvReleaseImage( &floorMaskImg );
-    }
+    LOG_TRACE("Finished.");
 
     return exitStatus;
 }
@@ -557,21 +552,18 @@ bool AnalyseResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
 
     if ( !resultDirParent.cdUp() )
     {
-        QMessageBox::critical( 0,
-                               QObject::tr( "Error" ),
-                               QObject::tr( "Results directory parent (%1) does not exist -- "
-                                            "please save your workbench first." )
-                                        .arg(resultDirParent.absolutePath()));
+        Message::Show( this,
+                       tr( "Track Results Analysis" ),
+                       tr( "Error - Save Workbench!" ),
+                       Message::Severity_Critical );
         return false;
     }
 
     if (resultDirParent.exists( resultDirName ))
     {
         QMessageBox mb;
-        mb.setText(QObject::tr("Warning"));
-        mb.setInformativeText(QObject::tr( "You have already performed analysis for this workbench -- "
-                                           "if you continue, you will overwrite the previous data (%1)")
-                                       .arg(resultDirParent.absoluteFilePath(resultDirName)));
+        mb.setText(QObject::tr("Track Results Analysis"));
+        mb.setInformativeText(QObject::tr( "Query - Overwrite data?"));
         mb.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         int ret = mb.exec();
 
@@ -585,10 +577,10 @@ bool AnalyseResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
 
     if ( !resultDirParent.mkdir( resultDirName ) || !resultDirParent.cd( resultDirName ))
     {
-        QMessageBox::critical( 0,
-                               QObject::tr( "Error" ),
-                               QObject::tr( "Could not create results directory %1" )
-                                        .arg(resultDirParent.absoluteFilePath(resultDirName)));
+        Message::Show( this,
+                       tr( "Track Results Analysis" ),
+                       tr( "Error - Missing folder!" ),
+                       Message::Severity_Critical );
         return false;
     }
 

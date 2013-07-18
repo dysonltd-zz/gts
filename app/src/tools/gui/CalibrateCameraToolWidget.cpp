@@ -177,8 +177,8 @@ void CalibrateCameraToolWidget::FromFileClicked()
     if (!mkPathSuccessful)
     {
         Message::Show( this,
-                       tr( "Calibrate Camera Tool" ),
-                       tr( "Error - Missing folder!"),
+                       tr( "Camera Calibration Tool" ),
+                       tr( "Error - Folder is missing!"),
                        Message::Severity_Critical );
         return;
     }
@@ -239,9 +239,9 @@ void CalibrateCameraToolWidget::CalibrateBtnClicked()
 
     if ( calibrationSuccessful )
     {
-        progressDialog->Complete( tr( "Calibration Successful" ),
+        progressDialog->Complete( tr( "Camera Calibration Successful" ),
                                   tr( "The camera has been calibrated.\n"
-                                      "Average reprojection error was: %1." )
+                                      "Average reprojection error is: %1." )
                                       .arg( GetCurrentConfig()
                                             .GetKeyValue( CalibrationSchema::avgReprojectionErrorKey )
                                             .ToDouble() ) );
@@ -251,8 +251,8 @@ void CalibrateCameraToolWidget::CalibrateBtnClicked()
         progressDialog->ForceClose();
 
         Message::Show( 0,
-                       tr( "Calibrate Camera Tool" ),
-                       tr( "Error - Please see log for details!" ),
+                       tr( "Camera Calibration Tool" ),
+                       tr( "See the log for details!" ),
                        Message::Severity_Critical );
     }
 }

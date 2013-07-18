@@ -18,31 +18,15 @@
 
 #include "HelpViewer.h"
 
-#include "ui_HelpViewer.h"
-
 #include <QApplication>
 
 #include <QtGlobal>
 
 #define HELP_FILE "gts_userguide.qhc"
 
-HelpViewer::HelpViewer( QWidget *parent ) :
-    QWidget           ( parent ),
-    m_ui              ( new Ui::HelpViewer ),
-    m_showHelpBtn     (),
+HelpViewer::HelpViewer() :
     m_pendingBookmark ( HELP_INVALID )
 {
-    m_ui->setupUi(this);
-
-    m_showHelpBtn = new QToolButton( this );
-    m_showHelpBtn->setIcon( QIcon( ":/help.png" ) );
-    m_showHelpBtn->setPopupMode(QToolButton::InstantPopup);
-
-    QObject::connect( m_showHelpBtn,
-	                  SIGNAL( clicked() ),
-                      this,
-			          SLOT( ShowHelpClicked() ) );
-
 #if 0
     m_process_help = new QProcess(this);
 #endif
@@ -63,21 +47,6 @@ HelpViewer::HelpViewer( QWidget *parent ) :
 
 HelpViewer::~HelpViewer()
 {
-    delete m_ui;
-}
-
-QToolButton* const HelpViewer::GetShowHelpBtn() const
-{
-    return m_showHelpBtn;
-}
-
-void HelpViewer::SetUiWidget( QWidget* const widget )
-{
-    delete m_ui->containerWidget->layout();
-    QHBoxLayout* layout = new QHBoxLayout;
-    layout->addWidget( widget );
-    layout->setContentsMargins( 0, 0, 0, 0 );
-    m_ui->containerWidget->setLayout( layout );
 }
 
 void HelpViewer::ShowHelpClicked()

@@ -17,19 +17,22 @@
  */
 
 #include "Workbench.h"
-#include <iostream>
-#include "ToolTabsContainerWidget.h"
+
 #include "WbSchema.h"
+#include "ToolTabsContainerWidget.h"
 #include "XmlConfigFileReader.h"
-#include <QtGui/QMessageBox>
 #include "XmlConfigFileWriter.h"
 #include "Message.h"
 
+#include <QtGui/QMessageBox>
+
+#include <iostream>
+
 Workbench::Workbench( QTreeWidget& treeWidget, ToolContainer& toolContainer ) :
-    m_treeWidget( treeWidget ),
-    m_toolContainer( toolContainer ),
-    m_handlerTools(),
-    m_workbenchConfig()
+    m_treeWidget      ( treeWidget ),
+    m_toolContainer   ( toolContainer ),
+    m_handlerTools    (),
+    m_workbenchConfig ()
 {
 }
 
@@ -64,6 +67,7 @@ bool Workbench::New( const QFileInfo& configFileInfo )
     {
         SwitchConfig( newConfig );
     }
+
     return successful;
 }
 
@@ -87,13 +91,17 @@ const WbSchema Workbench::Schema() const
 void Workbench::ReloadConfig()
 {
     m_treeWidget.clear();
+
     m_workbenchConfig.AddTo( m_treeWidget );
 }
 
 void Workbench::SwitchConfig( const WbConfig& newConfig )
 {
     m_workbenchConfig = newConfig;
+
     ReloadConfig();
+
+    m_workbenchConfig.SetListener( &m_configListener );
 }
 
 bool Workbench::ActivateToolFor( const QTreeWidgetItem& newItem )
@@ -120,4 +128,9 @@ void Workbench::SetSchema( const WbSchema& newSchema )
 const WbConfig Workbench::GetCurrentConfig() const
 {
     return m_workbenchConfig;
+}
+
+const Listener* Workbench::GetConfigListener() const
+{
+    return &m_configListener;
 }

@@ -21,11 +21,10 @@
 #include "ui_MainWindow.h"
 
 #include "WorkbenchUi.h"
-
 #include "HelpViewer.h"
-
 #include "AboutDialog.h"
 
+#include <QtGui/QToolButton>
 #include <QtGui/QMessageBox>
 #include <QtGui/qevent.h>
 
@@ -49,12 +48,11 @@ namespace
     }
 }
 
-MainWindow::MainWindow( QWidget* parent )
-    :
-    QMainWindow( parent ),
-    m_ui( new Ui::MainWindow ),
-    m_workbenchUi( ),
-    m_helpViewer( new HelpViewer )
+MainWindow::MainWindow( QWidget* parent ) :
+    QMainWindow   ( parent ),
+    m_ui          ( new Ui::MainWindow ),
+    m_helpViewer  ( new HelpViewer ),
+    m_workbenchUi ()
 {
     m_ui->setupUi( this );
 }
@@ -67,15 +65,18 @@ void MainWindow::Start()
 
     m_workbenchUi = new WorkbenchUi( *this );
     m_workbenchUi->SetToolMenu( *m_ui->m_toolMenu );
-    m_workbenchUi->SetHelpViewer( *m_helpViewer );
-    m_helpViewer->SetUiWidget( m_workbenchUi );
-    m_workbenchUi->SetCornerWidget( m_helpViewer->GetShowHelpBtn() );
+
+    m_cornerButton = new QToolButton();
+    m_cornerButton->setIcon( QIcon( ":/save.png" ) );
+    m_cornerButton->setPopupMode(QToolButton::InstantPopup);
+
+    m_workbenchUi->SetCornerWidget( m_cornerButton );
 
     QLayout* centralLayout = m_ui->m_centralwidget->layout();
     assert( centralLayout );
     if ( centralLayout )
     {
-      centralLayout->addWidget( m_helpViewer );
+        centralLayout->addWidget( m_workbenchUi );
     }
 
     QObject::connect( m_ui->actionE_xit,
@@ -108,6 +109,11 @@ void MainWindow::Start()
                       this,
                       SLOT( ShowAboutQt() ) );
 
+    QObject::connect( m_cornerButton,
+	                  SIGNAL( clicked() ),
+                      m_workbenchUi,
+	                  SLOT( SaveWorkbench() ) );
+
     m_workbenchUi->Reload();
 
     show();
@@ -115,6 +121,11 @@ void MainWindow::Start()
 
 MainWindow::~MainWindow()
 {
+    delete m_helpViewer;
+    delete m_cornerButton;
+
+    delete m_workbenchUi;
+
     delete m_ui;
 }
 
@@ -122,7 +133,6 @@ void MainWindow::ShowHelp()
 {
     m_helpViewer->Show();
 }
-
 
 void MainWindow::ShowAboutGTS()
 {

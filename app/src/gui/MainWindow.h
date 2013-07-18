@@ -27,6 +27,7 @@
 
 class WorkbenchUi;
 class HelpViewer;
+class QToolButton;
 
 namespace Ui
 {
@@ -58,7 +59,8 @@ private:
     Ui::MainWindow* m_ui;
 
     WorkbenchUi* m_workbenchUi;
-    HelpViewer* m_helpViewer;
+    HelpViewer*  m_helpViewer;
+    QToolButton* m_cornerButton;
 };
 
 #endif // MAINWINDOW_H

@@ -761,8 +761,8 @@ void TrackRobotToolWidget::TrackLoadButtonClicked()
             progressDialog->ForceClose();
 
             Message::Show( 0,
-                           tr( "Track Robot Tool" ),
-                           tr( "Error - Please see log for details!" ),
+                           tr( "Robot Tracking Tool" ),
+                           tr( "See the log for details!" ),
                            Message::Severity_Critical );
         }
     }

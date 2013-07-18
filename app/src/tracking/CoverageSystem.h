@@ -68,8 +68,9 @@ public:
 
 private:
 
-	IplImage* m_mask;
+	IplImage* m_cvgMask;
 	IplImage* m_floorMask;
+
 	unsigned int m_floorPixels;
 
 	IplImage* m_inOutMask;

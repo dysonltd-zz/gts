@@ -71,8 +71,7 @@ WbConfig::WbConfig()
  *  @param schema The schema followed by this config file.
  *  @param fileInfo The location of the config file on disk.
  */
-WbConfig::WbConfig( const WbSchema& schema, const QFileInfo& fileInfo )
-    :
+WbConfig::WbConfig( const WbSchema& schema, const QFileInfo& fileInfo ) :
     m_internalData( new WbConfigData )
 {
     globalRegister[ QueryData().m_id ] = *this; /// @todo We never clear this register so it
@@ -91,7 +90,6 @@ WbConfig::~WbConfig()
 
 //------------------------------------------------
 
-
 /** @brief Create a sub-config file for the key specified.
  *
  *  @param name The name of sub-schema, and the key where the sub config will be stored.
@@ -108,6 +106,7 @@ WbConfig WbConfig::CreateSubConfig( const KeyName& name,
     {
         WbConfig subConfig( QueryData().m_schema.FindSubSchema( name ), QFileInfo( fileName ) );
         subConfig.SetParent( *this );
+        subConfig.SetListener( QueryData().m_listener.get() );
         ModifyData().m_subConfigs.SetKeyValue( name, subConfig, id );
         return subConfig;
     }
@@ -185,6 +184,7 @@ WbConfig::GetAbsoluteFileInfoFor( const QFileInfo& possiblyRelativeFileInfo ) co
             absoluteFileInfo.setFile( QDir::cleanPath( absoluteFileInfo.filePath() ) );
         }
     }
+
     return absoluteFileInfo;
 }
 
@@ -205,12 +205,14 @@ const QString
 WbConfig::GetAbsoluteFileNameFor( const QString& possiblyRelativeFileName ) const
 {
     QString absoluteFileName( possiblyRelativeFileName );
+
     if ( !IsNull() && !possiblyRelativeFileName.isEmpty() )
     {
         const QFileInfo possiblyRelativeFileInfo( possiblyRelativeFileName );
         const QFileInfo absoluteFileInfo( GetAbsoluteFileInfoFor( possiblyRelativeFileInfo ) );
         absoluteFileName = absoluteFileInfo.absoluteFilePath();
     }
+
     return absoluteFileName;
 }
 
@@ -255,7 +257,6 @@ void WbConfig::RemoveOldKeys( const KeyName& keyName,
         }
     }
 }
-
 
 /** @brief Set all the key values specified into this config.
  *
@@ -360,11 +361,13 @@ bool WbConfig::WriteUsing( WbConfigFileWriter& writer ) const
         successful = QueryData().m_schema.WriteTo( writer, *this );
 
         QFileInfo absoluteFileInfo( GetAbsoluteFileInfo() );
+
         if ( successful )
         {
             QDir absoluteDirectory( absoluteFileInfo.absoluteDir() );
-            successful =  absoluteDirectory.mkpath( absoluteDirectory.path() );
+            successful = absoluteDirectory.mkpath( absoluteDirectory.path() );
         }
+
         if ( successful )
         {
             QFile configFile( absoluteFileInfo.absoluteFilePath() );
@@ -377,6 +380,7 @@ bool WbConfig::WriteUsing( WbConfigFileWriter& writer ) const
     {
         ModifyMutableData().m_modified = false;
     }
+
     return successful;
 }
 
@@ -413,6 +417,7 @@ bool WbConfig::ReadUsing( WbConfigFileReader& reader )
     {
         ModifyMutableData().m_modified = false;
     }
+
     return successful;
 }
 
@@ -426,6 +431,21 @@ void WbConfig::SetParent( WbConfig& parent )
     if ( !IsNull() )
     {
         *ModifyData().m_parent = parent;
+    }
+}
+
+void WbConfig::SetListener( Listener* listener )
+{
+    if ( !IsNull() )
+    {
+        ModifyData().m_listener.reset( listener );
+
+        std::vector< WbConfig > subConfigList( QueryData().m_subConfigs.EnumerateValues() );
+
+        for ( size_t i = 0; i < subConfigList.size(); ++i )
+        {
+            subConfigList.at( i ).SetListener( listener );
+        }
     }
 }
 
@@ -482,6 +502,7 @@ void WbConfig::AddTo( QTreeWidget& tree ) const
 void WbConfig::AddToItem( QTreeWidgetItem* const treeItem ) const
 {
     assert( treeItem != 0 );
+
     if ( !IsNull() )
     {
         QTreeWidgetItem* const myTreeItem = CreateTreeItem();
@@ -565,10 +586,12 @@ const WbConfig WbConfig::FromTreeItem( const QTreeWidgetItem& item )
     GloballyUniqueId configId = item.data( 0, Qt::UserRole ).value<GloballyUniqueId>();
 
     GlobalRegisterType::const_iterator itr = globalRegister.find( configId );
+
     if ( itr != globalRegister.end() )
     {
         return itr->second;
     }
+
     return WbConfig();
 }
 
@@ -586,9 +609,9 @@ bool WbConfig::IsTheSameAs( const WbConfig& other ) const
     {
         return true;
     }
+
     return false;
 }
-
 
 /** @brief Return whether config is null.
  *
@@ -610,6 +633,7 @@ const WbConfig WbConfig::GetParent() const
     {
         return *( QueryData().m_parent );
     }
+
     return WbConfig();
 }
 
@@ -623,11 +647,13 @@ const WbConfig WbConfig::GetParent() const
 const WbConfig WbConfig::FindAncestor( const KeyName& ancestorSchemaName ) const
 {
     WbConfig ancestorConfig( *this );
+
     while ( !ancestorConfig.IsNull() &&
             ( ancestorConfig.GetSchemaName() != ancestorSchemaName ) )
     {
         ancestorConfig = ancestorConfig.GetParent();
     }
+
     return ancestorConfig;
 }
 
@@ -641,10 +667,12 @@ const WbConfig WbConfig::FindAncestor( const KeyName& ancestorSchemaName ) const
 const WbConfig WbConfig::FindRootAncestor() const
 {
     WbConfig ancestorConfig( *this );
+
     while ( !ancestorConfig.GetParent().IsNull() )
     {
         ancestorConfig = ancestorConfig.GetParent();
     }
+
     return ancestorConfig;
 }
 
@@ -661,8 +689,9 @@ bool WbConfig::SchemaIsDescendantOf( const KeyName& schemaName ) const
 
 const KeyId WbConfig::FindSubConfigId( const WbConfig& subconfig ) const
 {
-    SubConfigs::ValueIdPairList subConfigs(
-                                GetSubConfigs( subconfig.GetSchemaName() ) );
+    SubConfigs::ValueIdPairList
+        subConfigs( GetSubConfigs( subconfig.GetSchemaName() ) );
+
     for ( size_t i = 0; i < subConfigs.size(); ++i )
     {
         if ( subConfigs.at( i ).value.IsTheSameAs( subconfig ) )
@@ -670,7 +699,9 @@ const KeyId WbConfig::FindSubConfigId( const WbConfig& subconfig ) const
             return subConfigs.at( i ).id;
         }
     }
+
     assert( !"Sub-config not found" );
+
     return KeyId();
 }
 
@@ -679,6 +710,7 @@ const WbConfig WbConfig::GetFromPath( const WbPath& path ) const
     WbPath pathRemaining( path );
     WbConfig currentConfig( *this );
     WbPathElement currentElement( pathRemaining.PopFront() );
+
     if ( currentConfig.GetSchemaName() == currentElement.Name() )
     {
         currentElement = pathRemaining.PopFront();
@@ -695,6 +727,7 @@ const WbConfig WbConfig::GetFromPath( const WbPath& path ) const
             currentConfig = currentConfig.GetSubConfig( currentElement.Name(),
                                                         currentElement.KnownId() );
         }
+
         if ( pathRemaining.IsEmpty() )
         {
             break;
@@ -704,6 +737,7 @@ const WbConfig WbConfig::GetFromPath( const WbPath& path ) const
             currentElement = pathRemaining.PopFront();
         }
     }
+
     return currentConfig;
 }
 
@@ -718,10 +752,12 @@ const KeyId WbConfig::GenerateNewId( const KeyName& keyName,
         counter++;
     }
     while ( Contains( keyName, newId ) );
+
     return newId;
 }
 
-const KeyId WbConfig::AddKeyValue( const KeyName& keyName, const KeyValue& value,
+const KeyId WbConfig::AddKeyValue( const KeyName& keyName,
+                                   const KeyValue& value,
                                    const QString& keyIdFormat )
 {
     const KeyId newId( GenerateNewId( keyName, keyIdFormat ) );
@@ -731,7 +767,8 @@ const KeyId WbConfig::AddKeyValue( const KeyName& keyName, const KeyValue& value
 
 bool WbConfig::Contains( const KeyName& keyName, const KeyId& id ) const
 {
-    return !GetKeyValue( keyName, id ).IsNull() || !GetSubConfig( keyName, id ).IsNull();
+    return !GetKeyValue( keyName, id ).IsNull() ||
+           !GetSubConfig( keyName, id ).IsNull();
 }
 
 /** @brief Function to access the internal data in such a way as to modify the
@@ -741,8 +778,11 @@ bool WbConfig::Contains( const KeyName& keyName, const KeyId& id ) const
  */
 WbConfig::WbConfigData& WbConfig::ModifyData()
 {
-    ModifyMutableData().m_modified = true;
     assert( !IsNull() );
+    ModifyMutableData().m_modified = true;
+
+    if (QueryData().m_listener.get()) QueryData().m_listener->NotifyChanged();
+
     return *m_internalData;
 }
 
@@ -777,6 +817,7 @@ bool WbConfig::IsModified() const
     if ( QueryData().m_modified ) return true;
 
     std::vector< WbConfig > subConfigList( QueryData().m_subConfigs.EnumerateValues() );
+
     for ( size_t i = 0; i < subConfigList.size(); ++i )
     {
         if ( subConfigList.at( i ).IsModified() )
@@ -784,5 +825,6 @@ bool WbConfig::IsModified() const
             return true;
         }
     }
+
     return false;
 }
