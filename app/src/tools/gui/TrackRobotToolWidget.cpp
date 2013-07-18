@@ -119,9 +119,19 @@ void TrackRobotToolWidget::ResetUi()
     m_ui->m_stepBtn->setEnabled(false);
     m_ui->m_stepBackBtn->setEnabled(false);
     m_ui->m_scanBackBtn->setEnabled(false);
+    m_ui->m_scanFwdBtn->setEnabled(false);
     m_ui->m_stopBtn->setEnabled(false);
-
     m_ui->m_videoPositionBar->setEnabled(true);
+
+    // enable global paramaters
+    m_ui->m_nccThresholdSpinBox->setEnabled(true);
+    m_ui->m_resolutionSpinBox->setEnabled(true);
+    m_ui->m_trackerThresholdSpinBox->setEnabled(true);
+
+    // enable camera specific parameters
+    m_ui->m_camNccThresholdSpinBox->setEnabled(true);
+    m_ui->m_camResolutionSpinBox->setEnabled(true);
+    m_ui->m_camTrackerThresholdSpinBox->setEnabled(true);
 }
 
 void TrackRobotToolWidget::ConnectSignals()
@@ -142,6 +152,10 @@ void TrackRobotToolWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( ScanBackButtonClicked() ) );
+    QObject::connect( m_ui->m_scanFwdBtn,
+                      SIGNAL( clicked() ),
+                      this,
+                      SLOT( ScanForwardButtonClicked() ) );
     QObject::connect( m_ui->m_stopBtn,
                       SIGNAL( clicked() ),
                       this,
@@ -382,9 +396,13 @@ void TrackRobotToolWidget::UseGlobalBtnClicked()
 	    m_ui->m_camNccThresholdSpinBox->setValue(NCC_DEFAULT);
 	    m_ui->m_camResolutionSpinBox->setValue(RESOLUTION_DEFAULT);
 
-	    m_ui->m_camTrackerThresholdSpinBox->setEnabled(true);
-	    m_ui->m_camNccThresholdSpinBox->setEnabled(true);
-	    m_ui->m_camResolutionSpinBox->setEnabled(true);
+        if (!m_loaded)
+        {
+            m_ui->m_camTrackerThresholdSpinBox->setEnabled(true);
+            m_ui->m_camNccThresholdSpinBox->setEnabled(true);
+            m_ui->m_camResolutionSpinBox->setEnabled(true);
+        }
+
 	}
 }
 
@@ -637,6 +655,7 @@ void TrackRobotToolWidget::ScanBackButtonClicked()
 {
     // disable buttons
     m_ui->m_scanBackBtn->setEnabled(false);
+    m_ui->m_scanFwdBtn->setEnabled(false);
     m_ui->m_stepBtn->setEnabled(false);
     m_ui->m_stepBackBtn->setEnabled(false);
     m_ui->m_stopBtn->setEnabled(false);
@@ -652,6 +671,28 @@ void TrackRobotToolWidget::ScanBackButtonClicked()
 
     m_playing = true;
 }
+
+void TrackRobotToolWidget::ScanForwardButtonClicked()
+{
+    // disable buttons
+    m_ui->m_scanBackBtn->setEnabled(false);
+    m_ui->m_scanFwdBtn->setEnabled(false);
+    m_ui->m_stepBtn->setEnabled(false);
+    m_ui->m_stepBackBtn->setEnabled(false);
+    m_ui->m_stopBtn->setEnabled(false);
+
+    // forward and DO NOT track
+    TrackRun( m_ui->m_videoPositionBar->GetRate(), false, false, true );
+
+    // set pause button icon
+    SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
+
+    // disable rate change bar
+    m_ui->m_videoPositionBar->setEnabled(false);
+
+    m_playing = true;
+}
+
 
 void TrackRobotToolWidget::PlayPauseButtonClicked()
 {
@@ -676,6 +717,7 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
 
         // disable << |<< >>| []
         m_ui->m_scanBackBtn->setEnabled(false);
+        m_ui->m_scanFwdBtn->setEnabled(false);
         m_ui->m_stepBackBtn->setEnabled(false);
         m_ui->m_stepBtn->setEnabled(false);
         m_ui->m_stopBtn->setEnabled(false);
@@ -707,6 +749,7 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
 
         // enable << |< >| >> []
         m_ui->m_scanBackBtn->setEnabled(true);
+        m_ui->m_scanFwdBtn->setEnabled(true);
         m_ui->m_stepBackBtn->setEnabled(true);
         m_ui->m_stepBtn->setEnabled(true);
         m_ui->m_stopBtn->setEnabled(true);
@@ -774,6 +817,16 @@ void TrackRobotToolWidget::TrackLoadButtonClicked()
         m_ui->m_stepBtn->setEnabled(true);
 
         m_ui->m_videoPositionBar->setEnabled(true);
+
+        // enable global paramaters
+        m_ui->m_nccThresholdSpinBox->setEnabled(false);
+        m_ui->m_resolutionSpinBox->setEnabled(false);
+        m_ui->m_trackerThresholdSpinBox->setEnabled(false);
+
+        // enable camera specific parameters
+        m_ui->m_camNccThresholdSpinBox->setEnabled(false);
+        m_ui->m_camResolutionSpinBox->setEnabled(false);
+        m_ui->m_camTrackerThresholdSpinBox->setEnabled(false);
 
         m_loaded = true;
     }
@@ -845,6 +898,16 @@ void TrackRobotToolWidget::TrackResetButtonClicked()
     m_ui->m_saveBtn->setEnabled(false);
     m_ui->m_resetBtn->setEnabled(false);
 
+    // disable global params
+    m_ui->m_nccThresholdSpinBox->setEnabled(true);
+    m_ui->m_resolutionSpinBox->setEnabled(true);
+    m_ui->m_trackerThresholdSpinBox->setEnabled(true);
+
+    // disable camera specific params
+    m_ui->m_camNccThresholdSpinBox->setEnabled(true);
+    m_ui->m_camResolutionSpinBox->setEnabled(true);
+    m_ui->m_camTrackerThresholdSpinBox->setEnabled(true);
+
     m_fpsSet = false;
 }
 
@@ -860,6 +923,7 @@ void TrackRobotToolWidget::Paused()
 {
     m_ui->m_stepBackBtn->setEnabled(true);
     m_ui->m_scanBackBtn->setEnabled(true);
+    m_ui->m_scanFwdBtn->setEnabled(true);
     m_ui->m_playBtn->setEnabled(true);
     m_ui->m_stepBtn->setEnabled(true);
     m_ui->m_stopBtn->setEnabled(true);
