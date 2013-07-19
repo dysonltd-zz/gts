@@ -42,5 +42,13 @@
         <file>playTrack.png</file>
         <file>stepTrack.png</file>
         <file>save.png</file>
+        <file>revscan2x.png</file>
+        <file>revscan4x.png</file>
+        <file>revscan10x.png</file>
+        <file>revscan20x.png</file>
+        <file>scan2x.png</file>
+        <file>scan4x.png</file>
+        <file>scan10x.png</file>
+        <file>scan20x.png</file>
     </qresource>
 </RCC>

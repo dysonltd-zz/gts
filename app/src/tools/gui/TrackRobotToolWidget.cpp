@@ -65,7 +65,10 @@ TrackRobotToolWidget::TrackRobotToolWidget( QWidget* parent ) :
     m_tracking ( false ),
     m_loaded   ( false ),
     m_fpsSet   ( false ),
-    m_fps      ( 1 )
+    m_fps      ( 1 ),
+    m_optimumRate ( 100 ),
+    m_scanFwdIndex ( 0 ),
+    m_scanBackIndex ( 0 )
 {
     SetupUi();
     ConnectSignals();
@@ -73,6 +76,19 @@ TrackRobotToolWidget::TrackRobotToolWidget( QWidget* parent ) :
     CreateMappers();
 
     RegisterCollectionCombo(m_ui->m_robotCombo, RobotsCollection());
+
+    m_scanFwdIconRatePair.push_back(std::make_pair(":/scan.png", 1));
+    m_scanFwdIconRatePair.push_back(std::make_pair(":/scan2x.png", 2));
+    m_scanFwdIconRatePair.push_back(std::make_pair(":/scan4x.png", 4));
+    m_scanFwdIconRatePair.push_back(std::make_pair(":/scan10x.png", 10));
+    m_scanFwdIconRatePair.push_back(std::make_pair(":/scan20x.png", 20));
+
+    m_scanBackIconRatePair.push_back(std::make_pair(":/revscan.png", 1));
+    m_scanBackIconRatePair.push_back(std::make_pair(":/revscan2x.png", 2));
+    m_scanBackIconRatePair.push_back(std::make_pair(":/revscan4x.png", 4));
+    m_scanBackIconRatePair.push_back(std::make_pair(":/revscan10x.png", 10));
+    m_scanBackIconRatePair.push_back(std::make_pair(":/revscan20x.png", 20));
+
 }
 
 void TrackRobotToolWidget::SetupUi()
@@ -122,6 +138,11 @@ void TrackRobotToolWidget::ResetUi()
     m_ui->m_scanFwdBtn->setEnabled(false);
     m_ui->m_stopBtn->setEnabled(false);
     m_ui->m_videoPositionBar->setEnabled(true);
+
+    SetButtonIcon(m_ui->m_scanBackBtn, QString::fromUtf8(m_scanBackIconRatePair[0].first.c_str()));
+    SetButtonIcon(m_ui->m_scanFwdBtn, QString::fromUtf8(m_scanFwdIconRatePair[0].first.c_str()));
+    m_scanBackIndex = 0;
+    m_scanFwdIndex = 0;
 
     // enable global paramaters
     m_ui->m_nccThresholdSpinBox->setEnabled(true);
@@ -654,14 +675,28 @@ void TrackRobotToolWidget::StepBackButtonClicked()
 void TrackRobotToolWidget::ScanBackButtonClicked()
 {
     // disable buttons
-    m_ui->m_scanBackBtn->setEnabled(false);
     m_ui->m_scanFwdBtn->setEnabled(false);
     m_ui->m_stepBtn->setEnabled(false);
     m_ui->m_stepBackBtn->setEnabled(false);
     m_ui->m_stopBtn->setEnabled(false);
 
-    // reverse and DO NOT track
-    TrackRun( m_ui->m_videoPositionBar->GetRate(), false, false, false );
+    // increment scan back index for vector
+    if (m_scanBackIndex == m_scanBackIconRatePair.size() - 1)
+    {
+        m_scanBackIndex = 0; // loop back
+    }
+    else
+    {
+        m_scanBackIndex++;
+    }
+
+    // cycle icon
+    SetButtonIcon(m_ui->m_scanBackBtn, QString::fromUtf8(m_scanBackIconRatePair[m_scanBackIndex].first.c_str()));
+
+    // reverse * scan multiplier rate and DO NOT track
+    int rate = m_optimumRate * m_scanBackIconRatePair[m_scanBackIndex].second;
+    TrackRun( rate, false, false, false );
+    m_ui->m_videoPositionBar->SetRate(rate);
 
     // set pause button icon
     SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
@@ -676,13 +711,27 @@ void TrackRobotToolWidget::ScanForwardButtonClicked()
 {
     // disable buttons
     m_ui->m_scanBackBtn->setEnabled(false);
-    m_ui->m_scanFwdBtn->setEnabled(false);
     m_ui->m_stepBtn->setEnabled(false);
     m_ui->m_stepBackBtn->setEnabled(false);
     m_ui->m_stopBtn->setEnabled(false);
 
-    // forward and DO NOT track
-    TrackRun( m_ui->m_videoPositionBar->GetRate(), false, false, true );
+    // increment scan forward index for vector
+    if (m_scanFwdIndex == m_scanFwdIconRatePair.size() - 1)
+    {
+        m_scanFwdIndex = 0; // loop back
+    }
+    else
+    {
+        m_scanFwdIndex++;
+    }
+
+    // cycle icon
+    SetButtonIcon(m_ui->m_scanFwdBtn, QString::fromUtf8(m_scanFwdIconRatePair[m_scanFwdIndex].first.c_str()));
+
+    // forward * scan multiplier rate and DO NOT track
+    int rate = m_optimumRate * m_scanFwdIconRatePair[m_scanFwdIndex].second;
+    TrackRun(rate, false, false, true );
+    m_ui->m_videoPositionBar->SetRate(rate);
 
     // set pause button icon
     SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
@@ -727,20 +776,20 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
     }
     else // paused pressed
     {
+        m_scanFwdIndex = 0;
+        m_scanBackIndex = 0;
+        SetButtonIcon(m_ui->m_scanFwdBtn, QString::fromUtf8(m_scanFwdIconRatePair[0].first.c_str()));
+        SetButtonIcon(m_ui->m_scanBackBtn, QString::fromUtf8(m_scanBackIconRatePair[0].first.c_str()));
+        m_ui->m_videoPositionBar->SetRate( m_optimumRate );
+
         if ( m_tracking )
         {
-            // switch to tracking/record icon
             SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/playTrack.png"));
-
-            // switch to step icon
             SetButtonIcon(m_ui->m_stepBtn, QString::fromUtf8(":/stepTrack.png"));
         }
         else
         {
-            // switch to play icon
             SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/play.png"));
-
-            // switch to step icon
             SetButtonIcon(m_ui->m_stepBtn, QString::fromUtf8(":/step.png"));
         }
 
@@ -1015,7 +1064,8 @@ void TrackRobotToolWidget::ImageUpdate( int id, const QImage& image, double fps 
     if ( (fps > 0 && !m_fpsSet) || (m_fpsSet && fps < m_fps) )
     {
         m_fps = fps;
-        m_ui->m_videoPositionBar->SetRate( (int) (1000/m_fps) );
+        m_optimumRate = (int) (1000/m_fps);
+        m_ui->m_videoPositionBar->SetRate( m_optimumRate );
         m_fpsSet = true;
     }
 

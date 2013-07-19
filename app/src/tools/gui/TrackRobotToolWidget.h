@@ -33,6 +33,9 @@
 
 #include "WbConfigTools.h"
 
+#include <vector>
+#include <utility>
+
 class GtsScene;
 
 namespace Ui
@@ -153,6 +156,15 @@ private:
     bool m_loaded;
     bool m_fpsSet;
     double m_fps;
+
+    double m_optimumRate;
+
+    std::vector<std::pair<std::string, uint>> m_scanFwdIconRatePair;
+    std::vector<std::pair<std::string, uint>> m_scanBackIconRatePair;
+
+    uint m_scanFwdIndex;
+    uint m_scanBackIndex;
+
 };
 
 #endif // TRACKROBOTTOOLWIDGET_H
