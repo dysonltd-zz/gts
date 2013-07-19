@@ -213,22 +213,12 @@
            <number>3</number>
           </property>
           <item>
-           <widget class="QPushButton" name="m_captureLoadResetBtn">
+           <widget class="QPushButton" name="m_captureLiveConnectDisconnectBtn">
             <property name="enabled">
              <bool>true</bool>
             </property>
             <property name="text">
-             <string>&amp;Load</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="m_captureLiveConnectDisconnectBtn">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>&amp;Connect</string>
+             <string>&amp;Live</string>
             </property>
            </widget>
           </item>

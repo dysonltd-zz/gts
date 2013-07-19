@@ -97,10 +97,6 @@ void CaptureVideoToolWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( CaptureLiveConnectDisconnectButtonClicked() ) );
-    QObject::connect( m_ui->m_captureLoadResetBtn,
-                      SIGNAL( clicked() ),
-                      this,
-                      SLOT( CaptureLoadResetButtonClicked() ) );
     QObject::connect( m_ui->m_recordBtn,
                       SIGNAL( clicked(bool) ),
                       this,
@@ -123,29 +119,7 @@ const QString CaptureVideoToolWidget::GetSubSchemaDefaultFileName() const
 
 void CaptureVideoToolWidget::CaptureLoadResetButtonClicked()
 {
-    if( !m_videoSourcesAdded )
-    {
-#if defined(__MINGW32__) || defined(__GNUC__)
-        SetUpVideoSources(MakeCallback( this,
-                                            &CaptureVideoToolWidget::AddLiveSourcesForEachCameraPosition ) );
-#else
-        SetUpVideoSources([this](const QStringList& camPosIds) -> bool
-                      {
-                          return AddLiveSourcesForEachCameraPosition(camPosIds);
-                      });
-#endif
-    }
-    else
-    {
-        // reset
-        StopUpdatingImages();
-        RemoveAllVideoSources();
-        m_ui->m_videoTable->clear();
-        m_ui->m_videoTable->setRowCount(0);
-        m_ui->m_captureLoadResetBtn->setText("&Load");
-        m_ui->m_captureLiveConnectDisconnectBtn->setEnabled(false);
-        m_videoSourcesAdded = false;
-    }
+
 
 }
 
@@ -467,31 +441,47 @@ void CaptureVideoToolWidget::SetUpVideoSources(GetVideoSourcesForCallback getVid
 #endif
     if ( success )
     {
-        m_ui->m_captureLoadResetBtn->setText("&Clear");
-
         m_videoSourcesAdded = true;
-        m_ui->m_captureLiveConnectDisconnectBtn->setEnabled(true);
     }
 }
 
 void CaptureVideoToolWidget::CaptureLiveConnectDisconnectButtonClicked()
 {
-    if ( !m_videoSourcesOpen  )
+
+    if( !m_videoSourcesAdded )
     {
+#if defined(__MINGW32__) || defined(__GNUC__)
+        SetUpVideoSources(MakeCallback( this,
+                                            &CaptureVideoToolWidget::AddLiveSourcesForEachCameraPosition ) );
+#else
+        SetUpVideoSources([this](const QStringList& camPosIds) -> bool
+                      {
+                          return AddLiveSourcesForEachCameraPosition(camPosIds);
+                      });
+#endif
+
         StartVideoSources();
 
         if( CanClose() )
         {
             m_ui->m_captureLiveConnectDisconnectBtn->setText("&Disconnect");
+            m_ui->m_recordBtn->setEnabled(true);
+        }
+        else
+        {
+            StopVideoSources();
+            m_ui->m_time->setText( QString("00:00:00:000") );
         }
     }
-
     else
     {
-        StopVideoSources();
-
-        m_ui->m_captureLiveConnectDisconnectBtn->setText("&Connect");
-        m_ui->m_time->setText( QString("00:00:00:000") );
+        // reset
+        StopUpdatingImages();
+        RemoveAllVideoSources();
+        m_ui->m_videoTable->clear();
+        m_ui->m_videoTable->setRowCount(0);
+        m_ui->m_captureLiveConnectDisconnectBtn->setText("&Live");
+        m_videoSourcesAdded = false;
     }
 }
 
@@ -517,10 +507,7 @@ void CaptureVideoToolWidget::StopUpdatingImages()
 void CaptureVideoToolWidget::StartVideoSources()
 {
     StartUpdatingImages();
-
     m_ui->m_recordBtn->setEnabled(true);
-    m_ui->m_captureLoadResetBtn->setEnabled(false);
-
     m_videoSourcesOpen = true;
 }
 
@@ -530,10 +517,7 @@ void CaptureVideoToolWidget::StartVideoSources()
 void CaptureVideoToolWidget::StopVideoSources()
 {
     StopUpdatingImages();
-
     m_ui->m_recordBtn->setEnabled(false);
-    m_ui->m_captureLoadResetBtn->setEnabled(true);
-
     m_videoSourcesOpen = false;
 }
 
