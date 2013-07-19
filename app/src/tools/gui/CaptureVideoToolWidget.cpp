@@ -117,12 +117,6 @@ const QString CaptureVideoToolWidget::GetSubSchemaDefaultFileName() const
     return "capturedVideos.xml";
 }
 
-void CaptureVideoToolWidget::CaptureLoadResetButtonClicked()
-{
-
-
-}
-
 void CaptureVideoToolWidget::FormatXVIDButtonClicked()
 {
     m_codec = AviWriter::CODEC_XVID;
