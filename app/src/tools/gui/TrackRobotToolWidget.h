@@ -21,6 +21,7 @@
 
 #include <QtGui/QWidget>
 #include <QtGui/QTableWidget>
+#include <QToolButton>
 #include <QPair>
 #include <QMap>
 

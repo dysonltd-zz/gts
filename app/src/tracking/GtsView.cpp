@@ -73,8 +73,8 @@ GtsView::GtsView() :
     m_imgFrame    ( 0 ),
     m_imgGrey     ( 0 ),
     m_thumbnail   ( 0 ),
-    m_imgIndex    ( 0 ),
-    m_metrics     ( 0 )
+    m_metrics     ( 0 ),
+    m_imgIndex    ( 0 )
 {
     m_imgWarp[0] = 0;
     m_imgWarp[1] = 0;

@@ -62,6 +62,7 @@ signals:
 	void position( double position );
 
 private:
+
     bool ShouldTrack() const;
     bool ShouldPause() const;
     bool ShouldStop() const;
@@ -83,6 +84,8 @@ private:
 
     void Release();
 
+    GtsScene& m_scene;
+
     bool m_step;
     bool m_stop;
     bool m_pause;
@@ -90,11 +93,9 @@ private:
     bool m_paused;
     bool m_forward;
 
-    GtsScene& m_scene;
+    std::unique_ptr<QThread> m_thread;
 
     mutable QMutex m_mutex;
-
-    std::unique_ptr<QThread> m_thread;
 };
 
 #endif // TRACKTHREAD_H

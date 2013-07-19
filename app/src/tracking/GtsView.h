@@ -134,13 +134,13 @@ private:
     CameraCalibration*    m_calNormal;
     RobotTracker*         m_tracker;
 
-    RobotMetrics*         m_metrics;
-
     std::vector<timespec> m_timestamps;
     VideoSequence*        m_sequencer;
     IplImage*             m_imgFrame;
     IplImage*             m_imgGrey;
     IplImage*             m_thumbnail;
+
+    RobotMetrics*         m_metrics;
 
     ImageView*            m_viewer;
 
