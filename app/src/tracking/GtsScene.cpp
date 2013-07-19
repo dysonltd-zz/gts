@@ -297,7 +297,7 @@ void GtsScene::SetupThread( TrackRobotToolWidget* tool )
     QObject::connect((QObject*)m_thread,
                      SIGNAL( position( double ) ),
                      (QObject*)tool,
-                     SLOT( VideoPosition ( double ) ),
+                     SLOT( SetPosition ( double ) ),
                      Qt::AutoConnection );
 }
 

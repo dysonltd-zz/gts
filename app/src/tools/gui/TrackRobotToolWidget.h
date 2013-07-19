@@ -24,6 +24,7 @@
 #include <QToolButton>
 #include <QPair>
 #include <QMap>
+#include <QTime>
 
 #include "Tool.h"
 #include "ImageGrid.h"
@@ -59,7 +60,6 @@ public:
     void Paused();
     void Stopped();
 
-    void UpdatePosition( long position );
     void ImageUpdate( int id, const QImage& image, double fps );
     void ImageSet( int id, const QImage& image, double fps );
 
@@ -69,11 +69,10 @@ signals:
 
 public slots:
      void ViewClicked( int id, int x, int y );
+     void SetPosition( double position );
 
      void ThreadPaused( bool trackingLost );
      void ThreadFinished();
-
-     void VideoPosition( double position );
 
 private:
     void SetupUi();

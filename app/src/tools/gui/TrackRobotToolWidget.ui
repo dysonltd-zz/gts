@@ -173,15 +173,52 @@
       </widget>
      </item>
      <item>
-      <widget class="VideoPositionBar" name="m_videoPositionBar" native="true">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
+      <widget class="QLabel" name="m_timeLabel">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-         <horstretch>100</horstretch>
+         <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Time:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="m_timeLineEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>90</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>90</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="text">
+        <string>00:00:00:000</string>
+       </property>
+       <property name="frame">
+        <bool>true</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -500,7 +537,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <attribute name="horizontalHeaderVisible">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </attribute>
                 <attribute name="horizontalHeaderStretchLastSection">
                  <bool>true</bool>
@@ -782,12 +819,6 @@ p, li { white-space: pre-wrap; }
    <class>ImageGrid</class>
    <extends>QWidget</extends>
    <header>ImageGrid.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>VideoPositionBar</class>
-   <extends>QWidget</extends>
-   <header>VideoPositionBar.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

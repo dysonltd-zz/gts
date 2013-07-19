@@ -137,7 +137,6 @@ void TrackRobotToolWidget::ResetUi()
     m_ui->m_scanBackBtn->setEnabled(false);
     m_ui->m_scanFwdBtn->setEnabled(false);
     m_ui->m_stopBtn->setEnabled(false);
-    m_ui->m_videoPositionBar->setEnabled(true);
 
     SetButtonIcon(m_ui->m_scanBackBtn, QString::fromUtf8(m_scanBackIconRatePair[0].first.c_str()));
     SetButtonIcon(m_ui->m_scanFwdBtn, QString::fromUtf8(m_scanFwdIconRatePair[0].first.c_str()));
@@ -660,7 +659,7 @@ const WbSchema TrackRobotToolWidget::CreateSchema()
 
 void TrackRobotToolWidget::StepBackButtonClicked()
 {
-    TrackRun( m_ui->m_videoPositionBar->GetRate(), false, true, false );
+    TrackRun( m_optimumRate, false, true, false );
 
     // set play button icon
     SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/play.png"));
@@ -696,13 +695,9 @@ void TrackRobotToolWidget::ScanBackButtonClicked()
     // reverse * scan multiplier rate and DO NOT track
     int rate = m_optimumRate * m_scanBackIconRatePair[m_scanBackIndex].second;
     TrackRun( rate, false, false, false );
-    m_ui->m_videoPositionBar->SetRate(rate);
 
     // set pause button icon
     SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
-
-    // disable rate change bar
-    m_ui->m_videoPositionBar->setEnabled(false);
 
     m_playing = true;
 }
@@ -731,13 +726,9 @@ void TrackRobotToolWidget::ScanForwardButtonClicked()
     // forward * scan multiplier rate and DO NOT track
     int rate = m_optimumRate * m_scanFwdIconRatePair[m_scanFwdIndex].second;
     TrackRun(rate, false, false, true );
-    m_ui->m_videoPositionBar->SetRate(rate);
 
     // set pause button icon
     SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
-
-    // disable rate change bar
-    m_ui->m_videoPositionBar->setEnabled(false);
 
     m_playing = true;
 }
@@ -750,7 +741,7 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
         if ( m_tracking )
         {
             // play video AND track
-            TrackRun( m_ui->m_videoPositionBar->GetRate(), true, false, true );
+            TrackRun( m_optimumRate, true, false, true );
 
             // switch to tracking/record icon
             SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pauseTrack.png"));
@@ -758,7 +749,7 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
         else
         {
             // just play video
-            TrackRun( m_ui->m_videoPositionBar->GetRate(), false, false, true );
+            TrackRun( m_optimumRate, false, false, true );
 
             // switch to pause icon
             SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
@@ -770,9 +761,6 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
         m_ui->m_stepBackBtn->setEnabled(false);
         m_ui->m_stepBtn->setEnabled(false);
         m_ui->m_stopBtn->setEnabled(false);
-
-        // disable rate change
-        m_ui->m_videoPositionBar->setEnabled(false);
     }
     else // paused pressed
     {
@@ -780,7 +768,6 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
         m_scanBackIndex = 0;
         SetButtonIcon(m_ui->m_scanFwdBtn, QString::fromUtf8(m_scanFwdIconRatePair[0].first.c_str()));
         SetButtonIcon(m_ui->m_scanBackBtn, QString::fromUtf8(m_scanBackIconRatePair[0].first.c_str()));
-        m_ui->m_videoPositionBar->SetRate( m_optimumRate );
 
         if ( m_tracking )
         {
@@ -803,8 +790,6 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
         m_ui->m_stepBtn->setEnabled(true);
         m_ui->m_stopBtn->setEnabled(true);
 
-        // enable rate change bar
-        m_ui->m_videoPositionBar->setEnabled(true);
     }
 
     // switch state of icon
@@ -813,7 +798,7 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
 
 void TrackRobotToolWidget::StepButtonClicked()
 {
-    TrackRun( m_ui->m_videoPositionBar->GetRate(), true, true, true );
+    TrackRun( m_optimumRate, true, true, true );
 }
 
 void TrackRobotToolWidget::StopButtonClicked()
@@ -864,8 +849,6 @@ void TrackRobotToolWidget::TrackLoadButtonClicked()
         m_ui->m_loadBtn->setEnabled(false);
         m_ui->m_playBtn->setEnabled(true);
         m_ui->m_stepBtn->setEnabled(true);
-
-        m_ui->m_videoPositionBar->setEnabled(true);
 
         // enable global paramaters
         m_ui->m_nccThresholdSpinBox->setEnabled(false);
@@ -939,7 +922,7 @@ void TrackRobotToolWidget::TrackResetButtonClicked()
 {
     m_loaded = false;
 
-    UpdatePosition(0);
+    SetPosition(0);
 
     TrackReset( m_ui->m_imageGrid );
 
@@ -976,7 +959,6 @@ void TrackRobotToolWidget::Paused()
     m_ui->m_playBtn->setEnabled(true);
     m_ui->m_stepBtn->setEnabled(true);
     m_ui->m_stopBtn->setEnabled(true);
-    m_ui->m_videoPositionBar->setEnabled(true);
 
     if (m_tracking)
     {
@@ -998,7 +980,6 @@ void TrackRobotToolWidget::Stopped()
     m_ui->m_stopBtn->setEnabled(false);
     m_ui->m_resetBtn->setEnabled(true);
     m_ui->m_saveBtn->setEnabled(true);
-    m_ui->m_videoPositionBar->setEnabled(true);
 
     // switch to (non-tracking) icons
     SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/play.png"));
@@ -1010,11 +991,6 @@ void TrackRobotToolWidget::SetButtonIcon(QToolButton* button, QString iconImage)
     QIcon icon;
     icon.addFile(iconImage, QSize(), QIcon::Normal, QIcon::Off);
     button->setIcon(icon);
-}
-
-void TrackRobotToolWidget::UpdatePosition( long position )
-{
-    m_ui->m_videoPositionBar->SetPosition( position );
 }
 
 void TrackRobotToolWidget::ViewClicked( int id, int x, int y )
@@ -1045,15 +1021,9 @@ void TrackRobotToolWidget::ThreadFinished()
 {
     m_running = false;
     m_playing = false;
-
     m_tracking = false;
 
     Stopped();
-}
-
-void TrackRobotToolWidget::VideoPosition( double position )
-{
-    UpdatePosition( position );
 }
 
 void TrackRobotToolWidget::ImageUpdate( int id, const QImage& image, double fps )
@@ -1065,7 +1035,6 @@ void TrackRobotToolWidget::ImageUpdate( int id, const QImage& image, double fps 
     {
         m_fps = fps;
         m_optimumRate = (int) (1000/m_fps);
-        m_ui->m_videoPositionBar->SetRate( m_optimumRate );
         m_fpsSet = true;
     }
 
@@ -1075,6 +1044,12 @@ void TrackRobotToolWidget::ImageUpdate( int id, const QImage& image, double fps 
 void TrackRobotToolWidget::ImageSet( int id, const QImage& image, double fps )
 {
     emit SetImage( id, image, fps );
+}
+
+void TrackRobotToolWidget::SetPosition( double position )
+{
+    QTime time = QTime(0,0);
+    m_ui->m_timeLineEdit->setText( time.addMSecs(position).toString("hh:mm:ss:zzz") );
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -1281,3 +1256,4 @@ bool TrackRobotToolWidget::CreateRunResultDirectory(const WbConfig& config)
 
     return true;
 }
+
