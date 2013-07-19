@@ -172,12 +172,20 @@ bool CreateFloorMaskToolWidget::ExportFloorPlan( const WbConfig& config )
         return false;
     }
 
-    const QString floorPlanDstFileName( QFileDialog::getSaveFileName( 0,
+    QString floorPlanDstFileName( QFileDialog::getSaveFileName( 0,
                                                                      QObject::tr( "Choose where to save the floor plan" ),
-                                                                     QDir::homePath() ) );
+                                                                     QDir::homePath(),
+                                                                     tr("Images (*.png)") ) );
+
+    QFileInfo file(floorPlanDstFileName);
 
     if ( !floorPlanDstFileName.isEmpty() )
     {
+        if(file.fileName() != "" && file.suffix().isEmpty())
+        {
+            floorPlanDstFileName += ".png";
+        }
+
         if ( QFile::exists( floorPlanDstFileName ) )
         {
             QFile::remove( floorPlanDstFileName );
