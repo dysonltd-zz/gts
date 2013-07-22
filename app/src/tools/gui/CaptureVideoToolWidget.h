@@ -103,6 +103,7 @@ public:
 private slots:
     void RecordButtonClicked( const bool shouldRecord );
     void CaptureLiveConnectDisconnectButtonClicked();
+    void CaptureLoadResetButtonClicked();
 
     void FormatXVIDButtonClicked();
     void FormatMP4ButtonClicked();
