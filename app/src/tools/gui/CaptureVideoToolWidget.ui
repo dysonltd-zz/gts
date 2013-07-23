@@ -27,6 +27,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Start/Stop Recording</string>
+       </property>
        <property name="text">
         <string/>
        </property>

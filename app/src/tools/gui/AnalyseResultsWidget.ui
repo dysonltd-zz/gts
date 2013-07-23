@@ -44,6 +44,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Browse for file</string>
+       </property>
        <property name="text">
         <string/>
        </property>

@@ -229,7 +229,6 @@ void MeasureFloorToolWidget::ShowImage()
     }
 }
 
-
 void MeasureFloorToolWidget::ViewClicked( int id, int x, int y )
 {
     Q_UNUSED(id);
@@ -249,8 +248,6 @@ void MeasureFloorToolWidget::ViewClicked( int id, int x, int y )
         {
             m_endPointX = x;
             m_endPointY = y;
-
-
             m_endPoint = true;
         }
         else

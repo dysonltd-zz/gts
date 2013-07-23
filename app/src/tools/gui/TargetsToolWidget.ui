@@ -74,6 +74,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>Browse for file</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -96,6 +99,9 @@
              <horstretch>1</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Reset value</string>
            </property>
            <property name="text">
             <string/>
@@ -138,6 +144,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>Browse for file</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -160,6 +169,9 @@
              <horstretch>1</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Reset value</string>
            </property>
            <property name="text">
             <string/>

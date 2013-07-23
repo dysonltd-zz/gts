@@ -299,6 +299,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="toolTip">
+             <string>Rotate referent</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -312,6 +315,9 @@
            <widget class="QToolButton" name="btnMatch">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Match image pair</string>
             </property>
             <property name="text">
              <string/>
@@ -327,6 +333,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="toolTip">
+             <string>Stitch image pair</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -341,6 +350,9 @@
             <property name="enabled">
              <bool>false</bool>
             </property>
+            <property name="toolTip">
+             <string>Save mapping</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -354,6 +366,9 @@
            <widget class="QToolButton" name="btnCancel">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>Cancel edits</string>
             </property>
             <property name="text">
              <string/>

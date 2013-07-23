@@ -27,6 +27,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Reverse Scan</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -49,6 +52,9 @@
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Reverse Step</string>
        </property>
        <property name="text">
         <string/>
@@ -79,6 +85,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Play/Pause</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -104,6 +113,9 @@
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Forward Step</string>
        </property>
        <property name="text">
         <string/>
@@ -137,6 +149,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Forward Scan</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -165,6 +180,9 @@
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="toolTip">
+        <string>Stop Tracking</string>
        </property>
        <property name="text">
         <string/>
