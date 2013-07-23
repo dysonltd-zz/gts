@@ -230,9 +230,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ZoomImageView</class>
+   <class>ImageGrid</class>
    <extends>QWidget</extends>
-   <header>ZoomImageView.h</header>
+   <header>ImageGrid.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

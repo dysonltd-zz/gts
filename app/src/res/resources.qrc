@@ -24,7 +24,6 @@
         <file>target5-print.png</file>
         <file>target6-print.png</file>
         <file>target7-print.png</file>
-        <file>help.png</file>
         <file>flip.png</file>
         <file>match.png</file>
         <file>stitch.png</file>
@@ -42,5 +41,13 @@
         <file>playTrack.png</file>
         <file>stepTrack.png</file>
         <file>save.png</file>
+        <file>revscan2x.png</file>
+        <file>revscan4x.png</file>
+        <file>revscan10x.png</file>
+        <file>revscan20x.png</file>
+        <file>scan2x.png</file>
+        <file>scan4x.png</file>
+        <file>scan10x.png</file>
+        <file>scan20x.png</file>
     </qresource>
 </RCC>

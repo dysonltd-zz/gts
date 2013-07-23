@@ -24,6 +24,7 @@
 #include <QtGui/QToolButton>
 #include <QPair>
 #include <QMap>
+#include <QTime>
 
 #include "Tool.h"
 #include "ImageGrid.h"
@@ -32,6 +33,9 @@
 #include "GtsScene.h"
 
 #include "WbConfigTools.h"
+
+#include <vector>
+#include <utility>
 
 class GtsScene;
 
@@ -56,7 +60,6 @@ public:
     void Paused();
     void Stopped();
 
-    void UpdatePosition( long position );
     void ImageUpdate( int id, const QImage& image, double fps );
     void ImageSet( int id, const QImage& image, double fps );
 
@@ -65,13 +68,13 @@ signals:
      void SetImage( int id, const QImage& image, double fps );
 
 public slots:
+     void SetPosition( double position );
+
      void SelectTrack( int id, int x, int y );
      void ClearTrack( int id );
 
      void ThreadPaused( bool trackingLost );
      void ThreadFinished();
-
-     void VideoPosition( double position );
 
 private:
     void SetupUi();
@@ -154,6 +157,14 @@ private:
     bool m_loaded;
     bool m_fpsSet;
     double m_fps;
+
+    double m_optimumRate;
+
+    std::vector<std::pair<std::string, uint>> m_scanFwdIconRatePair;
+    std::vector<std::pair<std::string, uint>> m_scanBackIconRatePair;
+
+    uint m_scanFwdIndex;
+    uint m_scanBackIndex;
 };
 
 #endif // TRACKROBOTTOOLWIDGET_H

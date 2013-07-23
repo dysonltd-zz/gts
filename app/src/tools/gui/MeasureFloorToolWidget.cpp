@@ -22,7 +22,8 @@
 
 #include "FloorMaskSchema.h"
 
-#include "ZoomImageView.h"
+#include "ImageGrid.h"
+#include "ImageView.h"
 
 #include "OpenCvTools.h"
 

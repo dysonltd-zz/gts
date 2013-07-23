@@ -228,7 +228,7 @@
              <bool>false</bool>
             </property>
             <property name="text">
-             <string>&amp;Connect</string>
+             <string>&amp;Live</string>
             </property>
            </widget>
           </item>
