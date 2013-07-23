@@ -130,7 +130,7 @@ const WbConfig Workbench::GetCurrentConfig() const
     return m_workbenchConfig;
 }
 
-const Listener* Workbench::GetConfigListener() const
+const ConfigListener* Workbench::GetConfigListener() const
 {
     return &m_configListener;
 }

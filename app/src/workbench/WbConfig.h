@@ -20,7 +20,7 @@
 #define WBCONFIG_H
 
 #include "WbSchema.h"
-#include "Listener.h"
+#include "ConfigListener.h"
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qfileinfo.h>
@@ -112,7 +112,7 @@ public:
     const KeyId FindSubConfigId( const WbConfig& subconfig ) const;
     const WbConfig GetFromPath( const WbPath& path ) const;
 
-    void SetListener( Listener* listener );
+    void SetListener( ConfigListener* listener );
 
 private:
     void SetParent( WbConfig& parent );
@@ -136,15 +136,15 @@ private:
     {
         WbConfigData();
 
-        WbSchema                   m_schema;
-        SubConfigs                 m_subConfigs;
-        std::auto_ptr< WbConfig >  m_parent; // owned
-        WbKeyValues                m_keyValues;
-        QFileInfo                  m_possiblyRelativeFileInfo;
-        mutable QTreeWidgetItem*   m_treeWidgetItem;
-        mutable bool               m_modified;
-        const GloballyUniqueId     m_id;
-        std::auto_ptr< Listener >  m_listener;
+        WbSchema                         m_schema;
+        SubConfigs                       m_subConfigs;
+        std::auto_ptr< WbConfig >        m_parent; // owned
+        WbKeyValues                      m_keyValues;
+        QFileInfo                        m_possiblyRelativeFileInfo;
+        mutable QTreeWidgetItem*         m_treeWidgetItem;
+        mutable bool                     m_modified;
+        const GloballyUniqueId           m_id;
+        std::auto_ptr< ConfigListener >  m_listener;
 
     private:
         WbConfigData( const WbConfigData& );

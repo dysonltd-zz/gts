@@ -16,17 +16,23 @@
  *
  */
 
-#include "Listener.h"
+#ifndef LISTENER_H
+#define LISTENER_H
 
-Listener::Listener()
-{
-}
+#include <QObject>
 
-Listener::~Listener()
+class ConfigListener : public QObject
 {
-}
+    Q_OBJECT
 
-void Listener::NotifyChanged()
-{
-    emit changed();
-}
+public:
+    ConfigListener();
+    virtual ~ConfigListener();
+
+    void NotifyChanged();
+
+signals:
+    void changed();
+};
+
+#endif // LISTENER_H

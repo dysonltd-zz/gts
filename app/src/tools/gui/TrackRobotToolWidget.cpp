@@ -968,7 +968,7 @@ void TrackRobotToolWidget::UpdatePosition( long position )
     m_ui->m_videoPositionBar->SetPosition( position );
 }
 
-void TrackRobotToolWidget::ViewClicked( int id, int x, int y )
+void TrackRobotToolWidget::SelectTrack( int id, int x, int y )
 {
     m_scene.SetTrackPosition( id, x, y );
 
@@ -980,6 +980,20 @@ void TrackRobotToolWidget::ViewClicked( int id, int x, int y )
     }
 
     m_tracking = true;
+}
+
+void TrackRobotToolWidget::ClearTrack( int id )
+{
+    m_scene.ClrTrackPosition( id );
+
+    if (m_tracking)
+    {
+        // switch to tracking icons
+        SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/play.png"));
+        SetButtonIcon(m_ui->m_stepBtn,QString::fromUtf8(":/step.png"));
+    }
+
+    m_tracking = false;
 }
 
 void TrackRobotToolWidget::ThreadPaused( bool trackingLost )

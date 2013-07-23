@@ -434,7 +434,7 @@ void WbConfig::SetParent( WbConfig& parent )
     }
 }
 
-void WbConfig::SetListener( Listener* listener )
+void WbConfig::SetListener( ConfigListener* listener )
 {
     if ( !IsNull() )
     {

@@ -558,3 +558,11 @@ void GtsScene::SetTrackPosition( int id, int x, int y )
 
     m_view[id].ShowRobotTrack();
 }
+
+void GtsScene::ClrTrackPosition( int id )
+{
+    m_view[id].GetTracker().Deactivate();
+
+    m_view[id].HideRobotTrack();
+}
+

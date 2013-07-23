@@ -72,9 +72,9 @@ GtsView::GtsView() :
     m_sequencer   ( 0 ),
     m_imgFrame    ( 0 ),
     m_imgGrey     ( 0 ),
+    m_metrics     ( 0 ),
     m_thumbnail   ( 0 ),
-    m_imgIndex    ( 0 ),
-    m_metrics     ( 0 )
+    m_imgIndex    ( 0 )
 {
     m_imgWarp[0] = 0;
     m_imgWarp[1] = 0;
@@ -602,6 +602,13 @@ void GtsView::ShowRobotTrack()
     m_tool->ImageSet( m_id, qimage.rgbSwapped(), m_fps );
 }
 
+void GtsView::HideRobotTrack()
+{
+    QImage qimage = GroundTruthUI::showRobotTrack( m_tracker, false );
+
+    m_tool->ImageSet( m_id, qimage.rgbSwapped(), m_fps );
+}
+
 void GtsView::SetTrackerParam( RobotTracker::paramType param, float value )
 {
     if ( m_tracker )
@@ -618,9 +625,15 @@ void GtsView::SetupView( TrackRobotToolWidget* tool, ImageGrid* imageGrid )
                                                m_calScaled->GetImageSize().height), m_id );
 
     QObject::connect( (QObject*)m_viewer,
-                      SIGNAL( onClick( int, int, int ) ),
+                      SIGNAL( onLeftClick( int, int, int ) ),
                       (QObject*)tool,
-                      SLOT( ViewClicked( int, int, int ) ),
+                      SLOT( SelectTrack( int, int, int ) ),
+                      Qt::AutoConnection );
+
+    QObject::connect( (QObject*)m_viewer,
+                      SIGNAL( onRightClick( int ) ),
+                      (QObject*)tool,
+                      SLOT( ClearTrack( int ) ),
                       Qt::AutoConnection );
 
     QObject::connect( (QObject*)tool,

@@ -114,6 +114,7 @@ public:
     void SaveThumbnail();
 
     void ShowRobotTrack();
+    void HideRobotTrack();
 
     const CameraCalibration* GetScaledCalibration() const
     {

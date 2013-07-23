@@ -51,8 +51,8 @@ namespace
 MainWindow::MainWindow( QWidget* parent ) :
     QMainWindow   ( parent ),
     m_ui          ( new Ui::MainWindow ),
-    m_helpViewer  ( new HelpViewer ),
-    m_workbenchUi ()
+    m_workbenchUi (),
+    m_helpViewer  ( new HelpViewer )
 {
     m_ui->setupUi( this );
 }
@@ -121,10 +121,12 @@ void MainWindow::Start()
 
 MainWindow::~MainWindow()
 {
+#if 0
     delete m_helpViewer;
     delete m_cornerButton;
 
     delete m_workbenchUi;
+#endif
 
     delete m_ui;
 }

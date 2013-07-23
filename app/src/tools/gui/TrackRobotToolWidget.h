@@ -21,6 +21,7 @@
 
 #include <QtGui/QWidget>
 #include <QtGui/QTableWidget>
+#include <QtGui/QToolButton>
 #include <QPair>
 #include <QMap>
 
@@ -64,7 +65,8 @@ signals:
      void SetImage( int id, const QImage& image, double fps );
 
 public slots:
-     void ViewClicked( int id, int x, int y );
+     void SelectTrack( int id, int x, int y );
+     void ClearTrack( int id );
 
      void ThreadPaused( bool trackingLost );
      void ThreadFinished();

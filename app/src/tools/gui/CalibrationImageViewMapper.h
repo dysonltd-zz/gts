@@ -44,10 +44,6 @@ public:
         m_view     ( imageView ),
         m_unwarped ( false )
     {
-        QObject::connect(&imageView,
-                         SIGNAL( onClick(int, int, int) ),
-                         this,
-                         SLOT( ViewClicked(int, int, int) ) );
     }
 
     virtual void CommitData( WbConfig& config )
@@ -72,8 +68,6 @@ public:
         {
             ShowWarped();
         }
-
-        m_view.SetCaption("");
     }
 
     void ToggleWarping( bool unwarped )
@@ -187,35 +181,6 @@ private:
                     m_view.update();
                 }
             }
-        }
-    }
-
-private slots:
-    void ViewClicked( int id, int x, int y )
-    {
-        Q_UNUSED(id);
-
-        if (m_unwarped)
-        {
-            CvPoint2D32f pos;
-            pos.x = x + m_offset.x;
-            pos.y = y + m_offset.y;
-
-            float squareCm = m_config.GetKeyValue
-                ( ExtrinsicCalibrationSchema::gridSquareSizeInCmKey ).ToDouble();
-
-            /// @todo This is the square size found
-            /// in the warped image (not unwarped)!
-            float squarePx = m_config.GetKeyValue
-                ( ExtrinsicCalibrationSchema::gridSquareSizeInPxKey ).ToDouble();
-
-            float sf = squarePx / squareCm;
-
-            m_view.SetCaption( QString( "[%1,%2 (px)] [%3,%4 (cm)]" )
-                              .arg( pos.x, 5, 'f', 2 )
-                              .arg( pos.y, 5, 'f', 2 )
-                              .arg( pos.x / sf, 5, 'f', 2 )
-                              .arg( pos.y / sf, 5, 'f', 2 ) );
         }
     }
 

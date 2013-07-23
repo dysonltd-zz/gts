@@ -22,7 +22,7 @@
 #include <memory>
 
 #include "WbConfig.h"
-#include "Listener.h"
+#include "ConfigListener.h"
 
 #include <QtGui/qtreewidget.h>
 #include <QtCore/qfileinfo.h>
@@ -51,7 +51,7 @@ public:
 
     const WbSchema Schema() const;
 
-    const Listener* GetConfigListener() const;
+    const ConfigListener* GetConfigListener() const;
 
 private:
     bool TryWriteConfig( const WbConfig& config );
@@ -62,9 +62,9 @@ private:
 
     std::map< QString, ToolInterface* > m_handlerTools;
 
-    WbSchema m_schema;
-    WbConfig m_workbenchConfig;
-    Listener m_configListener;
+    WbSchema       m_schema;
+    WbConfig       m_workbenchConfig;
+    ConfigListener m_configListener;
 };
 
 #endif // WORKBENCH_H_

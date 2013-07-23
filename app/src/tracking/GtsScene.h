@@ -95,6 +95,7 @@ public:
                       char* pixelOffsetsFile );
 
     void SetTrackPosition( int id, int x, int y );
+    void ClrTrackPosition( int id );
 
 private:
     int OrganiseLogs( TrackHistory::TrackLog* log );

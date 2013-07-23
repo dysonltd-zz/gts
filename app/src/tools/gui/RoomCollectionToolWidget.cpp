@@ -17,17 +17,19 @@
  */
 
 #include "RoomCollectionToolWidget.h"
-#include <QtGui/QLabel>
-#include <QtGui/QComboBox>
+
 #include "SetUpRoomToolWidget.h"
 #include "CreateFloorPlanToolWidget.h"
 #include "CreateFloorMaskToolWidget.h"
+#include "MeasureFloorToolWidget.h"
 #include "CameraHardware.h"
+
+#include <QtGui/QLabel>
+#include <QtGui/QComboBox>
 
 RoomCollectionToolWidget::RoomCollectionToolWidget( CameraHardware& cameraHardware,
                                                     QWidget* parent,
-                                                    MainWindow& mainWindow  )
-    :
+                                                    MainWindow& mainWindow  ) :
     CollectionToolWidget( tr( "Room" ),
                           CreateCollectionSchema(),
                           CreateElementSchema(),
@@ -38,6 +40,7 @@ RoomCollectionToolWidget::RoomCollectionToolWidget( CameraHardware& cameraHardwa
     AddSubTool( new SetUpRoomToolWidget( this ) );
     AddSubTool( new CreateFloorPlanToolWidget ( cameraHardware, this ) );
     AddSubTool( new CreateFloorMaskToolWidget ( this ) );
+    AddSubTool( new MeasureFloorToolWidget ( this ) );
 }
 
 RoomCollectionToolWidget::~RoomCollectionToolWidget()

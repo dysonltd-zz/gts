@@ -62,7 +62,8 @@ public:
     void setZoom( double zoom ) { m_zoom = zoom; };
 
  signals:
-    void onClick( int id, int x, int y );
+    void onLeftClick( int id, int x, int y );
+    void onRightClick( int id );
 
 protected:
     virtual void resizeEvent( QResizeEvent* );

@@ -204,7 +204,7 @@ void ImageView::paintEvent( QPaintEvent* )
 
 void ImageView::mousePressEvent( QMouseEvent* event )
 {
-  	if (event->button() == Qt::LeftButton)
+  	if ( event->button() == Qt::LeftButton )
     {
         double scale_x = (double)m_image.size().width() /
                          (double)m_scaledPixmap.rect().size().width();
@@ -217,8 +217,13 @@ void ImageView::mousePressEvent( QMouseEvent* event )
         if (( x <= m_image.size().width() ) &&
             ( y <= m_image.size().height() ))
         {
-            emit onClick( m_id, x, y );
+            emit onLeftClick( m_id, x, y );
         }
+    }
+
+    if ( event->button() == Qt::RightButton )
+    {
+        emit onRightClick( m_id );
     }
 
     QFrame::mousePressEvent( event );

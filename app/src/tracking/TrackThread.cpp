@@ -38,15 +38,15 @@
  * @param videoSeq The VideoSequence to capture from.
  */
 TrackThread::TrackThread( GtsScene& scene ) :
-    m_scene   ( scene ),
     m_step    ( false ),
     m_stop    ( false ),
     m_pause   ( false ),
     m_track   ( true ),
     m_paused  ( false ),
     m_forward ( true ),
-    m_thread  ( new QThread() ),
-    m_mutex   ()
+    m_scene   ( scene ),
+    m_mutex   (),
+    m_thread  ( new QThread() )
 {
     QObject::connect( m_thread.get(),
                       SIGNAL( started() ),
