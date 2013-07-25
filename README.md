@@ -49,6 +49,8 @@ __Visual Studio Only__
 
 * [Microsoft Visual C++ 2010](http://www.microsoft.com/visualstudio/eng/products/visual-studio-2010-express)
 
+* [Qt Visual Studio 2010 Libraries](http://download.qt-project.org/official_releases/qt/4.8/4.8.5/qt-win-opensource-4.8.5-vs2010.exe)
+
 ## Compiling
 
 __Linux__
