@@ -28,7 +28,6 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QSpacerItem>
 #include <QtGui/QVBoxLayout>
-#include <QtGui/qapplication>
 #include <QtGui/QGroupBox>
 
 namespace
