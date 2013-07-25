@@ -18,16 +18,17 @@
 
 #include "ConfigureRobotToolWidget.h"
 
-#include <iostream>
 #include "RobotMetricsToolWidget.h"
 #include "WbDefaultKeys.h"
+#include "CameraHardware.h"
+#include "CameraDescription.h"
+
 #include <QtGui/QAction>
 #include <QtGui/qfiledialog.h>
 #include <QtGui/qapplication.h>
-#include "CameraSelectionForm.h"
 #include <QtCore/qstring.h>
-#include "CameraHardware.h"
-#include "CameraDescription.h"
+
+#include <iostream>
 
 namespace
 {
@@ -37,8 +38,7 @@ namespace
 }
 
 ConfigureRobotToolWidget::ConfigureRobotToolWidget( QWidget* parent,
-                                                    MainWindow& mainWindow )
-    :
+                                                    MainWindow& mainWindow ) :
     CollectionToolWidget( tr( "Robot" ),
                           CreateCollectionSchema(),
                           CreateElementSchema(),

@@ -53,8 +53,7 @@ struct VideoSourceAndCameraPosition
     std::auto_ptr<VideoSource> videoSource;
     KeyId                      cameraPositionId;
 
-    VideoSourceAndCameraPosition( VideoSource* vs, const KeyId& camPosId )
-        :
+    VideoSourceAndCameraPosition( VideoSource* vs, const KeyId& camPosId ) :
         videoSource( vs ),
         cameraPositionId( camPosId )
     {}

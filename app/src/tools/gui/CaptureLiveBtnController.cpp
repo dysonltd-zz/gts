@@ -103,7 +103,7 @@ void CaptureLiveBtnController::TryToStartStreamingLiveSource(
         if ( m_liveView )
         {
             m_videoSource.reset( new VideoSource( camera, *m_liveView ) );
-            m_videoSource->StartUpdatingImage( -1.0 );
+            m_videoSource->StartUpdatingImage();
         }
     }
 }

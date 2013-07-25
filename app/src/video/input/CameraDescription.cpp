@@ -108,7 +108,7 @@ const std::wstring& CameraDescription::UniqueId() const
  *  this camera. If this is a null description a null pointer is returned. The
  *  caller takes ownership if the pointer is valid.
  */
-VideoSequence* const CameraDescription::CreateVideoSequence( const double fps ) const
+VideoSequence* const CameraDescription::CreateVideoSequence( double fps ) const
 {
     VideoSequence* newSequence = 0;
 
@@ -116,8 +116,7 @@ VideoSequence* const CameraDescription::CreateVideoSequence( const double fps ) 
 
     if ( newSequence )
     {
-        static const double defaultFrameRate = 7.5;
-        double newFrameRate = defaultFrameRate;
+        double newFrameRate = m_frameRate;
         if ( fps > 0.0 ) { newFrameRate = fps; }
 
         newSequence->SetFrameRate( newFrameRate );

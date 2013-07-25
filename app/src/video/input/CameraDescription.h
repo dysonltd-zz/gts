@@ -61,7 +61,7 @@ public:
     };
 
     typedef std::set<Resolution> Resolutions;
-    
+
     CameraDescription();
 
     explicit CameraDescription( const CameraApi& api );
@@ -73,7 +73,7 @@ public:
     const std::wstring& Description () const;
     const std::wstring& UniqueId    () const;
 
-    VideoSequence* const CreateVideoSequence( const double fps = -1.0 ) const;
+    VideoSequence* const CreateVideoSequence( double fps ) const;
 
     const CameraDescription WithName        ( const std::wstring& name ) const;
     const CameraDescription WithDescription ( const std::wstring& description ) const;
@@ -95,7 +95,10 @@ public:
     {
         return m_resolutions;
     }
-    
+
+    void SetFrameRate(const double rate) { m_frameRate = rate; };
+    const double GetFrameRate() const { return m_frameRate; };
+
 private:
     CameraDescription(const bool isOffline);
 
@@ -107,6 +110,7 @@ private:
     std::wstring     m_uniqueId;    ///< @copybrief UniqueId()
     size_t           m_apiIndex;    ///< @copybrief ApiIndex()
     Resolutions      m_resolutions; ///< @brief the set of available resolutions
+    double           m_frameRate;
 };
 
 Q_DECLARE_METATYPE( CameraDescription )

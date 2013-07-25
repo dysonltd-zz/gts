@@ -20,6 +20,7 @@
 
 #include "CameraSelectionFormContents.h"
 
+#include "CameraSchema.h"
 #include "CameraDescription.h"
 #include "CameraHardware.h"
 
@@ -27,7 +28,8 @@
 #include <QtGui/QGridLayout>
 #include <QtGui/QSpacerItem>
 #include <QtGui/QVBoxLayout>
-#include <QtGui/qapplication.h>
+#include <QtGui/qapplication>
+#include <QtGui/QGroupBox>
 
 namespace
 {
@@ -35,13 +37,14 @@ namespace
     {
     public:
         MatchesAny( const Collection& camerasCollection ) :
-            m_camerasCollection( camerasCollection ) {}
+            m_camerasCollection( camerasCollection )
+        {
+        }
 
         bool operator() ( const CameraDescription& description ) const
         {
-            return m_camerasCollection.AnyElementHas( KeyName( "uniqueId" ),
-                                                      KeyValue::from( description.UniqueId() )
-                                                      );
+            return m_camerasCollection.AnyElementHas( CameraSchema::uniqueIdKey,
+                                                      KeyValue::from( description.UniqueId() ));
         }
 
     private:
@@ -56,25 +59,42 @@ const QString CamerasPage::chosenCameraField( "chosenCamera" );
  */
 CamerasPage::CamerasPage( CameraHardware&   cameraHardware,
                           const Collection& camerasCollection ) :
-    m_cameraHardware     ( cameraHardware ),
-    m_cameraOrFileWidget ( new QWidget( this ) ),
-    m_pages              ( new QStackedWidget( this ) ),
-    m_cameraSelectionPage( 0 ),
-    m_refreshPage        ( 0 ),
-    m_fromLiveCameraBtn  (new QRadioButton(tr("&Live camera"))),
-    m_fromFileCameraBtn  (new QRadioButton(tr("&Offline camera"))),
-    m_camerasCollection  ( camerasCollection )
+    m_cameraHardware         ( cameraHardware ),
+    m_camerasCollection      ( camerasCollection ),
+    m_cameraPageWidget       ( new QWidget( this ) ),
+    m_fromLiveCameraBtn      ( new QRadioButton( tr("&Physical") ) ),
+    m_fromFileCameraBtn      ( new QRadioButton( tr("&Virtual") ) ),
+    m_cameraSelectionContent ( 0 )
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget( m_cameraOrFileWidget );
+    mainLayout->addWidget( m_cameraPageWidget );
+
+    QVBoxLayout* cameraPageLayout = new QVBoxLayout;
+    m_cameraPageWidget->setLayout(cameraPageLayout);
+
+    QGroupBox *cameraOrFileGroup = new QGroupBox(m_cameraPageWidget);
     QVBoxLayout* cameraOrFileLayout = new QVBoxLayout;
-    m_cameraOrFileWidget->setLayout(cameraOrFileLayout);
+    cameraOrFileGroup->setLayout(cameraOrFileLayout);
+
     cameraOrFileLayout->addWidget(m_fromLiveCameraBtn);
-    cameraOrFileLayout->addWidget(m_pages);
     cameraOrFileLayout->addWidget(m_fromFileCameraBtn);
+
+    cameraPageLayout->addWidget(cameraOrFileGroup);
+
+    QGroupBox *cameraSelectGroup = new QGroupBox(m_cameraPageWidget);
+    QVBoxLayout* cameraSelectLayout = new QVBoxLayout;
+    cameraSelectGroup->setLayout(cameraSelectLayout);
+
+    AddCameraSelectionPage( cameraSelectLayout );
+
+    cameraPageLayout->addWidget(cameraSelectGroup);
+
     m_fromLiveCameraBtn->setChecked(true);
-    m_fromLiveCameraBtn->setToolTip(tr("Set up a connected camera so images can be saved from a live stream or loaded from files."));
-    m_fromFileCameraBtn->setToolTip(tr("Load all camera images and videos from files."));
+    m_fromLiveCameraBtn->setToolTip(tr("Stream video direct from a connected camera."));
+    m_fromFileCameraBtn->setToolTip(tr("Load all camera images and videos from file."));
+
+    m_fromLiveCameraBtn->setEnabled(true);
+    m_fromFileCameraBtn->setEnabled(false);
 
     QObject::connect( m_fromLiveCameraBtn,
                       SIGNAL( clicked() ),
@@ -85,160 +105,35 @@ CamerasPage::CamerasPage( CameraHardware&   cameraHardware,
                       this,
                       SIGNAL( completeChanged() ) );
 
-    CreateAndAddCameraSelectionPage( *m_pages );
-    CreateAndAddRefreshPage        ( *m_pages );
-
     setLayout( mainLayout );
 }
 
-void CamerasPage::initializePage()
+void CamerasPage::AddCameraSelectionPage( QLayout* layout )
 {
-    wizard()->setOption( QWizard::HaveHelpButton, false );
-    wizard()->setOption( QWizard::HelpButtonOnRight, false );
+    m_cameraSelectionContent = new CameraSelectionFormContents();
 
-    TryToDisplayCameras();
-}
+    registerField(chosenCameraField % mandatoryFieldSuffix,
+                  this,
+                  "chosenCamera",
+                  SIGNAL(completeChanged()));
 
-bool CamerasPage::isComplete() const
-{
-    return field( chosenCameraField ).value<CameraDescription>().IsValid();
-}
-
-void CamerasPage::cleanupPage()
-{
-    wizard()->setOption( QWizard::HaveCustomButton1, false );
-
-    m_cameraSelectionPage->Shutdown();
-}
-
-void CamerasPage::TryToDisplayCameras()
-{
-    CameraApi::CameraList connectedCameras(m_cameraHardware.EnumerateConnectedCameras());
-    RemovePreviouslyChosenCameras( connectedCameras );
-    const bool startUpSucceeded = m_cameraSelectionPage->StartUp( connectedCameras, -1.0 );
-
-    if ( startUpSucceeded )
-    {
-        m_pages->setCurrentWidget( m_cameraSelectionPage );
-    }
-    else
-    {
-        m_pages->setCurrentWidget( m_refreshPage );
-    }
-}
-
-void CamerasPage::CreateAndAddCameraSelectionPage( QStackedWidget& stackedWidget )
-{
-    m_cameraSelectionPage = new CameraSelectionFormContents( &stackedWidget );
-
-    registerField(chosenCameraField % mandatoryFieldSuffix, this,
-                  "chosenCamera", SIGNAL(completeChanged()));
-
-    QObject::connect( m_cameraSelectionPage,
+    QObject::connect( m_cameraSelectionContent,
                       SIGNAL( CameraChosen() ),
                       this,
                       SIGNAL( completeChanged() ) );
 
-    stackedWidget.addWidget( m_cameraSelectionPage );
+    layout->addWidget( m_cameraSelectionContent );
 }
 
-void CamerasPage::AddSpacer( QGridLayout& gridLayout,
-                             const CameraSelectionPageRow row,
-                             const CameraSelectionPageColumn column,
-                             const QSizePolicy::Policy& horizPolicy,
-                             const QSizePolicy::Policy& vertPolicy )
+void CamerasPage::initializePage()
 {
-    QSpacerItem* verticalSpacer = new QSpacerItem( 20, 20, horizPolicy, vertPolicy );
+    // Try to display connected (but unused) cameras...
+    CameraApi::CameraList connectedCameras(m_cameraHardware.EnumerateConnectedCameras());
+    RemovePreviouslyChosenCameras( connectedCameras );
+    m_cameraSelectionContent->StartUp( connectedCameras );
 
-    const int oneCellSpan = 1;
-    gridLayout.addItem( verticalSpacer, row, column, oneCellSpan, oneCellSpan );
-}
-
-const CameraDescription CamerasPage::GetChosenCamera() const
-{
-    if (m_fromLiveCameraBtn->isChecked())
-    {
-        return m_cameraSelectionPage->GetChosenCamera();
-    }
-    else
-    {
-        return CameraDescription::CreateOffline();
-    }
-}
-
-void CamerasPage::AddVerticalSpacer( QGridLayout& gridLayout,
-                                     const CameraSelectionPageRow row )
-{
-    AddSpacer( gridLayout,
-               row,
-               buttonColumn,
-               QSizePolicy::Minimum, QSizePolicy::Expanding );
-}
-
-void CamerasPage::AddHorizontalSpacer( QGridLayout& gridLayout,
-                                       const CameraSelectionPageColumn column )
-{
-    AddSpacer( gridLayout,
-               buttonRow,
-               column,
-               QSizePolicy::Expanding, QSizePolicy::Minimum );
-}
-
-void CamerasPage::CreateAndAddRefreshPage( QStackedWidget& stackedWidget )
-{
-    m_refreshPage = new QWidget( &stackedWidget );
-
-    QGridLayout* refreshPageLayout = new QGridLayout;
-
-    AddVerticalSpacer( *refreshPageLayout, topSpacerRow );
-    AddVerticalSpacer( *refreshPageLayout, middleSpacerRow );
-    AddVerticalSpacer( *refreshPageLayout, bottomSpacerRow );
-
-    AddHorizontalSpacer( *refreshPageLayout, leftSpacerColumn1 );
-    AddHorizontalSpacer( *refreshPageLayout, leftSpacerColumn2 );
-    AddHorizontalSpacer( *refreshPageLayout, rightSpacerColumn1 );
-    AddHorizontalSpacer( *refreshPageLayout, rightSpacerColumn2 );
-
-    QPushButton* const refreshButton = new QPushButton( tr( "&Try Again" ),
-                                                        m_refreshPage );
-
-    QLabel* iconLabel = new QLabel();
-    iconLabel->setPixmap( QApplication::style()
-                            ->standardIcon( QStyle::SP_MessageBoxCritical )
-                            .pixmap( 32, 32, QIcon::Normal, QIcon::On ) );
-
-    QLabel* const infoLabel = new QLabel( tr( "There are no available connected cameras."
-                                              " This may be because of a faulty"
-                                              " connection, or because all the"
-                                              " connected cameras are already registered."
-                                              " If you expect to see a camera that is not "
-                                              " already registered, check its connections and try again." ) );
-    infoLabel->setWordWrap( true );
-    QFont labelFont( infoLabel->font() );
-    labelFont.setWeight( QFont::DemiBold );
-    infoLabel->setFont( labelFont );
-
-    QHBoxLayout* labelLayout = new QHBoxLayout;
-    labelLayout->addWidget( iconLabel, 0, Qt::AlignTop );
-    labelLayout->addWidget( infoLabel );
-
-    const int singleRowSpan = 1;
-    refreshPageLayout->addItem( labelLayout,
-                                labelRow,
-                                labelStartColumn,
-                                singleRowSpan,
-                                labelColumnSpan );
-
-    refreshPageLayout->addWidget( refreshButton, buttonRow, buttonColumn );
-
-    m_refreshPage->setLayout( refreshPageLayout );
-
-    QObject::connect( refreshButton,
-                      SIGNAL( clicked() ),
-                      this,
-                      SLOT( TryToDisplayCameras() ) );
-
-    stackedWidget.addWidget( m_refreshPage );
+    wizard()->setOption( QWizard::HaveHelpButton, false );
+    wizard()->setOption( QWizard::HelpButtonOnRight, false );
 }
 
 void CamerasPage::RemovePreviouslyChosenCameras( CameraApi::CameraList& connectedCameras )
@@ -251,3 +146,26 @@ void CamerasPage::RemovePreviouslyChosenCameras( CameraApi::CameraList& connecte
     connectedCameras.erase( newEnd, connectedCameras.end() );
 }
 
+void CamerasPage::cleanupPage()
+{
+    wizard()->setOption( QWizard::HaveCustomButton1, false );
+
+    m_cameraSelectionContent->Shutdown();
+}
+
+bool CamerasPage::isComplete() const
+{
+    return field( chosenCameraField ).value<CameraDescription>().IsValid();
+}
+
+const CameraDescription CamerasPage::GetChosenCamera() const
+{
+    if (m_fromLiveCameraBtn->isChecked())
+    {
+        return m_cameraSelectionContent->GetChosenCamera();
+    }
+    else
+    {
+        return CameraDescription::CreateOffline();
+    }
+}

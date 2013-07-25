@@ -17,11 +17,13 @@
  */
 
 #include "CameraTools.h"
-#include "CameraHardware.h"
-#include "WbConfig.h"
+
+#include "CameraSchema.h"
 #include "CameraDescription.h"
+#include "CameraHardware.h"
 #include "Message.h"
 #include "WbDefaultKeys.h"
+#include "WbConfig.h"
 
 namespace CameraTools
 {
@@ -31,12 +33,13 @@ namespace CameraTools
         const QString cameraName( cameraConfig
                                   .GetKeyValue( WbDefaultKeys::displayNameKey )
                                   .ToQString() );
+
         CameraDescription camera;
         bool isValid = !cameraConfig.IsNull();
         QString errorMsg = QObject::tr( "Error - No camera specified!" );
 
         const KeyValue uniqueIdKeyValue(
-                    cameraConfig.GetKeyValue( KeyName( "uniqueId" ) ) );
+                    cameraConfig.GetKeyValue( KeyName( CameraSchema::uniqueIdKey ) ) );
 
         if ( isValid )
         {
@@ -44,6 +47,7 @@ namespace CameraTools
             errorMsg = QObject::tr( "Error - Camera %1 has no unique id!" )
                                     .arg( cameraName );
         }
+
         if ( isValid )
         {
             camera = cameraHardware.GetCameraDescriptionFromUniqueId(
@@ -53,6 +57,14 @@ namespace CameraTools
                                      .arg( cameraName );
         }
 
+        if ( isValid )
+        {
+            const double frameRate( cameraConfig
+                                    .GetKeyValue( CameraSchema::frameRateKey )
+                                    .ToDouble() );
+            camera.SetFrameRate( frameRate );
+        }
+
         if ( !isValid )
         {
             Message::Show( 0,
@@ -60,8 +72,8 @@ namespace CameraTools
                            errorMsg,
                            Message::Severity_Critical );
         }
+
         return camera;
     }
-
 }
 

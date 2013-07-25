@@ -180,8 +180,8 @@ void CaptureLiveDualController::TryToStartStreamingLiveSource(
             m_videoSource1.reset( new VideoSource( camera1, *m_liveView1 ) );
             m_videoSource2.reset( new VideoSource( camera2, *m_liveView2 ) );
 
-            m_videoSource1->StartUpdatingImage( -1.0 );
-            m_videoSource2->StartUpdatingImage( -1.0 );
+            m_videoSource1->StartUpdatingImage();
+            m_videoSource2->StartUpdatingImage();
         }
     }
 }

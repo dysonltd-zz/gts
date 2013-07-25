@@ -100,10 +100,13 @@ void CaptureThread::run()
 #endif
 
         m_internalImage = m_videoSeq->RetrieveNextFrame();
+        double fps = m_videoSeq->GetFrameRate();
+
         UpdateQImage();
 
-        emit GotImage( m_image, tspec );
+        emit GotImage( m_image, tspec, fps );
     }
+
     emit finished();
     m_thread->quit();
 }

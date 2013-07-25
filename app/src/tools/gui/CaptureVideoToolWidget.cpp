@@ -22,17 +22,7 @@
 
 #include "CameraDescription.h"
 #include "CameraHardware.h"
-#include "CameraSelectionForm.h"
 #include "VideoSequence.h"
-
-#include <memory>
-#include <sstream>
-#include <iostream>
-
-#include <QtGui/QTableWidget>
-#include <QtCore/QFileInfo>
-
-#include <opencv/highgui.h>
 
 #include "CameraPositionSchema.h"
 #include "RoomLayoutSchema.h"
@@ -52,6 +42,15 @@
 #include "WbConfigTools.h"
 #include "WbDefaultKeys.h"
 
+#include <QtGui/QTableWidget>
+#include <QtCore/QFileInfo>
+
+#include <opencv/highgui.h>
+
+#include <memory>
+#include <sstream>
+#include <iostream>
+
 /** @bug Should use QStyle::standardIcon to get the media player icons, can't do it in
  * Qt Designer though.
  */
@@ -62,8 +61,7 @@
  * @param parent
  */
 CaptureVideoToolWidget::CaptureVideoToolWidget( CameraHardware& cameraHardware,
-                                                QWidget* parent )
-    :
+                                                QWidget* parent ) :
     Tool                ( parent, CreateSchema() ),
     m_ui                ( new Ui::CaptureVideoToolWidget ),
     m_cameraHardware    ( cameraHardware ),
@@ -178,8 +176,8 @@ void CaptureVideoToolWidget::RecordButtonClicked( const bool shouldRecord )
 void CaptureVideoToolWidget::StopRecording()
 {
     for (auto videoSource = m_videoSources.begin();
-         videoSource != m_videoSources.end();
-         ++videoSource)
+              videoSource != m_videoSources.end();
+              ++videoSource)
     {
         (*videoSource)->videoSource->StopRecording();
     }
@@ -188,8 +186,8 @@ void CaptureVideoToolWidget::StopRecording()
 bool CaptureVideoToolWidget::AnyViewIsRecording() const
 {
     for (auto videoSource = m_videoSources.begin();
-         videoSource != m_videoSources.end();
-         ++videoSource)
+              videoSource != m_videoSources.end();
+              ++videoSource)
     {
         if ((*videoSource)->videoSource->IsRecording())
         {
@@ -497,15 +495,19 @@ void CaptureVideoToolWidget::CaptureLiveConnectDisconnectButtonClicked()
 
 void CaptureVideoToolWidget::StartUpdatingImages()
 {
-    for (auto videoSource = m_videoSources.begin(); videoSource != m_videoSources.end(); ++videoSource)
+    for (auto videoSource = m_videoSources.begin();
+              videoSource != m_videoSources.end();
+              ++videoSource)
     {
-        (*videoSource)->videoSource->StartUpdatingImage( m_fps );
+        (*videoSource)->videoSource->StartUpdatingImage();
     }
 }
 
 void CaptureVideoToolWidget::StopUpdatingImages()
 {
-    for (auto videoSource = m_videoSources.begin(); videoSource != m_videoSources.end(); ++videoSource)
+    for (auto videoSource = m_videoSources.begin();
+              videoSource != m_videoSources.end();
+              ++videoSource)
     {
         (*videoSource)->videoSource->StopUpdatingImage();
     }

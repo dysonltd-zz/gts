@@ -43,8 +43,7 @@ namespace
 
 CameraCollectionToolWidget::CameraCollectionToolWidget( CameraHardware& cameraHardware,
                                                         QWidget* parent,
-                                                        MainWindow& mainWindow  )
-    :
+                                                        MainWindow& mainWindow  ) :
     CollectionToolWidget( tr( "Camera" ),
                           CreateCollectionSchema(),
                           CreateElementSchema(),
@@ -88,12 +87,15 @@ void CameraCollectionToolWidget::SetToolSpecificConfigItems(WbConfig newElement,
     newElement.SetKeyValue(WbDefaultKeys::descriptionKey, KeyValue::from(chosenCamera.ToPlainText()));
     newElement.SetKeyValue(CameraSchema::uniqueIdKey,
                            KeyValue::from( QString::fromStdWString(chosenCamera.UniqueId())));
+    newElement.SetKeyValue(CameraSchema::frameRateKey,
+                           KeyValue::from( chosenCamera.GetFrameRate()));
 }
 
 const WbSchema CameraCollectionToolWidget::CreateElementSchema()
 {
     WbSchema elementSchema(CreateElementWorkbenchSubSchema(CameraSchema::schemaName, Unnamed("Camera")));
     elementSchema.AddSingleValueKey(CameraSchema::uniqueIdKey, WbSchemaElement::Multiplicity::One);
+    elementSchema.AddSingleValueKey(CameraSchema::frameRateKey, WbSchemaElement::Multiplicity::One);
     return elementSchema;
 }
 

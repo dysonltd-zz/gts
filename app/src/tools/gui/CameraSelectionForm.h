@@ -46,8 +46,7 @@ public:
     CameraSelectionForm( QWidget* const parent );
     virtual ~CameraSelectionForm();
 
-    const CameraDescription ChooseConnectedCamera( const CameraApi::CameraList& cameras,
-                                                   const double fps );
+    const CameraDescription ChooseConnectedCamera( const CameraApi::CameraList& cameras );
 
 private:
     Ui::CameraSelectionForm* m_ui;

@@ -42,6 +42,13 @@
 #pragma warning ( disable : 4351 )
 #endif
 
+const double VideoSource::FPS_7_5 = 7.5;
+const double VideoSource::FPS_15  = 15.0;
+const double VideoSource::FPS_30  = 30.0;
+const double VideoSource::FPS_40  = 40.0;
+const double VideoSource::FPS_50  = 50.0;
+const double VideoSource::FPS_60  = 60.0;
+
 /** @brief Create a VideoSource.
  *
  * @param camera    The camera to display images from.
@@ -111,20 +118,22 @@ void VideoSource::StopRecording()
  *
  * @param fps The frame rate to use for the camera.
  */
-void VideoSource::StartUpdatingImage( const double fps )
+void VideoSource::StartUpdatingImage( double fps )
 {
     StopUpdatingImage();
 
     CaptureThread* capture = new CaptureThread( m_camera.CreateVideoSequence( fps ) );
 
     QObject::connect( capture,
-                      SIGNAL( GotImage( const QImage&, const timespec ) ),
+                      SIGNAL( GotImage( const QImage&, const timespec, const double ) ),
                       this,
-                      SLOT( UpdateDisplayedImage( const QImage, const timespec ) ) );
+                      SLOT( UpdateDisplayedImage( const QImage, const timespec, const double ) ),
+                      Qt::AutoConnection );
     QObject::connect( capture,
                       SIGNAL( finished() ),
                       this,
-                      SLOT( ResetCapture() ) );
+                      SLOT( ResetCapture() ),
+                      Qt::AutoConnection );
 
     m_captureThread.reset(capture);
 }
@@ -158,7 +167,7 @@ void VideoSource::StopUpdatingImage()
  *
  * @param newImage The new image received from the camera.
  */
-void VideoSource::UpdateDisplayedImage( const QImage newImage, timespec stamp )
+void VideoSource::UpdateDisplayedImage( const QImage newImage, const timespec stamp, const double fps )
 {
     if ( m_videoWriter.get() )
     {
@@ -173,7 +182,7 @@ void VideoSource::UpdateDisplayedImage( const QImage newImage, timespec stamp )
     }
 
     m_displayedImage = newImage.rgbSwapped();
-    SetImageAndUpdateFpsDisplay();
+    SetImageAndUpdateFpsDisplay( fps );
     m_imageView.update();
 }
 
@@ -186,7 +195,7 @@ bool VideoSource::IsRecording() const
  *
  *  The frame rate is very approximate & based on the time between calls to this function.
  */
-void VideoSource::SetImageAndUpdateFpsDisplay()
+void VideoSource::SetImageAndUpdateFpsDisplay( double devFps )
 {
     if ( !m_displayedImage.isNull() )
     {
@@ -201,11 +210,15 @@ void VideoSource::SetImageAndUpdateFpsDisplay()
         const double avgFrameDurationMs = std::accumulate(m_frameDurationsMs,
                                                           m_frameDurationsMs+NUM_FRAMES_TO_AVERAGE,
                                                           0.0)/NUM_FRAMES_TO_AVERAGE;
+
         const double avgFps = MSEC_PER_SEC / avgFrameDurationMs;
-        m_imageView.SetCaption( QString( "FPS: %1" ).arg( avgFps, 5, 'f', 2 ) );
+
+        m_imageView.SetCaption( QString( "%1x%2@%3(%4)" ).arg( m_displayedImage.width() )
+                                                         .arg( m_displayedImage.height() )
+                                                         .arg( devFps, 5, 'f', 2 )
+                                                         .arg( avgFps, 5, 'f', 2 ) );
     }
 }
-
 
 /** @brief Update the recording timer in GUI
  *
