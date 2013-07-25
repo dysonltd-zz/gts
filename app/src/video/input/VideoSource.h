@@ -20,15 +20,17 @@
 #define VIDEOSOURCE_H
 
 #include "CameraDescription.h"
-#include <memory>
 
 #include <QtGui/qimage.h>
-#include <opencv/cv.h>
 #include <QtGui/QTableWidget>
 #include <QtCore/QTime>
-#include <opencv/highgui.h>
 #include <QtCore/qobject.h>
 #include <QLineEdit>
+
+#include <opencv/highgui.h>
+#include <opencv/cv.h>
+
+#include <memory>
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
     #include <WinTime.h>
@@ -48,6 +50,15 @@ class CaptureThread;
 class VideoSource : public QObject
 {
     Q_OBJECT
+
+public:
+    static const double FPS_7_5;
+    static const double FPS_15;
+    static const double FPS_30;
+    static const double FPS_40;
+    static const double FPS_50;
+    static const double FPS_60;
+
 public:
     VideoSource(const CameraDescription& camera, ImageView& imageView , QLineEdit* recordingTimer = 0);
     ~VideoSource();
@@ -56,7 +67,7 @@ public:
     void StopRecording();
     bool IsRecording() const;
 
-    void StartUpdatingImage(const double fps = -1.0);
+    void StartUpdatingImage( double fps = -1.0 );
     void StopUpdatingImage();
 
     const QSize GetImageSize() const;
@@ -65,11 +76,10 @@ public:
 
 private slots:
     void ResetCapture();
-    void UpdateDisplayedImage(const QImage newImage , timespec stamp);
+    void UpdateDisplayedImage( const QImage newImage, const timespec stamp, const double devFps );
 
 private:
-
-    void SetImageAndUpdateFpsDisplay();
+    void SetImageAndUpdateFpsDisplay( double devFps );
     void UpdateRecordingTimer();
 
     static const size_t NUM_FRAMES_TO_AVERAGE = 10;

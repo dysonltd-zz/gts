@@ -47,7 +47,7 @@ public:
 
     const CameraDescription GetChosenCamera() const;
 
-    bool StartUp( const CameraApi::CameraList& cameras, const double fps );
+    bool StartUp( const CameraApi::CameraList& cameras );
     void Shutdown();
 
     bool HasCameras() const;
@@ -58,6 +58,9 @@ signals:
 
 private slots:
     void SelectedCameraChanged( QTableWidgetItem* current, QTableWidgetItem* previous );
+
+    void Reset();
+    void FrameRateToggled( bool state );
 
 private:
 
@@ -70,7 +73,6 @@ private:
 
     void InvalidateChosenCamera();
     bool ChosenCameraIsValid() const;
-
 
     std::auto_ptr< Ui::CameraSelectionFormContentsClass > m_ui; ///< The UI class created by Qt designer.
     size_t                       m_chosenCamera;  ///< The index of the currently-selected camera.

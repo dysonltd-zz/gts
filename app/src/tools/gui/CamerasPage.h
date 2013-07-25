@@ -21,7 +21,6 @@
 #include "CameraApi.h"
 #include "CameraDescription.h"
 
-#include <QtGui/QStackedWidget>
 #include <QtGui/QPushButton>
 #include <QtGui/QGridLayout>
 #include <QtGui/QRadioButton>
@@ -43,53 +42,18 @@ public:
 
     static const QString chosenCameraField;
 
-private slots:
-    void TryToDisplayCameras();
-
 private:
-    enum CameraSelectionPageRow
-    {
-        topSpacerRow,
-        labelRow,
-        middleSpacerRow,
-        buttonRow,
-        bottomSpacerRow
-    };
-
-    enum CameraSelectionPageColumn
-    {
-        leftSpacerColumn1,
-        leftSpacerColumn2,
-        buttonColumn,
-        rightSpacerColumn1,
-        rightSpacerColumn2
-    };
-
-    static const CameraSelectionPageColumn labelStartColumn = leftSpacerColumn2;
-    static const int labelColumnSpan = ((int)rightSpacerColumn1-(int)labelStartColumn)+1;
-
     void RemovePreviouslyChosenCameras( CameraApi::CameraList& connectedCameras );
 
-    void CreateAndAddCameraSelectionPage( QStackedWidget& stackedWidget );
-    void CreateAndAddRefreshPage        ( QStackedWidget& stackedWidget );
-    void AddVerticalSpacer              ( QGridLayout& gridLayout,
-                                          const CameraSelectionPageRow row );
-    void AddHorizontalSpacer            ( QGridLayout& gridLayout,
-                                          const CameraSelectionPageColumn column );
-    void AddSpacer                      ( QGridLayout& gridLayout,
-                                          const CameraSelectionPageRow row,
-                                          const CameraSelectionPageColumn column,
-                                          const QSizePolicy::Policy& horizPolicy,
-                                          const QSizePolicy::Policy& vertPolicy );
+    void AddCameraSelectionPage( QLayout* layout );
+
     const CameraDescription GetChosenCamera() const;
 
+    Collection                   m_camerasCollection;
     CameraHardware&              m_cameraHardware;
-    QWidget*                     m_cameraOrFileWidget;
-    QStackedWidget*              m_pages;
-    CameraSelectionFormContents* m_cameraSelectionPage;
-    QWidget*                     m_refreshPage;
+    QWidget*                     m_cameraPageWidget;
     QRadioButton*                m_fromLiveCameraBtn;
     QRadioButton*                m_fromFileCameraBtn;
-    Collection                   m_camerasCollection;
+    CameraSelectionFormContents* m_cameraSelectionContent;
 };
 

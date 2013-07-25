@@ -38,7 +38,7 @@ public:
     VideoCaptureCv(int i) : VideoSequence(), m_capture(0), m_avi(false)
     {
         m_capture = cvCreateCameraCapture(i);
-        cvSetCaptureProperty( m_capture, CV_CAP_PROP_FPS, 7.5 );
+        cvSetCaptureProperty( m_capture, CV_CAP_PROP_FPS, 15 ); // TODO!!
     }
 
     /** @brief Create a capture-from-video-file object.

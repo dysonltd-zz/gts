@@ -58,12 +58,11 @@ CameraSelectionForm::~CameraSelectionForm()
  *  are no cameras to select from, or the user cancels.
 **/
 const CameraDescription
-CameraSelectionForm::ChooseConnectedCamera( const CameraApi::CameraList& cameras,
-                                            const double fps )
+CameraSelectionForm::ChooseConnectedCamera( const CameraApi::CameraList& cameras )
 {
     CameraDescription camera;
 
-    if ( m_contents->StartUp( cameras, fps ) )
+    if ( m_contents->StartUp( cameras ) )
     {
         int success = exec();
 

@@ -127,6 +127,8 @@ void TargetsToolWidget::UseStandardBtnClicked()
 
 	    m_ui->m_browsePrintableBtn->setEnabled(false);
 	    m_ui->m_clearPrintableBtn->setEnabled(false);
+
+	    TargetTypeChanged();
 	}
 	else
 	{
@@ -137,6 +139,9 @@ void TargetsToolWidget::UseStandardBtnClicked()
 
 	    m_ui->m_browsePrintableBtn->setEnabled(true);
 	    m_ui->m_clearPrintableBtn->setEnabled(true);
+
+        m_ui->m_trackingTargetFileNameEdit->setText("");
+        m_ui->m_printableTargetFileNameEdit->setText("");
 	}
 }
 
@@ -281,12 +286,14 @@ void TargetsToolWidget::BrowseTrackingBtnClicked()
 
 void TargetsToolWidget::ClearTrackingBtnClicked()
 {
-    WbConfigTools::SetFileName( GetCurrentConfig(),
-                                "",
-                                TargetSchema::trackImgKey,
-                                WbConfigTools::FileNameMode_Absolute );
+    m_ui->m_trackingTargetFileNameEdit->setText("");
 
-    ReloadCurrentConfig();
+    //WbConfigTools::SetFileName( GetCurrentConfig(),
+    //                            "",
+    //                            TargetSchema::trackImgKey,
+    //                            WbConfigTools::FileNameMode_Absolute );
+
+    //ReloadCurrentConfig();
 }
 
 void TargetsToolWidget::BrowsePrintableBtnClicked()
@@ -296,12 +303,14 @@ void TargetsToolWidget::BrowsePrintableBtnClicked()
 
 void TargetsToolWidget::ClearPrintableBtnClicked()
 {
-    WbConfigTools::SetFileName( GetCurrentConfig(),
-                                "",
-                                TargetSchema::printImgKey,
-                                WbConfigTools::FileNameMode_Absolute );
+    m_ui->m_printableTargetFileNameEdit->setText("");
 
-    ReloadCurrentConfig();
+    //WbConfigTools::SetFileName( GetCurrentConfig(),
+    //                            "",
+    //                            TargetSchema::printImgKey,
+    //                            WbConfigTools::FileNameMode_Absolute );
+
+    //ReloadCurrentConfig();
 }
 
 void TargetsToolWidget::TargetImageChanged()

@@ -18,12 +18,14 @@
 
 #ifndef CAMERASCHEMA_H_
 #define CAMERASCHEMA_H_
+
 #include "KeyName.h"
 
 namespace CameraSchema
 {
     extern const KeyName schemaName;
     extern const KeyName uniqueIdKey;
+    extern const KeyName frameRateKey;
 }
 
 #endif // CAMERASCHEMA_H_

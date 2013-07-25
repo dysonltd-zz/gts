@@ -62,7 +62,7 @@ signals:
      * @param system timestamp of image
      */
     //void GotImage(const QImage& newImage, const QTime& stamp );
-    void GotImage(const QImage& newImage, const timespec stamp );
+    void GotImage(const QImage& newImage, const timespec stamp, const double fps );
 private:
     bool ShouldStopCapturing() const;
     void UpdateQImage();

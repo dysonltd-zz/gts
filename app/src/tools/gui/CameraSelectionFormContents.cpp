@@ -19,6 +19,7 @@
 #include "CameraSelectionFormContents.h"
 
 #include "ui_CameraSelectionFormContents.h"
+
 #include "VideoSource.h"
 #include "Message.h"
 
@@ -27,7 +28,7 @@ CameraSelectionFormContents::CameraSelectionFormContents( QWidget* parent ) :
     m_ui          ( new Ui::CameraSelectionFormContentsClass ),
     m_chosenCamera( 0 ),
     m_cameras     (),
-    m_fps         ( -1.0 )
+    m_fps         ( VideoSource::FPS_7_5 )
 {
     m_ui->setupUi( this );
 
@@ -44,6 +45,36 @@ CameraSelectionFormContents::CameraSelectionFormContents( QWidget* parent ) :
                       SIGNAL( itemDoubleClicked(QTableWidgetItem*) ),
                       this,
                       SIGNAL( CameraChosen() ) );
+
+    QObject::connect( m_ui->m_fps7_5,
+                      SIGNAL( toggled( bool ) ),
+                      this,
+                      SLOT( FrameRateToggled( bool ) ) );
+    QObject::connect( m_ui->m_fps15,
+                      SIGNAL( toggled( bool ) ),
+                      this,
+                      SLOT( FrameRateToggled( bool ) ) );
+    QObject::connect( m_ui->m_fps30,
+                      SIGNAL( toggled( bool ) ),
+                      this,
+                      SLOT( FrameRateToggled( bool ) ) );
+    QObject::connect( m_ui->m_fps40,
+                      SIGNAL( toggled( bool ) ),
+                      this,
+                      SLOT( FrameRateToggled( bool ) ) );
+    QObject::connect( m_ui->m_fps50,
+                      SIGNAL( toggled( bool ) ),
+                      this,
+                      SLOT( FrameRateToggled( bool ) ) );
+    QObject::connect( m_ui->m_fps60,
+                      SIGNAL( toggled( bool ) ),
+                      this,
+                      SLOT( FrameRateToggled( bool ) ) );
+
+    QObject::connect( m_ui->m_resetBtn,
+                      SIGNAL( clicked() ),
+                      this,
+                      SLOT( Reset() ) );
 }
 
 CameraSelectionFormContents::~CameraSelectionFormContents()
@@ -57,10 +88,8 @@ CameraSelectionFormContents::~CameraSelectionFormContents()
  *  @return @a true if the widget is able to start correctly (there are valid cameras),
  *    otherwise @a false.
 **/
-bool CameraSelectionFormContents::StartUp( const CameraApi::CameraList& cameras,
-                                                 const double fps )
+bool CameraSelectionFormContents::StartUp( const CameraApi::CameraList& cameras )
 {
-    m_fps = fps;
     m_cameras = cameras;
     FillOutCameraList();
 
@@ -141,6 +170,23 @@ void CameraSelectionFormContents::SelectedCameraChanged( QTableWidgetItem* curre
     UpdatePreview();
 }
 
+void CameraSelectionFormContents::Reset()
+{
+    UpdatePreview();
+}
+
+void CameraSelectionFormContents::FrameRateToggled( bool state )
+{
+    Q_UNUSED(state);
+
+    if (m_ui->m_fps7_5->isChecked()) m_fps = VideoSource::FPS_7_5;
+    if (m_ui->m_fps15->isChecked())  m_fps = VideoSource::FPS_15;
+    if (m_ui->m_fps30->isChecked())  m_fps = VideoSource::FPS_30;
+    if (m_ui->m_fps40->isChecked())  m_fps = VideoSource::FPS_40;
+    if (m_ui->m_fps50->isChecked())  m_fps = VideoSource::FPS_50;
+    if (m_ui->m_fps60->isChecked())  m_fps = VideoSource::FPS_60;
+}
+
 /** @brief Change chosen camera from a newly-selected QTableWidgetItem.
  *
  *  If the newly select item is null, invalidate the m_chosenCamera index.
@@ -174,6 +220,7 @@ void CameraSelectionFormContents::UpdatePreview()
 
         m_preview.reset( // ... before creating a new one
             new VideoSource( camera, *m_ui->m_previewImageWidget ) );
+
         m_preview->StartUpdatingImage( m_fps );
     }
 }
@@ -181,10 +228,14 @@ void CameraSelectionFormContents::UpdatePreview()
 const CameraDescription CameraSelectionFormContents::GetChosenCamera() const
 {
     CameraDescription camera;
+
     if( ChosenCameraIsValid() )
     {
         camera = m_cameras.at( m_chosenCamera );
+
+        camera.SetFrameRate( m_fps );
     }
+
     return camera;
 }
 
