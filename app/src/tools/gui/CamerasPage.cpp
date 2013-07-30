@@ -58,8 +58,8 @@ const QString CamerasPage::chosenCameraField( "chosenCamera" );
  */
 CamerasPage::CamerasPage( CameraHardware&   cameraHardware,
                           const Collection& camerasCollection ) :
-    m_cameraHardware         ( cameraHardware ),
     m_camerasCollection      ( camerasCollection ),
+    m_cameraHardware         ( cameraHardware ),
     m_cameraPageWidget       ( new QWidget( this ) ),
     m_fromLiveCameraBtn      ( new QRadioButton( tr("&Physical") ) ),
     m_fromFileCameraBtn      ( new QRadioButton( tr("&Virtual") ) ),
