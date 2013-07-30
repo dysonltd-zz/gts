@@ -42,12 +42,13 @@
 #pragma warning ( disable : 4351 )
 #endif
 
-const double VideoSource::FPS_7_5 = 7.5;
-const double VideoSource::FPS_15  = 15.0;
-const double VideoSource::FPS_30  = 30.0;
-const double VideoSource::FPS_40  = 40.0;
-const double VideoSource::FPS_50  = 50.0;
-const double VideoSource::FPS_60  = 60.0;
+const double VideoSource::FPS_3_75 = 3.75;
+const double VideoSource::FPS_7_5  = 7.5;
+const double VideoSource::FPS_15   = 15.0;
+const double VideoSource::FPS_30   = 30.0;
+const double VideoSource::FPS_40   = 40.0;
+const double VideoSource::FPS_50   = 50.0;
+const double VideoSource::FPS_60   = 60.0;
 
 /** @brief Create a VideoSource.
  *
@@ -207,9 +208,9 @@ void VideoSource::SetImageAndUpdateFpsDisplay( double devFps )
         m_frameDurationsMs[ m_frameNumber%NUM_FRAMES_TO_AVERAGE ] = frameDurationMs;
         m_frameNumber++;
 
-        const double avgFrameDurationMs = std::accumulate(m_frameDurationsMs,
-                                                          m_frameDurationsMs+NUM_FRAMES_TO_AVERAGE,
-                                                          0.0)/NUM_FRAMES_TO_AVERAGE;
+        const double avgFrameDurationMs = std::accumulate( m_frameDurationsMs,
+                                                           m_frameDurationsMs+NUM_FRAMES_TO_AVERAGE,
+                                                           0.0 ) / NUM_FRAMES_TO_AVERAGE;
 
         const double avgFps = MSEC_PER_SEC / avgFrameDurationMs;
 

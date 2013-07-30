@@ -58,6 +58,11 @@ static const int BI_LEVEL_DEFAULT = 128;
 static const double NCC_DEFAULT = 0.3;
 static const double RESOLUTION_DEFAULT = 15.0;
 
+static const int ROOM_POSITION_COLUMN = 0;
+static const int FILE_COLUMN = 1;
+
+static const int NUM_COLS = 2;
+
 TrackRobotToolWidget::TrackRobotToolWidget( QWidget* parent ) :
     Tool       ( parent, CreateSchema() ),
     m_ui       ( new Ui::TrackRobotToolWidget ),
@@ -88,13 +93,13 @@ TrackRobotToolWidget::TrackRobotToolWidget( QWidget* parent ) :
     m_scanBackIconRatePair.push_back(std::make_pair(":/revscan4x.png", 4));
     m_scanBackIconRatePair.push_back(std::make_pair(":/revscan10x.png", 10));
     m_scanBackIconRatePair.push_back(std::make_pair(":/revscan20x.png", 20));
-
 }
 
 void TrackRobotToolWidget::SetupUi()
 {
     m_ui->setupUi( this );
-    m_ui->m_videoTable->setColumnCount(2);
+
+    m_ui->m_videoTable->setColumnCount( NUM_COLS );
     m_ui->m_videoTable->setSortingEnabled( false );
 }
 
@@ -298,6 +303,11 @@ void TrackRobotToolWidget::ReloadCurrentConfigToolSpecific()
     // Create a map from positions to lists of video file names:
     m_ui->m_videoTable->clear();
     m_ui->m_videoTable->setRowCount(0);
+
+    QStringList headerlabels;
+    headerlabels << "Position" << "Source";
+    m_ui->m_videoTable->setHorizontalHeaderLabels( headerlabels );
+
     m_mapPositionsToFiles.clear();
 
     for (auto p = positions.begin(); p != positions.end(); ++p)
@@ -422,7 +432,6 @@ void TrackRobotToolWidget::UseGlobalBtnClicked()
             m_ui->m_camNccThresholdSpinBox->setEnabled(true);
             m_ui->m_camResolutionSpinBox->setEnabled(true);
         }
-
 	}
 }
 
@@ -596,26 +605,19 @@ const QStringList TrackRobotToolWidget::GetCameraPositionIds(const KeyId& roomId
 
 void TrackRobotToolWidget::AddTableRow( const QString& roomPosition, const QStringList& videoFileNames )
 {
-    const int ROOM_POSITION_COLUMN = 0;
-    const int FILE_COLUMN = 1;
     const int newAppendedRow = m_ui->m_videoTable->rowCount();
+
     m_ui->m_videoTable->insertRow( newAppendedRow );
-    if ( m_ui->m_videoTable->columnCount() < 2 )
-    {
-        m_ui->m_videoTable->insertColumn( FILE_COLUMN );
-    }
 
     QTableWidgetItem* positionTableItem = new QTableWidgetItem( roomPosition );
     positionTableItem->setToolTip(tr("Position: ") + roomPosition);
+
     m_ui->m_videoTable->setItem(newAppendedRow, ROOM_POSITION_COLUMN, positionTableItem );
 
     QComboBox* videoSpinBox = new QComboBox();
     videoSpinBox->addItems( videoFileNames );
-    m_ui->m_videoTable->setCellWidget( newAppendedRow, FILE_COLUMN, videoSpinBox );
 
-    QStringList headerlabels;
-    headerlabels << "Position" << "Source";
-    m_ui->m_videoTable->setHorizontalHeaderLabels( headerlabels );
+    m_ui->m_videoTable->setCellWidget( newAppendedRow, FILE_COLUMN, videoSpinBox );
 }
 
 const WbSchema TrackRobotToolWidget::CreateSchema()
@@ -668,7 +670,6 @@ void TrackRobotToolWidget::StepBackButtonClicked()
     SetButtonIcon(m_ui->m_stepBtn,QString::fromUtf8(":/step.png"));
 
     m_tracking = false;
-
 }
 
 void TrackRobotToolWidget::ScanBackButtonClicked()
@@ -1270,4 +1271,3 @@ bool TrackRobotToolWidget::CreateRunResultDirectory(const WbConfig& config)
 
     return true;
 }
-

@@ -96,9 +96,6 @@ public:
         return m_resolutions;
     }
 
-    void SetFrameRate(const double rate) { m_frameRate = rate; };
-    const double GetFrameRate() const { return m_frameRate; };
-
 private:
     CameraDescription(const bool isOffline);
 
@@ -110,7 +107,6 @@ private:
     std::wstring     m_uniqueId;    ///< @copybrief UniqueId()
     size_t           m_apiIndex;    ///< @copybrief ApiIndex()
     Resolutions      m_resolutions; ///< @brief the set of available resolutions
-    double           m_frameRate;
 };
 
 Q_DECLARE_METATYPE( CameraDescription )

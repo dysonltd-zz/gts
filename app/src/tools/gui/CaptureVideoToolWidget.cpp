@@ -51,6 +51,19 @@
 #include <sstream>
 #include <iostream>
 
+static const double rate[] = {VideoSource::FPS_3_75,
+                              VideoSource::FPS_7_5,
+                              VideoSource::FPS_15,
+                              VideoSource::FPS_30,
+                              VideoSource::FPS_40,
+                              VideoSource::FPS_50,
+                              VideoSource::FPS_60};
+
+static const int SOURCE_COLUMN = 0;
+static const int RATE_COLUMN = 1;
+
+static const int NUM_COLS = 2;
+
 /** @bug Should use QStyle::standardIcon to get the media player icons, can't do it in
  * Qt Designer though.
  */
@@ -85,7 +98,7 @@ void CaptureVideoToolWidget::SetupUi()
 {
     m_ui->setupUi( this );
 
-    m_ui->m_videoTable->setColumnCount( 1 );
+    m_ui->m_videoTable->setColumnCount( NUM_COLS );
     m_ui->m_videoTable->setSortingEnabled( false );
 }
 
@@ -113,7 +126,6 @@ void CaptureVideoToolWidget::ConnectSignals()
                       SLOT( FormatMP4ButtonClicked() ) );
 }
 
-
 const QString CaptureVideoToolWidget::GetSubSchemaDefaultFileName() const
 {
     return "capturedVideos.xml";
@@ -138,13 +150,12 @@ void CaptureVideoToolWidget::CaptureLoadResetButtonClicked()
         // reset
         StopUpdatingImages();
         RemoveAllVideoSources();
-        m_ui->m_videoTable->clear();
-        m_ui->m_videoTable->setRowCount(0);
+
         m_ui->m_captureLoadResetBtn->setText("&Load");
         m_ui->m_captureLiveConnectDisconnectBtn->setEnabled(false);
+
         m_videoSourcesAdded = false;
     }
-
 }
 
 void CaptureVideoToolWidget::FormatXVIDButtonClicked()
@@ -237,6 +248,8 @@ void CaptureVideoToolWidget::StartRecordingInDirectory( const QString& outputDir
         return;
     }
 
+    int row = 0;
+
     for (auto videoSource = m_videoSources.begin(); videoSource != m_videoSources.end(); ++videoSource)
     {
         const QSize imageSize((*videoSource)->videoSource->GetImageSize());
@@ -253,6 +266,10 @@ void CaptureVideoToolWidget::StartRecordingInDirectory( const QString& outputDir
         const QString timestampFileName(FileUtilities::GetUniqueFileName(
                                             outputDirectory.absoluteFilePath("timestamps%1.txt")));
 
+        // Identify frame rate...
+        QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(row, RATE_COLUMN);
+        double frameRate = rate[combo->currentIndex()];
+
         AddVideoFileConfigKey((*videoSource)->cameraPositionId, videoFileName, timestampFileName);
 
         const QFileInfo fileInfo( videoFileName );
@@ -263,7 +280,8 @@ void CaptureVideoToolWidget::StartRecordingInDirectory( const QString& outputDir
                                                                     imageSize.width(),
                                                                     imageSize.height(),
                                                                     videoFileName.toAscii(),
-                                                                    timestampFileName.toAscii() )));
+                                                                    timestampFileName.toAscii(),
+                                                                    frameRate )));
         }
         else
         {
@@ -275,6 +293,8 @@ void CaptureVideoToolWidget::StartRecordingInDirectory( const QString& outputDir
                            Message::Severity_Critical );
             return;
         }
+
+        row++;
     }
 }
 
@@ -316,6 +336,7 @@ void CaptureVideoToolWidget::RemovePreviouslyChosenCameras( CameraApi::CameraLis
         std::remove_if( connectedCameras.begin(),
                         connectedCameras.end(),
                         MatchesAny( m_videoSources ) );
+
     connectedCameras.erase( newEnd, connectedCameras.end() );
 }
 
@@ -324,9 +345,15 @@ void CaptureVideoToolWidget::RemoveAllVideoSources()
     StopUpdatingImages();
 
     m_videoSources.clear();
+
     m_ui->m_imageGrid->Clear();
+
     m_ui->m_videoTable->clear();
     m_ui->m_videoTable->setRowCount(0);
+
+    QStringList headerlabels;
+    headerlabels << "Source" << "Rate";
+    m_ui->m_videoTable->setHorizontalHeaderLabels( headerlabels );
 
     m_ui->m_recordBtn->setEnabled(false);
 
@@ -384,11 +411,13 @@ const QStringList CaptureVideoToolWidget::GetCameraPositionIds(const KeyId& room
 {
     Collection roomsCollection( RoomsCollection() );
     roomsCollection.SetConfig(GetCurrentConfig());
+
     const WbConfig roomConfig( roomsCollection.ElementById( roomIdToCapture ) );
     const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(
         roomLayoutConfig.GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
         .ToQStringList() );
+
     return cameraPositionIds;
 }
 
@@ -427,20 +456,24 @@ bool CaptureVideoToolWidget::TryToAddLiveVideoFor(const KeyId& camPosId)
     }
 
     AddLiveVideo(camera, camPosId);
+
     return SUCCESS;
 }
 
 const bool CaptureVideoToolWidget::AddLiveSourcesForEachCameraPosition(const QStringList& cameraPositionIds)
 {
     bool successfulSoFar = true;
+
     Collection camerasCollection(CamerasCollection());
     camerasCollection.SetConfig(GetCurrentConfig());
+
     for (auto camPosId = cameraPositionIds.begin();
          successfulSoFar && (camPosId != cameraPositionIds.end());
          ++camPosId)
     {
         successfulSoFar = TryToAddLiveVideoFor(*camPosId);
     }
+
     return successfulSoFar;
 }
 
@@ -483,7 +516,6 @@ void CaptureVideoToolWidget::CaptureLiveConnectDisconnectButtonClicked()
             m_ui->m_captureLiveConnectDisconnectBtn->setText("&Disconnect");
         }
     }
-
     else
     {
         StopVideoSources();
@@ -495,11 +527,17 @@ void CaptureVideoToolWidget::CaptureLiveConnectDisconnectButtonClicked()
 
 void CaptureVideoToolWidget::StartUpdatingImages()
 {
+    int row = 0;
+
     for (auto videoSource = m_videoSources.begin();
               videoSource != m_videoSources.end();
               ++videoSource)
     {
-        (*videoSource)->videoSource->StartUpdatingImage();
+        QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(row, RATE_COLUMN);
+
+        (*videoSource)->videoSource->StartUpdatingImage( rate[combo->currentIndex()]);
+
+        row++;
     }
 }
 
@@ -541,15 +579,27 @@ void CaptureVideoToolWidget::StopVideoSources()
 
 void CaptureVideoToolWidget::AddTableRow(QTableWidgetItem* tableItem)
 {
-    const int ONLY_COLUMN = 0;
     const int newAppendedRow = m_ui->m_videoTable->rowCount();
+
     m_ui->m_videoTable->insertRow( newAppendedRow );
-    m_ui->m_videoTable->setItem(newAppendedRow, ONLY_COLUMN, tableItem);
+    m_ui->m_videoTable->setItem(newAppendedRow, SOURCE_COLUMN, tableItem);
+
+    QComboBox* rateSpinBox = new QComboBox();
+    rateSpinBox->addItem( "3.75" );
+    rateSpinBox->addItem( "7.5" );
+    rateSpinBox->addItem( "15" );
+    rateSpinBox->addItem( "30" );
+    rateSpinBox->addItem( "40" );
+    rateSpinBox->addItem( "50" );
+    rateSpinBox->addItem( "60" );
+
+    m_ui->m_videoTable->setCellWidget( newAppendedRow, RATE_COLUMN, rateSpinBox );
 }
 
 void CaptureVideoToolWidget::AddLiveVideo( const CameraDescription& chosenCamera, const KeyId& camPosId )
 {
     ImageView* const addedImageView(m_ui->m_imageGrid->AddBlankImage(chosenCamera.GetImageSize()));
+
     if ( addedImageView )
     {
         VideoSource* newVideoSource = new VideoSource( chosenCamera, *addedImageView, m_ui->m_time );

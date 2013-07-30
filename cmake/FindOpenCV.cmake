@@ -113,65 +113,65 @@ endif()
 
 if(WIN32 OR MINGW)
     set(OPENCV2_LIBRARY_SEARCH_PATHS
-        "${OpenCV2_ROOT_DIR}/*/lib"
-        "${OpenCV2_ROOT_DIR}/*/lib/release"
-        "${OpenCV2_ROOT_DIR}/*/lib/debug"
+        "${OpenCV2_ROOT_DIR}/build/x86/vc10/lib"
+        "${OpenCV2_ROOT_DIR}/build/x86/vc10/lib/release"
+        "${OpenCV2_ROOT_DIR}/build/x86/vc10/lib/debug"
         )
 
     find_library(OpenCV2_CORE_LIBRARY
-                 NAMES opencv_core240 opencv_core220
+                 NAMES opencv_core246 opencv_core240 opencv_core220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_IMGPROC_LIBRARY
-                 NAMES opencv_imgproc240 opencv_imgproc220
+                 NAMES opencv_imgproc246 opencv_imgproc240 opencv_imgproc220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_FEATURES2D_LIBRARY
-                 NAMES opencv_features2d240 opencv_features2d220
+                 NAMES opencv_features2d246 opencv_features2d240 opencv_features2d220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_FLANN_LIBRARY
-                 NAMES opencv_flann240 opencv_flann220
+                 NAMES opencv_flann246 opencv_flann240 opencv_flann220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_CALIB3D_LIBRARY
-                 NAMES opencv_calib3d240 opencv_calib3d220
+                 NAMES opencv_calib3d246 opencv_calib3d240 opencv_calib3d220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_OBJDETECT_LIBRARY
-                 NAMES opencv_objdetect240 opencv_objdetect220
+                 NAMES opencv_objdetect246 opencv_objdetect240 opencv_objdetect220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_LEGACY_LIBRARY
-                 NAMES opencv_legacy240 opencv_legacy220
+                 NAMES opencv_legacy246 opencv_legacy240 opencv_legacy220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_CONTRIB_LIBRARY
-                 NAMES opencv_contrib240 opencv_contrib220
+                 NAMES opencv_contrib246 opencv_contrib240 opencv_contrib220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_HIGHGUI_LIBRARY
-                 NAMES opencv_highgui240 opencv_highgui220
+                 NAMES opencv_highgui246 opencv_highgui240 opencv_highgui220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_ML_LIBRARY
-                 NAMES opencv_ml240 opencv_ml220
+                 NAMES opencv_ml246 opencv_ml240 opencv_ml220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_VIDEO_LIBRARY
-                 NAMES opencv_video240 opencv_video220
+                 NAMES opencv_video246 opencv_video240 opencv_video220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_GPU_LIBRARY
-                 NAMES opencv_gpu240 opencv_gpu220
+                 NAMES opencv_gpu246 opencv_gpu240 opencv_gpu220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_FFMPEG_LIBRARY
-                 NAMES opencv_ffmpeg240 opencv_ffmpeg220
+                 NAMES opencv_ffmpeg246 opencv_ffmpeg240 opencv_ffmpeg220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
     find_library(OpenCV2_TS_LIBRARY
-                 NAMES opencv_ts240 opencv_ts220
+                 NAMES opencv_ts246 opencv_ts240 opencv_ts220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
                  )
 else()

@@ -149,7 +149,7 @@ void MeasureFloorToolWidget::OverlayMaskClicked()
 
 const WbSchema MeasureFloorToolWidget::CreateSchema()
 {
-    WbSchema schema( CreateWorkbenchSubSchema( KeyName( "Measure Floor" ),
+    WbSchema schema( CreateWorkbenchSubSchema( KeyName( "measureFloor" ),
                                                tr( "Measure Floor" ) ) );
 
     return schema;

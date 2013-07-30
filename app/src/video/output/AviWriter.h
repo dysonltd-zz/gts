@@ -16,8 +16,8 @@
  *
  */
 
-#ifndef AviWriterH
-#define AviWriterH
+#ifndef AVIWRITER_H
+#define AVIWRITER_H
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
@@ -47,7 +47,9 @@ public:
                const int         aviWidth,
                const int         aviHeight,
                const char* const videoFileName,
-               const char* const timestampFileName);
+               const char* const timestampFileName,
+               const double      frameRate );
+
     ~AviWriter();
 
     void addFrame(const char* const data,
@@ -69,10 +71,10 @@ private:
 
     CvVideoWriter* m_avi; ///< OpenCV Video writer.
     IplImage*      m_img; ///< @brief The OpenCV image to use for appending to the AVI
-                          ///(to ensure we maintain the frame size/format).
+                          ///         (to ensure we maintain the frame size / format).
 
     QFile          m_timestampFile;
     QTextStream    m_timestampStream;
 };
 
-#endif // AviWriterH
+#endif // AVIWRITER_H

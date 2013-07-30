@@ -78,7 +78,6 @@ bool CameraDescription::IsValid() const
     return m_isOfflineFileOnly || (m_api != 0);
 }
 
-
 /** @brief The friendly name of the camera. */
 const std::wstring& CameraDescription::Name() const
 {
@@ -116,7 +115,7 @@ VideoSequence* const CameraDescription::CreateVideoSequence( double fps ) const
 
     if ( newSequence )
     {
-        double newFrameRate = m_frameRate;
+        double newFrameRate = 0.0;
         if ( fps > 0.0 ) { newFrameRate = fps; }
 
         newSequence->SetFrameRate( newFrameRate );

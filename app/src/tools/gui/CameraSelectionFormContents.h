@@ -19,13 +19,15 @@
 #ifndef CAMERASELECTIONFORMCONTENTS_H
 #define CAMERASELECTIONFORMCONTENTS_H
 
+#include "CameraApi.h"
+#include "CameraDescription.h"
+
 #include <QtGui/QWidget>
-#include <memory>
 #include <QtGui/QTableWidget>
 #include <QtGui/QDialogButtonBox>
 #include <QtGui/QPushButton>
-#include "CameraApi.h"
-#include "CameraDescription.h"
+
+#include <memory>
 
 namespace Ui
 {
@@ -59,11 +61,7 @@ signals:
 private slots:
     void SelectedCameraChanged( QTableWidgetItem* current, QTableWidgetItem* previous );
 
-    void Reset();
-    void FrameRateToggled( bool state );
-
 private:
-
     void FillOutCameraList();
 
     QTableWidgetItem* const CreateTableItemForCamera( const size_t cameraIndex ) const;
@@ -79,7 +77,6 @@ private:
     CameraApi::CameraList        m_cameras;       ///< The list of camera to select from.
     std::auto_ptr< VideoSource > m_preview;       ///< The object which is obtaining camera images for the preview.
     QImage                       m_previewImage;  ///< The QImage where the preview is being drawn.
-    double                       m_fps;           ///< The current frame rate setting.
 };
 
 #endif // CAMERASELECTIONFORMCONTENTS_H

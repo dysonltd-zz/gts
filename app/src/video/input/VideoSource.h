@@ -52,6 +52,7 @@ class VideoSource : public QObject
     Q_OBJECT
 
 public:
+    static const double FPS_3_75;
     static const double FPS_7_5;
     static const double FPS_15;
     static const double FPS_30;
@@ -83,6 +84,7 @@ private:
     void UpdateRecordingTimer();
 
     static const size_t NUM_FRAMES_TO_AVERAGE = 10;
+
     CameraDescription              m_camera;
     std::unique_ptr<CaptureThread> m_captureThread;
     ImageView&                     m_imageView;

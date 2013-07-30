@@ -373,7 +373,8 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
             offset.x = -m_origin[i].x;
             offset.y = -m_origin[i].y;
 
-            // Reverse effect of previous call to ConvertTrackToCm()...
+            // Reverse effect of previous
+            // call to ConvertTrackToCm()...
             ScanUtility::LogCmToPx( m_log[i],
                                     m_logPx[i],
                                     m_view[i].GetMetrics().GetScaleFactor(),
@@ -410,11 +411,14 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
     {
         if (m_view[i].IsSetup())
         {
-            TrackHistory::TrackLog tmpLog;
+            if (i != baseIndex)
+            {
+                TrackHistory::TrackLog tmpLog;
 
-            ScanMatch::ScanAverage( avg, m_logPx[i], 7.5f, tmpLog );
+                ScanMatch::ScanAverage( avg, m_logPx[i], 7.5f, tmpLog );
 
-            avg = tmpLog;
+                avg = tmpLog;
+            }
         }
     }
 

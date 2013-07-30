@@ -24,8 +24,8 @@
 namespace CameraSchema
 {
     extern const KeyName schemaName;
+
     extern const KeyName uniqueIdKey;
-    extern const KeyName frameRateKey;
 }
 
 #endif // CAMERASCHEMA_H_

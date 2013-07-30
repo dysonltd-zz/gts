@@ -57,14 +57,6 @@ namespace CameraTools
                                      .arg( cameraName );
         }
 
-        if ( isValid )
-        {
-            const double frameRate( cameraConfig
-                                    .GetKeyValue( CameraSchema::frameRateKey )
-                                    .ToDouble() );
-            camera.SetFrameRate( frameRate );
-        }
-
         if ( !isValid )
         {
             Message::Show( 0,
@@ -76,4 +68,3 @@ namespace CameraTools
         return camera;
     }
 }
-

@@ -261,7 +261,7 @@
               <bool>true</bool>
              </property>
              <attribute name="horizontalHeaderVisible">
-              <bool>false</bool>
+              <bool>true</bool>
              </attribute>
              <attribute name="horizontalHeaderStretchLastSection">
               <bool>true</bool>
@@ -269,11 +269,28 @@
              <attribute name="verticalHeaderVisible">
               <bool>false</bool>
              </attribute>
-            </widget>
+             <attribute name="verticalHeaderShowSortIndicator" stdset="0">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+
+             <column>
+              <property name="text">
+               <string>Source</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Rate</string>
+              </property>
+             </column>
+
+		    </widget>
            </item>
           </layout>
          </widget>
-
 
          <widget class="QWidget" name="m_advancedOptionsPage">
           <attribute name="title">

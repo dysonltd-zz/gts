@@ -38,29 +38,26 @@ AviWriter::AviWriter( const codecType   codec,
                       const int         aviWidth,
                       const int         aviHeight,
                       const char* const videoFileName,
-                      const char* const timestampFileName ) :
+                      const char* const timestampFileName,
+                      const double      frameRate ) :
     m_aviWidth      ( aviWidth ),
     m_aviHeight     ( aviHeight ),
     m_numChannels   ( DEFAULT_NUM_CHANNELS ),
-    m_timestampFile (timestampFileName)
+    m_timestampFile ( timestampFileName )
 {
-    static const double DEFAULT_FRAME_RATE = 7.5;
-
-    double newFrameRate = DEFAULT_FRAME_RATE;
-
     switch (codec)
     {
         case CODEC_XVID:
             m_avi = cvCreateVideoWriter( videoFileName,
                                          AviWriter::XVID_COMPRESSION_CODEC,
-                                         newFrameRate,
+                                         frameRate,
                                          cvSize( aviWidth, aviHeight ) );
             break;
 
         case CODEC_FMP4:
             m_avi = cvCreateVideoWriter( videoFileName,
                                          AviWriter::FMP4_COMPRESSION_CODEC,
-                                         newFrameRate,
+                                         frameRate,
                                          cvSize( aviWidth, aviHeight ) );
             break;
     }
@@ -80,6 +77,7 @@ AviWriter::~AviWriter()
 {
     // delete the image
     cvReleaseImage( &m_img );
+
     // shut down the video writer
     cvReleaseVideoWriter( &m_avi );
 
@@ -141,4 +139,3 @@ void AviWriter::addFrame( const char* const data,
     // Write the corresponding timestamp to the timestamp file:
     m_timestampStream << stamp.tv_sec << ' ' << stamp.tv_nsec << '\n';
 }
-
