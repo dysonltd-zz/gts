@@ -284,7 +284,7 @@ void WorkbenchUi::SetUpWorkbenchSchema()
     WbSchema schema( KeyName( "workbench" ) );
     schema.AddSingleValueKey(WbDefaultKeys::displayNameKey,
                              WbSchemaElement::Multiplicity::One,
-                             KeyValue::from(tr("Default Workbench")));
+                             KeyValue::from(tr("Workbench")));
 
     m_toolTabs->AddToolsFullWorkbenchSchemaSubTreeTo(schema);
     m_workbench->SetSchema(schema);
