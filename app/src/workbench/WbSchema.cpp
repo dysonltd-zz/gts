@@ -102,6 +102,7 @@ WbSchema& WbSchema::operator =( const WbSchema& other )
     if ( this != &other )
     {
         m_keyName = other.m_keyName;
+
         for ( size_t i = 0; i < other.m_elements.size(); ++i )
         {
             const SchemaElementPtr& otherElement = other.m_elements.at( i );
@@ -111,6 +112,11 @@ WbSchema& WbSchema::operator =( const WbSchema& other )
                 m_subSchemas[otherElement->GetKeyName()] = dynamic_cast<WbSubSchema*>(thisElement);
             }
             m_elements.push_back(SchemaElementPtr(thisElement));
+        }
+
+        for ( int i = 0; i < other.m_dependants.size(); ++i )
+        {
+            m_dependants.push_back(other.m_dependants.at(i));
         }
     }
 
@@ -165,6 +171,15 @@ void WbSchema::AddKeyGroup( const KeyName& groupName,
     m_elements.push_back(SchemaElementPtr(newGroup));
 }
 
+void WbSchema::AddDependant( const KeyName& schemaName, const KeyName& keyName )
+{
+    SchemaKeyPair p;
+    p.schema = schemaName;
+    p.key = keyName;
+
+    m_dependants.push_back( p );
+}
+
 /** @brief Add a sub-schema.
  *
  *  @param subSchema The sub-schema specification.
@@ -198,9 +213,9 @@ void WbSchema::AddSubSchema( const WbSchema& subSchema,
  *  the sub-schema to).
  */
 bool WbSchema::AddSubSchemaToSchema( const WbSchema& subSchema,
-                                           const KeyName& nameOfSchemaToAddTo,
-                                           const WbSchemaElement::Multiplicity::Type& multiplicity,
-                                           const QString& defaultFileName )
+                                     const KeyName& nameOfSchemaToAddTo,
+                                     const WbSchemaElement::Multiplicity::Type& multiplicity,
+                                     const QString& defaultFileName )
 {
     if ( nameOfSchemaToAddTo == Name() )
     {
@@ -356,6 +371,11 @@ bool WbSchema::IsNull() const
 const size_t WbSchema::GetNumSubSchemas() const
 {
     return m_subSchemas.size();
+}
+
+const WbSchema::SchemaKeyPairList WbSchema::GetDependants() const
+{
+    return m_dependants;
 }
 
 /** @brief Returns whether the specified schema name is the name of any of the

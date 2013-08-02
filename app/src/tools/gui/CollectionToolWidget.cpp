@@ -26,27 +26,26 @@
 #include "OStreamConfigFileWriter.h"
 #include "ToolTabsContainerWidget.h"
 #include "NewElementWizard.h"
+#include "WbConfig.h"
 
-#include <QtCore/qstring.h>
+#include <QtCore/qstring>
+#include <QtGui/QMessageBox>
 
 #include "Debugging.h"
 
-/** @todo by using the same id after the wizard we could rename the existing items
- */
 CollectionToolWidget::CollectionToolWidget( const QString&  userFriendlyElementName,
                                             const WbSchema& collectionSchema,
                                             const WbSchema& elementSchema,
                                             QWidget*        parent,
-                                            MainWindow*     mainWindow )
-    :
-    Tool               ( parent, CreateCombinedSchema( collectionSchema, elementSchema ) ),
-    m_userFriendlyElementName( userFriendlyElementName ),
-    m_collectionSchema ( collectionSchema ),
-    m_elementSchema    ( elementSchema ),
-    m_ui               ( new Ui::CollectionToolWidget ),
-    m_ownedWidgets     (),
-    m_subToolsTabs     ( 0 ),
-    m_mainWindow       ( mainWindow )
+                                            MainWindow*     mainWindow ) :
+    Tool                      ( parent, CreateCombinedSchema( collectionSchema, elementSchema ) ),
+    m_userFriendlyElementName ( userFriendlyElementName ),
+    m_collectionSchema        ( collectionSchema ),
+    m_elementSchema           ( elementSchema ),
+    m_ui                      ( new Ui::CollectionToolWidget ),
+    m_ownedWidgets            (),
+    m_subToolsTabs            ( 0 ),
+    m_mainWindow              ( mainWindow )
 {
     m_ui->setupUi( this );
 
@@ -247,6 +246,20 @@ void CollectionToolWidget::AddExtraNewElementWizardPages( NewElementWizard* cons
     Q_UNUSED(wizard);
 }
 
+RenameElementWizard* const CollectionToolWidget::CreateRenameElementWizard()
+{
+    RenameElementWizard* const renameElementWizard = new RenameElementWizard(GetCollection(),
+                                                                             m_userFriendlyElementName,
+                                                                             this);
+    AddExtraRenameElementWizardPages(renameElementWizard);
+    return renameElementWizard;
+}
+
+void CollectionToolWidget::AddExtraRenameElementWizardPages( RenameElementWizard* const wizard )
+{
+    Q_UNUSED(wizard);
+}
+
 const WbSchema CollectionToolWidget::CreateCombinedSchema( const WbSchema& collectionSchema,
                                                            const WbSchema& elementSchema )
 {
@@ -277,6 +290,19 @@ void CollectionToolWidget::UpdateToolMenu( QMenu& toolMenu )
                         this,
                         SLOT( NewElement() ),
                         QKeySequence( tr( "Ctrl+Shift+N" ) ) );
+
+    if ( CurrentConfigIsElement() )
+    {
+        toolMenu.addAction( tr( "&Rename..." ),
+                            this,
+                            SLOT( RenameElement() ),
+                            QKeySequence( tr( "Ctrl+Shift+R" ) ) );
+
+        toolMenu.addAction( tr( "&Delete" ),
+                            this,
+                            SLOT( DeleteElement() ),
+                            QKeySequence( tr( "Ctrl+Shift+D" ) ) );
+    }
 }
 
 void CollectionToolWidget::NewElement()
@@ -288,6 +314,7 @@ void CollectionToolWidget::NewElement()
             KeyValue::from( newElementWizard
                                        ->field( WizardStartPage::nameField )
                                        .toString() ) );
+
         WbConfig newElement( GetCollection().AddNewElement( newElementName ) );
         SetToolSpecificConfigItems( newElement, *newElementWizard );
         ReloadAll( newElement );
@@ -298,8 +325,60 @@ void CollectionToolWidget::NewElement()
     }
 }
 
+void CollectionToolWidget::RenameElement()
+{
+    std::auto_ptr< RenameElementWizard > renameElementWizard( CreateRenameElementWizard() );
+    if ( renameElementWizard->exec() )
+    {
+        const KeyValue newElementName(
+            KeyValue::from( renameElementWizard
+                                       ->field( WizardStartPage::nameField )
+                                       .toString() ) );
+
+        WbConfig selectedElement = GetElementConfig();
+        selectedElement.SetKeyValue( WbDefaultKeys::displayNameKey,
+                                    newElementName);
+        SetToolSpecificConfigItems( selectedElement, *renameElementWizard );
+        ReloadAll( selectedElement );
+    }
+    else
+    {
+        PRINT( "User cancelled" );
+    }
+}
+
+void CollectionToolWidget::DeleteElement()
+{
+    WbConfig selectedElement = GetElementConfig();
+
+    const WbConfig parent = selectedElement.GetParent();
+    const KeyId id = parent.FindSubConfigId( selectedElement );
+
+    // Look to see if there are dependencies on this item.
+    if ( !selectedElement.DependentExists( KeyValue::from(id) ) )
+    {
+        GetCollection().DeleteElement( id );
+
+        ReloadAll( parent );
+    }
+    else
+    {
+        QMessageBox::information( 0,
+                               QObject::tr( "Error" ),
+                               QObject::tr( "Object is in use - cannot delete. "
+                                            "Remove references then try again." ) );
+    }
+}
+
 void CollectionToolWidget::SetToolSpecificConfigItems( WbConfig newElement,
                                                        NewElementWizard& wizard )
+{
+    Q_UNUSED(newElement);
+    Q_UNUSED(wizard);
+}
+
+void CollectionToolWidget::SetToolSpecificConfigItems( WbConfig newElement,
+                                                       RenameElementWizard& wizard )
 {
     Q_UNUSED(newElement);
     Q_UNUSED(wizard);

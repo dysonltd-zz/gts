@@ -62,11 +62,11 @@ public:
             idsToKeep.push_back(m_table.item(i, camera1Column)->data(idRole).toString());
         }
 
-        config.RemoveOldKeys( FloorPlanSchema::camera1IdKey, idsToKeep );
-        config.RemoveOldKeys( FloorPlanSchema::camera2IdKey, idsToKeep );
-        config.RemoveOldKeys( FloorPlanSchema::camera1ImgKey, idsToKeep );
-        config.RemoveOldKeys( FloorPlanSchema::camera2ImgKey, idsToKeep );
-        config.RemoveOldKeys( FloorPlanSchema::homographyKey, idsToKeep );
+        config.KeepKeys( FloorPlanSchema::camera1IdKey, idsToKeep );
+        config.KeepKeys( FloorPlanSchema::camera2IdKey, idsToKeep );
+        config.KeepKeys( FloorPlanSchema::camera1ImgKey, idsToKeep );
+        config.KeepKeys( FloorPlanSchema::camera2ImgKey, idsToKeep );
+        config.KeepKeys( FloorPlanSchema::homographyKey, idsToKeep );
 
         SetConfig( config ); // Since we need to re-number the entries and we won't
                              // get our SetConfig called as we're requesting the update

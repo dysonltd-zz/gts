@@ -65,8 +65,8 @@ public:
             idsToKeep.push_back(m_table.item(i, nameColumn)->data(idRoleOnName).toString());
         }
 
-        config.RemoveOldKeys( CalibrationSchema::imageFileKey,  idsToKeep );
-        config.RemoveOldKeys( CalibrationSchema::imageErrorKey, idsToKeep );
+        config.KeepKeys( CalibrationSchema::imageFileKey,  idsToKeep );
+        config.KeepKeys( CalibrationSchema::imageErrorKey, idsToKeep );
         SetConfig( config ); // Since we need to re-number the images and we won't
                              // get our SetConfig called as we're requesting the update
     }

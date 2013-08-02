@@ -56,7 +56,18 @@ class NewElementWizard : public QWizard
 
 public:
     NewElementWizard( const Collection& collection,
-                      const QString& elementType, QWidget* const parent = 0 );
+                      const QString& elementType,
+                      QWidget* const parent = 0 );
+};
+
+class RenameElementWizard : public QWizard
+{
+    Q_OBJECT
+
+public:
+    RenameElementWizard( const Collection& collection,
+                         const QString& elementType,
+                         QWidget* const parent = 0 );
 };
 
 #endif // NEWELEMENTWIZARD_H

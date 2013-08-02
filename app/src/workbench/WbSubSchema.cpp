@@ -18,21 +18,21 @@
 
 #include "WbSubSchema.h"
 
-#include <iostream>
-
 #include "WbSchema.h"
 #include "WbConfig.h"
 #include "WbConfigFileReader.h"
 #include "WbConfigFileWriter.h"
 
+#include <iostream>
+
 WbSubSchema::WbSubSchema( const WbSchema& subSchema,
                           const Multiplicity::Type& multiplicity,
-                          const QString& defaultFileName )
-    :
+                          const QString& defaultFileName ) :
     WbSchemaElement( subSchema.Name(), multiplicity ),
     m_schema( subSchema ),
     m_defaultFileName( defaultFileName )
-{}
+{
+}
 
 WbSubSchema* const WbSubSchema::Clone() const
 {
@@ -83,6 +83,7 @@ bool WbSubSchema::WriteTo( WbConfigFileWriter& writer, const WbConfig& config ) 
             return false;
         }
     }
+
     return true;
 }
 

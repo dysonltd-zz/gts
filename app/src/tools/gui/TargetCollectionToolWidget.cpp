@@ -18,10 +18,12 @@
 
 #include "TargetCollectionToolWidget.h"
 
+#include "TargetsToolWidget.h"
+
+#include "RobotMetricsSchema.h"
+
 #include <QtGui/QLabel>
 #include <QtGui/QComboBox>
-
-#include "TargetsToolWidget.h"
 
 namespace
 {
@@ -58,10 +60,16 @@ const QString TargetCollectionToolWidget::GetSubSchemaDefaultFileName() const
 const WbSchema TargetCollectionToolWidget::CreateCollectionSchema()
 {
     WbSchema targetSchema( CreateWorkbenchSubSchema( targetsSchemaName, tr( "Targets" ) ) );
+
     return targetSchema;
 }
 
 const WbSchema TargetCollectionToolWidget::CreateElementSchema()
 {
-    return CreateElementWorkbenchSubSchema( targetSchemaName, Unnamed( tr( "Target" ) ) );
+    WbSchema schema( CreateElementWorkbenchSubSchema( targetSchemaName, Unnamed( tr( "Target" ) ) ) );
+
+    schema.AddDependant( RobotMetricsSchema::schemaName,
+                         RobotMetricsSchema::targetTypeKey );
+
+    return schema;
 }

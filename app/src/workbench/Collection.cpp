@@ -17,23 +17,25 @@
  */
 
 #include "Collection.h"
-#include <QtCore/qstringbuilder.h>
+
 #include "WbDefaultKeys.h"
 
+#include <QtCore/qstringbuilder.h>
+
 Collection::Collection( const KeyName&  collectionSchemaName,
-                        const KeyName&  elementSchemaName )
-:
-m_collectionSchemaName( collectionSchemaName ),
-m_elementSchemaName   ( elementSchemaName ),
-m_collectionConfig    (),
-m_status              ( Status_CollectionNotSet ),
-m_elementKeyIdFormat  ( elementSchemaName.ToQString() % "%1" )
+                        const KeyName&  elementSchemaName ) :
+    m_collectionSchemaName( collectionSchemaName ),
+    m_elementSchemaName   ( elementSchemaName ),
+    m_collectionConfig    (),
+    m_status              ( Status_CollectionNotSet ),
+    m_elementKeyIdFormat  ( elementSchemaName.ToQString() % "%1" )
 {
 }
 
 const Collection::StatusType Collection::SetConfig( const WbConfig& config )
 {
     FindCollection( config );
+
     return Status();
 }
 
@@ -43,26 +45,32 @@ const WbConfig Collection::CollectionConfig() const
     {
         return m_collectionConfig;
     }
-    return WbConfig();
-}
 
-const QString Collection::GetSubConfigFileName( const KeyValue& name ) const
-{
-    return name.ToQString() % "/" % m_elementSchemaName.ToQString() % ".xml";
+    return WbConfig();
 }
 
 WbConfig Collection::AddNewElement( const KeyValue& name )
 {
     WbConfig newElement;
+
     if ( Status() == Status_Ok )
     {
         newElement = m_collectionConfig.AddSubConfig( m_elementSchemaName,
-                                                      GetSubConfigFileName( name ),
                                                       m_elementKeyIdFormat );
 
         newElement.SetKeyValue( WbDefaultKeys::displayNameKey, name );
     }
+
     return newElement;
+}
+
+void Collection::DeleteElement( const KeyId& keyId )
+{
+    std::vector< KeyId > idsToRemove;
+
+    idsToRemove.push_back(keyId);
+
+    m_collectionConfig.RemoveSubConfigs( m_elementSchemaName, idsToRemove );
 }
 
 bool Collection::AnyElementHas( const KeyId& keyId ) const
@@ -71,8 +79,8 @@ bool Collection::AnyElementHas( const KeyId& keyId ) const
 }
 
 bool Collection::AnyElementHas( const KeyName&  keyName,
-                                      const KeyValue& keyValue,
-                                      const Qt::CaseSensitivity& caseSensitivity ) const
+                                const KeyValue& keyValue,
+                                const Qt::CaseSensitivity& caseSensitivity ) const
 {
     for ( size_t i = 0; i < NumElements(); ++i )
     {
@@ -82,6 +90,7 @@ bool Collection::AnyElementHas( const KeyName&  keyName,
             return true;
         }
     }
+
     return false;
 }
 
@@ -99,6 +108,7 @@ const size_t Collection::NumElements() const
 
         return elementConfigs.size();
     }
+
     return 0;
 }
 
@@ -106,10 +116,12 @@ const WbConfig::SubConfigs::ValueIdPair Collection::ElementAt( const size_t inde
 {
     if ( Status() == Status_Ok )
     {
-        WbConfig::SubConfigs::ValueIdPairList elementConfigs = m_collectionConfig.GetSubConfigs( m_elementSchemaName );
+        WbConfig::SubConfigs::ValueIdPairList elementConfigs =
+                        m_collectionConfig.GetSubConfigs( m_elementSchemaName );
 
         return elementConfigs.at( index );
     }
+
     return WbConfig::SubConfigs::ValueIdPair();
 }
 
@@ -125,4 +137,3 @@ void Collection::FindCollection(const WbConfig & config)
 
     m_status = ( m_collectionConfig.IsNull() ) ? Status_CollectionNotFound : Status_Ok;
 }
-

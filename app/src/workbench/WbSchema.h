@@ -82,6 +82,14 @@ private:
 class WbSchema
 {
 public:
+    struct SchemaKeyPair
+    {
+        KeyName schema;
+        KeyName key;
+    };
+
+    typedef QList< SchemaKeyPair > SchemaKeyPairList;
+
     explicit WbSchema( const KeyName& name );
     WbSchema( const WbSchema& other );
 
@@ -103,6 +111,8 @@ public:
                             const WbSchemaElement::Multiplicity::Type& multiplicity,
                             const QString& defaultFileName = QString() );
 
+    void AddDependant     ( const KeyName& schemaName, const KeyName& keyName );
+
     bool AddSubSchemaToSchema( const WbSchema& subSchema,
                                      const KeyName& nameOfSchemaToAddTo,
                                      const WbSchemaElement::Multiplicity::Type& multiplicity,
@@ -116,6 +126,8 @@ public:
                                        WbSchemaElement::Multiplicity::One ) const;
 
     const size_t GetNumSubSchemas() const;
+
+    const SchemaKeyPairList GetDependants() const;
 
     bool ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const;
     bool WriteTo( WbConfigFileWriter& writer, const WbConfig& config ) const;
@@ -141,6 +153,7 @@ private:
 
     KeyName             m_keyName;
     SchemaElementVector m_elements;
+    SchemaKeyPairList   m_dependants;
     SubSchemaMap        m_subSchemas;
 };
 

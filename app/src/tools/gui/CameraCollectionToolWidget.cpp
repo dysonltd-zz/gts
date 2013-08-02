@@ -25,6 +25,7 @@
 #include "WbDefaultKeys.h"
 #include "CamerasPage.h"
 #include "CameraSchema.h"
+#include "CameraPositionSchema.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QComboBox>
@@ -91,8 +92,12 @@ void CameraCollectionToolWidget::SetToolSpecificConfigItems(WbConfig newElement,
 
 const WbSchema CameraCollectionToolWidget::CreateElementSchema()
 {
-    WbSchema elementSchema(CreateElementWorkbenchSubSchema(CameraSchema::schemaName, Unnamed("Camera")));
-    elementSchema.AddSingleValueKey(CameraSchema::uniqueIdKey, WbSchemaElement::Multiplicity::One);
-    return elementSchema;
+    WbSchema schema(CreateElementWorkbenchSubSchema(CameraSchema::schemaName, Unnamed("Camera")));
+    schema.AddSingleValueKey(CameraSchema::uniqueIdKey, WbSchemaElement::Multiplicity::One);
+
+    schema.AddDependant( CameraPositionSchema::schemaName,
+                         CameraPositionSchema::cameraIdKey );
+
+    return schema;
 }
 

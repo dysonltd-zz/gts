@@ -484,11 +484,11 @@ void TrackRobotToolWidget::SaveBtnClicked()
         }
     }
 
-    config.RemoveOldKeys( positionIdKey, idsToKeep );
-    config.RemoveOldKeys( useGlobalParams, idsToKeep );
-    config.RemoveOldKeys( biLevelThreshold, idsToKeep );
-    config.RemoveOldKeys( nccThreshold, idsToKeep );
-    config.RemoveOldKeys( resolution, idsToKeep );
+    config.KeepKeys( positionIdKey, idsToKeep );
+    config.KeepKeys( useGlobalParams, idsToKeep );
+    config.KeepKeys( biLevelThreshold, idsToKeep );
+    config.KeepKeys( nccThreshold, idsToKeep );
+    config.KeepKeys( resolution, idsToKeep );
 
     const KeyId cameraKeyId = config.AddKeyValue( positionIdKey,
                                                   KeyValue::from( cameraId ) );

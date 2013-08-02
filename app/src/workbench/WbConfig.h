@@ -20,6 +20,7 @@
 #define WBCONFIG_H
 
 #include "WbSchema.h"
+
 #include "ConfigListener.h"
 
 #include <QtCore/qstringlist.h>
@@ -67,26 +68,32 @@ public:
 
 
     //SubConfigs
-    WbConfig CreateSubConfig( const KeyName& name,
+    WbConfig CreateSubConfig( const KeyName& schemaName,
                               const QString& fileName,
                               const KeyId&   id = KeyId() );
-    WbConfig AddSubConfig( const KeyName& name,
-                           const QString& fileName,
+    WbConfig AddSubConfig( const KeyName& schemaName,
                            const QString& keyIdFormat = "%1" );
 
     WbConfig GetSubConfig( const KeyName& name,
                            const KeyId&   id = KeyId() ) const;
     const SubConfigs::ValueIdPairList GetSubConfigs( const KeyName& keyName ) const;
 
+    void RemoveSubConfigs( const KeyName& keyName,
+                           const std::vector<KeyId>& idsToRemove = std::vector<KeyId>());
+
     // Key values
-    void RemoveOldKeys(const KeyName& keyName, const std::vector<KeyId>& idsToKeep = std::vector<KeyId>());
+    void KeepKeys( const KeyName& keyName,
+                   const std::vector<KeyId>& idsToKeep = std::vector<KeyId>());
+    void RemoveKeys( const KeyName& keyName,
+                     const std::vector<KeyId>& idsToRemove = std::vector<KeyId>());
 
     void SetKeyValues( const WbKeyValues& keyValues );
     void SetKeyValue( const KeyName&  keyName,
                       const KeyValue& value,
                       const KeyId&    keyId = KeyId() );
 
-    const KeyId AddKeyValue( const KeyName& keyName, const KeyValue& value,
+    const KeyId AddKeyValue( const KeyName& keyName,
+                             const KeyValue& value,
                              const QString& keyIdFormat = "%1" );
 
     const KeyValue GetKeyValue( const KeyName& keyName,
@@ -104,6 +111,7 @@ public:
     bool SchemaIsDescendantOf( const KeyName& schemaName ) const;
     bool Contains( const KeyName& keyName, const KeyId& id = KeyId() ) const;
     bool IsModified() const;
+    bool DependentExists( const KeyValue& id ) const;
 
     // Hierarchical access
     const WbConfig GetParent() const;
@@ -125,8 +133,13 @@ private:
 
     void SetDefaults();
 
+    const QString GetSubConfigFileName( const KeyId& elementKey,
+                                        const KeyName& schemaName ) const;
+
     const KeyId GenerateNewId( const KeyName& keyName,
                                const QString& keyIdFormat ) const;
+
+    bool DependentExists( WbSchema::SchemaKeyPairList dependants, const KeyValue& id ) const;
 
     /** @brief Stores the member data for WbConfig.
      *

@@ -912,8 +912,8 @@ void CreateFloorPlanToolWidget::BtnCreateFloorPlanClicked()
     WbConfig config = GetCurrentConfig();
 
     // Remove all existing transforms...
-    config.RemoveOldKeys( FloorPlanSchema::cameraIdKey );
-    config.RemoveOldKeys( FloorPlanSchema::transformKey );
+    config.KeepKeys( FloorPlanSchema::cameraIdKey );
+    config.KeepKeys( FloorPlanSchema::transformKey );
 
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig

@@ -223,7 +223,6 @@ public:
         }
     }
 
-
     /** @brief Get a vector of all the values.
      *
      *  Order of the list is unspecified.

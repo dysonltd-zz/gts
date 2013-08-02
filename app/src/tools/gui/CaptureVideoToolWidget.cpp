@@ -359,9 +359,9 @@ void CaptureVideoToolWidget::RemoveAllVideoSources()
 
 #if 0
     WbConfig config(GetCurrentConfig());
-    config.RemoveOldKeys(VideoCaptureSchema::cameraPositionIdKey);
-    config.RemoveOldKeys(VideoCaptureSchema::videoFileNameKey);
-    config.RemoveOldKeys(VideoCaptureSchema::timestampFileNameKey);
+    config.KeepKeys(VideoCaptureSchema::cameraPositionIdKey);
+    config.KeepKeys(VideoCaptureSchema::videoFileNameKey);
+    config.KeepKeys(VideoCaptureSchema::timestampFileNameKey);
 #endif
 }
 

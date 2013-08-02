@@ -45,6 +45,7 @@ public:
     const WbConfig CollectionConfig() const;
 
     WbConfig AddNewElement( const KeyValue& name );
+    void DeleteElement( const KeyId& keyId );
 
     bool AnyElementHas( const KeyId& keyId ) const;
     bool AnyElementHas( const KeyName& keyName,
@@ -56,7 +57,7 @@ private:
     void FindCollection( const WbConfig& config );
     const StatusType Status() const;
 
-    const QString GetSubConfigFileName( const KeyValue& name ) const;
+    //const QString GetSubConfigFileName( const KeyValue& name ) const;
 
     KeyName    m_collectionSchemaName;
     KeyName    m_elementSchemaName;

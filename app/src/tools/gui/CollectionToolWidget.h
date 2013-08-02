@@ -28,9 +28,11 @@ namespace Ui
 {
     class CollectionToolWidget;
 }
+
 class MainWindow;
 class ToolTabsContainerWidget;
 class NewElementWizard;
+class RenameElementWizard;
 
 /** @brief A class.
  *
@@ -56,7 +58,7 @@ public:
 protected:
     void AddToolDetail( QLabel* const detailLabel, QWidget* const detailEntryBox );
     void AddSubTool( ToolInterface* const subTool );
-//    void AddNewElementWizardPage( QWizardPage* )
+
     void SetName( const QString& name );
     Collection GetCollection() const;
 
@@ -70,10 +72,12 @@ protected:
     virtual void showEvent(QShowEvent*);
 
     virtual void AddExtraNewElementWizardPages( NewElementWizard* const wizard );
+    virtual void AddExtraRenameElementWizardPages( RenameElementWizard* const wizard );
 
     virtual void SetToolSpecificConfigItems( WbConfig newElement,
                                              NewElementWizard& wizard );
-
+    virtual void SetToolSpecificConfigItems( WbConfig newElement,
+                                             RenameElementWizard& wizard );
 
     static const WbSchema CreateElementWorkbenchSubSchema( const KeyName& schemaName,
                                                            const QString& defaultName );
@@ -81,13 +85,18 @@ protected:
 private slots:
     void NameComboActivated( const int comboIndex );
     void NewElement();
+    void RenameElement();
+    void DeleteElement();
 
 private:
     void CreateSubToolTabs( MainWindow* const mainWindow );
     void ReloadToElement( const KeyId& elementId );
     void ReloadToConfig( const WbConfig newConfig );
     void ReloadToCollection();
+
     NewElementWizard* const CreateNewElementWizard();
+    RenameElementWizard* const CreateRenameElementWizard();
+
     bool CurrentConfigIsElement() const;
 
     virtual const WbSchema GetFullWorkbenchSchemaSubTree() const;
@@ -99,7 +108,6 @@ private:
 
     static const WbSchema CreateCombinedSchema( const WbSchema& collectionSchema,
                                                 const WbSchema& elementSchema );
-
 
     const QString  m_userFriendlyElementName;
     const WbSchema m_collectionSchema;

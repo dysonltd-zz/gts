@@ -23,6 +23,7 @@
 #include "CreateFloorMaskToolWidget.h"
 #include "MeasureFloorToolWidget.h"
 #include "CameraHardware.h"
+#include "RunSchema.h"
 
 #include <QtGui/QLabel>
 #include <QtGui/QComboBox>
@@ -65,5 +66,10 @@ const WbSchema RoomCollectionToolWidget::CreateCollectionSchema()
 
 const WbSchema RoomCollectionToolWidget::CreateElementSchema()
 {
-    return CreateElementWorkbenchSubSchema( KeyName( "room" ), Unnamed( tr( "Room" ) ) );
+    WbSchema schema = CreateElementWorkbenchSubSchema( KeyName( "room" ), Unnamed( tr( "Room" ) ) );
+
+    schema.AddDependant( RunSchema::schemaName,
+                         RunSchema::roomIdKey );
+
+    return schema;
 }

@@ -34,20 +34,18 @@
 
 const QString WizardStartPage::nameField( "name" );
 
-WizardStartPage::WizardStartPage( const Collection& collection, const QString& title )
-:
-NewElementWizardPage(),
-m_explanationIcon( new QLabel() ),
-m_explanationInfo( new QLabel() ),
-m_nameEdit       ( new QLineEdit() ),
-m_collection     ( collection )
+WizardStartPage::WizardStartPage( const Collection& collection, const QString& title ) :
+    NewElementWizardPage(),
+    m_explanationIcon   ( new QLabel() ),
+    m_explanationInfo   ( new QLabel() ),
+    m_nameEdit          ( new QLineEdit() ),
+    m_collection        ( collection )
 {
     setTitle( title );
 
     QLabel* const nameLabel = new QLabel( tr( "&Name" ) );
     QRegExpValidator* const newValidator =
         new QRegExpValidator( QRegExp( "[a-zA-Z0-9_]+" ), m_nameEdit );
-//        new QRegExpValidator( QRegExp( "[a-zA-Z0-9 _]+" ), m_nameEdit );
     m_nameEdit->setValidator( newValidator );
     nameLabel->setBuddy( m_nameEdit );
 
@@ -80,15 +78,15 @@ bool WizardStartPage::isComplete() const
     if ( !complete )
     {
         m_explanationInfo->setText( tr( "The name must contain only numbers, "
-                                        "letters and underscores, and "
-                                        "must contain at least 1 character." ) );
+                                        "letters and underscores, and must "
+                                        "contain at least one character." ) );
     }
     if ( m_collection.AnyElementHas( WbDefaultKeys::displayNameKey,
                                      KeyValue::from( m_nameEdit->text() ),
                                      Qt::CaseInsensitive ) )
     {
-        m_explanationInfo->setText( tr( "The name not match any existing name "
-                                        "(regardless of case)." ) );
+        m_explanationInfo->setText( tr( "The name must not match that of any "
+                                        "existing item (regardless of case)." ) );
         complete = false;
     }
 
@@ -110,9 +108,9 @@ const QString NewElementWizardPage::mandatoryFieldSuffix( "*" );
 //=================================================================================================================
 
 NewElementWizard::NewElementWizard( const Collection& collection,
-                                    const QString& elementType, QWidget* const parent )
-    :
-QWizard( parent )
+                                    const QString& elementType,
+                                    QWidget* const parent ) :
+    QWizard( parent )
 {
     const QString title( tr( "New %1" ).arg( elementType ) );
     setWindowTitle( title );
@@ -123,3 +121,16 @@ QWizard( parent )
     addPage( new WizardStartPage( collection, title ) );
 }
 
+RenameElementWizard::RenameElementWizard( const Collection& collection,
+                                          const QString& elementName,
+                                          QWidget* const parent ) :
+    QWizard( parent )
+{
+    const QString title( tr( "Rename %1" ).arg( elementName ) );
+    setWindowTitle( title );
+    setWindowFlags( windowFlags() & ~Qt::WindowContextHelpButtonHint );
+    setOption( QWizard::NoBackButtonOnStartPage, true );
+    setOption( QWizard::HaveNextButtonOnLastPage, false );
+
+    addPage( new WizardStartPage( collection, title ) );
+}

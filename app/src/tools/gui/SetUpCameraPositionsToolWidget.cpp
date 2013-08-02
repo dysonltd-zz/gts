@@ -17,17 +17,19 @@
  */
 
 #include "SetUpCameraPositionsToolWidget.h"
+
 #include "CamerasCollection.h"
 #include "CalibratePositionToolWidget.h"
-#include <QtGui/QComboBox>
-#include <QtGui/QLabel>
 #include "WbConfigTools.h"
 #include "CameraPositionSchema.h"
+#include "RoomLayoutSchema.h"
+
+#include <QtGui/QComboBox>
+#include <QtGui/QLabel>
 
 SetUpCameraPositionsToolWidget::SetUpCameraPositionsToolWidget( CameraHardware& cameraHardware,
                                                                 QWidget* parent,
-                                                                MainWindow& mainWindow )
-    :
+                                                                MainWindow& mainWindow ) :
     CollectionToolWidget( tr( "Position" ),
                           CreateCollectionSchema(),
                           CreateElementSchema(),
@@ -70,5 +72,9 @@ const WbSchema SetUpCameraPositionsToolWidget::CreateElementSchema()
                                                       Unnamed( tr( "CameraPos" ) ) ) );
     schema.AddSingleValueKey( CameraPositionSchema::cameraIdKey,
                               WbSchemaElement::Multiplicity::One );
+
+    schema.AddDependant( RoomLayoutSchema::schemaName,
+                         RoomLayoutSchema::cameraPositionIdsKey );
+
     return schema;
 }

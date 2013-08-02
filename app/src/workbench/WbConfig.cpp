@@ -18,11 +18,6 @@
 
 #include "WbConfig.h"
 
-#include <cassert>
-#include <string>
-
-#include <QtCore/qdir.h>
-
 #include "WbConfigTools.h"
 #include "WbConfigFileReader.h"
 #include "WbConfigFileWriter.h"
@@ -31,6 +26,12 @@
 #include "Container.h"
 
 #include "Debugging.h"
+
+#include <QtCore/qdir.h>
+#include <QtCore/qstringbuilder.h>
+
+#include <cassert>
+#include <string>
 
 #if !defined(__MINGW32__) && !defined(__GNUC__)
 #include <functional>
@@ -98,27 +99,53 @@ WbConfig::~WbConfig()
  *  @param id The ID used to distinguish keys with the same name.
  *  @return The newly created sub-config, or a null config if this one is null.
  */
-WbConfig WbConfig::CreateSubConfig( const KeyName& name,
+WbConfig WbConfig::CreateSubConfig( const KeyName& schemaName,
                                     const QString& fileName,
                                     const KeyId& id )
 {
     if ( !IsNull() )
     {
-        WbConfig subConfig( QueryData().m_schema.FindSubSchema( name ), QFileInfo( fileName ) );
+        WbConfig subConfig( QueryData().m_schema.FindSubSchema( schemaName ), QFileInfo( fileName ) );
         subConfig.SetParent( *this );
         subConfig.SetListener( QueryData().m_listener.get() );
-        ModifyData().m_subConfigs.SetKeyValue( name, subConfig, id );
+        ModifyData().m_subConfigs.SetKeyValue( schemaName, subConfig, id );
         return subConfig;
     }
 
     return WbConfig();
 }
 
-WbConfig WbConfig::AddSubConfig( const KeyName& name,
-                                 const QString& fileName,
+const QString WbConfig::GetSubConfigFileName( const KeyId& elementKey,
+                                              const KeyName& schemaName ) const
+{
+    return QString(elementKey) % "/" % schemaName.ToQString() % ".xml";
+}
+
+WbConfig WbConfig::AddSubConfig( const KeyName& schemaName,
                                  const QString& keyIdFormat )
 {
-    return CreateSubConfig( name, fileName, GenerateNewId( name, keyIdFormat ) );
+    KeyId id = GenerateNewId( schemaName, keyIdFormat );
+
+    return CreateSubConfig( schemaName, GetSubConfigFileName( id, schemaName), id );
+}
+
+void WbConfig::RemoveSubConfigs( const KeyName& keyName,
+                                 const std::vector<KeyId>& idsToRemove )
+{
+    if ( !IsNull() )
+    {
+        SubConfigs::ValueIdPairList values(  GetSubConfigs( keyName ) );
+
+        for ( size_t valueIndex = 0; valueIndex < values.size(); ++valueIndex )
+        {
+            const KeyId thisValueId( values.at( valueIndex ).id );
+
+            if ( container( idsToRemove ).contains( thisValueId ) )
+            {
+                ModifyData().m_subConfigs.RemoveKeyValue( keyName, thisValueId );
+            }
+        }
+    }
 }
 
 /** @brief Return the stored file info representing this config file's location on disk.
@@ -241,8 +268,8 @@ WbConfig WbConfig::GetSubConfig( const KeyName& name, const KeyId& id ) const
  * @param keyName    The name of the keys the operation should affect
  * @param idsToKeep  The IDs which should @em not be removed
  */
-void WbConfig::RemoveOldKeys( const KeyName& keyName,
-                              const std::vector<KeyId>& idsToKeep )
+void WbConfig::KeepKeys( const KeyName& keyName,
+                         const std::vector<KeyId>& idsToKeep )
 {
     if ( !IsNull() )
     {
@@ -251,6 +278,25 @@ void WbConfig::RemoveOldKeys( const KeyName& keyName,
         {
             const KeyId thisValueId( values.at( valueIndex ).id );
             if ( !container( idsToKeep ).contains( thisValueId ) )
+            {
+                ModifyData().m_keyValues.RemoveKeyValue( keyName, thisValueId );
+            }
+        }
+    }
+}
+
+void WbConfig::RemoveKeys( const KeyName& keyName,
+                           const std::vector<KeyId>& idsToRemove )
+{
+    if ( !IsNull() )
+    {
+        WbKeyValues::ValueIdPairList values( GetKeyValues( keyName ) );
+
+        for ( size_t valueIndex = 0; valueIndex < values.size(); ++valueIndex )
+        {
+            const KeyId thisValueId( values.at( valueIndex ).id );
+
+            if ( container( idsToRemove ).contains( thisValueId ) )
             {
                 ModifyData().m_keyValues.RemoveKeyValue( keyName, thisValueId );
             }
@@ -543,6 +589,7 @@ QTreeWidgetItem* const WbConfig::GetLinkedTreeItem() const
     {
         return QueryData().m_treeWidgetItem;
     }
+
     return 0;
 }
 
@@ -827,4 +874,50 @@ bool WbConfig::IsModified() const
     }
 
     return false;
+}
+
+bool WbConfig::DependentExists( const KeyValue& id ) const
+{
+    WbSchema::SchemaKeyPairList dependants = QueryData().m_schema.GetDependants();
+
+    // Is this "safe" - ensure no references exist?
+    const WbConfig rootConfig = FindRootAncestor();
+
+    return rootConfig.DependentExists( dependants, id );
+}
+
+bool WbConfig::DependentExists( WbSchema::SchemaKeyPairList dependants, const KeyValue& id ) const
+{
+    if ( IsNull() ) return false;
+
+    bool found = false;
+
+    for ( int i = 0; i < dependants.size(); ++i )
+    {
+        WbConfig subConfig = GetSubConfig ( dependants.at(i).schema );
+
+        KeyValue value = subConfig.GetKeyValue( dependants.at(i).key );
+
+        if ( value == id )
+        {
+            found = true;
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        std::vector< WbConfig > subConfigList( QueryData().m_subConfigs.EnumerateValues() );
+
+        for ( size_t i = 0; i < subConfigList.size(); ++i )
+        {
+            if ( subConfigList.at( i ).DependentExists( dependants, id ) )
+            {
+                found = true;
+                break;
+            }
+        }
+    }
+
+    return found;
 }
