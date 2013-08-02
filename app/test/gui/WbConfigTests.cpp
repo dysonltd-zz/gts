@@ -162,7 +162,7 @@ TEST(WbConfigTests, RemoveOldKeyValue)
     idsToKeep.push_back( secondAddedId );
     idsToKeep.push_back( fourthAddedId );
 
-    test.parentConfig.RemoveOldKeys( test.parentSchemaMultivaluedKey, idsToKeep );
+    test.parentConfig.KeepKeys( test.parentSchemaMultivaluedKey, idsToKeep );
 
     EXPECT_FALSE(test.parentConfig.GetKeyValue( test.parentSchemaMultivaluedKey, idsToKeep.at( 0 ) ).IsNull() ) << "The first key we required to keep is still present";
     EXPECT_FALSE(test.parentConfig.GetKeyValue( test.parentSchemaMultivaluedKey, idsToKeep.at( 1 ) ).IsNull() ) << "The second key we required to keep is still present";
