@@ -90,9 +90,9 @@ private:
     const WbKeyValues::ValueIdPairList GetCameraPositionPairList(const KeyId& roomIdToCapture);
     const QStringList GetCameraPositionIds(const KeyId& roomIdToCapture);
 
-    typedef QPair< QStringList, QString > VideoCaptureEntry;
+    typedef QPair< QStringList, QStringList > VideoCaptureEntry;
     void AddVideoFileConfigKey(const QString& videoFileName, const KeyId& camPosId);
-    void AddTableRow( const QString& roomPosition, const QStringList& videoFileName );
+    void AddTableRow( const QString& roomPosition, const QStringList& videoFileNames );
 
     void ShowNoRoomError();
     void ShowEmptyRoomError();

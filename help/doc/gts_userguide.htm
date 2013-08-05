@@ -315,8 +315,8 @@ style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 <p class=MsoNormal>&nbsp;</p>
 
 <p class=MsoNormal style='text-align:justify'>The GTS is provided for
-convenience in the form of an executable (<b>GTS-0.0.1a-win32.exe</b>) which
-should be run to install the software. This is presented in the form of a
+convenience in the form of an executable (<b>GTS-x.y.z-vs2010-win32.exe</b>)
+which should be run to install the software. This is presented in the form of a
 step-by-step wizard - in most cases the default settings will be appropriate.</p>
 
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
@@ -658,7 +658,7 @@ greatly. The maximum slant from the floor plane should be 45°.</p>
      the <b>Calibrate</b> button in the bottom right corner. The GTS then start
      to calibrate - once finished you should get an average projection error of
      less than 0.7 if it is more than 0.7 check your images to see which ones
-     have the highest average projection error and trying retaking those images
+     have the highest average projection error and try retaking those images
      one by one until average error falls below 0.7.<br>
      <br>
      <img border=0 width=14 height=14 src="gts_userguide_files/image010.png"> If
@@ -807,35 +807,27 @@ button.)</p>
      appropriate boxes. (The numbers represent the lines that make up the grid
      and should be one less than the number of squares in the corresponding
      dimension.)</li>
- <li class=MsoNormal style='text-align:justify'>Select the “base” camera and
-     segment then click the <img border=0 width=33 height=33
-     src="gts_userguide_files/image016.png"> button and locate the appropriate
-     camera image;</li>
- <li class=MsoNormal style='text-align:justify'>Select the “referent” camera
-     and segment then click the <img border=0 width=31 height=31
-     src="gts_userguide_files/image017.png"> button and locate the appropriate
-     camera image;</li>
  <li class=MsoNormal style='text-align:justify'>Now you need to capture an
-     image of the calibration grid on the floor. Click the <b>Live</b><i> </i>button
-     then <b>Capture</b>. Ensure you have an image from each of the fixed
-     ceiling cameras (“base” and “referent”), with the calibration grid as
-     level to the floor plane as possible.</li>
+     image of the calibration grid on the floor. Click either the <b>File</b> or
+     the <b>Live</b><i> </i>button then <b>Capture</b>. Ensure you have an
+     image from each of the fixed ceiling cameras (“base” and “referent”), with
+     the calibration grid as level to the floor plane as possible.</li>
  <li class=MsoNormal style='text-align:justify'>Rotate the “referent” by
      pressing the <img border=0 width=28 height=28
-     src="gts_userguide_files/image018.png"> button until its alignment
+     src="gts_userguide_files/image016.png"> button until its alignment
      corresponds as closely as possible with the “base”;</li>
  <li class=MsoNormal style='text-align:justify'>Match the pair together using
-     the <img border=0 width=32 height=32 src="gts_userguide_files/image019.png"> button
+     the <img border=0 width=32 height=32 src="gts_userguide_files/image017.png"> button
      and view the result – a dialog pops-up and displays the correspondence
      between each image;</li>
  <li class=MsoNormal style='text-align:justify'>Stitch the pair together using
-     the <img border=0 width=31 height=31 src="gts_userguide_files/image020.png"> button
+     the <img border=0 width=31 height=31 src="gts_userguide_files/image018.png"> button
      and view the result – a dialog pops-up and displays the result of stitching
      the pair of images;</li>
  <li class=MsoNormal style='text-align:justify'>Save this mapping pair by
      pressing the <img border=0 width=34 height=34
-     src="gts_userguide_files/image021.png"> button (or reset the form using
-     the <img border=0 width=33 height=33 src="gts_userguide_files/image022.png"> button);</li>
+     src="gts_userguide_files/image019.png"> button (or reset the form using
+     the <img border=0 width=33 height=33 src="gts_userguide_files/image020.png"> button);</li>
  <li class=MsoNormal style='text-align:justify'>Once all mapping pairs are
      complete press the <b>Create</b> button and the floor plan is created by
      combining all of the images used during image used during calibration for
@@ -845,7 +837,7 @@ button.)</p>
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
 
 <p class=MsoNormal align=center style='text-align:center'><img border=0
-width=481 height=349 src="gts_userguide_files/image023.jpg"></p>
+width=481 height=349 src="gts_userguide_files/image021.jpg"></p>
 
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
 
@@ -871,7 +863,7 @@ floor space using white pixels and black pixels for all other locations.</p>
 </ol>
 
 <p class=MsoNormal style='margin-left:36.0pt;text-align:justify'><img border=0
-width=13 height=13 src="gts_userguide_files/image024.png"> At present, the
+width=13 height=13 src="gts_userguide_files/image022.png"> At present, the
 easiest way to generate the floor mask is to use an (external) image editor
 such as Gimp or Photoshop;</p>
 
@@ -884,7 +876,27 @@ such as Gimp or Photoshop;</p>
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
 
 <p class=MsoNormal align=center style='text-align:center'><img border=0
-width=483 height=350 src="gts_userguide_files/image025.jpg"></p>
+width=483 height=350 src="gts_userguide_files/image023.jpg"></p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<h3 style='margin-left:0cm;text-indent:0cm'>4.6.4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span>Floor Measurement</h3>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>It is sometimes useful to verify
+that both calibration (camera and position) in conjunction with floor-plan transforms
+are accurate. In addition to displaying the (pixel) size of the floor-plan and
+floor-mask (if available), clicking on any two points within the image will display
+the distance between them.</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal align=center style='text-align:center'><img border=0
+width=488 height=366 src="gts_userguide_files/image024.jpg"></p>
 
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
 
@@ -899,7 +911,7 @@ name="RECORDING_A_RUN">4.7.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbs
 
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
 
-<ol style='margin-top:0cm' start=4 type=1>
+<ol style='margin-top:0cm' start=1 type=1>
  <li class=MsoNormal style='text-align:justify'>Go to the <b>Runs</b> tab;</li>
  <li class=MsoNormal style='text-align:justify'>In <i>Run</i> drop down menu,
      select <b>New...</b>;</li>
@@ -921,9 +933,6 @@ name="RECORDING_A_RUN">4.7.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbs
 <ol style='margin-top:0cm' start=1 type=1>
  <li class=MsoNormal style='text-align:justify'>Go to the <b>Capture Video</b>
      tab;</li>
-</ol>
-
-<ol style='margin-top:0cm' start=1 type=1>
  <li class=MsoNormal style='text-align:justify'>In <i>Run</i> drop down menu, select
      <b>New...</b>;</li>
  <li class=MsoNormal style='text-align:justify'>Name the run ‘<b><span
@@ -937,14 +946,14 @@ name="RECORDING_A_RUN">4.7.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbs
  <li class=MsoNormal style='text-align:justify'>Press <b>Connect </b>to open a
      live feed from each camera connected to the system;</li>
  <li class=MsoNormal style='text-align:justify'>When the robot is ready press
-     the <img border=0 width=36 height=36 src="gts_userguide_files/image026.png">button
+     the <img border=0 width=36 height=36 src="gts_userguide_files/image025.png">button
      to start recording a run;</li>
  <li class=MsoNormal style='text-align:justify'>When the run is finished press
-     the <img border=0 width=34 height=34 src="gts_userguide_files/image027.png"
+     the <img border=0 width=34 height=34 src="gts_userguide_files/image026.png"
      alt="Optical Drive"> button to stop recording.</li>
  <li class=MsoNormal style='text-align:justify'>Click <b>Disconnect</b> to
      terminate the live feed.</li>
- <li class=MsoNormal style='text-align:justify'>Click <b>Clear </b> to wipe the
+ <li class=MsoNormal style='text-align:justify'>Click <b>Clear </b>to wipe the
      camera’s from the table if you change the room setup.</li>
 </ol>
 
@@ -967,21 +976,34 @@ the appropriate robot from the <i>Robot</i> drop down (automatically selected)</
 -18.0pt'>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>Set
 the tracking parameters as desired:</p>
 
-<p class=MsoNormal style='margin-left:72.0pt;text-align:justify;text-indent:
--18.0pt'><span style='font-size:10.0pt;font-family:Symbol'>·<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span style='font-size:10.0pt'>Tracker (bi-level) threshold
-(default 128);</span></p>
+<p class=MsoNormal style='margin-left:72.0pt;text-indent:-18.0pt'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt'>Tracker (bi-level) threshold (range:
+0 to 255, default :128);<br>
+<br>
+Bi-level threshold used for determining orientation of target. Heading is
+computed using the distribution of (thresholded) light and dark pixels of the
+target in an image.<br>
+<br>
+</span></p>
 
-<p class=MsoNormal style='margin-left:72.0pt;text-align:justify;text-indent:
--18.0pt'><span style='font-size:10.0pt;font-family:Symbol'>·<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span style='font-size:10.0pt'>NCC threshold (default 0.3);</span></p>
+<p class=MsoNormal style='margin-left:72.0pt;text-indent:-18.0pt'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt'>NCC threshold (range: -1 to +1, default:
+0.3);<br>
+<br>
+Threshold applied to the error computed (during motion analysis and object
+tracking)  using a normalised-cross-correlation of the appearance of the robot
+in the previous image (at the robots old position) and the current image.</span></p>
 
-<p class=MsoNormal style='margin-left:72.0pt;text-align:justify;text-indent:
--18.0pt'><span style='font-size:10.0pt;font-family:Symbol'>·<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span></span><span style='font-size:10.0pt'>Resolution (default 15).</span></p>
+<p class=MsoNormal style='margin-left:72.0pt;text-indent:-18.0pt'><span
+style='font-size:10.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:10.0pt'>Resolution (range: 0 to 99, default
+:15).<br>
+<br>
+Scaling factor indicating the size in pixels to be used to represent one square
+of the target. (Larger values mean more accuracy – up to a point – but slower
+tracking.)</span></p>
 
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
 
@@ -991,23 +1013,15 @@ videos will be pre-populated based on your last recording, but this can be
 changed via the combo-boxes on the right.</p>
 
 <p class=MsoNormal style='margin-left:39.3pt;text-align:justify;text-indent:
--18.0pt'>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>Set
-the replay rate – this controls the rate at which frames are read from each of
-the recorded videos. <img border=0 width=13 height=13
-src="gts_userguide_files/image024.png"> When tracking, this needs to be (For a
-video recorded at 7.5fps, the rate should be less than 133ms to handle every
-single frame i.e. 1000/FPS) ;</p>
-
-<p class=MsoNormal style='margin-left:39.3pt;text-align:justify;text-indent:
--18.0pt'>6.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>Press
+-18.0pt'>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>Press
 <span style='font-size:10.0pt'><img border=0 width=39 height=39
-src="gts_userguide_files/image028.png">to </span>start playing the video(s) at
-the set rate if you need to skip ahead at any time. Pause the video to switch
-to tracking by pressing <span style='font-size:10.0pt'><img border=0 width=36
-height=36 src="gts_userguide_files/image029.png">.</span></p>
+src="gts_userguide_files/image027.png">to </span>start playing the video(s) if
+you need to skip ahead any time. Pause the video to switch to tracking by
+pressing <span style='font-size:10.0pt'><img border=0 width=36 height=36
+src="gts_userguide_files/image028.png">.</span></p>
 
 <p class=MsoNormal style='margin-left:39.3pt;text-align:justify;text-indent:
--18.0pt'>7.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>Click
+-18.0pt'>6.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>Click
 on the centre of the robot in the <i>track view</i> window of any camera in
 which it is visible. This will mark it for tracking and provide a visual
 representation of the robot (on the video);</p>
@@ -1045,11 +1059,11 @@ representation of the robot (on the video);</p>
   padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
   style='font-size:10.0pt'><img border=0 width=31 height=31
-  src="gts_userguide_files/image030.png"></span></p>
+  src="gts_userguide_files/image029.png"></span></p>
   </td>
   <td width=113 valign=top style='width:3.0cm;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
-  style='font-size:10.0pt'>Rewind</span></p>
+  style='font-size:10.0pt'>Scan backward</span></p>
   </td>
   <td width=50 valign=top style='width:37.5pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
@@ -1058,15 +1072,15 @@ representation of the robot (on the video);</p>
   <td width=319 valign=top style='width:238.9pt;border:none;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'>Rewind
-  at “replay rate” – <b>deleting track history</b>.</span></p>
+  – <b>deleting track history</b>.</span></p>
   </td>
  </tr>
  <tr>
   <td width=38 valign=top style='width:1.0cm;border:none;border-left:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
-  style='font-size:10.0pt'><img border=0 width=39 height=39
-  src="gts_userguide_files/image031.png"></span></p>
+  style='font-size:10.0pt'><img border=0 width=37 height=37
+  src="gts_userguide_files/image030.png"></span></p>
   </td>
   <td width=113 valign=top style='width:3.0cm;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
@@ -1087,7 +1101,7 @@ representation of the robot (on the video);</p>
   padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
   style='font-size:10.0pt'><img border=0 width=39 height=39
-  src="gts_userguide_files/image028.png"></span></p>
+  src="gts_userguide_files/image027.png"></span></p>
   </td>
   <td width=113 valign=top style='width:3.0cm;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
@@ -1108,7 +1122,7 @@ representation of the robot (on the video);</p>
   padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
   style='font-size:10.0pt'><img border=0 width=39 height=39
-  src="gts_userguide_files/image032.png"></span></p>
+  src="gts_userguide_files/image031.png"></span></p>
   </td>
   <td width=113 valign=top style='width:3.0cm;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
@@ -1129,8 +1143,8 @@ representation of the robot (on the video);</p>
   <td width=38 valign=top style='width:1.0cm;border:none;border-left:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
-  style='font-size:10.0pt'><img border=0 width=39 height=39
-  src="gts_userguide_files/image033.png"></span></p>
+  style='font-size:10.0pt'><img border=0 width=37 height=37
+  src="gts_userguide_files/image032.png"></span></p>
   </td>
   <td width=113 valign=top style='width:3.0cm;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
@@ -1150,11 +1164,11 @@ representation of the robot (on the video);</p>
   <td width=38 valign=top style='width:1.0cm;border:none;border-left:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><img border=0
-  width=40 height=40 src="gts_userguide_files/image034.png"></p>
+  width=36 height=36 src="gts_userguide_files/image033.png"></p>
   </td>
   <td width=113 valign=top style='width:3.0cm;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
-  style='font-size:10.0pt'>Track Step Forward</span></p>
+  style='font-size:10.0pt'>Track step forward</span></p>
   </td>
   <td width=50 valign=top style='width:37.5pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
@@ -1171,7 +1185,28 @@ representation of the robot (on the video);</p>
   padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
   style='font-size:10.0pt'><img border=0 width=36 height=36
-  src="gts_userguide_files/image035.png"></span></p>
+  src="gts_userguide_files/image034.png"></span></p>
+  </td>
+  <td width=113 valign=top style='width:3.0cm;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:10.0pt'>Scan forward</span></p>
+  </td>
+  <td width=50 valign=top style='width:37.5pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:10.0pt'>N</span></p>
+  </td>
+  <td width=319 valign=top style='width:238.9pt;border:none;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'>Fast
+  forward.</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=38 valign=top style='width:1.0cm;border:none;border-left:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal align=center style='text-align:center'><span
+  style='font-size:10.0pt'><img border=0 width=36 height=36
+  src="gts_userguide_files/image028.png"></span></p>
   </td>
   <td width=113 valign=top style='width:3.0cm;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
@@ -1193,11 +1228,11 @@ representation of the robot (on the video);</p>
   padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
   style='font-size:10.0pt'><img border=0 width=37 height=37
-  src="gts_userguide_files/image036.png"></span></p>
+  src="gts_userguide_files/image035.png"></span></p>
   </td>
   <td width=113 valign=top style='width:3.0cm;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
-  style='font-size:10.0pt'>Pause Track</span></p>
+  style='font-size:10.0pt'>Pause track</span></p>
   </td>
   <td width=50 valign=top style='width:37.5pt;border:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
@@ -1215,7 +1250,7 @@ representation of the robot (on the video);</p>
   border-bottom:solid windowtext 1.0pt;border-right:none;padding:0cm 5.4pt 0cm 5.4pt'>
   <p class=MsoNormal align=center style='text-align:center'><span
   style='font-size:10.0pt'><img border=0 width=32 height=32
-  src="gts_userguide_files/image037.png"></span></p>
+  src="gts_userguide_files/image036.png"></span></p>
   </td>
   <td width=113 valign=top style='width:3.0cm;border:none;border-bottom:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
@@ -1240,35 +1275,35 @@ representation of the robot (on the video);</p>
 <p class=MsoNormal style='margin-left:36.0pt;text-align:justify'>&nbsp;</p>
 
 <p class=MsoNormal style='margin-left:39.3pt;text-align:justify;text-indent:
--18.0pt'>8.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>With
+-18.0pt'>7.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>With
 the robot selected in either track view, press <img border=0 width=39
-height=39 src="gts_userguide_files/image038.png">to begin tracking.</p>
+height=39 src="gts_userguide_files/image037.png">to begin tracking.</p>
 
 <p class=MsoNormal style='margin-left:39.3pt;text-align:justify;text-indent:
--18.0pt'>9.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>If
+-18.0pt'>8.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>If
 the software loses track of the robot in both videos it will pause<a
 href="#_ftn3" name="_ftnref3" title=""><span class=MsoFootnoteReference><span
 class=MsoFootnoteReference><span style='font-size:12.0pt;font-family:"Arial","sans-serif"'>[3]</span></span></span></a>.
 Click on the robot in any videos where it is still visible and then press <span
 style='font-size:10.0pt'><img border=0 width=39 height=39
-src="gts_userguide_files/image038.png"></span>or <img border=0 width=42
-height=42 src="gts_userguide_files/image039.png"> to resume tracking the video;</p>
+src="gts_userguide_files/image037.png"></span>or <img border=0 width=36
+height=36 src="gts_userguide_files/image038.png"> to resume tracking the video;</p>
 
 <p class=MsoNormal style='margin-left:39.3pt;text-align:justify;text-indent:
--18.0pt'>10.<span style='font:7.0pt "Times New Roman"'> </span>If the software
-loses track of the robot due to distortion then reselect the robot to lock the
-target and continue by pressing <span style='font-size:10.0pt'><img border=0
-width=39 height=39 src="gts_userguide_files/image040.png">.</span>  </p>
+-18.0pt'>9.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span>If
+the software loses track of the robot due to distortion then reselect the robot
+to lock the target and continue by pressing <span style='font-size:10.0pt'><img
+border=0 width=39 height=39 src="gts_userguide_files/image039.png">.</span>  </p>
 
 <p class=MsoNormal style='margin-left:39.3pt;text-align:justify;text-indent:
--18.0pt'>11.<span style='font:7.0pt "Times New Roman"'> </span>Once the robot
+-18.0pt'>10.<span style='font:7.0pt "Times New Roman"'> </span>Once the robot
 run has completed then pressing <img border=0 width=38 height=38
-src="gts_userguide_files/image041.png"> will stop the tracking process. Alternatively
+src="gts_userguide_files/image040.png"> will stop the tracking process. Alternatively
 the application will stop automatically tracking once the videos have
 completed;</p>
 
 <p class=MsoNormal style='margin-left:39.3pt;text-align:justify;text-indent:
--18.0pt'>12.<span style='font:7.0pt "Times New Roman"'> </span>The tracking
+-18.0pt'>11.<span style='font:7.0pt "Times New Roman"'> </span>The tracking
 data should be stored by pressing the <b>Save Data</b> button. It will be
 stored in a folder called results inside the folder associated with the run. This
 will result in the storage of the following files – these include:</p>
@@ -1346,7 +1381,7 @@ analysis.</span></p>
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
 
 <p class=MsoNormal align=center style='text-align:center'><img border=0
-width=484 height=335 src="gts_userguide_files/image042.jpg"></p>
+width=484 height=335 src="gts_userguide_files/image041.jpg"></p>
 
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
 
@@ -1380,11 +1415,11 @@ style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 <ol style='margin-top:0cm' start=1 type=1>
  <li class=MsoNormal style='text-align:justify'>In the <i>floor plan</i>
      selection box click the <img border=0 width=35 height=35
-     src="gts_userguide_files/image043.png"> button and locate the appropriate
+     src="gts_userguide_files/image042.png"> button and locate the appropriate
      floor plan image;</li>
  <li class=MsoNormal style='text-align:justify'>In the <i>floor mask</i> selection
      box click the <img border=0 width=35 height=35
-     src="gts_userguide_files/image043.png"> button and locate the appropriate
+     src="gts_userguide_files/image042.png"> button and locate the appropriate
      floor mask image;</li>
  <li class=MsoNormal style='text-align:justify'>Press the <b>Load</b> button.
      This populates the table of runs (within the current workspace). Select
@@ -1410,7 +1445,7 @@ histogram.</span></p>
 <p class=MsoNormal style='text-align:justify'>&nbsp;</p>
 
 <p class=MsoNormal align=center style='text-align:center'><img border=0
-width=482 height=333 src="gts_userguide_files/image044.jpg"></p>
+width=482 height=333 src="gts_userguide_files/image043.jpg"></p>
 
 <b><i><span style='font-size:18.0pt;font-family:"Arial","sans-serif"'><br
 clear=all style='page-break-before:always'>

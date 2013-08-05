@@ -503,7 +503,7 @@ const ExitStatus::Flags PostProcessToolWidget::PostProcess( const WbConfig& post
 
             int missCount = coverage.MissedMask( coverageMissedFile );
 
-            LOG_INFO(QObject::tr("Missed pixels: %d.").arg(missCount));
+            LOG_INFO(QObject::tr("Missed pixels: %1.").arg(missCount));
 
             // Create a coloured map to
             // indicate repeated coverage.

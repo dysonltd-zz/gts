@@ -664,6 +664,13 @@ void CreateFloorPlanToolWidget::BtnMatchClicked()
 
         m_ui->btnStitch->setEnabled(true);
     }
+    else
+    {
+        Message::Show( this,
+                       tr( "Create Floor Plan" ),
+                       tr( "Error - Cannot find chessboard!" ),
+                       Message::Severity_Critical );
+    }
 }
 
 void CreateFloorPlanToolWidget::DisplayMatched( std::vector< cv::Point2f > ip1,

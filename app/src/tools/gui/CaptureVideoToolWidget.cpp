@@ -116,6 +116,7 @@ void CaptureVideoToolWidget::ConnectSignals()
                       SIGNAL( clicked(bool) ),
                       this,
                       SLOT( RecordButtonClicked(const bool) ) );
+
     QObject::connect( m_ui->m_formatXVIDRadioBtn,
                       SIGNAL( clicked() ),
                       this,
@@ -147,8 +148,6 @@ void CaptureVideoToolWidget::CaptureLoadResetButtonClicked()
     }
     else
     {
-        // reset
-        StopUpdatingImages();
         RemoveAllVideoSources();
 
         m_ui->m_captureLoadResetBtn->setText("&Load");
@@ -496,12 +495,17 @@ void CaptureVideoToolWidget::SetUpVideoSources(GetVideoSourcesForCallback getVid
 #else
     const bool success = getVideoSourcesFor(cameraPositionIds);
 #endif
+
     if ( success )
     {
         m_ui->m_captureLoadResetBtn->setText("&Clear");
+        m_ui->m_captureLiveConnectDisconnectBtn->setEnabled(true);
 
         m_videoSourcesAdded = true;
-        m_ui->m_captureLiveConnectDisconnectBtn->setEnabled(true);
+    }
+    else
+    {
+        RemoveAllVideoSources();
     }
 }
 
@@ -511,7 +515,7 @@ void CaptureVideoToolWidget::CaptureLiveConnectDisconnectButtonClicked()
     {
         StartVideoSources();
 
-        if( CanClose() )
+        if ( CanClose() )
         {
             m_ui->m_captureLiveConnectDisconnectBtn->setText("&Disconnect");
         }

@@ -326,14 +326,14 @@ void TrackRobotToolWidget::ReloadCurrentConfigToolSpecific()
                 WbKeyValues::ValueIdPair const &v = *cv;
 
                 // check if it was captured at the current camera position:
-                if (  v.value.ToQString() == positionString )
+                if ( v.value.ToQString() == positionString )
                 {
                     // If it was add it to the map of position -> videoFiles
                     QString videoFilename = videoConfig.GetKeyValue( VideoCaptureSchema::videoFileNameKey, v.id ).ToQString();
                     QString timestampFilename = videoConfig.GetKeyValue( VideoCaptureSchema::timestampFileNameKey, v.id ).ToQString();
 
                     m_mapPositionsToFiles[ positionString ].first << videoFilename;
-                    m_mapPositionsToFiles[ positionString ].second = timestampFilename;
+                    m_mapPositionsToFiles[ positionString ].second << timestampFilename;
                 }
             }
         }
@@ -468,7 +468,6 @@ void TrackRobotToolWidget::SaveBtnClicked()
     {
         if ( KeyId(*camPosId) != cameraId )
         {
-
             const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( positionIdKey );
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
@@ -698,7 +697,7 @@ void TrackRobotToolWidget::ScanBackButtonClicked()
     TrackRun( rate, false, false, false );
 
     // set pause button icon
-    SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
+    SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/pause.png"));
 
     m_playing = true;
 }
@@ -729,7 +728,7 @@ void TrackRobotToolWidget::ScanForwardButtonClicked()
     TrackRun(rate, false, false, true );
 
     // set pause button icon
-    SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
+    SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/pause.png"));
 
     m_playing = true;
 }
@@ -745,7 +744,7 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
             TrackRun( m_optimumRate, true, false, true );
 
             // switch to tracking/record icon
-            SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pauseTrack.png"));
+            SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/pauseTrack.png"));
         }
         else
         {
@@ -753,7 +752,7 @@ void TrackRobotToolWidget::PlayPauseButtonClicked()
             TrackRun( m_optimumRate, false, false, true );
 
             // switch to pause icon
-            SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/pause.png"));
+            SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/pause.png"));
         }
 
         // disable << |<< >>| []
@@ -1131,10 +1130,14 @@ const ExitStatus::Flags TrackRobotToolWidget::TrackLoad( const WbConfig&        
                         .ToQString() );
         const WbConfig cameraConfig( cameras.ElementById( cameraId ) );
 
+        QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(i, FILE_COLUMN);
+
         const VideoCaptureEntry& captureEntry = m_mapPositionsToFiles.value( camPosId );
 
-        const QString videoFileName = trackConfig.GetAbsoluteFileNameFor( captureEntry.first.at(0) );
-        const QString timestampFileName = trackConfig.GetAbsoluteFileNameFor( captureEntry.second );
+        const QString videoFileName =
+           trackConfig.GetAbsoluteFileNameFor( captureEntry.first.at(combo->currentIndex()) );
+        const QString timestampFileName =
+           trackConfig.GetAbsoluteFileNameFor( captureEntry.second.at(combo->currentIndex()) );
 
         successful = m_scene.LoadCameraConfig( camPosId,
                                                videoFileName.toAscii().data(),
