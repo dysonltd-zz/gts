@@ -35,6 +35,8 @@
 
 #include "TrackRobotToolWidget.h"
 
+#include "FileUtilities.h"
+
 #include "Logging.h"
 
 #include <opencv/highgui.h>
@@ -439,13 +441,15 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
  single or multiple cameras, computing a single output log
  in both cases.
  **/
-void GtsScene::PostProcess( char* floorPlanFile,
-                            char* trackerResultsTxtFile,
-                            char* trackerResultsCsvFile,
-                            char* trackerResultsImgFile,
-                            char* pixelOffsetsFile )
+void GtsScene::SaveData( char* floorPlanFile,
+                         char* trackerResultsTxtFile,
+                         char* trackerResultsCsvFile,
+                         char* trackerResultsImgFile,
+                         char* pixelOffsetsFile,
+                         QString trackResultsTemplate,
+                         QString pixelOffsetsTemplate )
 {
-    int baseLog = OrganiseLogs( m_log );
+    int baseLog = OrganiseLogs( m_log, trackResultsTemplate, pixelOffsetsTemplate );
 
     IplImage* compImg = 0;
     IplImage* compImgCol = 0;
@@ -505,7 +509,9 @@ void GtsScene::PostProcess( char* floorPlanFile,
  *
  * Also computes average frame-rate over all logs.
  **/
-int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log )
+int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log,
+                            QString trackResultsTemplate,
+                            QString pixelOffsetsTemplate )
 {
     int baseLog = -1;
     bool first = true;
@@ -545,6 +551,11 @@ int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log )
                                                          .arg(m_origin[i].y));
                 nLogs++;
             }
+
+            const QString trackerResultsTxtFile(FileUtilities::GetUniqueFileName(
+                                         trackResultsTemplate));
+
+            TrackHistory::WriteHistoryLog( trackerResultsTxtFile.toAscii().data(), log[i] );
         }
     }
 

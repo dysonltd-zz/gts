@@ -81,6 +81,7 @@ CaptureVideoToolWidget::CaptureVideoToolWidget( CameraHardware& cameraHardware,
     m_fps               ( -1.0 ),
     m_codec             ( AviWriter::CODEC_XVID ),
     m_fname             ( QString("video%1.avi") ),
+    m_tname             ( QString("timestamps%1.txt") ),
     m_videoSourcesAdded ( false ),
     m_videoSourcesOpen  ( false )
 {
@@ -263,7 +264,7 @@ void CaptureVideoToolWidget::StartRecordingInDirectory( const QString& outputDir
                                      outputDirectory.absoluteFilePath(m_fname)));
 
         const QString timestampFileName(FileUtilities::GetUniqueFileName(
-                                            outputDirectory.absoluteFilePath("timestamps%1.txt")));
+                                            outputDirectory.absoluteFilePath(m_tname)));
 
         // Identify frame rate...
         QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(row, RATE_COLUMN);

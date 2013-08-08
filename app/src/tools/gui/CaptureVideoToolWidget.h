@@ -155,6 +155,7 @@ private:
 
     AviWriter::codecType         m_codec;
     QString                      m_fname;
+    QString                      m_tname;
 
     bool                         m_videoSourcesAdded;
     bool                         m_videoSourcesOpen;

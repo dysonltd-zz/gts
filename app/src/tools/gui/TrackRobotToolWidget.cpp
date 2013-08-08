@@ -868,7 +868,7 @@ void TrackRobotToolWidget::TrackSaveButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Track Post Process...");
+    LOG_TRACE("Track Save Data...");
 
     const WbConfig runConfig( config.GetParent() );
 
@@ -895,14 +895,21 @@ void TrackRobotToolWidget::TrackSaveButtonClicked()
     const QString pixelOffsetsName(
          runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets.txt" ) );
 
+    const QString trackResultsTemplate(
+         runConfig.GetAbsoluteFileNameFor( "results/track_results_view%1.txt" ) );
+    const QString pixelOffsetsTemplate(
+         runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets_view%1.txt" ) );
+
     UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
     progressDialog->Start( tr( "Saving..." ), tr( "" ) );
 
-    ExitStatus::Flags exitCode = TrackPostProcess( floorPlanName.toAscii().data(),
-                                                   trackerResultsTxtName.toAscii().data(),
-                                                   trackerResultsCsvName.toAscii().data(),
-                                                   trackerResultsImgName.toAscii().data(),
-                                                   pixelOffsetsName.toAscii().data() );
+    ExitStatus::Flags exitCode = TrackSaveData( floorPlanName.toAscii().data(),
+                                                trackerResultsTxtName.toAscii().data(),
+                                                trackerResultsCsvName.toAscii().data(),
+                                                trackerResultsImgName.toAscii().data(),
+                                                pixelOffsetsName.toAscii().data(),
+                                                trackResultsTemplate,
+                                                pixelOffsetsTemplate );
 
     bool successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
 
@@ -1197,19 +1204,23 @@ const ExitStatus::Flags TrackRobotToolWidget::TrackStop()
     return exitStatus;
 }
 
-const ExitStatus::Flags TrackRobotToolWidget::TrackPostProcess( char* floorPlanFile,
-                                                                char* trackerResultsTxtFile,
-                                                                char* trackerResultsCsvFile,
-                                                                char* trackerResultsImgFile,
-                                                                char* pixelOffsetsFile )
+const ExitStatus::Flags TrackRobotToolWidget::TrackSaveData( char* floorPlanFile,
+                                                             char* trackerResultsTxtFile,
+                                                             char* trackerResultsCsvFile,
+                                                             char* trackerResultsImgFile,
+                                                             char* pixelOffsetsFile,
+                                                             QString trackResultsTemplate,
+                                                             QString pixelOffsetsTemplate )
 {
     ExitStatus::Flags exitStatus = ExitStatus::OK_TO_CONTINUE;
 
-    m_scene.PostProcess( floorPlanFile,
-                         trackerResultsTxtFile,
-                         trackerResultsCsvFile,
-                         trackerResultsImgFile,
-                         pixelOffsetsFile );
+    m_scene.SaveData( floorPlanFile,
+                      trackerResultsTxtFile,
+                      trackerResultsCsvFile,
+                      trackerResultsImgFile,
+                      pixelOffsetsFile,
+                      trackResultsTemplate,
+                      pixelOffsetsTemplate );
 
     return exitStatus;
 }

@@ -121,11 +121,13 @@ private:
                                                    bool runForward );
     const ExitStatus::Flags TrackPause();
     const ExitStatus::Flags TrackStop();
-    const ExitStatus::Flags TrackPostProcess( char* floorPlanFile,
-                                              char* trackerResultsTxtFile,
-                                              char* trackerResultsCsvFile,
-                                              char* trackerResultsImgFile,
-                                              char* pixelOffsetsFile );
+    const ExitStatus::Flags TrackSaveData( char* floorPlanFile,
+                                           char* trackerResultsTxtFile,
+                                           char* trackerResultsCsvFile,
+                                           char* trackerResultsImgFile,
+                                           char* pixelOffsetsFile,
+                                           QString trackResultsTemplate,
+                                           QString pixelOffsetsTemplate );
     const ExitStatus::Flags TrackReset( ImageGrid* imageGrid );
 
 private slots:

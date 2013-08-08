@@ -88,17 +88,21 @@ public:
 
     void SetRate( double rate );
 
-    void PostProcess( char* floorPlanFile,
-                      char* trackerResultsTxtFile,
-                      char* trackerResultsCsvFile,
-                      char* trackerResultsImgFile,
-                      char* pixelOffsetsFile );
+    void SaveData( char* floorPlanFile,
+                   char* trackerResultsTxtFile,
+                   char* trackerResultsCsvFile,
+                   char* trackerResultsImgFile,
+                   char* pixelOffsetsFile,
+                   QString trackResultsTemplate,
+                   QString pixelOffsetsTemplate );
 
     void SetTrackPosition( int id, int x, int y );
     void ClrTrackPosition( int id );
 
 private:
-    int OrganiseLogs( TrackHistory::TrackLog* log );
+    int OrganiseLogs( TrackHistory::TrackLog* log,
+                      QString trackResultsTemplate,
+                      QString pixelOffsetsTemplate );
 
     void PostProcessMultiCamera( TrackHistory::TrackLog& avg,
                                  CvPoint2D32f&           offset,
