@@ -31,6 +31,7 @@
 #include <QtCore/QString>
 #include <QtGui/QMessageBox>
 
+
 #include "Debugging.h"
 
 CollectionToolWidget::CollectionToolWidget( const QString&  userFriendlyElementName,
