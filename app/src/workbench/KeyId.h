@@ -19,7 +19,7 @@
 #ifndef KEYID_H
 #define KEYID_H
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 
 /** @brief Type to represent unique key IDs for keys with the same name.
  */

@@ -37,7 +37,7 @@
 #include "CalibrateCameraResultsMapper.h"
 
 #include <QtGui/QCheckBox>
-#include <QtGui/qfiledialog.h>
+#include <QtGui/QFileDialog>
 #include <QtGui/QRegExpValidator>
 
 #include "FileUtilities.h"

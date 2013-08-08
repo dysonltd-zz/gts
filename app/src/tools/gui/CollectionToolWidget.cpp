@@ -28,7 +28,7 @@
 #include "NewElementWizard.h"
 #include "WbConfig.h"
 
-#include <QtCore/qstring>
+#include <QtCore/QString>
 #include <QtGui/QMessageBox>
 
 #include "Debugging.h"

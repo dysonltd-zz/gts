@@ -18,7 +18,7 @@
 
 #include "FileDialogs.h"
 
-#include <QtGui/qfiledialog.h>
+#include <QtGui/QFileDialog>
 
 #include <cassert>
 

@@ -20,11 +20,12 @@
 #define CALIBRATIONIMAGETABLEMAPPER_H
 
 #include "ConfigKeyMapper.h"
-#include <QtGui/QTableWidget>
 #include "KeyName.h"
 #include "CalibrationSchema.h"
+
+#include <QtGui/QTableWidget>
 #include <QtGui/QAction>
-#include <QtCore/qlist.h>
+#include <QtCore/QList>
 #include <QtGui/QMessageBox>
 #include <QFile>
 

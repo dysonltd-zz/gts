@@ -23,7 +23,7 @@
 
 #include <QtGui/QWidget>
 #include <QtGui/QMenu>
-#include <QtGui/qtreewidget.h>
+#include <QtGui/QTreeWidget>
 
 #include <memory>
 

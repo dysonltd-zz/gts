@@ -19,7 +19,7 @@
 #ifndef XMLTOOLS_H
 #define XMLTOOLS_H
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 
 namespace XmlTools
 {

@@ -19,7 +19,7 @@
 #ifndef SCOPEDQTSIGNALSBLOCKER_H_
 #define SCOPEDQTSIGNALSBLOCKER_H_
 
-#include <QtCore/qobject.h>
+#include <QtCore/QObject>
 
 class ScopedQtSignalsBlocker
 {

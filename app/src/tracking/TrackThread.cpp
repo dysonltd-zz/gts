@@ -27,9 +27,9 @@
 #include <opencv/highgui.h>
 
 #include <QtCore/QTime>
-#include <QtCore/qthread.h>
-#include <QtCore/qmutex.h>
-#include <QtGui/qapplication.h>
+#include <QtCore/QThread>
+#include <QtCore/QMutex>
+#include <QtGui/QApplication>
 
 #include "Debugging.h"
 

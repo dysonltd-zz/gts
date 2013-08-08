@@ -20,10 +20,10 @@
 #define UNKNOWNLENGTHPROGRESSDLG_H_
 
 #include <QtGui/QProgressBar>
-#include <QtGui/qwidget.h>
+#include <QtGui/QWidget>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QLabel>
-#include <QtGui/qevent.h>
+#include <QtGui/QCloseEvent>
 
 class UnknownLengthProgressDlg : public QWidget
 {

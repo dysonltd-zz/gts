@@ -30,7 +30,7 @@
 #include "Message.h"
 #include "CamerasCollection.h"
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 #include <QtCore/QTime>
 
 #include "OpenCvUtility.h"

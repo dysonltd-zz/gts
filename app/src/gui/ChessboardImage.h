@@ -19,7 +19,7 @@
 #ifndef CHESSBOARDIMAGE_H
 #define CHESSBOARDIMAGE_H
 
-#include <QtGui/qimage.h>
+#include <QtGui/QImage>
 
 namespace ChessboardImage
 {

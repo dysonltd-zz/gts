@@ -21,7 +21,8 @@
 #include <iostream>
 
 #include "WbDefaultKeys.h"
-#include <QtCore/qstringbuilder.h>
+#include <QtCore/QStringBuilder>
+
 #include "OStreamConfigFileWriter.h"
 #include "ScopedQtSignalsBlocker.h"
 #include "WbConfigTools.h"

@@ -39,10 +39,10 @@
 
 #include "Debugging.h"
 
-#include <QtCore/qstring.h>
-#include <QtCore/qstringlist.h>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QSettings>
-#include <QtGui/qfiledialog.h>
+#include <QtGui/QFileDialog>
 
 namespace
 {

@@ -20,7 +20,8 @@
 #define WBCONFIGFILEREADER_H
 
 #include "WbKeyValues.h"
-#include <QtCore/qiodevice.h>
+
+#include <QtCore/QIODevice>
 #include <QtCore/QString>
 
 struct WbSchemaLocationIdPair

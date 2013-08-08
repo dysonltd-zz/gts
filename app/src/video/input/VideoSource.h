@@ -21,10 +21,10 @@
 
 #include "CameraDescription.h"
 
-#include <QtGui/qimage.h>
+#include <QtGui/QImage>
 #include <QtGui/QTableWidget>
 #include <QtCore/QTime>
-#include <QtCore/qobject.h>
+#include <QtCore/QObject>
 #include <QLineEdit>
 
 #include <opencv/highgui.h>

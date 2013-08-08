@@ -25,7 +25,7 @@
 #include <cassert>
 #include <algorithm>
 
-#include <QtGui/qevent.h>
+#include <QtGui/QWheelEvent>
 
 #include "Debugging.h"
 

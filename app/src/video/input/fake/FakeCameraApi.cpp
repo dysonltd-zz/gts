@@ -17,12 +17,14 @@
  */
 
 #include "FakeCameraApi.h"
-#include <opencv/cv.h>
 #include "CameraDescription.h"
-#include <cstdlib>
-#include <QtCore/qmutex.h>
 
+#include <QtCore/QMutex>
 #include <QtGlobal>
+
+#include <opencv/cv.h>
+
+#include <cstdlib>
 
 namespace
 {

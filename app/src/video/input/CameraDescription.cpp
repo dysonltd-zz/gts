@@ -17,10 +17,13 @@
  */
 
 #include "CameraDescription.h"
-#include <QtCore/qcoreapplication.h>
-#include <QtGui/QTableWidgetItem>
-#include <memory>
+
 #include "VideoSequence.h"
+
+#include <QtCore/QCoreApplication>
+#include <QtGui/QTableWidgetItem>
+
+#include <memory>
 
 /** @brief Create a null CameraDescription.
  *

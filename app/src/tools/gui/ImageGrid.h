@@ -20,13 +20,15 @@
 #define IMAGEGRID_H
 
 #include <QtGui/QFrame>
-#include <QtGui/qscrollarea.h>
+#include <QtGui/QScrollArea>
 #include <QtCore/QString>
 #include <QtGui/QImage>
+#include <QtGui/QGridLayout>
+
 #include "ImageView.h"
+
 #include <vector>
 #include <memory>
-#include <QtGui/QGridLayout>
 
 namespace Ui
 {

@@ -31,7 +31,7 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QWizard>
 #include <QtGui/QHBoxLayout>
-#include <QtCore/qstringbuilder.h>
+#include <QtCore/QStringBuilder>
 #include <QtGui/QStackedWidget>
 #include <QtGui/QPushButton>
 

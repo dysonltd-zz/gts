@@ -18,7 +18,7 @@
 
 #include "QtMessageHandler.h"
 
-#include <QtCore/qstringbuilder.h>
+#include <QtCore/QStringBuilder>
 #include <QtGui/QMessageBox>
 #include <QtGui/QStatusBar>
 

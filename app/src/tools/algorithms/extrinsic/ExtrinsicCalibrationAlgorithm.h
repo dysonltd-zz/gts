@@ -22,7 +22,7 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 
 class WbConfig;
 

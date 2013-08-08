@@ -23,8 +23,9 @@
 #include <string>
 
 #include <QtGui/QImage>
-#include <QtGui/qpixmap.h>
-#include <QtGui/qevent.h>
+#include <QtGui/QPixmap>
+#include <QtGui/QResizeEvent>
+#include <QtGui/QPaintEvent>
 #include <QtGui/QFrame>
 #include <QtGui/QLabel>
 

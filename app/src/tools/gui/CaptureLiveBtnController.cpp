@@ -27,7 +27,7 @@
 #include "CameraTools.h"
 #include "FileUtilities.h"
 
-#include <QtCore/qdir.h>
+#include <QtCore/QDir>
 
 #if defined(__MINGW32__) || defined(__GNUC__)
 #include <Callback.h>

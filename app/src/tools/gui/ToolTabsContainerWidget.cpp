@@ -18,12 +18,14 @@
 
 #include "ToolTabsContainerWidget.h"
 #include "WbSchema.h"
-#include <QtGui/QToolButton>
-#include <cassert>
 #include "ScopedQtSignalsBlocker.h"
 #include "MainWindow.h"
 #include "Message.h"
-#include <QtGui/qevent.h>
+
+#include <QtGui/QToolButton>
+#include <QtGui/QMouseEvent>
+
+#include <cassert>
 
 class ModifiedToolTabs : public QTabBar
 {

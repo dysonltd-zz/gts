@@ -20,7 +20,7 @@
 
 #include "WbDefaultKeys.h"
 
-#include <QtCore/qstringbuilder.h>
+#include <QtCore/QStringBuilder>
 
 Collection::Collection( const KeyName&  collectionSchemaName,
                         const KeyName&  elementSchemaName ) :

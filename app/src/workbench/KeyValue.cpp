@@ -17,6 +17,7 @@
  */
 
 #include "KeyValue.h"
+
 #include <opencv/cv.h>
 
 const QString KeyValue::trueString ( "true" );

@@ -19,11 +19,15 @@
 #ifndef KEYVALUE_H
 #define KEYVALUE_H
 
-#include <QtCore/qstring.h>
-#include <QtCore/qstringlist.h>
-#include <QtXml/qdom.h>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
+
 #include <string>
+
 #include <opencv/cv.h>
+
 #include "KeyId.h"
 
 /** @brief Type to represent the (possibly multi-part) values of the keys.

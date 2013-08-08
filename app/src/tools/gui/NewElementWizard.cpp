@@ -27,8 +27,8 @@
 #include "WbDefaultKeys.h"
 
 #include <QtGui/QRegExpValidator>
-#include <QtCore/qstringbuilder.h>
-#include <QtGui/qapplication.h>
+#include <QtCore/QStringBuilder>
+#include <QtGui/QApplication>
 
 #include "Debugging.h"
 

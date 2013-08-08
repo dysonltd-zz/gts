@@ -19,8 +19,9 @@
 #ifndef MESSAGEHANDLER_H_
 #define MESSAGEHANDLER_H_
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 #include <QWidget>
+
 #include "Message.h"
 
 class MessageHandler

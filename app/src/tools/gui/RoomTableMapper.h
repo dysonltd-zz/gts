@@ -20,18 +20,20 @@
 #define ROOMTABLEMAPPER_H
 
 #include "ConfigKeyMapper.h"
-#include <QtCore/qobject.h>
-#include <QtGui/QTableWidget>
 #include "WbConfig.h"
 #include "WbDefaultKeys.h"
-#include <QtGui/qwidget.h>
 #include "WbConfigTools.h"
-#include <QtCore/qdebug.h>
+#include "CameraPositionsCollection.h"
+#include "RoomLayoutSchema.h"
+
+#include <QtCore/QObject>
+#include <QtGui/QTableWidget>
+#include <QtGui/QWidget>
+#include <QtCore/QDebug>
 #include <QtGui/QStyledItemDelegate>
 #include <QtGui/QItemEditorCreatorBase>
-#include "CameraPositionsCollection.h"
+
 #include <cassert>
-#include "RoomLayoutSchema.h"
 
 namespace
 {

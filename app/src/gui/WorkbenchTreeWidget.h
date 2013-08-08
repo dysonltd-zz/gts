@@ -19,7 +19,7 @@
 #ifndef WORKBENCHTREEWIDGET_H_
 #define WORKBENCHTREEWIDGET_H_
 
-#include <QtGui/qtreewidget.h>
+#include <QtGui/QTreeWidget>
 
 class WorkbenchTreeWidget : public QTreeWidget
 {

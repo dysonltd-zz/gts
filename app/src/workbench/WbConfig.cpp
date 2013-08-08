@@ -27,8 +27,8 @@
 
 #include "Debugging.h"
 
-#include <QtCore/qdir.h>
-#include <QtCore/qstringbuilder.h>
+#include <QtCore/QDir>
+#include <QtCore/QStringBuilder>
 
 #include <cassert>
 #include <string>

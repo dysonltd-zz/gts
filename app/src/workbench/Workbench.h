@@ -24,8 +24,8 @@
 #include "WbConfig.h"
 #include "ConfigListener.h"
 
-#include <QtGui/qtreewidget.h>
-#include <QtCore/qfileinfo.h>
+#include <QtGui/QTreeWidget>
+#include <QtCore/QFileInfo>
 
 class ToolContainer;
 class ToolInterface;
