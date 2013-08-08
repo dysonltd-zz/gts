@@ -19,7 +19,8 @@
 #include "WbConfigTools.h"
 #include "WbDefaultKeys.h"
 #include "Collection.h"
-#include <QtCore/qdir.h>
+
+#include <QtCore/QDir>
 
 namespace WbConfigTools
 {

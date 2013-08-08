@@ -18,11 +18,13 @@
 
 #include "WorkbenchTreeWidget.h"
 
-#include <QtGui/qtooltip.h>
 #include "OStreamConfigFileWriter.h"
 #include "WbConfig.h"
+
+#include <QtGui/QToolTip>
+#include <QtGui/QHelpEvent>
+
 #include <sstream>
-#include <QtGui/qevent.h>
 #include <iostream>
 
 WorkbenchTreeWidget::WorkbenchTreeWidget( QWidget* const parent )

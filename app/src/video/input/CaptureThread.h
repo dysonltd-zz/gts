@@ -21,10 +21,10 @@
 
 #include <opencv/cv.h>
 
-#include <QtGui/qimage.h>
-#include <QtCore/qobject.h>
-#include <QtCore/qmutex.h>
-#include <QtCore/qthread.h>
+#include <QtGui/QImage>
+#include <QtCore/QObject>
+#include <QtCore/QMutex>
+#include <QtCore/QThread>
 
 #include <memory>
 

@@ -21,7 +21,7 @@
 
 #include <opencv/cv.h>
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 
 #include "WbKeyValues.h"
 

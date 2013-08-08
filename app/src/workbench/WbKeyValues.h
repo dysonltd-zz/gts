@@ -21,8 +21,8 @@
 
 #include <vector>
 
-#include <QtCore/qstring.h>
-#include <QtCore/qstringlist.h>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
 
 #include <map>
 #include <vector>

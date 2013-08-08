@@ -20,13 +20,14 @@
 #define CameraRelationsTableMapper_H
 
 #include "ConfigKeyMapper.h"
-#include <QtGui/QTableWidget>
 #include "KeyName.h"
 #include "FloorPlanSchema.h"
-#include <QtGui/QAction>
-#include <QtCore/qlist.h>
-#include <QtGui/QMessageBox>
 #include "CameraPositionsCollection.h"
+
+#include <QtGui/QTableWidget>
+#include <QtGui/QAction>
+#include <QtCore/QList>
+#include <QtGui/QMessageBox>
 
 #include <iostream>
 

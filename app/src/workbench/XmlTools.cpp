@@ -17,5 +17,6 @@
  */
 
 #include "XmlTools.h"
-#include <QtCore/qstring.h>
+
+#include <QtCore/QString>
 

@@ -19,14 +19,16 @@
 #ifndef XMLCONFIGWRITER_H
 #define XMLCONFIGWRITER_H
 
-#include "WbSchema.h"
-
 #include "WbConfigFileWriter.h"
 
-#include <QtCore/qfileinfo.h>
-#include <QtXml/qdom.h>
-#include <cassert>
+#include "WbSchema.h"
 #include "XmlTools.h"
+
+#include <QtCore/QFileInfo>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
+
+#include <cassert>
 
 class XmlConfigFileWriter : public WbConfigFileWriter
 {

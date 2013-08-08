@@ -20,8 +20,8 @@
 #define CAMERASELECTIONFORM_H_
 
 #include <QtGui/QDialog>
-#include <QtCore/qstring.h>
-#include <QtCore/qtimer.h>
+#include <QtCore/QString>
+#include <QtCore/QTimer>
 #include <QtGui/QTableWidget>
 
 #include "CameraApi.h"

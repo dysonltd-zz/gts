@@ -28,8 +28,8 @@
 
 #include <opencv/highgui.h>
 
-#include <QtGui/qpainter.h>
-#include <QtGui/qpen.h>
+#include <QtGui/QPainter>
+#include <QtGui/QPen>
 
 #include <stdio.h>
 

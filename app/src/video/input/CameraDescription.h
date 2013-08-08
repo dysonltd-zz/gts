@@ -27,9 +27,9 @@
 #include "VideoSequence.h"
 #include "CameraApi.h"
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 #include <QtCore/QVariant>
-#include <QtCore/qsize.h>
+#include <QtCore/QSize>
 
 class QTableWidgetItem;
 

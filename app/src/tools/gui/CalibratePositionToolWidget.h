@@ -26,7 +26,7 @@
 
 #include <memory>
 
-#include <QtCore/qsize.h>
+#include <QtCore/QSize>
 #include <QWidget>
 
 namespace Ui

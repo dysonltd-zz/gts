@@ -26,7 +26,7 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
-#include <QtGui/qimage.h>
+#include <QtGui/QImage>
 
 class ImageView;
 

@@ -21,7 +21,7 @@
 
 #include <opencv/cv.h>
 
-#include <QtGui/qimage.h>
+#include <QtGui/QImage>
 
 class RobotTracker;
 class CoverageSystem;

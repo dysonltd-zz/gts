@@ -20,7 +20,9 @@
 #define SETUPROOMTOOLWIDGET_H
 
 #include "CollectionToolWidget.h"
-#include <QtGui/qwidget.h>
+
+#include <QtGui/QWidget>
+
 #include <memory>
 #include <vector>
 

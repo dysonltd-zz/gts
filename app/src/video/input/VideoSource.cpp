@@ -31,7 +31,7 @@
 #include "AviWriter.h"
 
 #include <QtCore/QTime>
-#include <QtCore/qthread.h>
+#include <QtCore/QThread>
 #include <QtGui/QTableWidget>
 #include <QTime>
 

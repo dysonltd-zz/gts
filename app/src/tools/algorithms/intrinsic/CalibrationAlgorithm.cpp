@@ -32,10 +32,10 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
-#include <QtCore/qfileinfo.h>
-#include <QtCore/qobject.h>
+#include <QtCore/QFileInfo>
+#include <QtCore/QObject>
 #include <QtCore/QTime>
-#include <QtGui/qapplication.h>
+#include <QtGui/QApplication>
 
 #include "Debugging.h"
 

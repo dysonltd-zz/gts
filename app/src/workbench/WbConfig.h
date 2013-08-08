@@ -23,10 +23,10 @@
 
 #include "ConfigListener.h"
 
-#include <QtCore/qstringlist.h>
-#include <QtCore/qfileinfo.h>
-#include <QtCore/qsharedpointer.h>
-#include <QtGui/qtreewidget.h>
+#include <QtCore/QStringList>
+#include <QtCore/QFileInfo>
+#include <QtCore/QSharedPointer>
+#include <QtGui/QTreeWidget>
 
 #include <memory>
 #include <map>

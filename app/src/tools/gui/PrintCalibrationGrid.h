@@ -23,7 +23,7 @@
 #include "ImagePrintPreviewDlg.h"
 #include "Message.h"
 
-#include <QtGui/qfiledialog.h>
+#include <QtGui/QFileDialog>
 
 namespace
 {

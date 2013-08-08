@@ -19,7 +19,7 @@
 #ifndef KEYNAME_H
 #define KEYNAME_H
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 #include <QtCore/QList>
 
 /** @brief Type to represent unique key names

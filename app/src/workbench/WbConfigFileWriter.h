@@ -21,8 +21,8 @@
 
 #include "WbKeyValues.h"
 
-#include <QtCore/qfileinfo.h>
-#include <QtCore/qiodevice.h>
+#include <QtCore/QFileInfo>
+#include <QtCore/QIODevice>
 
 class WbConfigFileWriter
 {

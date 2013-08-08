@@ -31,9 +31,9 @@
 #include <vector>
 #include <memory>
 
-#include <QtCore/qstring.h>
-#include <QtCore/qstringlist.h>
-#include <QtGui/qwidget.h>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtGui/QWidget>
 
 class Workbench;
 class ScopedQtSignalsBlocker;

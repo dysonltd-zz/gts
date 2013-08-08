@@ -23,8 +23,10 @@
 #include "KeyName.h"
 #include "ImageGrid.h"
 #include "CalibrationSchema.h"
+
 #include <vector>
-#include <QtGui/qimage.h>
+
+#include <QtGui/QImage>
 
 class CalibrationImageGridMapper: public ConfigKeyMapper
 {

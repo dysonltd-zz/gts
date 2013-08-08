@@ -19,7 +19,7 @@
 #ifndef WBSUBSCHEMA_H
 #define WBSUBSCHEMA_H
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 
 #include "WbSchemaElement.h"
 #include "WbSchema.h"

@@ -767,7 +767,7 @@ void KltTracker::TargetSearch( const IplImage* mask )
         SetPosition( maxPos );
         Activate();
     }
-    else
+    else if ( maxVal > -1.0 )
     {
         LOG_INFO(QObject::tr("Failed to relocalise - max at %1 %2 (score: %3).").arg(maxPos.x)
                                                                                 .arg(maxPos.y)

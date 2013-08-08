@@ -21,9 +21,9 @@
 
 #include <memory>
 
-#include <QtCore/qobject.h>
-#include <QtCore/qmutex.h>
-#include <QtCore/qthread.h>
+#include <QtCore/QObject>
+#include <QtCore/QMutex>
+#include <QtCore/QThread>
 
 class GtsScene;
 

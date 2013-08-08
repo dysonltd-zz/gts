@@ -20,7 +20,7 @@
 
 #include "RobotTracker.h"
 
-#include <QtGui/qpainter.h>
+#include <QtGui/QPainter>
 #include <QMouseEvent>
 
 #include "Debugging.h"

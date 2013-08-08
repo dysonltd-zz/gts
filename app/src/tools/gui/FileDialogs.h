@@ -20,10 +20,11 @@
 #define FILEDIALOGS_H_
 
 #include <QtGui/QMessageBox>
-#include <QtCore/qstring.h>
-#include <QtGui/qfiledialog.h>
+#include <QtCore/QString>
+#include <QtGui/QFileDialog>
 #include <QtGui/QLayout>
 #include <QtGui/QCheckBox>
+
 #include "WbConfigTools.h"
 
 /// @brief Functions to create standard dialog types

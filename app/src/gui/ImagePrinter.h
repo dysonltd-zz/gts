@@ -19,10 +19,10 @@
 #ifndef IMAGEPRINTER_H_
 #define IMAGEPRINTER_H_
 
-#include <QtGui/qpainter.h>
-#include <QtGui/qprinter.h>
-#include <QtGui/qimage.h>
-#include <QtCore/qdebug.h>
+#include <QtGui/QPainter>
+#include <QtGui/QPrinter>
+#include <QtGui/QImage>
+#include <QtCore/QDebug>
 
 /** @brief A QObject to handle printing of a QImage
 

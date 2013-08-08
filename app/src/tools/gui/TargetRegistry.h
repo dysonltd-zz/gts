@@ -16,7 +16,7 @@
  *
  */
 
-#include <QtCore/qstring.h>
+#include <QtCore/QString>
 #include <QtGui/QComboBox>
 
 namespace TargetRegistry

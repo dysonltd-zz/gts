@@ -19,11 +19,14 @@
 #ifndef XMLCONFIGFILEREADER_H
 #define XMLCONFIGFILEREADER_H
 
-#include <QtCore/qiodevice.h>
-#include <QtXml/qdom.h>
-#include <memory>
 #include "XmlTools.h"
 #include "WbConfigFileReader.h"
+
+#include <QtCore/QIODevice>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomElement>
+
+#include <memory>
 
 class WbSchema;
 

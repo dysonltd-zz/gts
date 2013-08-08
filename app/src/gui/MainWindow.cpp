@@ -26,7 +26,7 @@
 
 #include <QtGui/QToolButton>
 #include <QtGui/QMessageBox>
-#include <QtGui/qevent.h>
+#include <QtGui/QCloseEvent>
 
 #include <cassert>
 

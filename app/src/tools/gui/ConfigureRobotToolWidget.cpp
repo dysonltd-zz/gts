@@ -24,9 +24,9 @@
 #include "CameraDescription.h"
 
 #include <QtGui/QAction>
-#include <QtGui/qfiledialog.h>
-#include <QtGui/qapplication.h>
-#include <QtCore/qstring.h>
+#include <QtGui/QFileDialog>
+#include <QtGui/QApplication>
+#include <QtCore/QString>
 
 #include <iostream>
 

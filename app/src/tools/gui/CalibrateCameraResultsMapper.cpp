@@ -22,7 +22,7 @@
 #include "KeyName.h"
 #include "CalibrationSchema.h"
 
-#include <QtCore/qstringbuilder.h>
+#include <QtCore/QStringBuilder>
 
 #include <opencv/cv.h>
 

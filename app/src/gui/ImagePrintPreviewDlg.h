@@ -20,7 +20,7 @@
 #define IMAGEPRINTPREVIEWDLG_H_
 
 #include <QtGui/QPrintPreviewDialog>
-#include <QtGui/qimage.h>
+#include <QtGui/QImage>
 
 #include "ImagePrinter.h"
 
