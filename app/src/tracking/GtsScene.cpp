@@ -239,6 +239,7 @@ void GtsScene::DestroyViewWindows( ImageGrid* imageGrid )
  **/
 GtsScene::TrackStatus GtsScene::StepTrackers( const bool forward, const bool seek )
 {
+    m_filePositionInMilliseconds = forward ? m_filePositionInMilliseconds+m_rateInMilliseconds : MAX(m_filePositionInMilliseconds-m_rateInMilliseconds, 0);
     TrackStatus status = { m_filePositionInMilliseconds, 0, 0, true };
 
     for (unsigned int i = 0; i < GetNumMaxCameras(); ++i)
@@ -249,16 +250,17 @@ GtsScene::TrackStatus GtsScene::StepTrackers( const bool forward, const bool see
             if ( seek )
             {
                 ready = m_view[i].ReadySeekFrame( m_filePositionInMilliseconds );
+                std::cout << "Seeking to Frame ms := " << m_filePositionInMilliseconds << std::endl;
             }
             else
             {
                 ready = m_view[i].ReadyNextFrame();
-            }
-
-            if ( ready )
-            {
-                m_filePositionInMilliseconds = m_view[i].GetSeekPositionInMilliseconds();
-                std::cout << "New file pos := " << m_filePositionInMilliseconds << std::endl;
+                std::cout << "Readying Next Frame" << std::endl;
+                if ( ready )
+                {
+                    m_filePositionInMilliseconds = m_view[i].GetSeekPositionInMilliseconds();
+                    std::cout << "New file pos := " << m_filePositionInMilliseconds << std::endl;
+                }
             }
 
             if ( ready && m_view[i].GetNextFrame() )
@@ -284,11 +286,6 @@ GtsScene::TrackStatus GtsScene::StepTrackers( const bool forward, const bool see
                 }
             }
         }
-    }
-
-    if (!status.eof)
-    {
-        m_filePositionInMilliseconds = forward ? m_filePositionInMilliseconds+m_rateInMilliseconds : MAX(m_filePositionInMilliseconds-m_rateInMilliseconds, 0);
     }
 
     return status;
