@@ -37,6 +37,8 @@ public:
     virtual ~RobotMetricsToolWidget();
 
     virtual const QString Name() const { return tr( "Robot Metrics" ); }
+    virtual bool CanClose() const;
+    const QString CannotCloseReason() const;
 
 private:
     virtual const QString GetSubSchemaDefaultFileName() const;
@@ -44,6 +46,8 @@ private:
     void ReloadCurrentConfigToolSpecific();
 
     static const WbSchema CreateSchema();
+
+    bool IsDataValid() const;
 
     Ui::RobotMetricsToolWidget* m_ui;
 };

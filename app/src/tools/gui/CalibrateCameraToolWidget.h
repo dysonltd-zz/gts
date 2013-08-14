@@ -73,6 +73,8 @@ private:
 
     static const WbSchema CreateSchema();
 
+    bool IsDataValid() const;
+
     CameraHardware& m_cameraHardware;
     std::auto_ptr< CaptureLiveBtnController > m_captureLiveBtnController;
     Ui::CalibrateCameraToolWidget* m_ui;

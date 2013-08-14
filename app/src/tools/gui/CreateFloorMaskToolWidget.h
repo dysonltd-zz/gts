@@ -60,15 +60,29 @@ private:
 
     const WbSchema CreateSchema();
 
+    void CreateFloorMaskMulti();
+    void CreateFloorMaskSingle();
+
+    void Stitch(KeyId rootId);
+
+    WbConfig GetFloorPlanConfig();
+
     Ui::CreateFloorMaskToolWidget* m_ui;
 
 private slots:
+    void BtnCombinePartsClicked();
+
     void BtnExportPlanClicked();
     void BtnImportMaskClicked();
+
+    void BtnCreateMaskClicked();
 
 private:
     bool ExportFloorPlan( const WbConfig& config );
     bool ImportFloorMask( const WbConfig& config );
+
+    bool ExportFloorPlanParts( const WbConfig& config );
+    bool ImportFloorMaskParts( const WbConfig& config );
 };
 
 #endif // CREATEFLOORMASKTOOLWIDGET_H

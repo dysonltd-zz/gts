@@ -58,7 +58,6 @@ public:
 
     virtual const WbConfig GetCurrentConfig() const;
 
-//    virtual const QString  GetHelpText() const;
     virtual const HelpBookmark GetHelpText() const;
     virtual const WbSchema GetMostSpecificSubSchema() const;
     virtual QWidget* Widget() { return this; }

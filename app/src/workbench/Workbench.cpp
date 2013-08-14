@@ -73,6 +73,11 @@ bool Workbench::New( const QFileInfo& configFileInfo )
 
 bool Workbench::Save()
 {
+    // Prevent save if cannot close tool.
+    // (Most likely due to invalid data.)
+    if (!m_toolContainer.ActiveToolCanClose())
+        return false;
+
     return TryWriteConfig( m_workbenchConfig );
 }
 

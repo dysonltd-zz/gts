@@ -44,6 +44,11 @@ namespace WbConfigTools
         FileNameMode_Absolute
     };
 
+    const QString ConvertFileName( const WbConfig& config,
+                                   const QString& absoluteFileName,
+                                   const FileNameMode& mode,
+                                   const bool fileIsInternal );
+
     const QString GetFileName( const WbConfig& config, const KeyName& fileNameKeyName );
 
     KeyId AddFileName( WbConfig config,

@@ -38,6 +38,8 @@ public:
     ~AnalyseResultsWidget();
 
     virtual const QString Name() const { return tr( "Results" ); }
+    virtual bool CanClose() const;
+    const QString CannotCloseReason() const;
 
 private:
     virtual const QString GetSubSchemaDefaultFileName() const;

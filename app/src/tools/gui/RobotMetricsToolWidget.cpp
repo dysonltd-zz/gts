@@ -17,7 +17,9 @@
  */
 
 #include "RobotMetricsToolWidget.h"
+
 #include "ui_RobotMetricsToolWidget.h"
+
 #include "MainWindow.h"
 #include "RobotMetricsSchema.h"
 #include "ImagePrintPreviewDlg.h"
@@ -34,10 +36,11 @@ RobotMetricsToolWidget::RobotMetricsToolWidget( QWidget* parent ) :
     AddMapper( targetDiagonalCmKey,     m_ui->m_dimensionsTopRadiusSpinBox );
     AddMapper( dimensionsBaseRadiusKey, m_ui->m_dimensionsBaseRadiusSpinBox );
 
+    AddMapper( targetTypeKey, m_ui->m_targetTypeComboBox );
+
     AddMapper( targetOffsetXKey,  m_ui->m_targetOffsetXSpinBox );
     AddMapper( targetOffsetYKey,  m_ui->m_targetOffsetYSpinBox );
     AddMapper( targetRotationKey, m_ui->m_targetRotationSpinBox );
-    AddMapper( targetTypeKey,     m_ui->m_targetTypeComboBox );
 
     AddMapper( brushBarLengthKey,  m_ui->m_brushBarLengthSpinBox );
     AddMapper( brushBarOffsetKey,  m_ui->m_brushBarOffsetSpinBox );
@@ -48,6 +51,38 @@ RobotMetricsToolWidget::RobotMetricsToolWidget( QWidget* parent ) :
 RobotMetricsToolWidget::~RobotMetricsToolWidget()
 {
     delete m_ui;
+}
+
+bool RobotMetricsToolWidget::IsDataValid() const
+{
+    if (GetCurrentConfig().IsNull()) return true;
+
+    bool valid = true;
+
+    valid = valid &&
+             !(m_ui->m_dimensionsHeightSpinBox->value() == 0.0);
+    valid = valid &&
+             !(m_ui->m_dimensionsTopRadiusSpinBox->value() == 0.0);
+    valid = valid &&
+             !(m_ui->m_dimensionsBaseRadiusSpinBox->value() == 0.0);
+
+    valid = valid &&
+             !(m_ui->m_targetTypeComboBox->currentText().isEmpty());
+
+    return valid;
+}
+
+bool RobotMetricsToolWidget::CanClose() const
+{
+    if ( !IsDataValid() )
+        return false;
+
+    return true;
+}
+
+const QString RobotMetricsToolWidget::CannotCloseReason() const
+{
+    return tr("Please complete data before leaving tab.");
 }
 
 const WbSchema RobotMetricsToolWidget::CreateSchema()

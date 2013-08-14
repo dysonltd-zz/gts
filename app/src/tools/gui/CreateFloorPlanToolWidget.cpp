@@ -894,6 +894,9 @@ void CreateFloorPlanToolWidget::BtnSaveClicked()
 
         cvReleaseMat( &rotMat );
 
+        cvReleaseImage(&m_cam1Img);
+        cvReleaseImage(&m_cam2Img);
+
         ReloadCurrentConfig();
 
         ResetUi();
@@ -909,6 +912,9 @@ void CreateFloorPlanToolWidget::BtnSaveClicked()
 
 void CreateFloorPlanToolWidget::BtnCancelClicked()
 {
+    if (m_cam1Img) cvReleaseImage(&m_cam1Img);
+    if (m_cam2Img) cvReleaseImage(&m_cam2Img);
+
     ResetUi();
 }
 
@@ -1353,6 +1359,9 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
     CvPoint2D32f offset;
     LoadFile( camRoot, &rootImg, rootFileName, &offset );
 
+    const QString rootFile(config.GetAbsoluteFileNameFor("plan_" + camRoot + ".png"));
+    cvSaveImage(rootFile.toAscii().data(), rootImg);
+
     cvSetIdentity(identity);
 
     // Store transform for root camera...
@@ -1477,6 +1486,9 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
             IplImage* camImg;
             CvPoint2D32f offset;
             LoadFile( camPosId, &camImg, camFileName, &offset );
+
+            const QString camFile(config.GetAbsoluteFileNameFor("plan_" + camPosId + ".png"));
+            cvSaveImage(camFile.toAscii().data(), camImg);
 
             // Align the image.
             cvZero( imgComposite );

@@ -311,14 +311,30 @@ const WbSchema CalibratePositionToolWidget::CreateSchema()
     return schema;
 }
 
+bool CalibratePositionToolWidget::IsDataValid() const
+{
+    if (GetCurrentConfig().IsNull()) return true;
+
+    bool valid = true;
+
+    valid = valid &&
+             !(m_ui->m_gridSquareSizeSpinBox->value() == 0.0);
+    valid = valid &&
+             !(m_ui->m_gridRowsSpinBox->value() == 0);
+    valid = valid &&
+             !(m_ui->m_gridColumnsSpinBox->value() == 0);
+
+    return valid;
+}
+
 bool CalibratePositionToolWidget::CanClose() const
 {
-    return !m_captureLiveBtnController->CurrentlyStreamingLiveSource();
+    return IsDataValid() && !m_captureLiveBtnController->CurrentlyStreamingLiveSource();
 }
 
 const QString CalibratePositionToolWidget::CannotCloseReason() const
 {
-    return tr( "Please complete the capture operation before switching tabs." );
+    return tr("Please complete data or capture before leaving tab.");
 }
 
 #if 0

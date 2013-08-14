@@ -54,8 +54,7 @@
 /** @todo add newly-captured files with relative file paths
  */
 CalibrateCameraToolWidget::CalibrateCameraToolWidget( CameraHardware& cameraHardware,
-                                                      QWidget* const parent )
-    :
+                                                      QWidget* const parent ) :
     Tool          ( parent, CreateSchema() ),
     m_cameraHardware( cameraHardware ),
     m_captureLiveBtnController(),
@@ -322,14 +321,30 @@ void CalibrateCameraToolWidget::CaptureCancelBtnClicked()
     m_captureLiveBtnController->CaptureCancelBtnClicked();
 }
 
+bool CalibrateCameraToolWidget::IsDataValid() const
+{
+    if (GetCurrentConfig().IsNull()) return true;
+
+    bool valid = true;
+
+    valid = valid &&
+             !(m_ui->m_gridSquareSizeSpinBox->value() == 0.0);
+    valid = valid &&
+             !(m_ui->m_gridRowsSpinBox->value() == 0);
+    valid = valid &&
+             !(m_ui->m_gridColumnsSpinBox->value() == 0);
+
+    return valid;
+}
+
 bool CalibrateCameraToolWidget::CanClose() const
 {
-    return !m_captureLiveBtnController->CurrentlyStreamingLiveSource();
+    return IsDataValid() && !m_captureLiveBtnController->CurrentlyStreamingLiveSource();
 }
 
 const QString CalibrateCameraToolWidget::CannotCloseReason() const
 {
-    return tr( "Please complete the capture operation before switching tabs." );
+    return tr("Please complete data or capture before leaving tab.");
 }
 
 const WbSchema CalibrateCameraToolWidget::CreateSchema()

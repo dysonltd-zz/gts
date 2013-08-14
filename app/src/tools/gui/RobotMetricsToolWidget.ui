@@ -52,9 +52,6 @@
           <property name="singleStep">
            <double>0.100000000000000</double>
           </property>
-          <property name="value">
-           <double>12.000000000000000</double>
-          </property>
          </widget>
         </item>
         <item row="1" column="0">
@@ -80,9 +77,6 @@
           </property>
           <property name="singleStep">
            <double>0.100000000000000</double>
-          </property>
-          <property name="value">
-           <double>10.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -116,9 +110,6 @@
           </property>
           <property name="singleStep">
            <double>0.100000000000000</double>
-          </property>
-          <property name="value">
-           <double>10.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -174,7 +165,6 @@
            </widget>
 		 </item>
 
-
 		 <item row="0" column="1">
            <widget class="QComboBox" name="m_targetTypeComboBox">
             <property name="sizePolicy">
@@ -183,19 +173,8 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <item>
-             <property name="text">
-              <string>1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>2</string>
-             </property>
-            </item>
            </widget>
           </item>
-
 
 		 <item row="1" column="0">
            <widget class="QLabel" name="label_8">
@@ -308,17 +287,12 @@
             <property name="singleStep">
              <double>0.100000000000000</double>
             </property>
-            <property name="value">
-             <double>10.000000000000000</double>
-            </property>
            </widget>
           </item>
          </layout>
         </item>
        </layout>
       </widget>
-
-
 
 	  </widget>
    </item>

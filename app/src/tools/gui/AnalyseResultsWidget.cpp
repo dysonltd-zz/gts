@@ -152,6 +152,16 @@ const QString AnalyseResultsWidget::GetSubSchemaDefaultFileName() const
     return "results.xml";
 }
 
+bool AnalyseResultsWidget::CanClose() const
+{
+    return true;
+}
+
+const QString AnalyseResultsWidget::CannotCloseReason() const
+{
+    return tr("Please complete data before leaving tab.");
+}
+
 const WbSchema AnalyseResultsWidget::CreateSchema()
 {
     WbSchema schema( CreateWorkbenchSubSchema( KeyName( "results" ),

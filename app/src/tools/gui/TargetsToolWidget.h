@@ -38,6 +38,8 @@ public:
     virtual ~TargetsToolWidget();
 
     virtual const QString Name() const { return tr( "Targets" ); }
+    virtual bool CanClose() const;
+    const QString CannotCloseReason() const;
 
 private slots:
     void UseStandardBtnClicked();
@@ -60,9 +62,11 @@ private:
 
     static const WbSchema CreateSchema();
 
+    bool IsDataValid() const;
+
     const QString GetSelectedTargetId() const;
 
-    void BrowseTargetImage( const KeyName& keyName );
+    QString BrowseTargetImage();
 
     bool DirectoryExists( const QString& outputDirectoryName );
 

@@ -125,12 +125,22 @@
             <number>0</number>
            </property>
            <item>
+            <widget class="QCheckBox" name="m_combineParts">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>Combine Parts</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="m_exportPlanBtn">
              <property name="enabled">
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>&amp;Export Floor Plan</string>
+              <string>&amp;Export Floor Plan(s)</string>
              </property>
             </widget>
            </item>
@@ -140,7 +150,7 @@
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>&amp;Import Floor Mask</string>
+              <string>&amp;Import Floor Mask(s)</string>
              </property>
             </widget>
            </item>
@@ -156,6 +166,16 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="m_createMaskBtn">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>&amp;Create Floor Mask</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
