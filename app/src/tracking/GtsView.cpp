@@ -328,23 +328,21 @@ bool GtsView::SetupVideo( const char* const videoFile,
 
 void GtsView::LoadTimestampFile( const char* const fileName )
 {
-    if ( fileName )
-    {
-        QTextStream stream( fileName );
+    QFile file( fileName );
 
-        while(!stream.atEnd())
+    if ( file.open( QFile::ReadOnly ) )
+    {
+        QTextStream stream( &file );
+
+        while ( !stream.atEnd() )
         {
             QString line = stream.readLine();
             QStringList fields = line.split(' ');
 
-            if (fields.size() >= 2)
-            {
-                timespec t;
-                t.tv_sec = fields.takeFirst().toLong();
-                t.tv_nsec = fields.takeFirst().toLong();
+            timespec t;
+            t.tv_sec = fields.takeFirst().toInt();
 
-                m_timestamps.push_back(t);
-            }
+            m_timestamps.push_back(t);
         }
     }
 }
