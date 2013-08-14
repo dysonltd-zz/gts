@@ -71,6 +71,8 @@ private:
 
     static const WbSchema CreateSchema();
 
+    bool IsDataValid() const;
+
     Ui::CalibratePositionToolWidget* m_ui;
 
     CalibrationImageViewMapper* m_viewMapper;

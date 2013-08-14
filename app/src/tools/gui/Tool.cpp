@@ -33,11 +33,10 @@ const QString Tool::selectItemString( tr( "Select..." ) );
  *
  *  This schema does NOT include sub-schemas handled by sub-tools
  */
-Tool::Tool( QWidget* const parent, const WbSchema& schema )
-:
-QWidget( parent ),
-m_schema ( schema ),
-m_mappers()
+Tool::Tool( QWidget* const parent, const WbSchema& schema ) :
+    QWidget( parent ),
+    m_schema ( schema ),
+    m_mappers()
 {
 }
 

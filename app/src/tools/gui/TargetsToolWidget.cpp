@@ -85,6 +85,33 @@ TargetsToolWidget::~TargetsToolWidget()
     delete m_ui;
 }
 
+bool TargetsToolWidget::IsDataValid() const
+{
+    if (GetCurrentConfig().IsNull()) return true;
+
+    bool valid = true;
+
+    valid = valid &&
+             !(m_ui->m_trackingTargetFileNameEdit->text().isEmpty());
+    valid = valid &&
+             !(m_ui->m_printableTargetFileNameEdit->text().isEmpty());
+
+    return valid;
+}
+
+bool TargetsToolWidget::CanClose() const
+{
+    if ( !IsDataValid() )
+        return false;
+
+    return true;
+}
+
+const QString TargetsToolWidget::CannotCloseReason() const
+{
+    return tr("Please complete data before leaving tab.");
+}
+
 const WbSchema TargetsToolWidget::CreateSchema()
 {
    using namespace TargetSchema;
@@ -185,16 +212,19 @@ void TargetsToolWidget::TargetTypeChanged()
 
 	    if ( successful )
 	    {
-            WbConfigTools::SetFileName( GetCurrentConfig(),
-                                        trackImageFile,
-                                        TargetSchema::trackImgKey,
-                                        WbConfigTools::FileNameMode_RelativeInsideWorkbench );
-            WbConfigTools::SetFileName( GetCurrentConfig(),
-                                        printImageFile,
-                                        TargetSchema::printImgKey,
-                                        WbConfigTools::FileNameMode_RelativeInsideWorkbench );
+            const QString relTrackImageFile =
+                WbConfigTools::ConvertFileName( GetCurrentConfig(),
+                                                trackImageFile,
+                                                WbConfigTools::FileNameMode_RelativeInsideWorkbench,
+                                                true );
+            const QString relPrintImageFile =
+                WbConfigTools::ConvertFileName( GetCurrentConfig(),
+                                                printImageFile,
+                                                WbConfigTools::FileNameMode_RelativeInsideWorkbench,
+                                                true );
 
-            ReloadCurrentConfig();
+            m_ui->m_trackingTargetFileNameEdit->setText(relTrackImageFile);
+            m_ui->m_printableTargetFileNameEdit->setText(relPrintImageFile);
 	    }
         else
         {
@@ -213,7 +243,7 @@ void TargetsToolWidget::TargetTypeChanged()
     }
 }
 
-void TargetsToolWidget::BrowseTargetImage( const KeyName& keyName )
+QString TargetsToolWidget::BrowseTargetImage()
 {
     // Make sure folder is there before adding file...
     const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "targetImage/" ) );
@@ -225,8 +255,10 @@ void TargetsToolWidget::BrowseTargetImage( const KeyName& keyName )
                        tr( "Target Configuration Tool" ),
                        tr( "Error - Folder is missing!"),
                        Message::Severity_Critical );
-        return;
+        return QString();
     }
+
+    QString relImageFile;
 
     // Display file selection dialog...
     FileDialogs::ExtendedFileDialog fileDialog( this,
@@ -269,48 +301,39 @@ void TargetsToolWidget::BrowseTargetImage( const KeyName& keyName )
                 }
             }
 
-            WbConfigTools::SetFileName( GetCurrentConfig(),
-                                        imageName,
-                                        keyName,
-                                        mode );
-
-            ReloadCurrentConfig();
+            relImageFile =
+                WbConfigTools::ConvertFileName( GetCurrentConfig(),
+                                                imageName,
+                                                mode,
+                                                true );
         }
     }
+
+    return relImageFile;
 }
 
 void TargetsToolWidget::BrowseTrackingBtnClicked()
 {
-    BrowseTargetImage( TargetSchema::trackImgKey );
+    const QString relImageFile = BrowseTargetImage();
+
+    m_ui->m_trackingTargetFileNameEdit->setText(relImageFile);
 }
 
 void TargetsToolWidget::ClearTrackingBtnClicked()
 {
     m_ui->m_trackingTargetFileNameEdit->setText("");
-
-    //WbConfigTools::SetFileName( GetCurrentConfig(),
-    //                            "",
-    //                            TargetSchema::trackImgKey,
-    //                            WbConfigTools::FileNameMode_Absolute );
-
-    //ReloadCurrentConfig();
 }
 
 void TargetsToolWidget::BrowsePrintableBtnClicked()
 {
-    BrowseTargetImage( TargetSchema::printImgKey );
+    const QString relImageFile = BrowseTargetImage();
+
+    m_ui->m_printableTargetFileNameEdit->setText(relImageFile);
 }
 
 void TargetsToolWidget::ClearPrintableBtnClicked()
 {
     m_ui->m_printableTargetFileNameEdit->setText("");
-
-    //WbConfigTools::SetFileName( GetCurrentConfig(),
-    //                            "",
-    //                            TargetSchema::printImgKey,
-    //                            WbConfigTools::FileNameMode_Absolute );
-
-    //ReloadCurrentConfig();
 }
 
 void TargetsToolWidget::TargetImageChanged()

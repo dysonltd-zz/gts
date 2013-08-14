@@ -26,38 +26,21 @@ namespace WbConfigTools
 {
     namespace
     {
-        const QString ConvertFileName( const WbConfig& config,
-                                       const QString& absoluteFileName,
-                                       const FileNameMode& mode,
-                                       const bool fileIsInternal )
+        const KeyValue GetFileNameToForConfig( WbConfig config,
+                                               const QString& possiblyRelativeFileName,
+                                               const FileNameMode& mode )
         {
-            switch ( mode )
-            {
-                case FileNameMode_Relative:
-                    return config.GetAbsoluteFileInfo()
-                                .absoluteDir().relativeFilePath( absoluteFileName );
+            const QString absoluteFileName(
+                    config.GetAbsoluteFileNameFor( possiblyRelativeFileName ) );
 
-                case FileNameMode_RelativeInsideWorkbench:
-                    if ( fileIsInternal )
-                    {
-                        return config.GetAbsoluteFileInfo()
-                                .absoluteDir().relativeFilePath( absoluteFileName );
-                    }
-                    else
-                    {
-                        return config.GetAbsoluteFileNameFor( absoluteFileName );
-                    }
+            const WbConfig topLevelCfg( config.FindRootAncestor() );
+            const QDir topLevelDir( topLevelCfg.GetAbsoluteFileInfo().absoluteDir() );
+            const bool fileIsInternal =
+                        !topLevelDir.relativeFilePath( absoluteFileName ).startsWith( ".." );
 
-                case FileNameMode_Absolute:
-                    return config.GetAbsoluteFileNameFor( absoluteFileName );
-
-                default:
-                    assert( !"Unhandled FileNameMode" );
-                    return QString();
-            }
+            return KeyValue::from( ConvertFileName( config, absoluteFileName, mode, fileIsInternal ) );
         }
     }
-
 
     void AddComboBoxItemForElement( QComboBox& comboBox,
                                     const WbConfig::SubConfigs::ValueIdPair& element )
@@ -85,29 +68,42 @@ namespace WbConfigTools
         }
     }
 
+    const QString ConvertFileName( const WbConfig& config,
+                                   const QString& absoluteFileName,
+                                   const FileNameMode& mode,
+                                   const bool fileIsInternal )
+    {
+        switch ( mode )
+        {
+            case FileNameMode_Relative:
+                return config.GetAbsoluteFileInfo()
+                            .absoluteDir().relativeFilePath( absoluteFileName );
+
+            case FileNameMode_RelativeInsideWorkbench:
+                if ( fileIsInternal )
+                {
+                    return config.GetAbsoluteFileInfo()
+                            .absoluteDir().relativeFilePath( absoluteFileName );
+                }
+                else
+                {
+                    return config.GetAbsoluteFileNameFor( absoluteFileName );
+                }
+
+            case FileNameMode_Absolute:
+                return config.GetAbsoluteFileNameFor( absoluteFileName );
+
+            default:
+                assert( !"Unhandled FileNameMode" );
+                return QString();
+        }
+    }
+
     const QString GetFileName( const WbConfig& config, const KeyName& fileNameKeyName )
     {
         const KeyValue fileNameKeyValue( config.GetKeyValue( fileNameKeyName ) );
         const QString fileName( fileNameKeyValue.ToQString() );
         return config.GetAbsoluteFileNameFor( fileName );
-    }
-
-    namespace
-    {
-        const KeyValue GetFileNameToForConfig( WbConfig config,
-                                               const QString& possiblyRelativeFileName,
-                                               const FileNameMode& mode )
-        {
-            const QString absoluteFileName(
-                    config.GetAbsoluteFileNameFor( possiblyRelativeFileName ) );
-
-            const WbConfig topLevelCfg( config.FindRootAncestor() );
-            const QDir topLevelDir( topLevelCfg.GetAbsoluteFileInfo().absoluteDir() );
-            const bool fileIsInternal =
-                        !topLevelDir.relativeFilePath( absoluteFileName ).startsWith( ".." );
-
-            return KeyValue::from( ConvertFileName( config, absoluteFileName, mode, fileIsInternal ) );
-        }
     }
 
     void SetFileName( WbConfig config,

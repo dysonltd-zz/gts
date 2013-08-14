@@ -42,7 +42,6 @@
 #include <opencv/highgui.h>
 
 #include <QTemporaryFile>
-#include <QtCore/QDir>
 #include <QObject>
 
 #include <stdio.h>
