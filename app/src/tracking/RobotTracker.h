@@ -66,7 +66,7 @@ public:
 
     virtual void SetCurrentImage(const IplImage* const pImg) = 0;
     virtual const IplImage* GetCurrentImage() const = 0;
-    virtual bool Track(double timeStamp) = 0;
+    virtual bool Track( double timeStampMillisecs ) = 0;
     virtual void Rewind( double timeStamp ) = 0;
 
     virtual bool LoadTargetImage( const char* fileName ) = 0;

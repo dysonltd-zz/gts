@@ -348,157 +348,106 @@ void GtsView::LoadTimestampFile( const char* const fileName )
 }
 
 /**
-    Capture and retrieve the next frame from the video source. If the end of
-    the sequence is reached or if no image was available for any other reason
-    then the function returns 0.
-
-    @return Pointer to image if one was available, 0 otherwise.
-**/
-const IplImage* GtsView::GetNextFrame()
+    @return The current seek posision in the video file @note This is not the same as the frame timestamp (which comes from system time of capture)!.
+    This is the time that should be used to in seek commands.
+*/
+double GtsView::GetSeekPositionInMilliseconds() const
 {
-    bool bad;
-
-    if ( m_sequencer )
+    assert( m_sequencer );
+    if ( m_sequencer != nullptr )
     {
-        double idx = m_sequencer->GetFrameIndex();
-        double final = m_sequencer->GetNumFrames();
-
-        if ( !m_sequencer->IsLive() && idx >= final  )
-        {
-            // The end!
-            bad = true;
-        }
-        else if ( m_sequencer->ReadyNextFrame() )
-        {
-            // New frame is available...
-            const IplImage* img = m_sequencer->RetrieveNextFrame();
-
-            if (m_imgFrame)
-            {
-                // An image is already allocated so copy over it.
-                // (Assumes all images in sequence are same size!)
-
-                if ( img->nChannels == 3 )
-                {
-                    cvCopyImage( img, m_imgFrame );
-                }
-                else
-                {
-                    cvConvertImage( img, m_imgFrame, 0 );
-                }
-            }
-            else
-            {
-                // Need to allocate space for image
-                m_imgFrame = cvCreateImage( cvSize(img->width,
-                                                   img->height), IPL_DEPTH_8U, 3 );
-
-                if ( img->nChannels == 3 )
-                {
-                    cvCopyImage( img, m_imgFrame );
-                }
-                else
-                {
-                    cvConvertImage( img, m_imgFrame, 0 );
-                }
-            }
-
-            m_imgFrame->origin = img->origin;
-
-            bad = false;
-
-            if ( m_sequencer->IsLive() )
-            {
-                SaveThumbnail();
-            }
-        }
-        else
-        {
-            bad = true;
-        }
-    }
-    else
-    {
-        bad = true;
+       return m_sequencer->GetTimeStamp();
     }
 
-    if ( bad )
-    {
-        // If there is no frame
-        // clean up and return 0
-
-        if ( m_imgFrame )
-        {
-            cvReleaseImage( &m_imgFrame );
-        }
-
-        m_imgFrame = 0;
-    }
-
-    return m_imgFrame;
+    return -1.0;
 }
 
-const IplImage* GtsView::GetNextFrame( double msec )
+/**
+    Ready the next frame based upon the timestamp - i.e. seek to frame with specifed timestamp.
+    @return true if frame is ready, false if there was an error.
+*/
+bool GtsView::ReadySeekFrame( double msec )
 {
-    bool bad;
+    assert( m_sequencer );
+    if ( m_sequencer == nullptr )
+    {
+        return false;
+    }
+
+    return m_sequencer->ReadyNextFrame( msec );
+}
+
+/**
+    Simply ready the next consequetive frame in the video sequence - this is much more
+    efficient than seeking (especially on video-files which have a broken/missing seek index).
+
+    @return true if frame is ready, false if there was an error.
+*/
+bool GtsView::ReadyNextFrame()
+{
+    assert( m_sequencer );
+    if ( m_sequencer == nullptr )
+    {
+        return false;
+    }
+
+    const double idx = m_sequencer->GetFrameIndex();
+    const double final = m_sequencer->GetNumFrames();
+
+    if ( idx < final )
+    {
+        return m_sequencer->ReadyNextFrame();
+    }
+
+    return false;
+}
+
+const IplImage* GtsView::GetNextFrame()
+{
+    bool bad = true;
 
     if ( m_sequencer )
     {
-        double idx = m_sequencer->GetFrameIndex();
-        double final = m_sequencer->GetNumFrames();
+        // New frame is available...
+        const IplImage* img = m_sequencer->RetrieveNextFrame();
 
-        if ( !m_sequencer->IsLive() &&  idx >= final  )
+        if ( m_imgFrame )
         {
-            // The end!
-            bad = true;
-        }
-        else if ( m_sequencer->ReadyNextFrame( msec ) )
-        {
-            // New frame is available...
-            const IplImage* img = m_sequencer->RetrieveNextFrame();
+            // An image is already allocated so copy over it.
+            // (Assumes all images in sequence are same size!)
 
-            if (m_imgFrame)
+            if ( img->nChannels == 3 )
             {
-                // An image is already allocated so copy over it.
-                // (Assumes all images in sequence are same size!)
-
-                if ( img->nChannels == 3 )
-                {
-                    cvCopyImage( img, m_imgFrame );
-                }
-                else
-                {
-                    cvConvertImage( img, m_imgFrame, 0 );
-                }
+                cvCopyImage( img, m_imgFrame );
             }
             else
             {
-                // Need to allocate space for image
-                m_imgFrame = cvCreateImage( cvSize(img->width,
-                                                   img->height), IPL_DEPTH_8U, 3 );
-
-                if ( img->nChannels == 3 )
-                {
-                    cvCopyImage( img, m_imgFrame );
-                }
-                else
-                {
-                    cvConvertImage( img, m_imgFrame, 0 );
-                }
-            }
-
-            m_imgFrame->origin = img->origin;
-
-            bad = false;
-
-            if ( m_sequencer->IsLive() )
-            {
-                SaveThumbnail();
+                cvConvertImage( img, m_imgFrame, 0 );
             }
         }
         else
         {
-            bad = true;
+            // Need to allocate space for image
+            m_imgFrame = cvCreateImage( cvSize(img->width,
+                                               img->height), IPL_DEPTH_8U, 3 );
+
+            if ( img->nChannels == 3 )
+            {
+                cvCopyImage( img, m_imgFrame );
+            }
+            else
+            {
+                cvConvertImage( img, m_imgFrame, 0 );
+            }
+        }
+
+        m_imgFrame->origin = img->origin;
+
+        bad = false;
+
+        if ( m_sequencer->IsLive() )
+        {
+            SaveThumbnail();
         }
     }
     else
@@ -516,7 +465,7 @@ const IplImage* GtsView::GetNextFrame( double msec )
             cvReleaseImage( &m_imgFrame );
         }
 
-        m_imgFrame = 0;
+        m_imgFrame = nullptr;
     }
 
     return m_imgFrame;

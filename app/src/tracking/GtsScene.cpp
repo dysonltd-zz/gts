@@ -59,8 +59,8 @@
 
 GtsScene::GtsScene( ) :
     m_thread      ( 0 ),
-	m_msec        ( 0.0 ),
-	m_rate        ( 0.0 ),
+    m_filePositionInMilliseconds        ( 0.0 ),
+    m_rateInMilliseconds        ( 0.0 ),
 	m_ln          ( 0 )
 {
 }
@@ -81,8 +81,8 @@ void GtsScene::Reset()
         }
     }
 
-    m_msec = 0.0;
     m_ln = 0;
+    m_filePositionInMilliseconds = 0.0;
 }
 
 bool GtsScene::LoadTarget( const WbConfig& targetCfg )
@@ -237,15 +237,31 @@ void GtsScene::DestroyViewWindows( ImageGrid* imageGrid )
   @return a TrackResult indicating how many trackers are currently active,
   and how many of those are lost.
  **/
-GtsScene::TrackStatus GtsScene::StepTrackers( bool forward )
+GtsScene::TrackStatus GtsScene::StepTrackers( const bool forward, const bool seek )
 {
-    TrackStatus status = { m_msec, 0, 0, true };
+    TrackStatus status = { m_filePositionInMilliseconds, 0, 0, true };
 
     for (unsigned int i = 0; i < GetNumMaxCameras(); ++i)
     {
         if ( m_view[i].IsSetup() )
         {
-            if (m_view[i].GetNextFrame( m_msec ))
+            bool ready;
+            if ( seek )
+            {
+                ready = m_view[i].ReadySeekFrame( m_filePositionInMilliseconds );
+            }
+            else
+            {
+                ready = m_view[i].ReadyNextFrame();
+            }
+
+            if ( ready )
+            {
+                m_filePositionInMilliseconds = m_view[i].GetSeekPositionInMilliseconds();
+                std::cout << "New file pos := " << m_filePositionInMilliseconds << std::endl;
+            }
+
+            if ( ready && m_view[i].GetNextFrame() )
             {
                 status.eof = false;
 
@@ -272,7 +288,7 @@ GtsScene::TrackStatus GtsScene::StepTrackers( bool forward )
 
     if (!status.eof)
     {
-        m_msec = forward ? m_msec+m_rate : MAX(m_msec-m_rate, 0);
+        m_filePositionInMilliseconds = forward ? m_filePositionInMilliseconds+m_rateInMilliseconds : MAX(m_filePositionInMilliseconds-m_rateInMilliseconds, 0);
     }
 
     return status;
@@ -323,7 +339,7 @@ void GtsScene::StartThread( double rate, bool trackingActive,
     trackingActive ? m_thread->TrackingOn() : m_thread->TrackingOff();
     singleStep ? m_thread->SteppingOn() : m_thread->SteppingOff();
 
-    m_rate = rate;
+    m_rateInMilliseconds = rate;
 
     m_thread->Run();
 }
@@ -340,7 +356,7 @@ void GtsScene::StopThread()
 
 void GtsScene::SetRate( double rate )
 {
-    m_rate = rate;
+    m_rateInMilliseconds = rate;
 }
 
 void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
@@ -577,7 +593,6 @@ void GtsScene::SetTrackPosition( int id, int x, int y )
 void GtsScene::ClrTrackPosition( int id )
 {
     m_view[id].GetTracker().Deactivate();
-
     m_view[id].HideRobotTrack();
 }
 

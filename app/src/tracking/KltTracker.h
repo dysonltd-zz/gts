@@ -104,7 +104,7 @@ public:
         return Track( timeStamp, true, false );
     }
 
-    bool Track( double timeStamp, bool flipCorrect, bool init );
+    bool Track( double timestampInMillisecs, bool flipCorrect, bool init );
     void DoInactiveProcessing( double timeStamp );
     void MotionDetect();
     void LossRecovery();
@@ -127,12 +127,12 @@ public:
 private:
     float flipCorrection( float angle, float oldAngle );
 
-    void Lost()
+    void SetLost()
     {
         m_status = TRACKER_LOST;
     }
 
-    void JustLost()
+    void SetJustLost()
     {
         m_status = TRACKER_JUST_LOST;
     }
