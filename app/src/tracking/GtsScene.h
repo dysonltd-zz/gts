@@ -101,7 +101,6 @@ public:
 
 private:
     int OrganiseLogs( TrackHistory::TrackLog* log,
-                      QString trackResultsTemplate,
                       QString pixelOffsetsTemplate );
 
     void PostProcessMultiCamera( TrackHistory::TrackLog& avg,
@@ -109,7 +108,9 @@ private:
                                  IplImage**              compImgCol,
                                  float                   timeThresh,
                                  char*                   floorPlanName,
-                                 unsigned int            baseIndex );
+                                 unsigned int            baseIndex,
+                                 QString trackResultsTemplate
+                                 );
 
     static const unsigned int kMaxCameras = GTS_MAX_CAMERAS;
 

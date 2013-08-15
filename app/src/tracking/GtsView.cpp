@@ -337,10 +337,11 @@ void GtsView::LoadTimestampFile( const char* const fileName )
         while ( !stream.atEnd() )
         {
             QString line = stream.readLine();
-            QStringList fields = line.split(' ');
+            QStringList fields = line.split( ' ' );
 
             timespec t;
-            t.tv_sec = fields.takeFirst().toInt();
+            t.tv_sec  = fields.takeFirst().toInt();
+            t.tv_nsec = fields.takeFirst().toInt();
 
             m_timestamps.push_back(t);
         }

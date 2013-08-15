@@ -896,7 +896,7 @@ void TrackRobotToolWidget::TrackSaveButtonClicked()
          runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets.txt" ) );
 
     const QString trackResultsTemplate(
-         runConfig.GetAbsoluteFileNameFor( "results/track_results_view%1.txt" ) );
+         runConfig.GetAbsoluteFileNameFor( "results/track_result_view%1.txt" ) );
     const QString pixelOffsetsTemplate(
          runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets_view%1.txt" ) );
 
