@@ -90,7 +90,7 @@ namespace ScanUtility
 	    for ( unsigned int i=1; i<log.size(); ++i )
 	    {
 		    double tdiff = fabs( log[i].t() - log[i-1].t() );
-		    if ( tdiff > timeThresh )
+            if ( tdiff > timeThresh )
 		    {
 			    old = cvPoint( scale*log[i].x()+xoffset,
                                scale*log[i].y()+yoffset );

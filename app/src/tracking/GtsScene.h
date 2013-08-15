@@ -77,7 +77,7 @@ public:
         bool eof;
     };
 
-    TrackStatus StepTrackers( bool forward );
+    TrackStatus StepTrackers( const bool forward, const bool seek );
 
     void SetupThread( TrackRobotToolWidget* tool );
     void StartThread( double rate, bool trackingActive = true,
@@ -131,8 +131,8 @@ private:
     // time offset for each log
     float m_dt[GtsScene::kMaxCameras];
 
-    double m_msec;
-    double m_rate;
+    double m_filePositionInMilliseconds;
+    double m_rateInMilliseconds;
 
     unsigned int m_ln;
 };

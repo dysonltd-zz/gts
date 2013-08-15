@@ -228,7 +228,7 @@ void KltTracker::DoInactiveProcessing( double timeStamp )
     Q_UNUSED( timeStamp );
     if ( WasJustLost() )
     {
-        Lost();
+        SetLost();
     }
 }
 
@@ -240,7 +240,7 @@ void KltTracker::DoInactiveProcessing( double timeStamp )
  that it generates both pyramids for the KLT. (In normal operation it can reuse the
  pyramid calculation from the previous frame.)
  **/
-bool KltTracker::Track( double timeStamp, bool flipCorrect, bool init )
+bool KltTracker::Track( double timestampInMillisecs, bool flipCorrect, bool init )
 {
     char found = 0;
     CvPoint2D32f newPos;
@@ -283,13 +283,13 @@ bool KltTracker::Track( double timeStamp, bool flipCorrect, bool init )
 
                 LOG_INFO(QObject::tr("NCC value: %1 (thresh %2).").arg(ncc)
                                                                   .arg(m_nccThresh));
-                JustLost(); // tracker has transitioned into lost state
+                SetJustLost(); // tracker has transitioned into lost state
             }
             else
             {
                 LOG_WARN("Still lost.");
 
-                Lost(); // ttacker is still lost
+                SetLost(); // ttacker is still lost
             }
         }
 
@@ -304,7 +304,7 @@ bool KltTracker::Track( double timeStamp, bool flipCorrect, bool init )
         }
 
         // If we found a good track and the 2nd stage was a success then store the result
-        m_history.push_back( TrackEntry( GetPosition(), GetHeading(), GetError(), timeStamp, val ) );
+        m_history.push_back( TrackEntry( GetPosition(), GetHeading(), GetError(), timestampInMillisecs, val ) );
 
         return true;
     }

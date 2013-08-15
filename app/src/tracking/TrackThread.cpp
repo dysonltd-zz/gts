@@ -75,7 +75,7 @@ void TrackThread::Execute()
 {
     while ( !ShouldStop() )
     {
-        GtsScene::TrackStatus status = m_scene.StepTrackers( m_forward );
+        GtsScene::TrackStatus status = m_scene.StepTrackers( Forwards(), Seeking() );
 
         bool trackingLost = ( status.numTrackersActive ==
                               status.numTrackersLost );
@@ -172,7 +172,6 @@ void TrackThread::Release()
     m_paused = false;
 }
 
-
 void TrackThread::Run()
 {
     ClearPauseFlag();
@@ -201,11 +200,10 @@ void TrackThread::Stop()
             assert( QThread::currentThread() != m_thread.get() );
 
             SetStopFlag();
-            thread()->wait();
+            m_thread->wait();
         }
     }
 }
-
 
 void TrackThread::TrackingOn()
 {

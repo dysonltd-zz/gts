@@ -84,6 +84,12 @@ private:
 
     void Release();
 
+
+    const bool Tracking() const { return m_track; };
+    const bool Forwards() const { return m_forward; }
+     // The following is the only condition in which the system should seek:
+    const bool Seeking() const { return Tracking() == false; }
+
     GtsScene& m_scene;
 
     bool m_step;

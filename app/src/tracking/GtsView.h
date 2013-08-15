@@ -96,8 +96,10 @@ public:
 
     void LoadTimestampFile( const char* const fileName );
 
+    double GetSeekPositionInMilliseconds() const;
+    bool ReadySeekFrame( double msec );
+    bool ReadyNextFrame();
     const IplImage* GetNextFrame();
-    const IplImage* GetNextFrame( double msec );
 
     const IplImage* GetCurrentImage() const { return m_imgFrame; }
     const IplImage* GetGroundPlaneImage() const { return m_imgWarp[m_imgIndex]; }
