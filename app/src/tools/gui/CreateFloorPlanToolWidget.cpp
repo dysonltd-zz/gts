@@ -43,6 +43,8 @@
 #include "GroundPlaneUtility.h"
 #include "OpenCvUtility.h"
 
+#include "FloorPlanning.h"
+
 #include <iostream>
 #include <algorithm>
 
@@ -490,117 +492,6 @@ void CreateFloorPlanToolWidget::ShowImage( IplImage* img, ImageView* view )
     cvReleaseImage( &imgTmp );
 }
 
-bool CreateFloorPlanToolWidget::LoadFile( KeyId cameraPosition, IplImage** camImg, QString fileName, CvPoint2D32f* offset )
-{
-    bool successful = true;
-
-    // Get configuration information...
-    Collection camerasCollection( CamerasCollection() );
-    Collection cameraPositionsCollection( CameraPositionsCollection() );
-
-    camerasCollection.SetConfig( GetCurrentConfig() );
-    cameraPositionsCollection.SetConfig( GetCurrentConfig() );
-
-    const KeyId camPosId = cameraPosition;
-
-    LOG_INFO(QObject::tr("Camera position id: %1").arg(camPosId));
-
-    const WbConfig camPosConfig = cameraPositionsCollection.ElementById( camPosId );
-
-    if (camPosConfig.IsNull()) successful = false;
-
-    CvMat* cameraMtx = cvCreateMat( 3, 3, CV_32F );
-    CvMat* distortionCoeffs = cvCreateMat( 5, 1, CV_32F );
-    CvMat* inverseCoeffs = cvCreateMat( 5, 1, CV_32F );
-
-    CvMat* rot = cvCreateMat( 3, 3, CV_32F );
-    CvMat* trans = cvCreateMat( 1, 3, CV_32F );
-
-    if (successful)
-    {
-        const KeyId camId = camPosConfig.GetKeyValue(CameraPositionSchema::cameraIdKey).ToKeyId();
-
-        LOG_INFO(QObject::tr("Camera id: %1").arg(camId));
-
-        WbConfig cameraConfig = camerasCollection.ElementById( camId );
-
-        if (cameraConfig.IsNull()) successful = false;
-
-        if (successful)
-        {
-            // Intrinsic Parameters...
-            const WbConfig cameraIntrisicConfig( cameraConfig.GetSubConfig( CalibrationSchema::schemaName ) );
-
-            if (cameraIntrisicConfig.IsNull()) successful = false;
-
-            if (successful)
-            {
-                const bool calibrationWasSuccessful = cameraIntrisicConfig
-                                    .GetKeyValue( CalibrationSchema::calibrationSuccessfulKey )
-                                    .ToBool();
-
-                const bool cameraMtxValid = cameraIntrisicConfig
-                                .GetKeyValue( CalibrationSchema::cameraMatrixKey )
-                                .ToCvMat( *cameraMtx );
-                const bool distortionCoeffsValid = cameraIntrisicConfig
-                                .GetKeyValue( CalibrationSchema::distortionCoefficientsKey )
-                                .ToCvMat( *distortionCoeffs );
-                const bool inverseCoeffsValid = cameraIntrisicConfig
-                                .GetKeyValue( CalibrationSchema::invDistortionCoefficientsKey )
-                                .ToCvMat( *inverseCoeffs );
-
-                successful = calibrationWasSuccessful &&
-                             cameraMtxValid &&
-                             distortionCoeffsValid &&
-                             inverseCoeffsValid;
-            }
-
-            // Extrinsic Parameters...
-            const WbConfig cameraExtrisicConfig(camPosConfig.GetSubConfig(ExtrinsicCalibrationSchema::schemaName));
-
-            if (cameraExtrisicConfig.IsNull()) successful = false;
-
-            if (successful)
-            {
-                const bool rotMatValid = cameraExtrisicConfig
-                                .GetKeyValue( ExtrinsicCalibrationSchema::rotationMatrixKey )
-                                .ToCvMat( *rot );
-                const bool transValid = cameraExtrisicConfig
-                                .GetKeyValue( ExtrinsicCalibrationSchema::translationKey )
-                                .ToCvMat( *trans );
-
-                successful = rotMatValid &&
-                             transValid;
-            }
-        }
-    }
-
-    if (successful)
-    {
-        // Load file...
-        IplImage* imgGrey = cvLoadImage( fileName.toAscii(), CV_LOAD_IMAGE_GRAYSCALE );
-
-        *camImg = GroundPlaneUtility::unwarpGroundPlane( imgGrey,
-                                                         cameraMtx,
-                                                         distortionCoeffs,
-                                                         inverseCoeffs,
-                                                         rot,
-                                                         trans,
-                                                         offset );
-
-        cvReleaseImage( &imgGrey );
-    }
-
-    cvReleaseMat( &cameraMtx );
-    cvReleaseMat( &distortionCoeffs );
-    cvReleaseMat( &inverseCoeffs );
-
-    cvReleaseMat( &rot );
-    cvReleaseMat( &trans );
-
-    return successful;
-}
-
 void CreateFloorPlanToolWidget::BtnRotateClicked()
 {
     m_rotAngle = (m_rotAngle + 90) % 360;
@@ -969,7 +860,7 @@ void CreateFloorPlanToolWidget::CreateFloorPlanSingle()
 
     LOG_TRACE(QObject::tr("Creating (single) floor plan for %1...").arg(camPosId));
 
-    if (LoadFile( camPosId, &imgComposite, imgFile, &offset ))
+    if (FloorPlanning::LoadFile( config, camPosId, &imgComposite, imgFile, &offset, false ))
     {
         LOG_INFO(QObject::tr("Loading image %1.").arg(imgFile));
 
@@ -1045,19 +936,19 @@ void CreateFloorPlanToolWidget::CreateFloorPlanMulti()
     LOG_TRACE("Checking mapping...");
 
     // Check camera mapping(s)...
-    if (CheckMappingIsComplete())
+    if (FloorPlanning::CheckMappingIsComplete(GetCurrentConfig()))
     {
         LOG_TRACE("Finding root...");
 
         // Find the base camera(s)...
-        std::vector<KeyId> rootCamera = FindRoot();
+        std::vector<KeyId> rootCamera = FloorPlanning::FindRoot(GetCurrentConfig());
 
         if (rootCamera.size() == 1)
         {
             LOG_INFO(QObject::tr("Checking root mapping for %1.").arg(rootCamera.front()));
 
             // Find a path from camera to the base...
-            if (CheckRootMapping(rootCamera.front()))
+            if (FloorPlanning::CheckRootMapping(GetCurrentConfig(), rootCamera.front()))
             {
                 LOG_INFO(QObject::tr("Compositing images with %1.").arg(rootCamera.front()));
 
@@ -1088,241 +979,6 @@ void CreateFloorPlanToolWidget::CreateFloorPlanMulti()
     }
 
     LOG_TRACE("Done.");
-}
-
-bool CreateFloorPlanToolWidget::CheckMappingIsComplete()
-{
-    bool allMapped = true;
-
-    WbConfig config = GetCurrentConfig();
-
-    // for each camera,
-    //    for each mapping,
-    //       if camera1 = camera OR camera2 = camera
-    //          found = true;
-    //          break;
-    //    if !found
-    //       break
-    // return found
-
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
-    const QStringList cameraPositionIds(roomLayoutConfig
-                                        .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList() );
-
-    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
-
-    for ( int n = 0; n < cameraPositionIds.size(); ++n )
-    {
-        const KeyId camPosId = cameraPositionIds.at( n );
-
-        bool found = false;
-
-        LOG_INFO(QObject::tr("Checking mapping for %1.").arg(camPosId));
-
-        for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
-        {
-            const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
-            const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
-
-            if ((camPosId == camera1Id) || (camPosId == camera2Id))
-            {
-                found = true;
-                break;
-            }
-        }
-
-        if (!found)
-        {
-            allMapped = false;
-            break;
-        }
-    }
-
-    return allMapped;
-}
-
-std::vector<KeyId> CreateFloorPlanToolWidget::FindRoot()
-{
-    std::vector<KeyId> rootCamera;
-
-    WbConfig config = GetCurrentConfig();
-
-    // for each camera,
-    //    for each mapping,
-    //       if camera2 == camera
-    //          root = false
-    //    if root
-    //       add to set
-
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
-    const QStringList cameraPositionIds(roomLayoutConfig
-                                        .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList() );
-
-    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
-
-    for ( int n = 0; n < cameraPositionIds.size(); ++n )
-    {
-        const KeyId camPosId = cameraPositionIds.at( n );
-
-        bool root = true;
-
-        for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
-        {
-            const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
-            const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
-
-            if (camPosId == camera2Id)
-            {
-                root = false;
-                break;
-            }
-        }
-
-        if (root)
-        {
-            rootCamera.push_back(camPosId);
-        }
-    }
-
-    return rootCamera;
-}
-
-std::vector<KeyId> CreateFloorPlanToolWidget::FindChain(KeyId camId, KeyId rootId, std::vector<KeyId> mappingChain)
-{
-    WbConfig config = GetCurrentConfig();
-
-    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
-
-    for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
-    {
-        const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
-        const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
-
-        LOG_INFO(QObject::tr("Camera1 id = %1.").arg(camera1Id));
-        LOG_INFO(QObject::tr("Camera2 id = %1.").arg(camera2Id));
-
-        if (camId == camera2Id)
-        {
-            if (std::find(mappingChain.begin(), mappingChain.end(), camera1Id) == mappingChain.end())
-            {
-                mappingChain.push_back(camera1Id);
-
-                if (camera1Id != rootId)
-                {
-                    LOG_INFO(QObject::tr("Find chain for %1 - %2.").arg(camera1Id)
-                                                                   .arg(rootId));
-
-                    mappingChain = FindChain(camera1Id, rootId, mappingChain);
-                }
-
-                if (mappingChain.back() == rootId)
-                {
-                    LOG_INFO("Found.");
-
-                    break;
-                }
-                else
-                {
-                    mappingChain.pop_back();
-                }
-            }
-        }
-    }
-
-    return mappingChain;
-}
-
-bool CreateFloorPlanToolWidget::CheckRootMapping(KeyId rootId)
-{
-    bool allMapped = true;
-
-    WbConfig config = GetCurrentConfig();
-
-    // for each camera in root,
-    //   for each camera
-    //      if camera /= root
-    //         if !FindChain (camera, root)
-    //            ... = false;
-    //            break;
-    //   if found
-    //      theRoot = root
-    //      break
-    //   else...
-
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
-    const QStringList cameraPositionIds(roomLayoutConfig
-                                        .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList() );
-
-    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
-    for ( int n = 0; n < cameraPositionIds.size(); ++n )
-    {
-        const KeyId camPosId = cameraPositionIds.at( n );
-
-        if (camPosId != rootId)
-        {
-            LOG_INFO(QObject::tr("Find chain for %1 - %2.").arg(camPosId)
-                                                           .arg(rootId));
-
-            std::vector<KeyId> chain = FindChain(camPosId, rootId, std::vector<KeyId>());
-
-            if (chain.size() == 0)
-            {
-                LOG_INFO("Not found.");
-
-                allMapped = false;
-                break;
-            }
-        }
-    }
-
-    return allMapped;
-}
-
-void CreateFloorPlanToolWidget::ComputeTransform(KeyId refId, std::vector<KeyId> chain, CvMat* transform)
-{
-    WbConfig config = GetCurrentConfig();
-
-    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
-
-    for (std::vector<KeyId>::iterator elt = chain.begin(); elt != chain.end(); ++elt)
-    {
-        for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
-        {
-            const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
-            const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
-
-            if ((camera1Id == *elt) && (camera2Id == refId))
-            {
-                CvMat* homography = cvCreateMat( 3, 3, CV_32F );
-
-                const bool homographyValid = config
-                                .GetKeyValue( FloorPlanSchema::homographyKey, it->id )
-                                .ToCvMat( *homography );
-                Q_UNUSED(homographyValid);
-
-                CvMat* tmp = cvCreateMat( 3, 3, CV_32F );
-                cvMatMul( transform, homography, tmp );
-
-                cvmSet(transform,0,0, cvmGet(tmp,0,0));
-                cvmSet(transform,0,1, cvmGet(tmp,0,1));
-                cvmSet(transform,0,2, cvmGet(tmp,0,2));
-                cvmSet(transform,1,0, cvmGet(tmp,1,0));
-                cvmSet(transform,1,1, cvmGet(tmp,1,1));
-                cvmSet(transform,1,2, cvmGet(tmp,1,2));
-                cvmSet(transform,2,0, cvmGet(tmp,2,0));
-                cvmSet(transform,2,1, cvmGet(tmp,2,1));
-                cvmSet(transform,2,2, cvmGet(tmp,2,2));
-
-                cvReleaseMat(&tmp);
-                cvReleaseMat(&homography);
-
-                refId = *elt;
-            }
-        }
-    }
 }
 
 void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
@@ -1357,7 +1013,7 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
 
     IplImage* rootImg;
     CvPoint2D32f offset;
-    LoadFile( camRoot, &rootImg, rootFileName, &offset );
+    FloorPlanning::LoadFile( config, camRoot, &rootImg, rootFileName, &offset, false );
 
     const QString rootFile(config.GetAbsoluteFileNameFor("plan_" + camRoot + ".png"));
     cvSaveImage(rootFile.toAscii().data(), rootImg);
@@ -1398,10 +1054,10 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
             LOG_INFO(QObject::tr("Find chain for %1 - %2.").arg(camPosId)
                                                            .arg(camRoot));
 
-            std::vector<KeyId> chain = FindChain(camPosId, camRoot, std::vector<KeyId>());
+            std::vector<KeyId> chain = FloorPlanning::FindChain(config, camPosId, camRoot, std::vector<KeyId>());
 
             cvSetIdentity(transform);
-            ComputeTransform( camPosId, chain, transform );
+            FloorPlanning::ComputeTransform( config, camPosId, chain, transform );
 
             // Store transform for camera...
             const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
@@ -1431,7 +1087,7 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
 
             IplImage* camImg;
             CvPoint2D32f offset;
-            LoadFile( camPosId, &camImg, camFileName, &offset );
+            FloorPlanning::LoadFile( GetCurrentConfig(), camPosId, &camImg, camFileName, &offset, false );
 
             // Stitch the images together...
             GroundPlaneUtility::compositeImageBoundingBox( transform, camImg, &cmpBox );
@@ -1460,10 +1116,10 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
 
         if (camPosId != camRoot)
         {
-            std::vector<KeyId> chain = FindChain(camPosId, camRoot, std::vector<KeyId>());
+            std::vector<KeyId> chain = FloorPlanning::FindChain(config, camPosId, camRoot, std::vector<KeyId>());
 
             cvSetIdentity(transform);
-            ComputeTransform( camPosId, chain, transform );
+            FloorPlanning::ComputeTransform( GetCurrentConfig(), camPosId, chain, transform );
 
             // Load camera image...
             KeyValue camImageFile;
@@ -1485,7 +1141,7 @@ void CreateFloorPlanToolWidget::Stitch(KeyId camRoot)
 
             IplImage* camImg;
             CvPoint2D32f offset;
-            LoadFile( camPosId, &camImg, camFileName, &offset );
+            FloorPlanning::LoadFile( GetCurrentConfig(), camPosId, &camImg, camFileName, &offset, false );
 
             const QString camFile(config.GetAbsoluteFileNameFor("plan_" + camPosId + ".png"));
             cvSaveImage(camFile.toAscii().data(), camImg);
@@ -1617,12 +1273,12 @@ void CreateFloorPlanToolWidget::CaptureLiveBtnClicked()
          m_camera1FileName = m_captureLiveDualController->CapturedFileName1();
          m_camera2FileName = m_captureLiveDualController->CapturedFileName2();
 
-         if (LoadFile( m_camPosId1, &m_cam1Img, m_camera1FileName, &offset ))
+         if (FloorPlanning::LoadFile( config, m_camPosId1, &m_cam1Img, m_camera1FileName, &offset, false ))
          {
              ShowImage(m_cam1Img, m_ui->m_liveView1);
          }
 
-         if (LoadFile( m_camPosId2, &m_cam2Img, m_camera2FileName, &offset ))
+         if (FloorPlanning::LoadFile( config, m_camPosId2, &m_cam2Img, m_camera2FileName, &offset, false ))
          {
              ShowImage(m_cam2Img, m_ui->m_liveView2);
          }
@@ -1737,12 +1393,12 @@ void CreateFloorPlanToolWidget::FromFileBtnClicked()
         if ( !m_camera1FileName.isEmpty() &&
              !m_camera2FileName.isEmpty() )
         {
-            if (LoadFile( m_camPosId1, &m_cam1Img, m_camera1FileName, &offset ))
+            if (FloorPlanning::LoadFile( config, m_camPosId1, &m_cam1Img, m_camera1FileName, &offset, false ))
             {
                 ShowImage(m_cam1Img, m_ui->m_liveView1);
             }
 
-            if (LoadFile( m_camPosId2, &m_cam2Img, m_camera2FileName, &offset ))
+            if (FloorPlanning::LoadFile( config, m_camPosId2, &m_cam2Img, m_camera2FileName, &offset, false ))
             {
                 ShowImage(m_cam2Img, m_ui->m_liveView2);
             }

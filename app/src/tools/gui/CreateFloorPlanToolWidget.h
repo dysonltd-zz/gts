@@ -69,18 +69,11 @@ private:
 
     void FillOutCameraCombo( QComboBox& comboBox );
 
-    bool LoadFile( QString cameraPosition, IplImage** camImg, QString fileName, CvPoint2D32f* offset );
-
     void ShowImage( IplImage* img, ImageView* view );
 
     void CreateFloorPlanSingle();
     void CreateFloorPlanMulti();
 
-    bool CheckMappingIsComplete();
-    std::vector<KeyId> FindRoot();
-    bool CheckRootMapping(KeyId rootId);
-    std::vector<KeyId> FindChain(KeyId camId, KeyId rootId, std::vector<KeyId> mappingChain);
-    void ComputeTransform(KeyId refId, std::vector<KeyId> chain, CvMat* transform);
     void Stitch(KeyId rootId);
 
     virtual void ReloadCurrentConfigToolSpecific();
