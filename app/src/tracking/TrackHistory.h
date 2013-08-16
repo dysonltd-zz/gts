@@ -110,7 +110,7 @@ public:
     const double       GetTimeStamp()   const { return m_timeStamp; };
     const std::string* GetString()      const { return m_additionalInfo; };
 
-    float GetWeighting() const { return m_warpGradientMagnitude*m_nccError; }; ///< Return the weight to be used in averaging.
+    float GetWeighting() const { return m_warpGradientMagnitude*(m_nccError+1.0)*0.5; }; ///< Return the weight to be used in averaging.
 
     void SetPosition( CvPoint2D32f v ) { m_robotPosition = v; };
     void SetOrientation( float v )     { m_robotAngle = v; };

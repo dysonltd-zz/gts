@@ -295,16 +295,20 @@ bool KltTracker::Track( double timestampInMillisecs, bool flipCorrect, bool init
 
         // Read the warp gradient magnitude at the tracked position to store in TrackEntry for later use.
         const CvMat* wgi = m_cal->GetWarpGradientImage();
-        int x = m_pos.x + .5f;
-        int y = m_pos.y + .5f;
-        float val = TrackEntry::unknownWgm;
+        int x = static_cast<int>( m_pos.x + .5f );
+        int y = static_cast<int>( m_pos.y + .5f );
+        float warpGradient = TrackEntry::unknownWgm;
         if ( ( x < wgi->cols ) && ( y < wgi->rows ) ) ///@todo Need to investigate why we sometimes access beyond the edge of wgi image.
         {
-            val = CV_MAT_ELEM( *wgi, float, y, x );
+            warpGradient = CV_MAT_ELEM( *wgi, float, y, x );
         }
 
         // If we found a good track and the 2nd stage was a success then store the result
-        m_history.push_back( TrackEntry( GetPosition(), GetHeading(), GetError(), timestampInMillisecs, val ) );
+        const float error = GetError();
+        assert( std::isnan(error) == false );
+        assert( error >= -1.0 );
+        assert( error <= 1.0 );
+        m_history.push_back( TrackEntry( GetPosition(), GetHeading(), GetError(), timestampInMillisecs, warpGradient ) );
 
         return true;
     }
