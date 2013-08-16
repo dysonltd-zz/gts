@@ -194,9 +194,9 @@ namespace CrossCorrelation
         const char* pEnd2 = pStart2 + ( ww * c2 );
 
         // compute weighted means
-        unsigned int mean1 = 0;
-        unsigned int mean2 = 0;
-        unsigned int count = 0;
+        double mean1 = 0;
+        double mean2 = 0;
+        double count = 0;
         float ry, ry2;
         float rx, r;
         float w;
@@ -246,9 +246,9 @@ namespace CrossCorrelation
         pEnd2 = pStart2 + ( ww * c2 );
 
         // Compute cross-correlation
-        int corr = 0;
-        unsigned int sq1 = 0;
-        unsigned int sq2 = 0;
+        double corr = 0;
+        double sq1 = 0;
+        double sq2 = 0;
         for ( int y=0; y < wh; ++y )
         {
             const char* pImg1 = pStart1;
@@ -282,8 +282,12 @@ namespace CrossCorrelation
 
         // compute and return normalised cross correlation
         float denom = sqrtf( sq1 ) * sqrtf( sq2 );
-
-        return corr/denom;
+        float ncc = corr/denom;
+        if ( ncc < 0.0 )
+        {
+            ncc = ncc+0.000000001;
+        }
+        return ncc;
     }
 
     /**

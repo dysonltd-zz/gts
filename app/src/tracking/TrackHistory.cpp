@@ -62,12 +62,13 @@ namespace TrackHistory
                 }
                 else
                 {
-                    fprintf( to, "  %4.4f  %.3f %.3f %.3f %f\n",
+                    fprintf( to, "  %4.4f  %.3f %.3f %.3f %f %f\n",
                         history[i].GetTimeStamp(),
                         history[i].GetPosition().x,
                         -history[i].GetPosition().y,  // convert to right handed coords
                         history[i].GetOrientation() * MathsConstants::R2D,
-                        history[i].GetError() );
+                        history[i].GetError(),
+                        history[i].wgm() );
                 }
             }
 
