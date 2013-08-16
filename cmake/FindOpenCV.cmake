@@ -1,6 +1,6 @@
 #
 # The following variables are optionally searched for:
-#       OpenCV2_ROOT_DIR         Base directory of OpenCV 2 tree to use.
+#       OpenCV_ROOT_DIR         Base directory of OpenCV 2 tree to use.
 #
 
 include(FindPackageHandleStandardArgs)
@@ -11,6 +11,7 @@ if(WIN32 OR MINGW)
     find_path(OpenCV2_ROOT_DIR
 		      NAMES include/opencv2/opencv.hpp
 		      PATHS "${OpenCV_ROOT_DIR}"
+			  NO_DEFAULT_PATH
 	)
 
 # If Unix, first try and use command line option. Then try typical locations
@@ -38,69 +39,23 @@ else()
 endif()
 
 if(WIN32 OR MINGW)
-	
-	find_path(OpenCV2_CORE_INCLUDE_DIR
-	          NAMES opencv2/core/core_c.h
-			        opencv2/core/core.hpp
-					opencv2/core/wimage.hpp
-					opencv2/core/eigen.hpp
-					opencv2/core/internal.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/core"
-			        "${OpenCV2_ROOT_DIR}/modules/core/include")
-	find_path(OpenCV2_IMGPROC_INCLUDE_DIR
-	          NAMES opencv2/imgproc/imgproc_c.h
-			        opencv2/imgproc/imgproc.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/imgproc"
-			        "${OpenCV2_ROOT_DIR}/modules/imgproc/include")
-	find_path(OpenCV2_FEATURES2D_INCLUDE_DIR
-	          NAMES opencv2/features2d/features2d.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/features2d"
-			        "${OpenCV2_ROOT_DIR}/modules/features2d/include")
-	find_path(OpenCV2_FLANN_INCLUDE_DIR
-	          NAMES opencv2/flann/flann.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/flann"
-			        "${OpenCV2_ROOT_DIR}/modules/flann/include")
-	FIND_PATH(OpenCV2_CALIB3D_INCLUDE_DIR
-	          NAMES opencv2/calib3d/calib3d.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/calib3d"
-			        "${OpenCV2_ROOT_DIR}/modules/calib3d/include")
-	find_path(OpenCV2_OBJDETECT_INCLUDE_DIR
-	          NAMES opencv2/objdetect/objdetect.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/objdetect"
-			        "${OpenCV2_ROOT_DIR}/modules/objdetect/include")
-	find_path(OpenCV2_LEGACY_INCLUDE_DIR
-	          NAMES opencv2/legacy/compat.hpp
-			        opencv2/legacy/legacy.hpp
-					opencv2/legacy/blobtrack.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/legacy"
-			        "${OpenCV2_ROOT_DIR}/modules/legacy/include")
-	find_path(OpenCV2_CONTRIB_INCLUDE_DIR
-	          NAMES opencv2/contrib/contrib.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/contrib"
-			        "${OpenCV2_ROOT_DIR}/modules/contrib/include")
-	find_path(OpenCV2_HIGHGUI_INCLUDE_DIR
-	          NAMES   opencv2/highgui/highgui_c.h
-			          opencv2/highgui/highgui.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/highgui"
-			        "${OpenCV2_ROOT_DIR}/modules/highgui/include")
-	find_path(OpenCV2_ML_INCLUDE_DIR
-	          NAMES opencv2/ml/ml.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/ml"
-			        "${OpenCV2_ROOT_DIR}/modules/ml/include")
-	find_path(OpenCV2_VIDEO_INCLUDE_DIR
-	          NAMES opencv2/video/tracking.hpp
-			        opencv2/video/background_segm.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/video"
-			        "${OpenCV2_ROOT_DIR}/modules/video/include")
-	find_path(OpenCV2_GPU_INCLUDE_DIR
-	          NAMES opencv2/gpu/gpu.hpp
-	          PATHS "${OpenCV2_ROOT_DIR}/include/opencv2/gpu"
-			        "${OpenCV2_ROOT_DIR}/modules/gpu/include")
+	set( OpenCV2_CORE_INCLUDE_DIR  "${OpenCV2_ROOT_DIR}/modules/core/include" )
+	set( OpenCV2_IMGPROC_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/imgproc/include" )
+	set( OpenCV2_FEATURES2D_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/features2d/include" )
+	set( OpenCV2_FLANN_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/flann/include" )
+	set( OpenCV2_CALIB3D_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/calib3d/include" )
+	set( OpenCV2_OBJDETECT_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/objdetect/include" )
+	set( OpenCV2_LEGACY_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/legacy/include" )
+	set( OpenCV2_CONTRIB_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/contrib/include" )
+	set( OpenCV2_HIGHGUI_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/highgui/include" )
+	set( OpenCV2_ML_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/ml/include" )
+	set( OpenCV2_VIDEO_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/video/include" )
+	set( OpenCV2_GPU_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/modules/gpu/include" )
 else()
 	set( OpenCV2_CORE_INCLUDE_DIR  "${OpenCV2_ROOT_DIR}/include/opencv2/core" )
 	set( OpenCV2_IMGPROC_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/imgproc" )
 	set( OpenCV2_FEATURES2D_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/features2d" )
-	set( OpenCV2_FLANN_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/flann/include" )
+	set( OpenCV2_FLANN_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/flann" )
 	set( OpenCV2_CALIB3D_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/calib3d" )
 	set( OpenCV2_OBJDETECT_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/objdetect" )
 	set( OpenCV2_LEGACY_INCLUDE_DIR "${OpenCV2_ROOT_DIR}/include/opencv2/legacy" )
@@ -113,66 +68,83 @@ endif()
 
 if(WIN32 OR MINGW)
     set(OPENCV2_LIBRARY_SEARCH_PATHS
+        "${OpenCV2_ROOT_DIR}/build/lib"
+        "${OpenCV2_ROOT_DIR}/build/lib"
+        "${OpenCV2_ROOT_DIR}/build/lib"
         "${OpenCV2_ROOT_DIR}/build/x86/vc10/lib"
         "${OpenCV2_ROOT_DIR}/build/x86/vc10/lib/release"
         "${OpenCV2_ROOT_DIR}/build/x86/vc10/lib/debug"
         )
 
     find_library(OpenCV2_CORE_LIBRARY
-                 NAMES opencv_core246 opencv_core240 opencv_core220
+                 NAMES opencv_core246d opencv_core240 opencv_core220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_IMGPROC_LIBRARY
-                 NAMES opencv_imgproc246 opencv_imgproc240 opencv_imgproc220
+                 NAMES opencv_imgproc246d opencv_imgproc240 opencv_imgproc220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_FEATURES2D_LIBRARY
-                 NAMES opencv_features2d246 opencv_features2d240 opencv_features2d220
+                 NAMES opencv_features2d246d opencv_features2d240 opencv_features2d220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_FLANN_LIBRARY
-                 NAMES opencv_flann246 opencv_flann240 opencv_flann220
+                 NAMES opencv_flann246d opencv_flann240 opencv_flann220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_CALIB3D_LIBRARY
-                 NAMES opencv_calib3d246 opencv_calib3d240 opencv_calib3d220
+                 NAMES opencv_calib3d246d opencv_calib3d240 opencv_calib3d220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_OBJDETECT_LIBRARY
-                 NAMES opencv_objdetect246 opencv_objdetect240 opencv_objdetect220
+                 NAMES opencv_objdetect246d opencv_objdetect240 opencv_objdetect220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_LEGACY_LIBRARY
-                 NAMES opencv_legacy246 opencv_legacy240 opencv_legacy220
+                 NAMES opencv_legacy246d opencv_legacy240 opencv_legacy220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_CONTRIB_LIBRARY
-                 NAMES opencv_contrib246 opencv_contrib240 opencv_contrib220
+                 NAMES opencv_contrib246d opencv_contrib240 opencv_contrib220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_HIGHGUI_LIBRARY
-                 NAMES opencv_highgui246 opencv_highgui240 opencv_highgui220
+                 NAMES opencv_highgui246d opencv_highgui240 opencv_highgui220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_ML_LIBRARY
-                 NAMES opencv_ml246 opencv_ml240 opencv_ml220
+                 NAMES opencv_ml246d opencv_ml240 opencv_ml220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_VIDEO_LIBRARY
-                 NAMES opencv_video246 opencv_video240 opencv_video220
+                 NAMES opencv_video246d opencv_video240 opencv_video220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_GPU_LIBRARY
-                 NAMES opencv_gpu246 opencv_gpu240 opencv_gpu220
+                 NAMES opencv_gpu246d opencv_gpu240 opencv_gpu220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_FFMPEG_LIBRARY
-                 NAMES opencv_ffmpeg246 opencv_ffmpeg240 opencv_ffmpeg220
+                 NAMES opencv_ffmpeg246d opencv_ffmpeg240 opencv_ffmpeg220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
     find_library(OpenCV2_TS_LIBRARY
-                 NAMES opencv_ts246 opencv_ts240 opencv_ts220
+                 NAMES opencv_ts246d opencv_ts240 opencv_ts220
                  PATHS ${OPENCV2_LIBRARY_SEARCH_PATHS}
+				 NO_DEFAULT_PATH
                  )
 else()
     set(OPENCV2_LIBRARY_SEARCH_PATHS

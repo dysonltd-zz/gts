@@ -354,7 +354,7 @@ void GtsView::LoadTimestampFile( const char* const fileName )
 double GtsView::GetSeekPositionInMilliseconds() const
 {
     assert( m_sequencer );
-    if ( m_sequencer != nullptr )
+    if ( m_sequencer )
     {
        return m_sequencer->GetTimeStamp();
     }
@@ -369,7 +369,7 @@ double GtsView::GetSeekPositionInMilliseconds() const
 bool GtsView::ReadySeekFrame( double msec )
 {
     assert( m_sequencer );
-    if ( m_sequencer == nullptr )
+    if ( !m_sequencer )
     {
         return false;
     }
@@ -386,7 +386,7 @@ bool GtsView::ReadySeekFrame( double msec )
 bool GtsView::ReadyNextFrame()
 {
     assert( m_sequencer );
-    if ( m_sequencer == nullptr )
+    if ( !m_sequencer )
     {
         return false;
     }
@@ -465,7 +465,7 @@ const IplImage* GtsView::GetNextFrame()
             cvReleaseImage( &m_imgFrame );
         }
 
-        m_imgFrame = nullptr;
+        m_imgFrame = 0;
     }
 
     return m_imgFrame;

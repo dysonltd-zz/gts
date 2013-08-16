@@ -410,13 +410,10 @@
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
             <property name="minimum">
-             <number>3</number>
+             <number>0</number>
             </property>
             <property name="maximum">
-             <number>999</number>
-            </property>
-            <property name="value">
-             <number>6</number>
+             <number>99</number>
             </property>
            </widget>
           </item>
@@ -436,13 +433,10 @@
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
             <property name="minimum">
-             <number>3</number>
+             <number>0</number>
             </property>
             <property name="maximum">
-             <number>999</number>
-            </property>
-            <property name="value">
-             <number>9</number>
+             <number>99</number>
             </property>
            </widget>
           </item>

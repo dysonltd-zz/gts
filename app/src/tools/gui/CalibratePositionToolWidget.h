@@ -63,6 +63,10 @@ private slots:
     void ShowUnwarpedBtnClicked();
 
 private:
+    const KeyId GetCameraIdToCapture() const;
+
+    void ShowNoCameraError();
+
     ImageView* const GetStreamingView( const QSize& imageSize );
     virtual const QString GetSubSchemaDefaultFileName() const;
     virtual void ReloadCurrentConfigToolSpecific();

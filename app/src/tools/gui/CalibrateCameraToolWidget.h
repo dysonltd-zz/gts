@@ -48,7 +48,7 @@ public:
                                         QWidget* const parent = 0 );
     ~CalibrateCameraToolWidget();
 
-    virtual const QString Name() const;
+    virtual const QString Name() const { return tr( "Calibrate Camera" ); }
     virtual const HelpBookmark GetHelpText() const;
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;

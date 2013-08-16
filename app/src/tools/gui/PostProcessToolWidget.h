@@ -42,11 +42,19 @@ public:
     ~PostProcessToolWidget();
 
     virtual const QString Name() const { return tr( "Post Process" ); }
+    virtual bool CanClose() const;
+    virtual const QString CannotCloseReason() const;
 
 private:
+    const KeyId GetRoomIdToCapture() const;
+
+    void ShowNoRoomError();
+
     virtual const QString GetSubSchemaDefaultFileName() const;
 
     const WbSchema CreateSchema();
+
+    bool IsDataValid() const;
 
 private:
     const ExitStatus::Flags PostProcess( const WbConfig& postProcConfig,

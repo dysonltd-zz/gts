@@ -525,6 +525,8 @@ int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log,
                             QString trackResultsTemplate,
                             QString pixelOffsetsTemplate )
 {
+    Q_UNUSED(pixelOffsetsTemplate);
+
     int baseLog = -1;
     bool first = true;
     unsigned int nLogs = 0;

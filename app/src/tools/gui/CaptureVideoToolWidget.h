@@ -148,6 +148,8 @@ private:
 
     static const WbSchema CreateSchema();
 
+    bool IsDataValid() const;
+
     Ui::CaptureVideoToolWidget*  m_ui;
     CameraHardware&              m_cameraHardware;
     double                       m_fps;

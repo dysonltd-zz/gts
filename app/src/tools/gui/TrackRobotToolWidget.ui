@@ -410,7 +410,7 @@
                   </property>
                   <property name="toolTip">
                    <string>&lt;head/&gt;&lt;body&gt;
-&lt;p&gt;Bi-level threshold used for orientation determination.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p&gt;Bi-level threshold used for orientation determination [0..255].&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -447,7 +447,7 @@
                   <property name="toolTip">
                    <string>&lt;head/&gt;
 &lt;body&gt;
-&lt;p&gt;Normalised Cross Correlation threshold for tracking [0...1]&lt;/p&gt;
+&lt;p&gt;Normalised Cross Correlation threshold for tracking [-1..+1].&lt;/p&gt;
 &lt;/body&gt;</string>
                   </property>
                   <property name="alignment">
@@ -492,7 +492,7 @@ p, li { white-space: pre-wrap; }
                    <bool>true</bool>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;p&gt;The size in pixels to be used to represent one square of the target. Larger means more accurate (up to a point) but slower.&lt;/p&gt;</string>
+                   <string>&lt;p&gt;The size in pixels to be used to represent one square of the target. Larger means more accurate (up to a point) but slower [0..99].&lt;/p&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -696,7 +696,7 @@ p, li { white-space: pre-wrap; }
                   </property>
                   <property name="toolTip">
                    <string>&lt;head/&gt;&lt;body&gt;
-&lt;p&gt;Bi-level threshold used for orientation determination.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p&gt;Bi-level threshold used for orientation determination [0..255].&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -733,7 +733,7 @@ p, li { white-space: pre-wrap; }
                   <property name="toolTip">
                    <string>&lt;head/&gt;
 &lt;body&gt;
-&lt;p&gt;Normalised Cross Correlation threshold for tracking [0...1]&lt;/p&gt;
+&lt;p&gt;Normalised Cross Correlation threshold for tracking [-1..+1].&lt;/p&gt;
 &lt;/body&gt;</string>
                   </property>
                   <property name="alignment">
@@ -778,7 +778,7 @@ p, li { white-space: pre-wrap; }
                    <bool>false</bool>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;p&gt;The size in pixels to be used to represent one square of the target. Larger means more accurate (up to a point) but slower.&lt;/p&gt;</string>
+                   <string>&lt;p&gt;The size in pixels to be used to represent one square of the target. Larger means more accurate (up to a point) but slower [0..99].&lt;/p&gt;</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
