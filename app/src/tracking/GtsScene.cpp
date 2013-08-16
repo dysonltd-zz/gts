@@ -239,7 +239,7 @@ void GtsScene::DestroyViewWindows( ImageGrid* imageGrid )
 GtsScene::TrackStatus GtsScene::StepTrackers( const bool forward, const bool seek )
 {
     m_filePositionInMilliseconds = forward ? m_filePositionInMilliseconds+m_rateInMilliseconds : MAX(m_filePositionInMilliseconds-m_rateInMilliseconds, 0);
-    TrackStatus status = { m_filePositionInMilliseconds, 0, 0, true };
+    TrackStatus status = { m_filePositionInMilliseconds, 0, 0, false };
 
     for (unsigned int i = 0; i < GetNumMaxCameras(); ++i)
     {
@@ -260,17 +260,19 @@ GtsScene::TrackStatus GtsScene::StepTrackers( const bool forward, const bool see
                     m_filePositionInMilliseconds = m_view[i].GetSeekPositionInMilliseconds();
                     std::cout << "New file pos := " << m_filePositionInMilliseconds << std::endl;
                 }
+                else
+                {
+                    std::cout << "No more frames, file pos := " << m_filePositionInMilliseconds << std::endl;
+                }
             }
 
             if ( ready && m_view[i].GetNextFrame() )
             {
-                status.eof = false;
-
                 m_view[i].StepTracker( forward );
 
                 RobotTracker& tracker = m_view[i].GetTracker();
 
-                if (tracker.IsLost())
+                if ( tracker.IsLost() )
                 {
                     status.numTrackersLost++;
 
@@ -279,10 +281,14 @@ GtsScene::TrackStatus GtsScene::StepTrackers( const bool forward, const bool see
 
                     status.numTrackersActive++;
                 }
-                else if (tracker.IsActive())
+                else if ( tracker.IsActive() )
                 {
                     status.numTrackersActive++;
                 }
+            }
+            else
+            {
+                status.eof = true;
             }
         }
     }
@@ -360,7 +366,8 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
                                        IplImage**              compImgCol,
                                        float                   timeThresh,
                                        char*                   floorPlanFile,
-                                       unsigned int            baseIndex )
+                                       unsigned int            baseIndex,
+                                       QString trackResultsTemplate )
 {
     IplImage* compImg;
 
@@ -409,6 +416,10 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
             ScanUtility::TransformLog( m_logPx[i], tlog, m_view[i].GetTracker().GetCalibration()->GetCameraTransform() );
             m_logPx[i] = tlog;
 
+            // Write the individual transformed logs as these can be useful for external analysis:
+            const QString fileName(FileUtilities::GetUniqueFileName(trackResultsTemplate));
+            TrackHistory::WriteHistoryLog( fileName.toAscii().data(), tlog );
+
             ScanUtility::PlotLog( m_logPx[i],
                                  *compImgCol,
                                  colours[(i + 1) % 4],
@@ -436,13 +447,13 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
         }
     }
 
-    ScanUtility::PlotLog( avg,
+    /*ScanUtility::PlotLog( avg,
                           *compImgCol,
-                          colours[0],
+                          cvScalar( 255, 0, 0, 128 ),
                           cvRect( 0, 0, 0, 0 ),
                           0,
                           1,
-                          timeThresh );
+                          timeThresh );*/
 
     cvReleaseImage( &compImg );
     cvReleaseImage( &baseImg );
@@ -461,7 +472,7 @@ void GtsScene::SaveData( char* floorPlanFile,
                          QString trackResultsTemplate,
                          QString pixelOffsetsTemplate )
 {
-    int baseLog = OrganiseLogs( m_log, trackResultsTemplate, pixelOffsetsTemplate );
+    int baseLog = OrganiseLogs( m_log, pixelOffsetsTemplate );
 
     IplImage* compImg = 0;
     IplImage* compImgCol = 0;
@@ -479,7 +490,7 @@ void GtsScene::SaveData( char* floorPlanFile,
     offset.x = -m_origin[0].x;
     offset.y = -m_origin[0].y;
 
-    PostProcessMultiCamera( avg, offset, &compImgCol, timeThresh, floorPlanFile, baseLog );
+    PostProcessMultiCamera( avg, offset, &compImgCol, timeThresh, floorPlanFile, baseLog, trackResultsTemplate );
 
     // Write composite image to file
     cvSaveImage( trackerResultsImgFile, compImgCol );
@@ -522,7 +533,6 @@ void GtsScene::SaveData( char* floorPlanFile,
  * Also computes average frame-rate over all logs.
  **/
 int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log,
-                            QString trackResultsTemplate,
                             QString pixelOffsetsTemplate )
 {
     Q_UNUSED(pixelOffsetsTemplate);
@@ -565,11 +575,6 @@ int GtsScene::OrganiseLogs( TrackHistory::TrackLog* log,
                                                          .arg(m_origin[i].y));
                 nLogs++;
             }
-
-            const QString trackerResultsTxtFile(FileUtilities::GetUniqueFileName(
-                                         trackResultsTemplate));
-
-            TrackHistory::WriteHistoryLog( trackerResultsTxtFile.toAscii().data(), log[i] );
         }
     }
 

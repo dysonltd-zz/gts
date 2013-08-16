@@ -75,12 +75,10 @@ void TrackThread::Execute()
 {
     while ( !ShouldStop() )
     {
-        GtsScene::TrackStatus status = m_scene.StepTrackers( Forwards(), Seeking() );
+        const GtsScene::TrackStatus status = m_scene.StepTrackers( Forwards(), Seeking() );
 
         bool trackingLost = ( status.numTrackersActive ==
                               status.numTrackersLost );
-
-        bool gameOver = status.eof;
 
         emit position( status.videoPosition );
 
@@ -95,7 +93,7 @@ void TrackThread::Execute()
 			if ( ShouldStop() ) { break; }
 		}
 
-		if (gameOver)
+        if ( status.eof )
 		{
 		    break;
 		}

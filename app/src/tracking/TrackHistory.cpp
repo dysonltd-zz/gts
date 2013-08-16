@@ -27,7 +27,7 @@
 
 #include <string>
 
-const float TrackEntry::unknownWgm = -1.f;
+const float TrackEntry::unknownWgm = 0.f;
 
 namespace TrackHistory
 {

@@ -532,13 +532,21 @@ namespace ScanMatch
             {
                 // create associated point by interpolation
                 float w = l_dt / (l_dt-e_dt);
+                assert( w >= 0.0 );
+                assert( w <= 1.0 );
                 TrackEntry assoc = TrackHistory::InterpolateEntries( b1[e_idx], b1[l_idx], w );
 
                 // Now average interpolated point with point from a1
                 // (but weight the average based weighting functions)
                 float wa = a1[i].GetWeighting();
                 float wi = assoc.GetWeighting();
+
+                assert( wa >= 0.0 );
+                assert( wi >= 0.0 );
+
                 w = wi / (wa+wi);
+                assert( w >= 0.0 );
+                assert( w <= 1.0 );
                 TrackEntry average = TrackHistory::InterpolateEntries( a1[i], assoc, w );
                 average.SetTimeStamp( ts );
 
