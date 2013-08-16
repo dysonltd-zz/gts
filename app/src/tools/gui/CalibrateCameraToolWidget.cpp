@@ -139,11 +139,6 @@ const HelpBookmark CalibrateCameraToolWidget::GetHelpText() const
     return HELP_CALIBRATING_THE_CAMERA;
 }
 
-const QString CalibrateCameraToolWidget::Name() const
-{
-    return tr( "Calibrate Camera" );
-}
-
 const QString CalibrateCameraToolWidget::GetSubSchemaDefaultFileName() const
 {
     return "calibration.xml";
@@ -269,7 +264,6 @@ ImageView* const CalibrateCameraToolWidget::CreateStreamingView( const QSize& im
     return m_ui->m_imageGrid->AddBlankImage( imageSize );
 }
 
-
 void CalibrateCameraToolWidget::ReloadCurrentConfigToolSpecific()
 {
     const WbKeyValues::ValueIdPairList calibImages(
@@ -359,11 +353,11 @@ const WbSchema CalibrateCameraToolWidget::CreateSchema()
                                       << gridRowsKey
                                       << gridColumnsKey,
                         DefaultValueMap().WithDefault( gridSquareSizeInCmKey,
-                                                       KeyValue::from( 10.0 ) )
+                                                       KeyValue::from( 0.0 ) )
                                          .WithDefault( gridRowsKey,
-                                                       KeyValue::from( 6 ) )
+                                                       KeyValue::from( 0 ) )
                                          .WithDefault( gridColumnsKey,
-                                                       KeyValue::from( 9 ) ) );
+                                                       KeyValue::from( 0 ) ) );
 
     schema.AddKeyGroup( imageGroup,
                         WbSchemaElement::Multiplicity::One,

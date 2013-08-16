@@ -483,27 +483,39 @@ void TrackRobotToolWidget::SaveBtnClicked()
         }
     }
 
-    config.KeepKeys( positionIdKey, idsToKeep );
-    config.KeepKeys( useGlobalParams, idsToKeep );
-    config.KeepKeys( biLevelThreshold, idsToKeep );
-    config.KeepKeys( nccThreshold, idsToKeep );
-    config.KeepKeys( resolution, idsToKeep );
+    bool valid = true;
 
-    const KeyId cameraKeyId = config.AddKeyValue( positionIdKey,
-                                                  KeyValue::from( cameraId ) );
+    valid = valid &&
+             !(m_ui->m_camNccThresholdSpinBox->value() == 0.0);
+    valid = valid &&
+             !(m_ui->m_camResolutionSpinBox->value() == 0);
+    valid = valid &&
+             !(m_ui->m_camTrackerThresholdSpinBox->value() == 0);
 
-    config.SetKeyValue( useGlobalParams,
-                        KeyValue::from( m_ui->m_useGlobal->isChecked() ),
-                        cameraKeyId );
-    config.SetKeyValue( biLevelThreshold,
-                        KeyValue::from( QString().setNum( m_ui->m_camTrackerThresholdSpinBox->value() ) ),
-                        cameraKeyId );
-    config.SetKeyValue( nccThreshold,
-                        KeyValue::from( QString().setNum( m_ui->m_camNccThresholdSpinBox->value() ) ),
-                        cameraKeyId );
-    config.SetKeyValue( resolution,
-                        KeyValue::from( QString().setNum( m_ui->m_camResolutionSpinBox->value() ) ),
-                        cameraKeyId );
+    if (valid)
+    {
+        config.KeepKeys( positionIdKey, idsToKeep );
+        config.KeepKeys( useGlobalParams, idsToKeep );
+        config.KeepKeys( biLevelThreshold, idsToKeep );
+        config.KeepKeys( nccThreshold, idsToKeep );
+        config.KeepKeys( resolution, idsToKeep );
+
+        const KeyId cameraKeyId = config.AddKeyValue( positionIdKey,
+                                                      KeyValue::from( cameraId ) );
+
+        config.SetKeyValue( useGlobalParams,
+                            KeyValue::from( m_ui->m_useGlobal->isChecked() ),
+                            cameraKeyId );
+        config.SetKeyValue( biLevelThreshold,
+                            KeyValue::from( QString().setNum( m_ui->m_camTrackerThresholdSpinBox->value() ) ),
+                            cameraKeyId );
+        config.SetKeyValue( nccThreshold,
+                            KeyValue::from( QString().setNum( m_ui->m_camNccThresholdSpinBox->value() ) ),
+                            cameraKeyId );
+        config.SetKeyValue( resolution,
+                            KeyValue::from( QString().setNum( m_ui->m_camResolutionSpinBox->value() ) ),
+                            cameraKeyId );
+    }
 }
 
 void TrackRobotToolWidget::AddVideoFileConfigKey( const QString& videoFileName,
@@ -553,27 +565,10 @@ void TrackRobotToolWidget::ShowEmptyRoomError()
                    Message::Severity_Critical );
 }
 
-void TrackRobotToolWidget::ShowNullCameraPosError()
-{
-    Message::Show( this,
-                   tr( "Track Robot" ),
-                   tr( "Error - One of the camera positions is invalid!" ),
-                   Message::Severity_Critical );
-}
-
-void TrackRobotToolWidget::ShowMissingCameraError(const QString& cameraPosDisplayName)
-{
-    Message::Show( this,
-                   tr( "Track Robot" ),
-                   tr( "Camera position %1 is missing camera!" )
-                     .arg(cameraPosDisplayName),
-                   Message::Severity_Critical );
-}
-
 const KeyId TrackRobotToolWidget::GetRoomIdToCapture() const
 {
-    const WbConfig capturedVideosConfig( GetCurrentConfig() );
-    const WbConfig runConfig( capturedVideosConfig.GetParent() );
+    const WbConfig trackRobotConfig( GetCurrentConfig() );
+    const WbConfig runConfig( trackRobotConfig.GetParent() );
     const KeyId roomIdToCapture( runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId() );
 
     return roomIdToCapture;
@@ -617,6 +612,37 @@ void TrackRobotToolWidget::AddTableRow( const QString& roomPosition, const QStri
     videoSpinBox->addItems( videoFileNames );
 
     m_ui->m_videoTable->setCellWidget( newAppendedRow, FILE_COLUMN, videoSpinBox );
+}
+
+bool TrackRobotToolWidget::IsDataValid() const
+{
+    if (GetCurrentConfig().IsNull()) return true;
+
+    bool valid = true;
+
+    valid = valid && !(GetRoomIdToCapture().isEmpty());
+
+    valid = valid &&
+             !(m_ui->m_robotCombo->currentText().isEmpty());
+
+    valid = valid &&
+             !(m_ui->m_nccThresholdSpinBox->value() == 0.0);
+    valid = valid &&
+             !(m_ui->m_resolutionSpinBox->value() == 0);
+    valid = valid &&
+             !(m_ui->m_trackerThresholdSpinBox->value() == 0);
+
+    return valid;
+}
+
+bool TrackRobotToolWidget::CanClose() const
+{
+    return IsDataValid();
+}
+
+const QString TrackRobotToolWidget::CannotCloseReason() const
+{
+    return tr("Please complete data before leaving tab.");
 }
 
 const WbSchema TrackRobotToolWidget::CreateSchema()
@@ -813,6 +839,12 @@ void TrackRobotToolWidget::TrackLoadButtonClicked()
     const WbConfig& config = GetCurrentConfig();
 
     LOG_TRACE("Track Load...");
+
+    const KeyId roomIdToCapture(GetRoomIdToCapture());
+    if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
+
+    const QStringList cameraPositionIds(GetCameraPositionIds(roomIdToCapture));
+    if (cameraPositionIds.size() == 0) { ShowEmptyRoomError(); return; }
 
     const WbConfig runConfig( config.GetParent() );
 

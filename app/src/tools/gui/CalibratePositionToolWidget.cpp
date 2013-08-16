@@ -105,6 +105,23 @@ CalibratePositionToolWidget::~CalibratePositionToolWidget()
     delete m_ui;
 }
 
+void CalibratePositionToolWidget::ShowNoCameraError()
+{
+    Message::Show( this,
+                   tr( "Calibrate Position" ),
+                   tr( "Error - There is no camera selected!" ),
+                   Message::Severity_Critical );
+}
+
+const KeyId CalibratePositionToolWidget::GetCameraIdToCapture() const
+{
+    const WbConfig calibratePositionConfig( GetCurrentConfig() );
+    const WbConfig aConfig( calibratePositionConfig.GetParent() );
+    const KeyId cameraIdToCapture( aConfig.GetKeyValue( CameraPositionSchema::cameraIdKey ).ToKeyId() );
+
+    return cameraIdToCapture;
+}
+
 ImageView* const CalibratePositionToolWidget::GetStreamingView( const QSize& imageSize )
 {
     Q_UNUSED(imageSize);
@@ -215,10 +232,10 @@ void CalibratePositionToolWidget::CaptureLiveBtnClicked()
     Collection camerasCollection( CamerasCollection() );
     camerasCollection.SetConfig( GetCurrentConfig() );
 
-    const KeyId cameraId( GetCurrentConfig().GetParent()
-                          .GetKeyValue( CameraPositionSchema::cameraIdKey ).ToQString() );
+    const KeyId cameraIdToCapture(GetCameraIdToCapture());
+    if (cameraIdToCapture.isEmpty()) { ShowNoCameraError(); return; }
 
-    const WbConfig cameraConfig( camerasCollection.ElementById( cameraId ) );
+    const WbConfig cameraConfig( camerasCollection.ElementById( cameraIdToCapture ) );
 
      const QString newFileNameFormat(
          GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImage/Calib%1.png" ) );
@@ -291,11 +308,11 @@ const WbSchema CalibratePositionToolWidget::CreateSchema()
                                       << gridRowsKey
                                       << gridColumnsKey,
                         DefaultValueMap().WithDefault( gridSquareSizeInCmKey,
-                                                       KeyValue::from( 10.0 ) )
+                                                       KeyValue::from( 0.0 ) )
                                          .WithDefault( gridRowsKey,
-                                                       KeyValue::from( 6 ) )
+                                                       KeyValue::from( 0 ) )
                                          .WithDefault( gridColumnsKey,
-                                                       KeyValue::from( 9 ) ) );
+                                                       KeyValue::from( 0 ) ) );
 
     schema.AddSingleValueKey( calibrationImageKey, WbSchemaElement::Multiplicity::One );
 
@@ -316,6 +333,8 @@ bool CalibratePositionToolWidget::IsDataValid() const
     if (GetCurrentConfig().IsNull()) return true;
 
     bool valid = true;
+
+    valid = valid && !(GetCameraIdToCapture().isEmpty());
 
     valid = valid &&
              !(m_ui->m_gridSquareSizeSpinBox->value() == 0.0);

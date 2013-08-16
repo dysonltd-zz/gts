@@ -614,19 +614,25 @@ void CaptureVideoToolWidget::AddLiveVideo( const CameraDescription& chosenCamera
     }
 }
 
+bool CaptureVideoToolWidget::IsDataValid() const
+{
+    if (GetCurrentConfig().IsNull()) return true;
+
+    bool valid = true;
+
+    valid = valid && !(GetRoomIdToCapture().isEmpty());
+
+    return valid;
+}
+
 bool CaptureVideoToolWidget::CanClose() const
 {
-    if ( AnyViewIsRecording() )
-    {
-        return false;
-    }
-
-    return Tool::CanClose();
+    return IsDataValid() && !AnyViewIsRecording();
 }
 
 const QString CaptureVideoToolWidget::CannotCloseReason() const
 {
-    return tr("The video is currently being recorded. Please stop recording before switching tabs.");
+    return tr("Please complete data or capture before leaving tab.");
 }
 
 const WbSchema CaptureVideoToolWidget::CreateSchema()

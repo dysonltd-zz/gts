@@ -91,11 +91,6 @@ CreateFloorMaskToolWidget::~CreateFloorMaskToolWidget()
     delete m_ui;
 }
 
-const QString CreateFloorMaskToolWidget::Name() const
-{
-    return tr( "Create Floor Mask" );
-}
-
 QWidget* CreateFloorMaskToolWidget::Widget()
 {
     return this;

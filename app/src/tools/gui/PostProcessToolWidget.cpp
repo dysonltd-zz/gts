@@ -98,6 +98,27 @@ const QString PostProcessToolWidget::GetSubSchemaDefaultFileName() const
     return "postProcess.xml";
 }
 
+bool PostProcessToolWidget::IsDataValid() const
+{
+    if (GetCurrentConfig().IsNull()) return true;
+
+    bool valid = true;
+
+    valid = valid && !(GetRoomIdToCapture().isEmpty());
+
+    return valid;
+}
+
+bool PostProcessToolWidget::CanClose() const
+{
+    return IsDataValid();
+}
+
+const QString PostProcessToolWidget::CannotCloseReason() const
+{
+    return tr("Please complete data before leaving tab.");
+}
+
 const WbSchema PostProcessToolWidget::CreateSchema()
 {
     WbSchema schema( CreateWorkbenchSubSchema( KeyName( "postProcessing" ), tr( "Post Processing" ) ) );
@@ -105,9 +126,34 @@ const WbSchema PostProcessToolWidget::CreateSchema()
     return schema;
 }
 
+void PostProcessToolWidget::ShowNoRoomError()
+{
+    Message::Show( this,
+                   tr( "Post Process" ),
+                   tr( "Error - There is no room selected!" ),
+                   Message::Severity_Critical );
+}
+
+
+const KeyId PostProcessToolWidget::GetRoomIdToCapture() const
+{
+    const WbConfig postProcessConfig( GetCurrentConfig() );
+    const WbConfig runConfig( postProcessConfig.GetParent() );
+    const KeyId roomIdToCapture( runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId() );
+
+    return roomIdToCapture;
+}
+
 void PostProcessToolWidget::LoadDataButtonClicked()
 {
-    const WbConfig runConfig( GetCurrentConfig().GetParent() );
+    const WbConfig& config = GetCurrentConfig();
+
+    LOG_TRACE("Post Prcoess Load...");
+
+    const KeyId roomIdToCapture(GetRoomIdToCapture());
+    if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
+
+    const WbConfig runConfig( config.GetParent() );
 
      const QString fileName(
          runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.csv" ) );

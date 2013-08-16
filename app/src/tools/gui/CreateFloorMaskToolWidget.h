@@ -44,7 +44,7 @@ public:
     explicit CreateFloorMaskToolWidget( QWidget* parent = 0 );
     virtual ~CreateFloorMaskToolWidget();
 
-    virtual const QString Name() const;
+    virtual const QString Name() const { return tr( "Create Floor Mask" ); }
     virtual QWidget* Widget();
 
 private:

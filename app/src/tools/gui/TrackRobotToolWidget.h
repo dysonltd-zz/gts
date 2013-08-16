@@ -53,6 +53,8 @@ public:
     ~TrackRobotToolWidget();
 
     virtual const QString Name() const { return tr( "Track Robot" ); }
+    virtual bool CanClose() const;
+    virtual const QString CannotCloseReason() const;
 
     void ReloadCurrentConfigToolSpecific();
 
@@ -96,8 +98,6 @@ private:
 
     void ShowNoRoomError();
     void ShowEmptyRoomError();
-    void ShowNullCameraPosError();
-    void ShowMissingCameraError(const QString& cameraPosDisplayName);
 
     virtual const QString GetSubSchemaDefaultFileName() const;
 
@@ -107,6 +107,8 @@ private:
     void PopulateCameraParams();
 
     const WbSchema CreateSchema();
+
+    bool IsDataValid() const;
 
     bool CreateRunResultDirectory(const WbConfig& config);
 

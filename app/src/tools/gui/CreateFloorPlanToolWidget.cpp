@@ -332,11 +332,6 @@ CreateFloorPlanToolWidget::~CreateFloorPlanToolWidget()
     delete m_ui;
 }
 
-const QString CreateFloorPlanToolWidget::Name() const
-{
-    return tr( "Create Floor Plan" );
-}
-
 QWidget* CreateFloorPlanToolWidget::Widget()
 {
     return this;
@@ -427,9 +422,9 @@ const WbSchema CreateFloorPlanToolWidget::CreateSchema()
                                  KeyNameList() << calGridRowsKey
                                                << calGridColsKey,
                                  DefaultValueMap().WithDefault( calGridRowsKey,
-                                                                KeyValue::from( 4 ) )
+                                                                KeyValue::from( 0 ) )
                                                   .WithDefault( calGridColsKey,
-                                                                KeyValue::from( 6 ) ) );
+                                                                KeyValue::from( 0 ) ) );
 
     floorPlanSchema.AddKeyGroup( mappingGroup,
                                  WbSchemaElement::Multiplicity::One,
@@ -1405,6 +1400,8 @@ void CreateFloorPlanToolWidget::FromFileBtnClicked()
 
             m_ui->btnRotate->setEnabled(true);
             m_ui->btnMatch->setEnabled(true);
+
+            m_ui->btnCancel->setEnabled(true);
 
             m_rotAngle = 0;
         }

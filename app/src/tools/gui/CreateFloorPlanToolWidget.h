@@ -51,7 +51,7 @@ public:
                                         QWidget* parent = 0 );
     virtual ~CreateFloorPlanToolWidget();
 
-    virtual const QString Name() const;
+    virtual const QString Name() const { return tr( "Create Floor Plan" ); }
     virtual QWidget* Widget();
 
 private:
