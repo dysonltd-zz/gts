@@ -43,7 +43,7 @@ class VideoSequence;
 class ImageView;
 class ImageGrid;
 
-class TrackRobotToolWidget;
+class TrackRobotWidget;
 
 /**
     GtsView - Ground-Truth-System View.
@@ -87,7 +87,7 @@ public:
                      float shutter,
                      float gain );
 
-    void SetupView( TrackRobotToolWidget* tool, ImageGrid* imageGrid );
+    void SetupView( TrackRobotWidget* tool, ImageGrid* imageGrid );
 
     void SetTrackerParam( RobotTracker::paramType param, float value );
 
@@ -156,7 +156,7 @@ private:
 	std::string           m_trackView;
     std::string           m_aviView;
 
-    TrackRobotToolWidget* m_tool;
+    TrackRobotWidget* m_tool;
 
     // make uncopyable
     GtsView(const GtsView&);

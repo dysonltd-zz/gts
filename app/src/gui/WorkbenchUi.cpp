@@ -20,10 +20,15 @@
 
 #include "ui_WorkbenchUi.h"
 
+#include "PositionCollectionTool.h"
+#include "TargetCollectionTool.h"
+#include "CameraCollectionTool.h"
+#include "RoomCollectionTool.h"
+#include "RobotCollectionTool.h"
+#include "RunCollectionTool.h"
+#include "AnalysisTool.h"
+
 #include "CameraHardware.h"
-#include "ConfigureRobotToolWidget.h"
-#include "CaptureRunToolWidget.h"
-#include "AnalysisToolWidget.h"
 #include "Workbench.h"
 #include "WbDefaultKeys.h"
 #include "Message.h"
@@ -31,10 +36,6 @@
 #include "MainWindow.h"
 #include "ToolTabsContainerWidget.h"
 #include "ScopedQtSignalsBlocker.h"
-#include "SetUpCameraPositionsToolWidget.h"
-#include "TargetCollectionToolWidget.h"
-#include "CameraCollectionToolWidget.h"
-#include "RoomCollectionToolWidget.h"
 #include "XmlConfigFileReader.h"
 
 #include "Debugging.h"
@@ -305,15 +306,15 @@ void WorkbenchUi::CreateToolTabs( MainWindow& mainWindow )
 
 void WorkbenchUi::CreateTools( MainWindow& mainWindow )
 {
-    m_toolTabs->AddTool( new TargetCollectionToolWidget ( this, mainWindow ) );
-    m_toolTabs->AddTool( new ConfigureRobotToolWidget  ( this, mainWindow ) );
-    m_toolTabs->AddTool( new CameraCollectionToolWidget( *m_cameraHardware, this, mainWindow ) );
-    m_toolTabs->AddTool( new SetUpCameraPositionsToolWidget( *m_cameraHardware,
-                                                             this,
-                                                             mainWindow ) );
-    m_toolTabs->AddTool( new RoomCollectionToolWidget ( *m_cameraHardware, this, mainWindow ) );
-    m_toolTabs->AddTool( new CaptureRunToolWidget     ( *m_cameraHardware, this, mainWindow ) );
-    m_toolTabs->AddTool( new AnalysisToolWidget ( this, mainWindow ) );
+    m_toolTabs->AddTool( new TargetCollectionTool ( this, mainWindow ) );
+    m_toolTabs->AddTool( new RobotCollectionTool  ( this, mainWindow ) );
+    m_toolTabs->AddTool( new CameraCollectionTool( *m_cameraHardware, this, mainWindow ) );
+    m_toolTabs->AddTool( new PositionCollectionTool( *m_cameraHardware,
+                                                     this,
+                                                     mainWindow ) );
+    m_toolTabs->AddTool( new RoomCollectionTool ( *m_cameraHardware, this, mainWindow ) );
+    m_toolTabs->AddTool( new RunCollectionTool ( *m_cameraHardware, this, mainWindow ) );
+    m_toolTabs->AddTool( new AnalysisTool ( this, mainWindow ) );
 }
 
 void WorkbenchUi::Reload( const bool updateWorkbench )

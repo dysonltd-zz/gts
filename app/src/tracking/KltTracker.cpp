@@ -305,7 +305,9 @@ bool KltTracker::Track( double timestampInMillisecs, bool flipCorrect, bool init
 
         // If we found a good track and the 2nd stage was a success then store the result
         const float error = GetError();
+#if !defined(__MINGW32__) && !defined(_MSC_VER)
         assert( std::isnan(error) == false );
+#endif
         assert( error >= -1.0 );
         assert( error <= 1.0 );
         m_history.push_back( TrackEntry( GetPosition(), GetHeading(), GetError(), timestampInMillisecs, warpGradient ) );

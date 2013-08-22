@@ -34,7 +34,7 @@
 
 class ImageGrid;
 
-class TrackRobotToolWidget;
+class TrackRobotWidget;
 
 /**
     GtsScene: Ground-Truth-System Scene.
@@ -64,7 +64,7 @@ public:
 
     unsigned int GetNumMaxCameras() const { return GtsScene::kMaxCameras; }
 
-    void SetupViewWindows( TrackRobotToolWidget* tool, ImageGrid* imageGrid );
+    void SetupViewWindows( TrackRobotWidget* tool, ImageGrid* imageGrid );
     void DestroyViewWindows( ImageGrid* imageGrid );
 
     struct TrackStatus
@@ -79,7 +79,7 @@ public:
 
     TrackStatus StepTrackers( const bool forward, const bool seek );
 
-    void SetupThread( TrackRobotToolWidget* tool );
+    void SetupThread( TrackRobotWidget* tool );
     void StartThread( double rate, bool trackingActive = true,
                                    bool singleStep = false,
                                    bool runForward = true );

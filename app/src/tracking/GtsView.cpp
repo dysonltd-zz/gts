@@ -34,7 +34,7 @@
 #include "CalibrationSchema.h"
 #include "ExtrinsicCalibrationSchema.h"
 
-#include "TrackRobotToolWidget.h"
+#include "TrackRobotWidget.h"
 
 #include "Logging.h"
 
@@ -565,7 +565,7 @@ void GtsView::SetTrackerParam( RobotTracker::paramType param, float value )
     }
 }
 
-void GtsView::SetupView( TrackRobotToolWidget* tool, ImageGrid* imageGrid )
+void GtsView::SetupView( TrackRobotWidget* tool, ImageGrid* imageGrid )
 {
     m_tool = tool;
 
