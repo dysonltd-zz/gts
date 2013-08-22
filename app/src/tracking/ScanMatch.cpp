@@ -531,10 +531,11 @@ namespace ScanMatch
                 )
             {
                 // create associated point by interpolation
+                assert( e_idx < l_idx );
                 float w = l_dt / (l_dt-e_dt);
                 assert( w >= 0.0 );
                 assert( w <= 1.0 );
-                TrackEntry assoc = TrackHistory::InterpolateEntries( b1[e_idx], b1[l_idx], w );
+                TrackEntry assoc = TrackHistory::InterpolateEntries( b1[l_idx],b1[e_idx], w );
 
                 // Now average interpolated point with point from a1
                 // (but weight the average based weighting functions)

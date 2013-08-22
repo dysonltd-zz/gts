@@ -440,9 +440,19 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
             {
                 TrackHistory::TrackLog tmpLog;
 
-                ScanMatch::ScanAverage( avg, m_logPx[i], 7.5f, tmpLog );
-
-                avg = tmpLog;
+                if ( avg.empty() )
+                {
+                    avg = m_logPx[i];
+                }
+                else if ( m_logPx[i].empty() )
+                {
+                    // just continue
+                }
+                else
+                {
+                    ScanMatch::ScanAverage( avg, m_logPx[i], 7.5f, tmpLog );
+                    avg = tmpLog;
+                }
             }
         }
     }

@@ -194,14 +194,16 @@ namespace CrossCorrelation
         const char* pEnd2 = pStart2 + ( ww * c2 );
 
         // compute weighted means
-        unsigned int mean1 = 0;
-        unsigned int mean2 = 0;
-        unsigned int count = 0;
+        double mean1 = 0.0;
+        double mean2 = 0.0;
+        double wsum = 0.0;
+
         float ry, ry2;
         float rx, r;
         float w;
-        float wsum = 0.f;
-        float radius = .25f*(ww+wh-1);
+        float windowDiagonal = sqrtf(ww*ww + wh*wh);
+        float radius = windowDiagonal*0.4f;
+
         for ( int y=0 ; y<wh; ++y )
         {
             const char* pImg1 = pStart1;
@@ -223,7 +225,6 @@ namespace CrossCorrelation
 
                 mean1 += w*val1;
                 mean2 += w*val2;
-                count++;
             }
 
             pStart1 += step1;
@@ -231,9 +232,6 @@ namespace CrossCorrelation
             pEnd1 += step1;
             pEnd2 += step2;
         }
-
-        /// @todo Check this, it means are integers
-        /// so bizarre that truncation happens here.
 
         mean1 /= wsum;
         mean2 /= wsum;
@@ -246,9 +244,9 @@ namespace CrossCorrelation
         pEnd2 = pStart2 + ( ww * c2 );
 
         // Compute cross-correlation
-        int corr = 0;
-        unsigned int sq1 = 0;
-        unsigned int sq2 = 0;
+        double corr = 0.0;
+        double sq1  = 0.0;
+        double sq2  = 0.0;
         for ( int y=0; y < wh; ++y )
         {
             const char* pImg1 = pStart1;
@@ -269,9 +267,9 @@ namespace CrossCorrelation
                 int diff1 = val1 - mean1;
                 int diff2 = val2 - mean2;
 
-                corr+= w*diff1*diff2;
-                sq1 += w*diff1*diff1;
-                sq2 += w*diff2*diff2;
+                corr += w*w*diff1*diff2;
+                sq1  += w*w*diff1*diff1;
+                sq2  += w*w*diff2*diff2;
             }
 
             pEnd1 += step1;
@@ -281,9 +279,9 @@ namespace CrossCorrelation
         }
 
         // compute and return normalised cross correlation
-        float denom = sqrtf( sq1 ) * sqrtf( sq2 );
-
-        return corr/denom;
+        float denom = sqrtf( sq1 * sq2 );
+        float ncc = corr/denom;
+        return ncc;
     }
 
     /**

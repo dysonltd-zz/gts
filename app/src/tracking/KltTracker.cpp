@@ -305,11 +305,13 @@ bool KltTracker::Track( double timestampInMillisecs, bool flipCorrect, bool init
 
         // If we found a good track and the 2nd stage was a success then store the result
         const float error = GetError();
+
 #if !defined(__MINGW32__) && !defined(_MSC_VER)
         assert( std::isnan(error) == false );
 #endif
-        assert( error >= -1.0 );
-        assert( error <= 1.0 );
+        //assert( error >= -1.0 );
+        //assert( error <= 1.0 );
+
         m_history.push_back( TrackEntry( GetPosition(), GetHeading(), GetError(), timestampInMillisecs, warpGradient ) );
 
         return true;
@@ -388,6 +390,8 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
     // with current image
     float ncc1 = CrossCorrelation::Ncc2dRadial( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, newPos.x, newPos.y, 2 * r, 2 * r );
 
+    //cvSaveImage( "appearance1.png", m_appearanceImg );
+
     // Predict again with opposite orientation so we can disambiguate heading
     PredictTargetAppearance( 180 );
     cvCalcOpticalFlowPyrLK( m_appearanceImg,
@@ -404,13 +408,15 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
                             cvTermCriteria( CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03 ),
                             kltFlags );
 
+    //cvSaveImage( "appearance2.png", m_appearanceImg );
+
     // Compute tracker error using normalised-cross-correlation
-    float ncc2 = CrossCorrelation::Ncc2dRadial( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, newPos.x, newPos.y, 2 * r, 2 * r );
+    float ncc2 = CrossCorrelation::Ncc2dRadial( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, newPos2.x, newPos2.y, 2 * r, 2 * r );
 
     if (found1)
     {
         // if both KLTs were successful then we chose between them based on the errors.
-        if (!found2 || (error1 < error2))
+        if (!found2 || (ncc1 > ncc2))
         {
             m_pos = newPos;
             m_error = ncc1;
@@ -419,7 +425,7 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
     if (found2)
     {
         // if both KLTs were successful then we chose between them based on the errors.
-        if (!found1 || (error2 <= error1))
+        if (!found1 || (ncc2 >= ncc1))
         {
             m_pos = newPos2;
             m_angle += MathsConstants::F_PI;
