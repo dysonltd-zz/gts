@@ -125,7 +125,8 @@ public:
 
 
 private:
-    float flipCorrection( float angle, float oldAngle );
+    bool HasFlipped( float angle, float oldAngle, float threshold );
+    void SaveResult( const CvPoint2D32f& pos, const float angle, const float error );
 
     void SetLost()
     {
@@ -177,7 +178,7 @@ private:
     void ReleasePyramids();
     void SwapPyramids();
 
-    void PredictTargetAppearance( float offsetAngle = 0.f );
+    void PredictTargetAppearance( float angleInRadians, float offsetAngleDegrees );
     bool TrackStage2( CvPoint2D32f initialPosition, bool flipCorrect, bool init );
 
     void InitialiseRecoverySystem();
