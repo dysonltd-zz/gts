@@ -352,11 +352,10 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
     m_pos = newPos;
 
     float oldAngle = m_angle;
-
-    m_angle = ComputeHeading( m_pos );
+    float newAngle = ComputeHeading( m_pos );
 
     // Use heading to predict appearance
-    PredictTargetAppearance( 0 );
+    PredictTargetAppearance( newAngle, 0 );
 
     float error1;
     float error2;
@@ -393,7 +392,7 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
     //cvSaveImage( "appearance1.png", m_appearanceImg );
 
     // Predict again with opposite orientation so we can disambiguate heading
-    PredictTargetAppearance( 180 );
+    PredictTargetAppearance( newAngle, 180 );
     cvCalcOpticalFlowPyrLK( m_appearanceImg,
                             m_currImg,
                             0,
@@ -413,13 +412,14 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
     // Compute tracker error using normalised-cross-correlation
     float ncc2 = CrossCorrelation::Ncc2dRadial( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, newPos2.x, newPos2.y, 2 * r, 2 * r );
 
+    int appearanceModelChosen = 0;
     if (found1)
     {
         // if both KLTs were successful then we chose between them based on the errors.
         if (!found2 || (ncc1 > ncc2))
         {
-            m_pos = newPos;
-            m_error = ncc1;
+            SaveResult( newPos, newAngle, ncc1 );
+            appearanceModelChosen = 1;
         }
     }
     if (found2)
@@ -427,19 +427,34 @@ bool KltTracker::TrackStage2( CvPoint2D32f newPos, bool flipCorrect, bool init )
         // if both KLTs were successful then we chose between them based on the errors.
         if (!found1 || (ncc2 >= ncc1))
         {
-            m_pos = newPos2;
-            m_angle += MathsConstants::F_PI;
-            m_error = ncc2;
+            newAngle += MathsConstants::F_PI;
+            SaveResult( newPos2, newAngle, ncc2 );
+            appearanceModelChosen = 2;
         }
     }
 
     if (found1 || found2)
     {
-        m_angle = Angles::NormAngle(m_angle); // puts angle in range -pi to pi
+        newAngle = Angles::NormAngle( newAngle ); // puts angle in range -pi to pi
+        oldAngle -=  m_metrics->GetTargetRotationRad();
+        oldAngle = Angles::NormAngle( oldAngle );
 
-        if (flipCorrect)
+        if ( flipCorrect )
         {
-            m_angle = flipCorrection(m_angle, oldAngle);
+            if ( HasFlipped( newAngle, oldAngle, 1.6 ) )
+            {
+                // Switch the choice of appearance model:
+                if ( appearanceModelChosen  == 1 )
+                {
+                    SaveResult( newPos2, newAngle + MathsConstants::F_PI, ncc2 );
+                }
+                else
+                {
+                    SaveResult( newPos, newAngle - MathsConstants::F_PI, ncc1 );
+                }
+
+                m_angle = Angles::NormAngle( m_angle ); // puts angle in range -pi to pi
+            }
         }
 
         m_angle += m_metrics->GetTargetRotationRad();
@@ -632,14 +647,12 @@ bool KltTracker::LoadTargetImage( const char* targetFilename )
  Angular offset parameter allows us to test different
  orientation hypothesis.
  **/
-void KltTracker::PredictTargetAppearance( float offsetAngle )
+void KltTracker::PredictTargetAppearance( float angleInRadians, float offsetAngleDegrees )
 {
     if ( !m_targetImg )
         return;
 
-    float angle = GetHeading();
-
-    angle = (float)((180 + MathsConstants::R2D * angle) + offsetAngle);
+    float angle = (float)((180 + MathsConstants::R2D * angleInRadians) + offsetAngleDegrees);
 
     int smoothing = 5;
     assert( smoothing % 2 ); // smoothing parameter must be odd
@@ -790,21 +803,23 @@ void KltTracker::TargetSearch( const IplImage* mask )
 /**
  Resolve ambiguity in tracked orientation by comparing old and new robot angles.
  **/
-float KltTracker::flipCorrection( float angle, float oldAngle )
+bool KltTracker::HasFlipped( float angle, float oldAngle, float threshold )
 {
     float diff = Angles::DiffAngle( angle, oldAngle );
 
-    if ( diff > 2.f )
+    if ( fabsf(diff) > threshold )
     {
-        angle -= MathsConstants::F_PI;
+        return true;
     }
-    if ( diff < -2.f )
-    {
-        angle += MathsConstants::F_PI;
-    }
-    angle = Angles::NormAngle( angle );
 
-    return angle;
+    return false;
+}
+
+void KltTracker::SaveResult( const CvPoint2D32f& pos, const float angle, const float error )
+{
+    m_pos = pos;
+    m_angle = angle;
+    m_error = error;
 }
 
 void KltTracker::SetParam( paramType param, float value )
