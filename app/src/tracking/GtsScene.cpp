@@ -33,7 +33,7 @@
 #include "FloorPlanSchema.h"
 #include "TargetSchema.h"
 
-#include "TrackRobotToolWidget.h"
+#include "TrackRobotWidget.h"
 
 #include "FileUtilities.h"
 
@@ -213,7 +213,7 @@ bool GtsScene::LoadCameraConfig( const KeyId               camPosId,
  Create OpenCV named windows for displaying tracker results.
  Also setup mouse call backs for each window.
  **/
-void GtsScene::SetupViewWindows( TrackRobotToolWidget* tool, ImageGrid* imageGrid )
+void GtsScene::SetupViewWindows( TrackRobotWidget* tool, ImageGrid* imageGrid )
 {
     for ( unsigned int i = 0; i < GetNumMaxCameras(); ++i )
     {
@@ -296,7 +296,7 @@ GtsScene::TrackStatus GtsScene::StepTrackers( const bool forward, const bool see
     return status;
 }
 
-void GtsScene::SetupThread( TrackRobotToolWidget* tool )
+void GtsScene::SetupThread( TrackRobotWidget* tool )
 {
     m_thread = new TrackThread( *this );
 

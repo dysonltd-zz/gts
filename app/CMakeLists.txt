@@ -19,7 +19,7 @@ endif()
 
 set(CMAKE_INCLUDE_DIRECTORIES_BEFORE ON)
 
-find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED )
+find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml QtSvg REQUIRED )
 
 find_package(OpenCV COMPONENTS opencv_calib3d
                                opencv_contrib
@@ -41,6 +41,7 @@ if(UNIX)
 endif()
 
 add_subdirectory(lib/log4qt)
+add_subdirectory(lib/qwt-6.1.0)
 
 # ----------------------------------------------------------------------------
 #  Files
@@ -50,17 +51,23 @@ set(GTS_INCLS src/main
               src/gui
               src/hardware
               src/misc
+              src/tools
               src/tools/algorithms
               src/tools/algorithms/extrinsic
               src/tools/algorithms/intrinsic
-              src/tools/gui
+              src/tools/core
+              src/tools/core/components
+              src/tools/core/mappers
+              src/tools/core/tabs
               src/tools/schema
               src/tracking
+              src/video
               src/video/input
               src/video/input/fake
               src/video/output
               src/workbench
-              lib/log4qt/src)
+              lib/log4qt/src
+              lib/qwt-6.1.0/src)
 
 # add platform specific camera apis
 if(MINGW)
@@ -176,11 +183,11 @@ else()
 endif()
 
 if(MINGW)
-    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt )
+    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt Qwt )
 elseif(MSVC)
-    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt strmiids.lib )
+    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt Qwt strmiids.lib )
 elseif(UNIX)
-    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt )
+    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt Qwt )
 endif()
 
 # ----------------------------------------------------------------------------
@@ -219,12 +226,12 @@ if(GTS_TESTS)
     add_executable( gts_test ${GTS_TEST_SOURCES} ${GTS_TEST_MOC_SRCS} ${GTS_TESTED_UI_SRCS} ${GTS_TESTED_MOC_SRCS} ${GTS_TESTED_SRCS} ${GTS_TESTED_SRCS_PLATFORM} )
 
     if(MINGW)
-        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt gtest )
+        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt Qwt gtest )
     elseif(MSVC)
         link_directories( ${gtest_BINARY_DIR} )
-        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt gtest strmiids.lib )
+        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt Qwt gtest strmiids.lib )
     elseif(UNIX)
-        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt gtest )
+        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt Qwt gtest )
     endif()
 
 endif()

@@ -79,6 +79,7 @@ install( FILES "${QT_LIBRARY_DIR}/../bin/QtCore4.dll"
                "${QT_LIBRARY_DIR}/../bin/QtXml4.dll"
                "${QT_LIBRARY_DIR}/../bin/QtHelp4.dll"
                "${QT_LIBRARY_DIR}/../bin/QtSql4.dll"
+               "${QT_LIBRARY_DIR}/../bin/QtSvg4.dll"
                "${QT_LIBRARY_DIR}/../bin/QtNetwork4.dll"
                "${QT_LIBRARY_DIR}/../bin/QtCLucene4.dll"
                "${QT_LIBRARY_DIR}/../bin/QtWebkit4.dll"
@@ -146,7 +147,7 @@ set( CPACK_PACKAGE_VENDOR "Ground Truth System" )
 set( CPACK_PACKAGE_DESCRIPTION_SUMMARY "GTS - Ground Truth System" )
 set( CPACK_PACKAGE_VERSION_MAJOR "0" )
 set( CPACK_PACKAGE_VERSION_MINOR "3" )
-set( CPACK_PACKAGE_VERSION_PATCH "1" )
+set( CPACK_PACKAGE_VERSION_PATCH "3" )
 set( CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}" )
 set( CPACK_PACKAGE_INSTALL_DIRECTORY "GTS" )
 

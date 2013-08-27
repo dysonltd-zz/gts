@@ -198,6 +198,7 @@ namespace TrackHistory
         {
             log.clear();
 
+            // Skip headders...
             FileUtilities::LineSkip(fp);
 
             while (!feof(fp))
@@ -210,7 +211,7 @@ namespace TrackHistory
                     LOG_ERROR(QObject::tr("Unexpected data (%1) in log %2!").arg(cnt).arg(filename));
                 }
 
-                log.push_back( TrackEntry( cvPoint2D32f(x,y), th, e, t, w ) );
+                log.push_back( TrackEntry( cvPoint2D32f(x,y), th*MathsConstants::F_D2R, e, t, w ) );
             }
 
             fclose(fp);
