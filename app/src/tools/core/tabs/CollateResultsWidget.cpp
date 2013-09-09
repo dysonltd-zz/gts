@@ -16,13 +16,13 @@
  *
  */
 
+#include "CoverageMetrics.h"
+
 #include "CollateResultsWidget.h"
 
 #include "ui_CollateResultsWidget.h"
 
 #include "UnknownLengthProgressDlg.h"
-
-#include "CoverageMetrics.h"
 
 #include "Collection.h"
 #include "RunsCollection.h"
@@ -480,7 +480,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     OpenCvTools::DrawColouredOverlay( floorPlanImg,
                                       totalCoverageImg,
                                       CV_RGB(0,255,0),
-                                      std::bind2nd(std::greater_equal<int>(), RunEntry::MAX_LEVEL) );
+                                      std::bind2nd(std::greater_equal<int>(), RunEntry::GetMaxLevel() ) );
 
     // Clean up...
     if ( f ) { fclose( f ); }

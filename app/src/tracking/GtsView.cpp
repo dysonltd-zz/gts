@@ -500,10 +500,13 @@ void GtsView::StepTracker( bool forward, CoverageSystem* coverage )
         if ( m_timestamps.size() > 0 )
         {
             unsigned int frame = m_sequencer->GetFrameIndex() - 1;
+            std::cerr << "frame index := " << frame << std::endl;
             assert( frame < m_timestamps.size() );
             timespec t = m_timestamps[frame];
+            std::cerr << "timestamp from file := " << t.tv_sec << " " << t.tv_nsec << std::endl;
             videoTimeStampInMillisecs = t.tv_sec * 1000.0;
             videoTimeStampInMillisecs += t.tv_nsec * 0.000001;
+            fprintf(stderr, "timestamp := %g\n", videoTimeStampInMillisecs );
         }
         else
         {

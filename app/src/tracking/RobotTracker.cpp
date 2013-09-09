@@ -164,7 +164,7 @@ void RobotTracker::ConvertLogForProcessing( TrackHistory::TrackLog& newlog, bool
                 p.y = (sina*x) + (cosa*y);
 
                 float o = history[i].GetOrientation() - oStart;
-                float t = history[i].GetTimeStamp()/1000.0;
+                double t = history[i].GetTimeStamp()/1000.0; // convert timestamp from millisecs to secs
 
                 // save conversion into the new log
                 newlog[i] = TrackEntry( p, o, history[i].GetError(), t, history[i].wgm() );
