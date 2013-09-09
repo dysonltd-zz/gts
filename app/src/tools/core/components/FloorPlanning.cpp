@@ -181,8 +181,6 @@ bool CheckMappingIsComplete(WbConfig config)
 {
     bool allMapped = true;
 
-    //WbConfig config = GetCurrentConfig();
-
     // for each camera,
     //    for each mapping,
     //       if camera1 = camera OR camera2 = camera
@@ -229,11 +227,57 @@ bool CheckMappingIsComplete(WbConfig config)
     return allMapped;
 }
 
+bool IsBase(WbConfig config, KeyId camId)
+{
+    //  for each mapping,
+    //    if camera1 == camera
+    //      base = true
+
+    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
+
+    bool base = false;
+
+    for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
+    {
+        const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
+
+        if (camId == camera1Id)
+        {
+            base = true;
+            break;
+        }
+    }
+
+    return base;
+}
+
+bool IsRef(WbConfig config, KeyId camId)
+{
+    //  for each mapping,
+    //    if camera2 == camera
+    //      ref = true
+
+    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
+
+    bool ref = false;
+
+    for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
+    {
+        const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
+
+        if (camId == camera2Id)
+        {
+            ref = true;
+            break;
+        }
+    }
+
+    return ref;
+}
+
 std::vector<KeyId> FindRoot(WbConfig config)
 {
     std::vector<KeyId> rootCamera;
-
-    //WbConfig config = GetCurrentConfig();
 
     // for each camera,
     //    for each mapping,
@@ -267,7 +311,7 @@ std::vector<KeyId> FindRoot(WbConfig config)
             }
         }
 
-        if (root)
+        if (root && IsBase(config, camPosId))
         {
             rootCamera.push_back(camPosId);
         }
@@ -278,8 +322,6 @@ std::vector<KeyId> FindRoot(WbConfig config)
 
 std::vector<KeyId> FindChain(WbConfig config, KeyId camId, KeyId rootId, std::vector<KeyId> mappingChain)
 {
-    //WbConfig config = GetCurrentConfig();
-
     const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
 
     for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
@@ -325,8 +367,6 @@ bool CheckRootMapping(WbConfig config, KeyId rootId)
 {
     bool allMapped = true;
 
-    //WbConfig config = GetCurrentConfig();
-
     // for each camera in root,
     //   for each camera
     //      if camera /= root
@@ -348,7 +388,7 @@ bool CheckRootMapping(WbConfig config, KeyId rootId)
     {
         const KeyId camPosId = cameraPositionIds.at( n );
 
-        if (camPosId != rootId)
+        if ((camPosId != rootId) && IsRef(config, camPosId))
         {
             LOG_INFO(QObject::tr("Find chain for %1 - %2.").arg(camPosId)
                                                            .arg(rootId));
@@ -370,8 +410,6 @@ bool CheckRootMapping(WbConfig config, KeyId rootId)
 
 void ComputeTransform(WbConfig config, KeyId refId, std::vector<KeyId> chain, CvMat* transform)
 {
-    //WbConfig config = GetCurrentConfig();
-
     const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
 
     for (std::vector<KeyId>::iterator elt = chain.begin(); elt != chain.end(); ++elt)
@@ -391,7 +429,7 @@ void ComputeTransform(WbConfig config, KeyId refId, std::vector<KeyId> chain, Cv
                 Q_UNUSED(homographyValid);
 
                 CvMat* tmp = cvCreateMat( 3, 3, CV_32F );
-                cvMatMul( transform, homography, tmp );
+                cvMatMul( homography, transform, tmp );
 
                 cvmSet(transform,0,0, cvmGet(tmp,0,0));
                 cvmSet(transform,0,1, cvmGet(tmp,0,1));

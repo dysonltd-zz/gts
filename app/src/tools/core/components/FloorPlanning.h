@@ -34,6 +34,9 @@ namespace FloorPlanning
 
     bool CheckMappingIsComplete(WbConfig config);
 
+    bool IsBase(WbConfig config, KeyId camId);
+    bool IsRef(WbConfig config, KeyId camId);
+
 	std::vector<KeyId> FindRoot(WbConfig config);
 	std::vector<KeyId> FindChain(WbConfig config, KeyId camId, KeyId rootId, std::vector<KeyId> mappingChain);
 

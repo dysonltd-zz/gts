@@ -931,37 +931,35 @@ void CreateFloorPlanWidget::CreateFloorPlanMulti()
     LOG_TRACE("Checking mapping...");
 
     // Check camera mapping(s)...
-    if (FloorPlanning::CheckMappingIsComplete(GetCurrentConfig()))
+    if (!FloorPlanning::CheckMappingIsComplete(GetCurrentConfig()))
     {
-        LOG_TRACE("Finding root...");
+        Message::Show( this,
+                       tr( "Create Floor Plan" ),
+                       tr( "Warning - Mapping incomplete." ),
+                       Message::Severity_Warning );
+    }
 
-        // Find the base camera(s)...
-        std::vector<KeyId> rootCamera = FloorPlanning::FindRoot(GetCurrentConfig());
+    LOG_TRACE("Finding root...");
 
-        if (rootCamera.size() == 1)
+    // Find the base camera(s)...
+    std::vector<KeyId> rootCamera = FloorPlanning::FindRoot(GetCurrentConfig());
+
+    if (rootCamera.size() == 1)
+    {
+        LOG_INFO(QObject::tr("Checking root mapping for %1.").arg(rootCamera.front()));
+
+        // Find a path from camera to the base...
+        if (FloorPlanning::CheckRootMapping(GetCurrentConfig(), rootCamera.front()))
         {
-            LOG_INFO(QObject::tr("Checking root mapping for %1.").arg(rootCamera.front()));
+            LOG_INFO(QObject::tr("Compositing images with %1.").arg(rootCamera.front()));
 
-            // Find a path from camera to the base...
-            if (FloorPlanning::CheckRootMapping(GetCurrentConfig(), rootCamera.front()))
-            {
-                LOG_INFO(QObject::tr("Compositing images with %1.").arg(rootCamera.front()));
-
-                Stitch(rootCamera.front());
-            }
-            else
-            {
-                Message::Show( this,
-                               tr( "Create Floor Plan" ),
-                               tr( "Error - Mapping is incomplete!" ),
-                               Message::Severity_Critical );
-            }
+            Stitch(rootCamera.front());
         }
         else
         {
             Message::Show( this,
                            tr( "Create Floor Plan" ),
-                           tr( "Error - Need one root camera!" ),
+                           tr( "Error - Mapping incomplete!" ),
                            Message::Severity_Critical );
         }
     }
@@ -969,7 +967,7 @@ void CreateFloorPlanWidget::CreateFloorPlanMulti()
     {
         Message::Show( this,
                        tr( "Create Floor Plan" ),
-                       tr( "Error - Must map every camera!" ),
+                       tr( "Error - Need one root camera!" ),
                        Message::Severity_Critical );
     }
 
@@ -1044,7 +1042,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
     {
         const KeyId camPosId = cameraPositionIds.at( i );
 
-        if (camPosId != camRoot)
+        if ((camPosId != camRoot) && FloorPlanning::IsRef(config, camPosId))
         {
             LOG_INFO(QObject::tr("Find chain for %1 - %2.").arg(camPosId)
                                                            .arg(camRoot));
@@ -1104,12 +1102,14 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
     CvSize cmpSize = cvSize( sizex,sizey );
     imgComposite = cvCreateImage( cmpSize, rootImg->depth, rootImg->nChannels );
 
+    GroundPlaneUtility::alignGroundPlane( identity, rootImg, imgComposite );
+
     // Process remaining (non-root) cameras...
     for ( int i = 0; i < cameraPositionIds.size(); ++i )
     {
         const KeyId camPosId = cameraPositionIds.at( i );
 
-        if (camPosId != camRoot)
+        if ((camPosId != camRoot) && FloorPlanning::IsRef(config, camPosId))
         {
             std::vector<KeyId> chain = FloorPlanning::FindChain(config, camPosId, camRoot, std::vector<KeyId>());
 
@@ -1142,20 +1142,11 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
             cvSaveImage(camFile.toAscii().data(), camImg);
 
             // Align the image.
-            cvZero( imgComposite );
-            GroundPlaneUtility::alignGroundPlane( transform, camImg, imgComposite );
-            IplImage *img1 = cvCloneImage( imgComposite );
-
-            // Align root image.
-            cvZero( imgComposite );
-            GroundPlaneUtility::alignGroundPlane( identity, rootImg, imgComposite );
-            IplImage *img2 = cvCloneImage( imgComposite );
-
-            GroundPlaneUtility::createCompositeImage( img1, imgComposite, imgComposite );
-            GroundPlaneUtility::createCompositeImage( img2, imgComposite, imgComposite );
-
-            cvReleaseImage( &img1 );
-            cvReleaseImage( &img2 );
+            IplImage *imgTmp = cvCloneImage( imgComposite );
+            cvZero( imgTmp );
+            GroundPlaneUtility::alignGroundPlane( transform, camImg, imgTmp );
+            GroundPlaneUtility::createCompositeImage( imgTmp, imgComposite, imgComposite );
+            cvReleaseImage( &imgTmp );
         }
     }
 
