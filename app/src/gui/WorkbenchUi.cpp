@@ -388,36 +388,31 @@ void WorkbenchUi::OpenWorkbench( const QString& workbenchConfigFileName )
 
 void WorkbenchUi::NewWorkbench()
 {
-    QString workbenchConfigFileName =
-        QFileDialog::getSaveFileName( this,
-                                      tr( "New Workbench" ),
-                                      QApplication::applicationDirPath(),
-                                      "XML workbench files (*.xml)" );
-    QFileInfo file(workbenchConfigFileName);
+    QString workbenchConfigFolderName = QFileDialog::getExistingDirectory(this,
+                                                                          tr("Create Workbench"),
+                                                                          getenv("HOME"),
+                                                                          QFileDialog::ShowDirsOnly |
+                                                                          QFileDialog::DontResolveSymlinks);
 
-    if ( !workbenchConfigFileName.isEmpty() )
+    QString workbenchConfigFileName = QString("%1/%2").arg(workbenchConfigFolderName).
+                                                        arg("workbench.xml");
+
+    if ( m_workbench->New( QFileInfo( workbenchConfigFileName ) ) )
     {
-        if(file.fileName() != "" && file.suffix().isEmpty())
-        {
-            workbenchConfigFileName += ".xml";
-        }
+        QSettings settings;
+        settings.setValue( "wb/lastOpenWorkbench", workbenchConfigFileName );
 
-        if ( m_workbench->New( QFileInfo( workbenchConfigFileName ) ) )
-        {
-            QSettings settings;
-            settings.setValue( "wb/lastOpenWorkbench", workbenchConfigFileName );
+        Reload();
 
-            Reload();
-
-            m_mainWindow.setWindowTitle( tr("Ground Truth System - ") + workbenchConfigFileName );
-        }
-        else
-        {
-            Message::Show( this,
-                           tr( "New Workbench" ),
-                           tr( "Error - Failed to create workbench!" ),
-                           Message::Severity_Critical );
-        }
+        m_mainWindow.setWindowTitle( tr("Ground Truth System - ") + workbenchConfigFileName );
+        SaveWorkbench();
+    }
+    else
+    {
+        Message::Show( this,
+                       tr( "New Workbench" ),
+                       tr( "Error - Failed to create workbench!" ),
+                       Message::Severity_Critical );
     }
 }
 
