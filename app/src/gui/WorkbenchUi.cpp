@@ -359,7 +359,7 @@ void WorkbenchUi::OpenWorkbench()
         QFileDialog::getOpenFileName( this,
                                       tr( "Open Workbench" ),
                                       initialDir,
-                                      tr("XML workbench files (*.xml )") );
+                                      tr("XML workbench files (*.xml)") );
 
     OpenWorkbench( workbenchConfigFileName );
 }
