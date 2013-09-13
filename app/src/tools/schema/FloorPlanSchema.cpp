@@ -22,8 +22,10 @@ namespace FloorPlanSchema
     const KeyName camera2ImgKey     ( "camera2Img" );
     const KeyName homographyKey     ( "homography" );
 
-	const KeyName transformGroup    ( "cameraTransform" );
+    const KeyName transformGroup    ( "cameraTransform" );
     const KeyName cameraIdKey       ( "cameraId" );
     const KeyName transformKey      ( "transform" );
+    const KeyName offsetXKey        ( "offsetX" );
+    const KeyName offsetYKey        ( "offsetY" );
 }
 

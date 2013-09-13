@@ -263,23 +263,6 @@ namespace GroundPlaneUtility
         @param imgOrigin Origin of the ground-plane coordinate system in the input image (in pixels)
         @param cmpOrigin Origin of the ground-plane coordinate system in the composite image (in pixels)
     **/
-    void alignGroundPlane( ScanMatch::ScanPose pose,
-                           const IplImage*     src,
-                           IplImage*           dst,
-                           CvPoint2D32f        imgOrigin,
-                           CvPoint2D32f        cmpOrigin )
-    {
-        assert(src);
-        assert(dst);
-
-        float A[6];
-        CvMat affine = cvMat( 2, 3, CV_32F, A );
-        cv2DRotationMatrix( imgOrigin, -pose.dth*MathsConstants::R2D, 1, &affine );
-        A[2] += cmpOrigin.x - imgOrigin.x + pose.dx;
-        A[5] += cmpOrigin.y - imgOrigin.y + pose.dy;
-
-        cvWarpAffine( src, dst, &affine, CV_INTER_LINEAR, cvScalar(255) );
-    }
 
     void alignGroundPlane( const CvMat* transform,
                            const IplImage* src,
@@ -305,6 +288,47 @@ namespace GroundPlaneUtility
 #endif
     }
 
+    void alignGroundPlane( const CvMat*    transform,
+                           const IplImage* src,
+                           IplImage*       dst,
+                           CvPoint2D32f    imgOrigin,
+                           CvPoint2D32f    cmpOrigin )
+    {
+        assert(src);
+        assert(dst);
+
+        float A[9];
+        CvMat transf = cvMat( 3, 3, CV_32F, A );
+        A[0] = cvmGet(transform,0,0);
+        A[1] = cvmGet(transform,0,1);
+        A[2] = cvmGet(transform,0,2);
+        A[3] = cvmGet(transform,1,0);
+        A[4] = cvmGet(transform,1,1);
+        A[5] = cvmGet(transform,1,2);
+        A[6] = cvmGet(transform,2,0);
+        A[7] = cvmGet(transform,2,1);
+        A[8] = cvmGet(transform,2,2);
+
+        float C[9];
+        CvMat transl = cvMat( 3, 3, CV_32F, C );
+        C[0] = 1.0;
+        C[1] = 0.0;
+        C[2] = cmpOrigin.x - imgOrigin.x;
+        C[3] = 0.0;
+        C[4] = 1.0;
+        C[5] = cmpOrigin.y - imgOrigin.y;
+        C[6] = 0.0;
+        C[7] = 0.0;
+        C[8] = 1.0;
+
+        float X[9];
+        CvMat x = cvMat( 3, 3, CV_32F, X );
+
+        cvMatMul(&transl, &transf, &x);
+
+        cvWarpPerspective(src, dst, &x);
+    }
+
     /**
         Given the alignment result from a scan match, computes the image
         transformation that aligns src to dst, the new bounding box which
@@ -322,47 +346,6 @@ namespace GroundPlaneUtility
         @param[out]    newOrigin  Origin of the ground-plane in the composite image.
         @param[in,out] bbox       Rectangular bounding box of composite image. Goes in as current bounding box; comes out as new one.
     **/
-    void compositeImageBoundingBox( ScanMatch::ScanPose pose,
-                                    const IplImage*     src,
-                                    CvPoint2D32f        srcOrigin,
-                                    CvPoint2D32f        dstOrigin,
-                                    CvPoint2D32f*       newOrigin,
-                                    Rect32f*            bbox )
-    {
-        assert(src);
-
-        float A[6];
-        // Compute affine transformation
-        CvMat affine = cvMat( 2, 3, CV_32F, A );
-        cv2DRotationMatrix( srcOrigin, -pose.dth*MathsConstants::R2D, 1, &affine );
-        A[2] += dstOrigin.x - srcOrigin.x + pose.dx;
-        A[5] += dstOrigin.y - srcOrigin.y + pose.dy;
-
-        // Transform corners of source image:
-        CvPoint2D32f inVerts[4] = {cvPoint2D32f( 0, 0 ),
-                                   cvPoint2D32f( 0, src->height ),
-                                   cvPoint2D32f( src->width, src->height ),
-                                   cvPoint2D32f( src->width, 0 )};
-        CvPoint2D32f outVerts[8];
-
-        for ( unsigned int i=0; i<4; ++i )
-        {
-            outVerts[i].x = A[0]*inVerts[i].x + A[1]*inVerts[i].y + A[2];
-            outVerts[i].y = A[3]*inVerts[i].x + A[4]*inVerts[i].y + A[5];
-        }
-
-        outVerts[4] = cvPoint2D32f( bbox->pos.x,             bbox->pos.y );
-        outVerts[5] = cvPoint2D32f( bbox->pos.x,             bbox->pos.y+bbox->dim.y );
-        outVerts[6] = cvPoint2D32f( bbox->pos.x+bbox->dim.x, bbox->pos.y+bbox->dim.y );
-        outVerts[7] = cvPoint2D32f( bbox->pos.x+bbox->dim.x, bbox->pos.y );
-
-        // compute bounding box
-        OpenCvUtility::BoundingBox( 8, outVerts, &bbox->pos, &bbox->dim );
-
-        // compute new origin
-        newOrigin->x = dstOrigin.x - bbox->pos.x;
-        newOrigin->y = dstOrigin.y - bbox->pos.y;
-    }
 
     void compositeImageBoundingBox( const CvMat* transform,
                                     const IplImage* src,
@@ -423,6 +406,91 @@ namespace GroundPlaneUtility
 
         // compute bounding box
         OpenCvUtility::BoundingBox( 8, outVerts, &bbox->pos, &bbox->dim );
+    }
+
+    void compositeImageBoundingBox( const CvMat*    transform,
+                                    const IplImage* src,
+                                    CvPoint2D32f    srcOrigin,
+                                    CvPoint2D32f    dstOrigin,
+                                    CvPoint2D32f*   newOrigin,
+                                    Rect32f*        bbox )
+    {
+        Q_UNUSED(srcOrigin);
+        assert(src);
+
+        // transform corners of source image:
+        CvPoint2D32f inVerts[4] = { cvPoint2D32f( 0,          0 ),
+                                    cvPoint2D32f( 0,          src->height ),
+                                    cvPoint2D32f( src->width, src->height ),
+                                    cvPoint2D32f( src->width, 0 ) };
+
+        CvPoint2D32f outVerts[8];
+
+printf("INVERTS: %f,%f %f,%f %f,%f %f,%f\n", inVerts[0].x,inVerts[0].y,
+                                             inVerts[1].x,inVerts[1].y,
+                                             inVerts[2].x,inVerts[2].y,
+                                             inVerts[3].x,inVerts[3].y);
+
+        for ( unsigned int i=0; i<4; ++i )
+        {
+            CvScalar p1;
+            CvMat tsrc, tdst;
+            CvMat* src = cvCreateMat( 2, 1, CV_32F );
+            CvMat* dst = cvCreateMat( 2, 1, CV_32F );
+
+            cvSet2D(src,0,0,cvScalar(inVerts[i].x));
+            cvSet2D(src,1,0,cvScalar(inVerts[i].y));
+            cvReshape( src, &tsrc, 2, 0 );
+            cvReshape( dst, &tdst, 2, 0 );
+
+            cvPerspectiveTransform(&tsrc, &tdst, transform);
+
+            p1=cvGet2D(&tdst,0,0);
+            outVerts[i].x=p1.val[0];
+            outVerts[i].y=p1.val[1];
+
+            cvReleaseMat( &src );
+            cvReleaseMat( &dst );
+        }
+
+//        CvMat tsrc = cvMat( 2, 4, CV_32FC3, inVerts );
+//        CvMat tdst = cvMat( 2, 4, CV_32FC2, outVerts );
+
+//        for ( unsigned int i=0; i<4; ++i )
+//        {
+//            cvSet2D( &tsrc, 0,i, cvScalar( inVerts[i].x ) );
+//            cvSet2D( &tsrc, 1,i, cvScalar( inVerts[i].y ) );
+//        }
+
+//        cvPerspectiveTransform( &tsrc, &tdst, transform );
+
+//        for ( unsigned int i=0; i<4; ++i )
+//        {
+//            CvScalar p1;
+//            p1 = cvGet2D( &tdst, 0, i );
+//            outVerts[i].x=p1.val[0];
+//            outVerts[i].y=p1.val[1];
+//        }
+
+        outVerts[4] = cvPoint2D32f( bbox->pos.x,             bbox->pos.y );
+        outVerts[5] = cvPoint2D32f( bbox->pos.x,             bbox->pos.y+bbox->dim.y );
+        outVerts[6] = cvPoint2D32f( bbox->pos.x+bbox->dim.x, bbox->pos.y+bbox->dim.y );
+        outVerts[7] = cvPoint2D32f( bbox->pos.x+bbox->dim.x, bbox->pos.y );
+printf("OUTVERTS: %f,%f %f,%f %f,%f %f,%f\n", outVerts[0].x,outVerts[0].y,
+                                              outVerts[1].x,outVerts[1].y,
+                                              outVerts[2].x,outVerts[2].y,
+                                              outVerts[3].x,outVerts[3].y);
+printf("OUTVERTS: %f,%f %f,%f %f,%f %f,%f\n", outVerts[4].x,outVerts[4].y,
+                                              outVerts[5].x,outVerts[5].y,
+                                              outVerts[6].x,outVerts[6].y,
+                                              outVerts[7].x,outVerts[7].y);
+printf("\n\n");
+        // compute bounding box
+        OpenCvUtility::BoundingBox( 8, outVerts, &bbox->pos, &bbox->dim );
+
+        // compute new origin
+        newOrigin->x = dstOrigin.x - bbox->pos.x;
+        newOrigin->y = dstOrigin.y - bbox->pos.y;
     }
 
     /**

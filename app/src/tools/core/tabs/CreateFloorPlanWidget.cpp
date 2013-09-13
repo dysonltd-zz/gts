@@ -198,7 +198,7 @@ CreateFloorPlanWidget::CreateFloorPlanWidget( CameraHardware& cameraHardware,
                                        *this,
                                        cameraHardware ) );
 
-	ConnectSignals();
+    ConnectSignals();
     CreateMappers();
 }
 
@@ -438,7 +438,9 @@ const WbSchema CreateFloorPlanWidget::CreateSchema()
     floorPlanSchema.AddKeyGroup( transformGroup,
                                  WbSchemaElement::Multiplicity::One,
                                  KeyNameList() << cameraIdKey
-                                               << transformKey );
+                                               << transformKey
+                                               << offsetXKey
+                                               << offsetYKey );
 
     return floorPlanSchema;
 }
@@ -665,7 +667,13 @@ void CreateFloorPlanWidget::DisplayStitched()
 
     CvMat matH = m_homography;
 
-    GroundPlaneUtility::compositeImageBoundingBox( &matH, m_cam2Img, &cmpBox );
+    CvPoint2D32f m_origin1; m_origin1.x = 0.0; m_origin1.y = 0.0;
+    CvPoint2D32f m_origin2; m_origin2.x = 0.0; m_origin2.y = 0.0;
+
+    CvPoint2D32f baseOrigin; baseOrigin.x = 0.0; baseOrigin.y = 0.0;
+    CvPoint2D32f cmpOrigin; cmpOrigin.x = 0.0; cmpOrigin.y = 0.0;
+
+    GroundPlaneUtility::compositeImageBoundingBox( &matH, m_cam2Img, m_origin2, baseOrigin, &cmpOrigin, &cmpBox );
 
     // Now we know the dimensions and origin of the composite
     // image so we can allocate it and transform all images.
@@ -679,13 +687,13 @@ void CreateFloorPlanWidget::DisplayStitched()
 
     // Align image.
     cvZero( compImg );
-    GroundPlaneUtility::alignGroundPlane( &matH, m_cam2Img, compImg );
-    IplImage *img1 = cvCloneImage( compImg );
+    GroundPlaneUtility::alignGroundPlane( &matH, m_cam2Img, compImg, m_origin2, cmpOrigin );
+    IplImage *img2 = cvCloneImage( compImg );
 
     // Align root.
     cvZero( compImg );
-    GroundPlaneUtility::alignGroundPlane( I, m_cam1Img, compImg );
-    IplImage *img2 = cvCloneImage( compImg );
+    GroundPlaneUtility::alignGroundPlane( I, m_cam1Img, compImg, m_origin1, cmpOrigin );
+    IplImage *img1 = cvCloneImage( compImg );
 
     GroundPlaneUtility::createCompositeImage( img1, compImg, compImg );
     GroundPlaneUtility::createCompositeImage( img2, compImg, compImg );
@@ -753,7 +761,7 @@ void CreateFloorPlanWidget::BtnSaveClicked()
         h[7] = m_homography.at<double>(2,1);
         h[8] = m_homography.at<double>(2,2);
 
-	    cvMatMul(&xH, &rotH, &tH);
+        cvMatMul(&xH, &rotH, &tH);
 
         const KeyId mappingKeyId = config.AddKeyValue( FloorPlanSchema::homographyKey,
                                                        KeyValue::from( tH ) );
@@ -788,12 +796,12 @@ void CreateFloorPlanWidget::BtnSaveClicked()
         ResetUi();
     }
     else
-	{
+    {
         Message::Show( this,
                        tr( "Create Floor Plan" ),
                        tr( "Error - Camera already mapped!" ),
                        Message::Severity_Critical );
-	}
+    }
 }
 
 void CreateFloorPlanWidget::BtnCancelClicked()
@@ -813,6 +821,8 @@ void CreateFloorPlanWidget::BtnCreateFloorPlanClicked()
     // Remove all existing transforms...
     config.KeepKeys( FloorPlanSchema::cameraIdKey );
     config.KeepKeys( FloorPlanSchema::transformKey );
+    config.KeepKeys( FloorPlanSchema::offsetXKey );
+    config.KeepKeys( FloorPlanSchema::offsetYKey );
 
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
@@ -919,6 +929,13 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
                         KeyValue::from(camPosId),
                         transformId );
 
+    config.SetKeyValue( FloorPlanSchema::offsetXKey,
+                        KeyValue::from(0.0),
+                        transformId );
+    config.SetKeyValue( FloorPlanSchema::offsetYKey,
+                        KeyValue::from(0.0),
+                        transformId );
+
     LOG_TRACE("Done.");
 
     cvReleaseMat( &identity );
@@ -1013,14 +1030,6 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
     cvSetIdentity(identity);
 
-    // Store transform for root camera...
-    const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
-                                                  KeyValue::from( *identity ) );
-
-    config.SetKeyValue( FloorPlanSchema::cameraIdKey,
-                        KeyValue::from(camRoot),
-                        transformId );
-
     GroundPlaneUtility::Rect32f cmpBox;
     cmpBox.pos.x = 0;
     cmpBox.pos.y = 0;
@@ -1038,6 +1047,11 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
                                         .ToQStringList() );
 
+    CvPoint2D32f imgOrigin; imgOrigin.x = 0.0; imgOrigin.y = 0.0;
+
+    CvPoint2D32f baseOrigin; baseOrigin.x = 0.0; baseOrigin.y = 0.0;
+    CvPoint2D32f cmpOrigin; cmpOrigin.x = 0.0; cmpOrigin.y = 0.0;
+
     for ( int i = 0; i < cameraPositionIds.size(); ++i )
     {
         const KeyId camPosId = cameraPositionIds.at( i );
@@ -1051,14 +1065,6 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
             cvSetIdentity(transform);
             FloorPlanning::ComputeTransform( config, camPosId, chain, transform );
-
-            // Store transform for camera...
-            const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
-                                                          KeyValue::from( *transform ) );
-
-            config.SetKeyValue( FloorPlanSchema::cameraIdKey,
-                                KeyValue::from(camPosId),
-                                transformId );
 
             // Load camera image...
             KeyValue camImageFile;
@@ -1083,7 +1089,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
             FloorPlanning::LoadFile( GetCurrentConfig(), camPosId, &camImg, camFileName, &offset, true );
 
             // Stitch the images together...
-            GroundPlaneUtility::compositeImageBoundingBox( transform, camImg, &cmpBox );
+            GroundPlaneUtility::compositeImageBoundingBox( transform, camImg, imgOrigin, baseOrigin, &cmpOrigin, &cmpBox );
 
             LOG_INFO(QObject::tr("Composite bounding box is %1 %2 %3 %4.").arg(cmpBox.dim.x)
                                                                           .arg(cmpBox.dim.y)
@@ -1091,6 +1097,23 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
                                                                           .arg(cmpBox.pos.y));
         }
     }
+
+
+    // Store transform for root camera...
+    const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
+                                                  KeyValue::from( *identity ) );
+
+    config.SetKeyValue( FloorPlanSchema::cameraIdKey,
+                        KeyValue::from(camRoot),
+                        transformId );
+
+    config.SetKeyValue( FloorPlanSchema::offsetXKey,
+                        KeyValue::from(cmpOrigin.x - imgOrigin.x),
+                        transformId );
+    config.SetKeyValue( FloorPlanSchema::offsetYKey,
+                        KeyValue::from(cmpOrigin.y - imgOrigin.y),
+                        transformId );
+
 
     // Now we know dimensions and origin of the composite
     // image so we can allocate it and transform all images.
@@ -1102,7 +1125,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
     CvSize cmpSize = cvSize( sizex,sizey );
     imgComposite = cvCreateImage( cmpSize, rootImg->depth, rootImg->nChannels );
 
-    GroundPlaneUtility::alignGroundPlane( identity, rootImg, imgComposite );
+    GroundPlaneUtility::alignGroundPlane( identity, rootImg, imgComposite, imgOrigin, cmpOrigin );
 
     // Process remaining (non-root) cameras...
     for ( int i = 0; i < cameraPositionIds.size(); ++i )
@@ -1115,6 +1138,23 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
             cvSetIdentity(transform);
             FloorPlanning::ComputeTransform( GetCurrentConfig(), camPosId, chain, transform );
+
+
+            // Store transform for camera...
+            const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
+                                                          KeyValue::from( *transform ) );
+
+            config.SetKeyValue( FloorPlanSchema::cameraIdKey,
+                                KeyValue::from(camPosId),
+                                transformId );
+
+            config.SetKeyValue( FloorPlanSchema::offsetXKey,
+                                KeyValue::from(cmpOrigin.x - imgOrigin.x),
+                                transformId );
+            config.SetKeyValue( FloorPlanSchema::offsetYKey,
+                                KeyValue::from(cmpOrigin.y - imgOrigin.y),
+                                transformId );
+
 
             // Load camera image...
             KeyValue camImageFile;
@@ -1144,7 +1184,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
             // Align the image.
             IplImage *imgTmp = cvCloneImage( imgComposite );
             cvZero( imgTmp );
-            GroundPlaneUtility::alignGroundPlane( transform, camImg, imgTmp );
+            GroundPlaneUtility::alignGroundPlane( transform, camImg, imgTmp, imgOrigin, cmpOrigin );
             GroundPlaneUtility::createCompositeImage( imgTmp, imgComposite, imgComposite );
             cvReleaseImage( &imgTmp );
         }
@@ -1398,4 +1438,3 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
         }
     }
 }
-

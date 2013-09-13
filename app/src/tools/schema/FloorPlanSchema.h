@@ -25,27 +25,29 @@ namespace FloorPlanSchema
 {
     extern const KeyName schemaName;
 
-	extern const KeyName calGridGroup;
-	extern const KeyName calGridSizeKey;
-	extern const KeyName calGridRowsKey;
-	extern const KeyName calGridColsKey;
+    extern const KeyName calGridGroup;
+    extern const KeyName calGridSizeKey;
+    extern const KeyName calGridRowsKey;
+    extern const KeyName calGridColsKey;
 
-	extern const KeyName camGridGroup;
+    extern const KeyName camGridGroup;
     extern const KeyName camIdKey;
-	extern const KeyName camGridRowKey;
-	extern const KeyName camGridColKey;
+    extern const KeyName camGridRowKey;
+    extern const KeyName camGridColKey;
     extern const KeyName camRotationKey;
 
-	extern const KeyName mappingGroup;
+    extern const KeyName mappingGroup;
     extern const KeyName camera1IdKey;
     extern const KeyName camera2IdKey;
     extern const KeyName camera1ImgKey;
     extern const KeyName camera2ImgKey;
     extern const KeyName homographyKey;
 
-	extern const KeyName transformGroup;
+    extern const KeyName transformGroup;
     extern const KeyName cameraIdKey;
     extern const KeyName transformKey;
+    extern const KeyName offsetXKey;
+    extern const KeyName offsetYKey;
 }
 
 #endif // FLOORPLANSCHEMA_H_

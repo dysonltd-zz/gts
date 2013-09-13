@@ -16,13 +16,13 @@
  *
  */
 
-#include "CoverageMetrics.h"
-
 #include "CollateResultsWidget.h"
 
 #include "ui_CollateResultsWidget.h"
 
 #include "UnknownLengthProgressDlg.h"
+
+#include "CoverageMetrics.h"
 
 #include "Collection.h"
 #include "RunsCollection.h"
@@ -327,9 +327,9 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                 }
             }
         }
-	    else
+        else
         {
-		    QMessageBox::critical(this,
+            QMessageBox::critical(this,
                                   tr( "Results Analysis Failed" ),
                                   tr( "Temporary file missing!" ));
         }
@@ -480,7 +480,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     OpenCvTools::DrawColouredOverlay( floorPlanImg,
                                       totalCoverageImg,
                                       CV_RGB(0,255,0),
-                                      std::bind2nd(std::greater_equal<int>(), RunEntry::GetMaxLevel() ) );
+                                      std::bind2nd(std::greater_equal<int>(), 5 /*RunEntry::MAX_LEVEL*/) );
 
     // Clean up...
     if ( f ) { fclose( f ); }

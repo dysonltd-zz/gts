@@ -27,8 +27,8 @@ namespace GroundPlaneUtility
 {
     struct Rect32f
     {
-    	CvPoint2D32f pos; ///< Position of rectangle (x and y coords).
-    	CvPoint2D32f dim; ///< Dimension of rectangle (width and height).
+        CvPoint2D32f pos; ///< Position of rectangle (x and y coords).
+        CvPoint2D32f dim; ///< Dimension of rectangle (width and height).
     };
 
     CvMat* createCalibrationObject( int width,
@@ -67,22 +67,22 @@ namespace GroundPlaneUtility
 
     CvMat* findChessBoard( IplImage* viewGrey, CvSize boardSize );
 
-    void alignGroundPlane( ScanMatch::ScanPose pose,
+    void alignGroundPlane( const CvMat* transform, const IplImage* src, IplImage* dst );
+
+    void alignGroundPlane( const CvMat* transform,
                            const IplImage* src,
                            IplImage* dst,
                            CvPoint2D32f imgOrigin,
                            CvPoint2D32f cmpOrigin );
 
-    void alignGroundPlane( const CvMat* transform, const IplImage* src, IplImage* dst );
-
-    void compositeImageBoundingBox( ScanMatch::ScanPose pose,
-                                    const IplImage* src,
-						            CvPoint2D32f srcOrigin,
-						            CvPoint2D32f dstOrigin,
-						            CvPoint2D32f* newOrigin,
-						            Rect32f* bbox );
-
     void compositeImageBoundingBox( const CvMat* transform, const IplImage* src, Rect32f* bbox );
+
+    void compositeImageBoundingBox( const CvMat* transform,
+                                    const IplImage* src,
+                                    CvPoint2D32f srcOrigin,
+                                    CvPoint2D32f dstOrigin,
+                                    CvPoint2D32f* newOrigin,
+                                    Rect32f* bbox );
 
     void createCompositeImage( const IplImage* src1, const IplImage* src2, IplImage* dst);
 }

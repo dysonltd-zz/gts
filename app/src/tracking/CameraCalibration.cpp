@@ -35,14 +35,14 @@
 
 struct CalibViewArgs
 {
-	CalibViewArgs( const CameraCalibration* cal, const RobotMetrics& met ) :
-		m_cal ( cal ),
-		m_met ( met )
+    CalibViewArgs( const CameraCalibration* cal, const RobotMetrics& met ) :
+        m_cal ( cal ),
+        m_met ( met )
     {
     };
 
-	const CameraCalibration* m_cal;
-	const RobotMetrics& m_met;
+    const CameraCalibration* m_cal;
+    const RobotMetrics& m_met;
 };
 
 CameraCalibration::CameraCalibration() :
@@ -141,10 +141,29 @@ bool CameraCalibration::LoadCameraTransform( const KeyId camPosId, const WbConfi
         {
             LOG_INFO(QObject::tr("Camera position id: %1").arg(camPosId));
 
+            float transf_f[9];
+            CvMat transf = cvMat( 3, 3, CV_32F, transf_f );
+
             successful = floorPlanCfg.GetKeyValue(
-                             FloorPlanSchema::transformKey, itt->id).ToCvMat(m_transform);
+                             FloorPlanSchema::transformKey, itt->id).ToCvMat(transf);
 
             LOG_INFO("Camera transform:");
+            OpenCvUtility::LogCvMat32F(&transf);
+
+            double offsetX = floorPlanCfg.GetKeyValue(
+                                 FloorPlanSchema::offsetXKey, itt->id).ToDouble();
+            double offsetY = floorPlanCfg.GetKeyValue(
+                                 FloorPlanSchema::offsetYKey, itt->id).ToDouble();
+
+            float transl_f[9];
+            CvMat transl = cvMat( 3, 3, CV_32F, transl_f );
+            cvSetIdentity( &transl );
+            transl_f[2] = offsetX;
+            transl_f[5] = offsetY;
+
+            cvMatMul(&transl, &transf, &m_transform);
+
+            LOG_INFO("With offsets:");
             OpenCvUtility::LogCvMat32F(&m_transform);
 
             break;
