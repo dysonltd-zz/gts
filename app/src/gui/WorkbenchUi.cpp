@@ -45,6 +45,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QSettings>
 #include <QtGui/QFileDialog>
+#include <QtGui/QMessageBox>
+#include <QDialogButtonBox>
 
 namespace
 {
@@ -153,6 +155,7 @@ namespace
     private:
         QTreeWidget& m_treeWidget;
     };
+
 }
 
 WorkbenchUi::WorkbenchUi( MainWindow& mainWindow ) :
@@ -355,11 +358,10 @@ void WorkbenchUi::OpenWorkbench()
         initialDir = QFileInfo(lastWb).absolutePath();
     }
 
-    const QString workbenchConfigFileName =
-        QFileDialog::getOpenFileName( this,
-                                      tr( "Open Workbench" ),
-                                      initialDir,
-                                      tr("XML workbench files (*.xml)") );
+    const QString workbenchConfigFileName = QFileDialog::getOpenFileName( this,
+                                                                          tr( "Open Workbench" ),
+                                                                          initialDir,
+                                                                          tr("XML workbench files (*.xml )") );
 
     OpenWorkbench( workbenchConfigFileName );
 }
@@ -380,10 +382,33 @@ void WorkbenchUi::OpenWorkbench( const QString& workbenchConfigFileName )
         }
         else
         {
-            Message::Show( this,
-                           tr( "Open Workbench" ),
-                           tr( "Error - Failed to parse workbench!" ),
-                           Message::Severity_Critical );
+            QMessageBox question( QMessageBox::Information,
+                                  tr("Create New or Open Workbench?"),
+                                  tr("Create New or Open Workbench?"),
+                                  QMessageBox::Open | QMessageBox::Close,
+                                  this );
+            question.addButton("New", QMessageBox::ActionRole);
+            question.setDefaultButton(QMessageBox::Close);
+
+            const int response = question.exec();
+
+            switch (response)
+            {
+                case QMessageBox::Open:
+                    OpenWorkbench();
+                    break;
+
+                case QMessageBox::Close:
+                    // use std::exit as qApp->closeAllWindows() would not work yet
+                    // since the app has not started running!
+                    std::exit(0);
+                    break;
+
+                // Create new workbench
+                default:
+                    NewWorkbench();
+                    break;
+            }
         }
     }
 }
@@ -393,8 +418,7 @@ void WorkbenchUi::NewWorkbench()
     QString workbenchConfigFolderName = QFileDialog::getExistingDirectory(this,
                                                                           tr("Create Workbench"),
                                                                           getenv("HOME"),
-                                                                          QFileDialog::ShowDirsOnly |
-                                                                          QFileDialog::DontResolveSymlinks);
+                                                                          QFileDialog::ShowDirsOnly);
 
     QString workbenchConfigFileName = QString("%1/%2").arg(workbenchConfigFolderName).
                                                         arg("workbench.xml");

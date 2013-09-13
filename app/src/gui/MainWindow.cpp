@@ -95,7 +95,6 @@ void MainWindow::Start()
                       SIGNAL( triggered() ),
                       m_workbenchUi,
                       SLOT( SaveWorkbench() ) );
-
     QObject::connect( m_ui->m_helpAction,
                       SIGNAL( triggered() ),
                       this,
@@ -108,7 +107,6 @@ void MainWindow::Start()
                       SIGNAL( triggered() ),
                       this,
                       SLOT( ShowAboutQt() ) );
-
     QObject::connect( m_cornerButton,
 	                  SIGNAL( clicked() ),
                       m_workbenchUi,
@@ -117,6 +115,7 @@ void MainWindow::Start()
     m_workbenchUi->Reload();
 
     show();
+
 }
 
 MainWindow::~MainWindow()
