@@ -406,7 +406,8 @@ void WorkbenchUi::NewWorkbench()
 
         Reload();
 
-        m_mainWindow.setWindowTitle( tr("Ground Truth System - ") + workbenchConfigFileName );
+        QString title = QString("Ground Truth System (v%1) - %2").arg(GTS_BUILD_REVN).arg(workbenchConfigFileName);
+        m_mainWindow.setWindowTitle(title);
         SaveWorkbench();
     }
     else
