@@ -38,6 +38,7 @@
 #include "ScopedQtSignalsBlocker.h"
 #include "XmlConfigFileReader.h"
 
+#include "Version.h"
 #include "Debugging.h"
 
 #include <QtCore/QString>
@@ -374,7 +375,8 @@ void WorkbenchUi::OpenWorkbench( const QString& workbenchConfigFileName )
             QSettings settings;
             settings.setValue( "wb/lastOpenWorkbench", workbenchConfigFileName );
 
-            m_mainWindow.setWindowTitle( tr("Ground Truth System - ") + workbenchConfigFileName );
+            QString title = QString("Ground Truth System (v%1) - %2").arg(GTS_BUILD_REVN).arg(workbenchConfigFileName);
+            m_mainWindow.setWindowTitle(title);
         }
         else
         {
