@@ -55,13 +55,11 @@ static const double rate[] = {VideoSource::FPS_3_75,
                               VideoSource::FPS_7_5,
                               VideoSource::FPS_15,
                               VideoSource::FPS_30,
-                              VideoSource::FPS_40,
                               VideoSource::FPS_50,
                               VideoSource::FPS_60};
 
 static const int SOURCE_COLUMN = 0;
 static const int RATE_COLUMN = 1;
-
 static const int NUM_COLS = 2;
 
 /** @bug Should use QStyle::standardIcon to get the media player icons, can't do it in
@@ -117,7 +115,6 @@ void CaptureVideoWidget::ConnectSignals()
                       SIGNAL( clicked(bool) ),
                       this,
                       SLOT( RecordButtonClicked(const bool) ) );
-
     QObject::connect( m_ui->m_formatXVIDRadioBtn,
                       SIGNAL( clicked() ),
                       this,
@@ -254,7 +251,7 @@ void CaptureVideoWidget::StartRecordingInDirectory( const QString& outputDirecto
     {
         const QSize imageSize((*videoSource)->videoSource->GetImageSize());
 
-        /// @todo This is slightly nasty - whilst the Xml file will always contain
+        /// @todo This is slightly nasty - whilst the XML file will always contain
         /// a correct mapping between videos and timestamps, they could have different
         /// enumerations if videos have ben manually copied from elsewhere : e.g. the
         /// timestamps for video1.avi could be in the file timestamps0.txt if there was
@@ -594,9 +591,10 @@ void CaptureVideoWidget::AddTableRow(QTableWidgetItem* tableItem)
     rateSpinBox->addItem( "7.5" );
     rateSpinBox->addItem( "15" );
     rateSpinBox->addItem( "30" );
-    rateSpinBox->addItem( "40" );
     rateSpinBox->addItem( "50" );
     rateSpinBox->addItem( "60" );
+
+    rateSpinBox->setCurrentIndex(1); // default to 7.5fps
 
     m_ui->m_videoTable->setCellWidget( newAppendedRow, RATE_COLUMN, rateSpinBox );
 }
