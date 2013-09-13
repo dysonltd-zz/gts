@@ -383,8 +383,8 @@ void WorkbenchUi::OpenWorkbench( const QString& workbenchConfigFileName )
         else
         {
             QMessageBox question( QMessageBox::Information,
-                                  tr("Create New or Open Workbench?"),
-                                  tr("Create New or Open Workbench?"),
+                                  tr("Create New Workbench or Open Existing Workbench?"),
+                                  tr("Create New Workbench or Open Existing Workbench?"),
                                   QMessageBox::Open | QMessageBox::Close,
                                   this );
             question.addButton("New", QMessageBox::ActionRole);
@@ -517,6 +517,7 @@ void WorkbenchUi::SetToolMenu( QMenu& toolMenu )
 void WorkbenchUi::SetCornerWidget( QWidget* const widget )
 {
     m_toolTabs->setCornerWidget( widget );
+    m_toolTabs->cornerWidget()->setVisible( false );
 }
 
 QWidget* WorkbenchUi::GetCornerWidget()
