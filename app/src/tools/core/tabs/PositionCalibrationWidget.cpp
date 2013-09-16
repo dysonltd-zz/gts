@@ -267,11 +267,6 @@ void PositionCalibrationWidget::CaptureCancelBtnClicked()
     m_captureLiveBtnController->CaptureCancelBtnClicked();
 }
 
-const HelpBookmark PositionCalibrationWidget::GetHelpText() const
-{
-    return HELP_SETTING_UP_THE_CAMERA_POSITIONS;
-}
-
 const QString PositionCalibrationWidget::GetSubSchemaDefaultFileName() const
 {
     return "cameraPositionCalibration.xml";

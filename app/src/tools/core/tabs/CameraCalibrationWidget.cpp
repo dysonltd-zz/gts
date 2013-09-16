@@ -134,11 +134,6 @@ CameraCalibrationWidget::~CameraCalibrationWidget()
     delete m_ui;
 }
 
-const HelpBookmark CameraCalibrationWidget::GetHelpText() const
-{
-    return HELP_CALIBRATING_THE_CAMERA;
-}
-
 const QString CameraCalibrationWidget::GetSubSchemaDefaultFileName() const
 {
     return "calibration.xml";

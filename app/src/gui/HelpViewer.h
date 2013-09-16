@@ -22,48 +22,6 @@
 #include <QObject>
 #include <QProcess>
 
-enum HelpBookmark
-{
-    HELP_GENERAL,
-    HELP_CREATING_A_WORKBENCH,
-    HELP_CONFIGURING_YOUR_ROBOT,
-    HELP_CALIBRATING_THE_CAMERA,
-    HELP_SETTING_UP_THE_CAMERA_POSITIONS,
-    HELP_CREATING_ROOMS,
-    HELP_RECORDING_A_RUN,
-    HELP_TRACKING_THE_ROBOT,
-    HELP_ANALYSING_COVERAGE,
-    HELP_INVALID
-};
-
-const size_t NumHelpBookmarks = static_cast<size_t>( HELP_INVALID );
-
-const QString helpGeneral                  ( "gts_userguide.htm" );
-const QString helpCreatingAWorkbench       ( "gts_userguide.htm#CREATING_A_WORKBENCH" );
-const QString helpConfiguringARobot        ( "gts_userguide.htm#CONFIGURING_YOUR_ROBOT" );
-const QString helpCalibratingACamera       ( "gts_userguide::htm#CALIBRATING_THE_CAMERA" );
-const QString helpSettingUpCameraPositions ( "gts_userguide.htm#SETTING_UP_THE_CAMERA_POSITIONS" );
-const QString helpCreatingRooms            ( "gts_userguide.htm#CREATING_ROOMS" );
-const QString helpRecodingARun             ( "gts_userguide.htm#RECORDING_A_RUN" );
-const QString helpTrackingTheRobot         ( "gts_userguide.htm#TRACKING_THE_ROBOT" );
-const QString helpAnalysingCoverage        ( "gts_userguide.htm#ANALYSING_COVERAGE" );
-
-const QString helpBookmark[ NumHelpBookmarks ] =
-{
-    helpGeneral,
-    helpCreatingAWorkbench,
-    helpConfiguringARobot,
-    helpCalibratingACamera,
-    helpSettingUpCameraPositions,
-    helpCreatingRooms,
-    helpRecodingARun,
-    helpTrackingTheRobot,
-    helpAnalysingCoverage
-};
-
-/**
- *  @todo Write help text for each Tool.
- */
 class HelpViewer : public QObject
 {
     Q_OBJECT
@@ -72,31 +30,18 @@ public:
     explicit HelpViewer();
     ~HelpViewer();
 
-    void showPage( const QString &page );
-
-	void preparePage( HelpBookmark bookmark );
-    void requestPage( HelpBookmark bookmark );
-
 public:
     void Show();
-	void OnHelpChange();
     void Close();
 
 public slots:
-	void OnStartedHelp();
-	void OnEndHelp( int , QProcess::ExitStatus );
+    void OnEndHelp(int , QProcess::ExitStatus );
 
 private slots:
     void ShowHelpClicked();
 
 private:
-    void showPage( HelpBookmark bookmark );
-
-private:
-    HelpBookmark     m_pendingBookmark;
-
     QProcess*        m_process_help;
-
 	bool             m_help_exec;
 };
 

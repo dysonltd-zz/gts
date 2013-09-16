@@ -21,13 +21,12 @@
 
 #include "Tool.h"
 #include "HelpViewer.h"
-
 #include "WbConfigTools.h"
-
-#include <memory>
 
 #include <QtCore/QSize>
 #include <QWidget>
+
+#include <memory>
 
 namespace Ui
 {
@@ -49,8 +48,6 @@ public:
     ~PositionCalibrationWidget();
 
     virtual const QString Name() const { return tr( "Calibrate Position" ); }
-    virtual const HelpBookmark GetHelpText() const;
-
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
 

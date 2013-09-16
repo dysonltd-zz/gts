@@ -223,11 +223,6 @@ const WbSchema Tool::GetHandledSchema() const
     return m_schema;
 }
 
-const HelpBookmark Tool::GetHelpText() const
-{
-    return HELP_GENERAL;
-}
-
 const WbConfig Tool::GetMappedConfig() const
 {
     return GetCurrentConfig();

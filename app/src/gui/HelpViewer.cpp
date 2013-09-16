@@ -19,30 +19,13 @@
 #include "HelpViewer.h"
 
 #include <QApplication>
-
 #include <QtGlobal>
 
 #define HELP_FILE "gts_userguide.qhc"
 
-HelpViewer::HelpViewer() :
-    m_pendingBookmark ( HELP_INVALID )
+HelpViewer::HelpViewer()
 {
-#if 0
-    m_process_help = new QProcess(this);
-#endif
-
 	m_help_exec = false;
-
-#if 0
-	QObject::connect( m_process_help,
-	                  SIGNAL( started() ),
-                      this,
-			          SLOT( OnStartedHelp() ) );
-	QObject::connect( m_process_help,
-	                  SIGNAL( finished( int, QProcess::ExitStatus ) ),
-			          this,
-			          SLOT( OnEndHelp( int, QProcess::ExitStatus ) ) );
-#endif
 }
 
 HelpViewer::~HelpViewer()
@@ -54,61 +37,9 @@ void HelpViewer::ShowHelpClicked()
     Show();
 }
 
-void HelpViewer::showPage( const QString &page )
-{
-    Q_UNUSED(page);
-
-#if 0
-    QString path = QApplication::applicationDirPath() + "/help/" + page;
-
-    if (!assistant)
-        assistant = new QAssistantClient("");
-
-    assistant->showPage(path);
-#endif
-}
-
-void HelpViewer::preparePage( HelpBookmark bookmark )
-{
-    m_pendingBookmark = bookmark;
-}
-
-void HelpViewer::requestPage( HelpBookmark bookmark )
-{
-    if (m_help_exec)
-    {
-        showPage( bookmark );
-    }
-    else
-    {
-        m_pendingBookmark = bookmark;
-
-        Show();
-    }
-}
-
-void HelpViewer::showPage( HelpBookmark bookmark )
-{
-	QByteArray ba;
-	ba.append("activateIdentifier " + helpBookmark[bookmark]);
-	ba.append('\0');
-	ba.append('\n');
-
-	m_process_help->write(ba);
-}
-
 void HelpViewer::Show()
 {
-    if (m_help_exec)
-    {
-        if (m_pendingBookmark != HELP_INVALID)
-        {
-            showPage( m_pendingBookmark );
-
-	        m_pendingBookmark = HELP_INVALID;
-        }
-    }
-    else
+    if (!m_help_exec)
     {
         m_process_help = new QProcess;
         QStringList args;
@@ -148,27 +79,6 @@ void HelpViewer::Close()
         m_process_help->terminate();
 		m_process_help->waitForFinished();
 		m_help_exec = false;
-    }
-}
-
-void HelpViewer::OnHelpChange()
-{
-#if 0
-	QByteArray ba;
-	ba.append("setSource qthelp://Sample_Help/doc/doc2.html");
-	ba.append('\0');
-
-	m_process_help->write(ba);
-#endif
-}
-
-void HelpViewer::OnStartedHelp()
-{
-    if (m_pendingBookmark != HELP_INVALID)
-    {
-        showPage( m_pendingBookmark );
-
-	    m_pendingBookmark = HELP_INVALID;
     }
 }
 

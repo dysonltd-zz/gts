@@ -77,11 +77,6 @@ namespace
         {
         }
 
-        virtual const HelpBookmark GetHelpText() const
-        {
-            return HELP_GENERAL;
-        }
-
         virtual const WbConfig GetCurrentConfig() const
         {
             return WbConfig();

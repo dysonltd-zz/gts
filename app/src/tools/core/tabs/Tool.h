@@ -59,7 +59,6 @@ public:
 
     virtual const WbConfig GetCurrentConfig() const;
 
-    virtual const HelpBookmark GetHelpText() const;
     virtual const WbSchema GetMostSpecificSubSchema() const;
     virtual QWidget* Widget() { return this; }
     void ReloadCurrentConfig( const ConfigKeyMapper* const excludeMapper = 0 );
@@ -68,7 +67,6 @@ public:
     virtual const QString CannotCloseReason() const;
 
 protected:
-
     virtual void SetEnabled( const bool shouldEnable );
 
     WbConfig& GetCurrentConfig();

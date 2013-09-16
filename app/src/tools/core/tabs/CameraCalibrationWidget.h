@@ -49,7 +49,6 @@ public:
     ~CameraCalibrationWidget();
 
     virtual const QString Name() const { return tr( "Calibrate Camera" ); }
-    virtual const HelpBookmark GetHelpText() const;
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
 

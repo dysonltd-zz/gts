@@ -45,7 +45,6 @@ class ToolInterface
 public:
     virtual ~ToolInterface() {}
     virtual const QString Name() const = 0;
-    virtual const HelpBookmark GetHelpText() const = 0;
 
     virtual QWidget* Widget() = 0;
 
