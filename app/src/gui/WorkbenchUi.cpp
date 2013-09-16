@@ -167,7 +167,8 @@ WorkbenchUi::WorkbenchUi( MainWindow& mainWindow ) :
     m_toolTabs           ( 0 ),
     m_itemToSwitchBackTo ( 0 ),
     m_activePath         (),
-    m_mainWindow         ( mainWindow )
+    m_mainWindow         ( mainWindow ),
+    m_currentlyLoadedWorkbench ( false )
 {
     m_ui->setupUi(this);
 
@@ -366,6 +367,35 @@ void WorkbenchUi::OpenWorkbench()
     OpenWorkbench( workbenchConfigFileName );
 }
 
+void WorkbenchUi::NewOrLoadWorkbenchQuestion()
+{
+    QMessageBox question( QMessageBox::Information,
+                          tr("Create New Workbench or Open Existing Workbench?"),
+                          tr("Create New Workbench or Open Existing Workbench?"),
+                          QMessageBox::Open | QMessageBox::Close,
+                          this );
+    question.addButton("New", QMessageBox::ActionRole);
+    question.setDefaultButton(QMessageBox::Close);
+
+    switch (question.exec())
+    {
+        case QMessageBox::Open:
+            OpenWorkbench();
+            break;
+
+        case QMessageBox::Close:
+            // use std::exit as qApp->closeAllWindows() would not work yet
+            // since the app has not started running!
+            std::exit(0);
+            break;
+
+        // Create new workbench
+        default:
+            NewWorkbench();
+            break;
+    }
+}
+
 void WorkbenchUi::OpenWorkbench( const QString& workbenchConfigFileName )
 {
     if ( !workbenchConfigFileName.isEmpty() )
@@ -379,37 +409,16 @@ void WorkbenchUi::OpenWorkbench( const QString& workbenchConfigFileName )
 
             QString title = QString("Ground Truth System (v%1) - %2").arg(GTS_BUILD_REVN).arg(workbenchConfigFileName);
             m_mainWindow.setWindowTitle(title);
+            m_currentlyLoadedWorkbench = true;
         }
         else
         {
-            QMessageBox question( QMessageBox::Information,
-                                  tr("Create New Workbench or Open Existing Workbench?"),
-                                  tr("Create New Workbench or Open Existing Workbench?"),
-                                  QMessageBox::Open | QMessageBox::Close,
-                                  this );
-            question.addButton("New", QMessageBox::ActionRole);
-            question.setDefaultButton(QMessageBox::Close);
-
-            const int response = question.exec();
-
-            switch (response)
-            {
-                case QMessageBox::Open:
-                    OpenWorkbench();
-                    break;
-
-                case QMessageBox::Close:
-                    // use std::exit as qApp->closeAllWindows() would not work yet
-                    // since the app has not started running!
-                    std::exit(0);
-                    break;
-
-                // Create new workbench
-                default:
-                    NewWorkbench();
-                    break;
-            }
+            NewOrLoadWorkbenchQuestion();
         }
+    }
+    else if ( !m_currentlyLoadedWorkbench && workbenchConfigFileName.isEmpty() )
+    {
+        NewOrLoadWorkbenchQuestion();
     }
 }
 
@@ -420,6 +429,10 @@ void WorkbenchUi::NewWorkbench()
                                                                           getenv("HOME"),
                                                                           QFileDialog::ShowDirsOnly);
 
+    if (!m_currentlyLoadedWorkbench && workbenchConfigFolderName.isEmpty() )
+    {
+        NewOrLoadWorkbenchQuestion();
+    }
     QString workbenchConfigFileName = QString("%1/%2").arg(workbenchConfigFolderName).
                                                         arg("workbench.xml");
 
@@ -433,6 +446,7 @@ void WorkbenchUi::NewWorkbench()
         QString title = QString("Ground Truth System (v%1) - %2").arg(GTS_BUILD_REVN).arg(workbenchConfigFileName);
         m_mainWindow.setWindowTitle(title);
         SaveWorkbench();
+        m_currentlyLoadedWorkbench = true;
     }
     else
     {
@@ -448,7 +462,6 @@ void WorkbenchUi::SaveWorkbench()
     if ( m_workbench->Save() )
     {
         Reload();
-
         GetCornerWidget()->setVisible( false );
     }
     else

@@ -76,6 +76,7 @@ private:
     void CreateTools(MainWindow & mainWindow);
     void SetupSplitter();
     void SetupWorkbench();
+    void NewOrLoadWorkbenchQuestion();
     void OpenWorkbench( const QString & workbenchConfigFileName );
     void SetUpWorkbenchSchema();
     void ConnectSignals();
@@ -93,6 +94,8 @@ private:
     QTreeWidgetItem* m_itemToSwitchBackTo;
     WbPath m_activePath;
     MainWindow& m_mainWindow;
+
+    bool m_currentlyLoadedWorkbench;
 };
 
 #endif // WORKBENCHUI_H
