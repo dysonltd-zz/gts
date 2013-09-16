@@ -185,7 +185,6 @@ void TrackRobotWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( StopButtonClicked() ) );
-
     QObject::connect( m_ui->m_loadBtn,
                       SIGNAL( clicked() ),
                       this,
@@ -198,17 +197,14 @@ void TrackRobotWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( TrackResetButtonClicked() ) );
-
     QObject::connect( m_ui->m_positionCombo,
                       SIGNAL( currentIndexChanged (int) ),
                       this,
                       SLOT( CameraComboChanged() ) );
-
     QObject::connect( m_ui->m_useGlobalCheckBox,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( UseGlobalBtnClicked() ) );
-
     QObject::connect( m_ui->btnSave,
                       SIGNAL( clicked() ),
                       this,
@@ -652,7 +648,7 @@ const WbSchema TrackRobotWidget::CreateSchema()
 {
     using namespace TrackRobotSchema;
 
-    WbSchema schema( CreateWorkbenchSubSchema( schemaName, tr( "Tracked Runs" ) ) );
+    WbSchema schema( CreateWorkbenchSubSchema( schemaName, tr( "Track Robot" ) ) );
 
     schema.AddSingleValueKey( robotIdKey, WbSchemaElement::Multiplicity::One );
 

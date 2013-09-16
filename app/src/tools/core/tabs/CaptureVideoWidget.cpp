@@ -627,7 +627,7 @@ const WbSchema CaptureVideoWidget::CreateSchema()
     using namespace VideoCaptureSchema;
 
     WbSchema schema( CreateWorkbenchSubSchema( schemaName,
-                                               tr( "Captured Videos" ) ) );
+                                               tr( "Video Source(s)" ) ) );
 
     schema.AddKeyGroup( capturedVideoGroup,
                         WbSchemaElement::Multiplicity::Many,

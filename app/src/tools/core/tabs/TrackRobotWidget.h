@@ -118,9 +118,11 @@ private:
                                        ImageGrid*                imageGrid,
                                        RobotTracker::trackerType tracker );
 
-    const ExitStatus::Flags TrackRun( double rate, bool trackingActive,
-                                                   bool singleStep,
-                                                   bool runForward );
+    const ExitStatus::Flags TrackRun( double rate,
+                                      bool trackingActive,
+                                      bool singleStep,
+                                      bool runForward );
+
     const ExitStatus::Flags TrackPause();
     const ExitStatus::Flags TrackStop();
     const ExitStatus::Flags TrackSaveData( char* floorPlanFile,
