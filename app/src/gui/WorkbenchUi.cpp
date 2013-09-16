@@ -367,7 +367,7 @@ void WorkbenchUi::OpenWorkbench()
     OpenWorkbench( workbenchConfigFileName );
 }
 
-void WorkbenchUi::NewOrLoadWorkbenchQuestion()
+void WorkbenchUi::NewOrOpenWorkbenchQuestion()
 {
     QMessageBox question( QMessageBox::Information,
                           tr("Create New Workbench or Open Existing Workbench?"),
@@ -413,12 +413,12 @@ void WorkbenchUi::OpenWorkbench( const QString& workbenchConfigFileName )
         }
         else
         {
-            NewOrLoadWorkbenchQuestion();
+            NewOrOpenWorkbenchQuestion();
         }
     }
     else if ( !m_currentlyLoadedWorkbench && workbenchConfigFileName.isEmpty() )
     {
-        NewOrLoadWorkbenchQuestion();
+        NewOrOpenWorkbenchQuestion();
     }
 }
 
@@ -431,7 +431,7 @@ void WorkbenchUi::NewWorkbench()
 
     if (!m_currentlyLoadedWorkbench && workbenchConfigFolderName.isEmpty() )
     {
-        NewOrLoadWorkbenchQuestion();
+        NewOrOpenWorkbenchQuestion();
     }
     QString workbenchConfigFileName = QString("%1/%2").arg(workbenchConfigFolderName).
                                                         arg("workbench.xml");

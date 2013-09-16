@@ -76,7 +76,7 @@ private:
     void CreateTools(MainWindow & mainWindow);
     void SetupSplitter();
     void SetupWorkbench();
-    void NewOrLoadWorkbenchQuestion();
+    void NewOrOpenWorkbenchQuestion();
     void OpenWorkbench( const QString & workbenchConfigFileName );
     void SetUpWorkbenchSchema();
     void ConnectSignals();
