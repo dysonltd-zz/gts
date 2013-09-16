@@ -20,7 +20,7 @@ __Qt__ (4.8.1)
 	
 	sudo apt-get install libqt4-dev
 
-__OpenCV__ (2.4)
+__OpenCV__ (2.4.6)
 
 	git clone https://github.com/Itseez/opencv.git 
 	git checkout 2.4.5
