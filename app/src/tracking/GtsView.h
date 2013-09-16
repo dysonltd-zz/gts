@@ -114,7 +114,6 @@ public:
     const std::string& GetAviViewName() const { return m_aviView; }
 
     void SaveThumbnail();
-
     void ShowRobotTrack();
     void HideRobotTrack();
 

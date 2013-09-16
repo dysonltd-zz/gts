@@ -328,6 +328,7 @@ bool GtsView::SetupVideo( const char* const videoFile,
 
 void GtsView::LoadTimestampFile( const char* const fileName )
 {
+    m_timestamps.clear();
     QFile file( fileName );
 
     if ( file.open( QFile::ReadOnly ) )
