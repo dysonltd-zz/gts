@@ -138,7 +138,7 @@ void PostProcessWidget::LoadDataButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Post Prcoess Load...");
+    LOG_TRACE("Post Process Load...");
 
     const KeyId roomIdToCapture(GetRoomIdToCapture());
     if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
