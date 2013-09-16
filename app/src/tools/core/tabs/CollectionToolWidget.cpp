@@ -57,6 +57,11 @@ CollectionToolWidget::CollectionToolWidget( const QString&  userFriendlyElementN
                       this,
                       SLOT( NameComboActivated(const int) ) );
 
+    QObject::connect( m_ui->m_addButton,
+                      SIGNAL( clicked() ),
+                      this,
+                      SLOT( NewElement()) );
+
     AddMapper( WbDefaultKeys::descriptionKey, m_ui->m_descriptionPlainTextBox );
     RegisterCollectionCombo( m_ui->m_nameComboBox, GetCollection(), true );
 }
@@ -138,7 +143,7 @@ void CollectionToolWidget::AddSubTool( ToolInterface* const subTool )
 void CollectionToolWidget::AddToolDetail( QLabel*  const detailLabel,
                                           QWidget* const detailEntryBox )
 {
-    m_ui->m_toolDetailsLayout->addRow( detailLabel, detailEntryBox );
+    //m_ui->m_toolDetailsLayout->addRow( detailLabel, detailEntryBox );
     m_ownedWidgets.push_back( detailLabel );
     m_ownedWidgets.push_back( detailEntryBox );
 }
@@ -192,17 +197,17 @@ void CollectionToolWidget::ReloadCurrentConfigToolSpecific()
     }
 }
 
-void CollectionToolWidget::SetEnabled( const bool shoudEnable )
+void CollectionToolWidget::SetEnabled( const bool shouldEnable )
 {
-    Tool::SetEnabled( shoudEnable );
+    Tool::SetEnabled( shouldEnable );
     Widget()->setEnabled( true );
     for ( size_t i = 0; i < m_ownedWidgets.size(); ++i )
     {
         QWidget* widget = m_ownedWidgets.at( i );
-        widget->setEnabled( shoudEnable );
+        widget->setEnabled( shouldEnable );
     }
-    m_ui->m_descriptionPlainTextBox->setEnabled( shoudEnable );
-    m_subToolsTabs->setEnabled( shoudEnable );
+    m_ui->m_descriptionPlainTextBox->setEnabled( shouldEnable );
+    m_subToolsTabs->setEnabled( shouldEnable );
 
     m_ui->m_nameComboBox->setEnabled( true );
 }

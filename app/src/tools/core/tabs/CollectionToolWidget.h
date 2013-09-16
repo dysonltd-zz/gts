@@ -66,7 +66,7 @@ protected:
 
     virtual void UpdateToolMenu( QMenu& toolMenu );
 
-    virtual void SetEnabled( const bool shoudEnable );
+    virtual void SetEnabled(const bool shouldEnable );
 
     virtual void hideEvent(QHideEvent*);
     virtual void showEvent(QShowEvent*);

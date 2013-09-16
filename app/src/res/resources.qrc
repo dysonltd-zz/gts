@@ -49,5 +49,6 @@
         <file>scan4x.png</file>
         <file>scan10x.png</file>
         <file>scan20x.png</file>
+        <file>add.png</file>
     </qresource>
 </RCC>
