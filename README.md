@@ -35,7 +35,7 @@ __Unicap__ (0.9.12)
 
 * [Xvid](http://www.xvid.org/) (1.3.2)
 
-* [OpenCV](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) (2.4)
+* [OpenCV](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) (2.4.6)
 
 __MinGW Only__
 
@@ -59,7 +59,7 @@ From root directory:
 
 	$ mkdir build && cd build
 	$ cmake [options] ../
-	    e.g. cmake -DOpenCV_ROOT_DIR=/home/username/opencv2.4.5/ -DCMAKE_BUILD_TYPE=Debug -DGTS_TESTS=ON -DCMAKE_INSTALL_PREFIX=/home/username/gts/ ../
+	    e.g. cmake -DOpenCV_ROOT_DIR=/home/username/opencv2.4.6/ -DCMAKE_BUILD_TYPE=Debug -DGTS_TESTS=ON -DCMAKE_INSTALL_PREFIX=/home/username/gts/ ../
 	$ cmake --build . --target install
 
 __Windows (MinGW)__
@@ -92,7 +92,7 @@ __MinGW__
 	MKDIR build
 	CD build
 	SET OpenCV_DIR="C:\Software\OpenCV-2.2.0-MinGW\opencv"
-	cmake.exe -G"MinGW Makefiles" -DOpenCV_DIR="C:\Software\OpenCV-2.2.0-MinGW\opencv" ..
+	cmake.exe -G"MinGW Makefiles" -DOpenCV_DIR="C:\Software\OpenCV-2.4.6-MinGW\opencv" ..
 	mingw32-make package
 
 __VS2010__
