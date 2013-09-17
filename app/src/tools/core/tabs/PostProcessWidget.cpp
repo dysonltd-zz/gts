@@ -20,12 +20,9 @@
 
 #include "ui_PostProcessWidget.h"
 
-#include "UnknownLengthProgressDlg.h"
-
 #include "ScanUtility.h"
 #include "CoverageSystem.h"
 #include "KltTracker.h"
-
 #include "TrackModel.h"
 
 #include "RoomsCollection.h"
@@ -38,12 +35,11 @@
 #include "RobotMetricsSchema.h"
 #include "FloorPlanSchema.h"
 #include "RunSchema.h"
-
-#include "Message.h"
-
 #include "Sweeper.h"
 
+#include "Message.h"
 #include "Logging.h"
+#include "UnknownLengthProgressDlg.h"
 
 #include <QtCore/QDir>
 #include <QtGui/QMessageBox>
