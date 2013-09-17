@@ -182,10 +182,6 @@ void TrackView::updateView()
         }
     }
 
-#if 0
-    LogSwapHandedness( avg );
-#endif
-
     ScanUtility::PlotLog( avg,
                           compImgCol,
                           colours[0],

@@ -348,22 +348,6 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
             incCoverageFile = fopen( coverageFile, "w" );
         }
 
-#if 0
-        if ( sweeperFile )
-        {
-            Sweeper newSweeper( sweeperFile );
-            sweepers.push_back( newSweeper );
-
-            LOG_INFO(QObject::tr("Read sweeper (%1) data from %2.").arg(sweepers.size())
-                                                                   .arg(sweeperName));
-
-            LOG_INFO(QObject::tr("x = %1, y = %2, angle = %3, width = %4.").arg(newSweeper.x)
-                                                                           .arg(newSweeper.y)
-                                                                           .arg(newSweeper.a)
-                                                                           .arg(newSweeper.w));
-        }
-#endif
-
         // Read the tracking results,
         // robot metrics, floor plan,
         // and pixel offsets.

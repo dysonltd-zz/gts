@@ -20,11 +20,6 @@
 
 #include "ui_TrackRobotWidget.h"
 
-#include "UnknownLengthProgressDlg.h"
-
-#include "FileDialogs.h"
-#include "FileUtilities.h"
-
 #include "TrackRobotSchema.h"
 #include "CameraPositionSchema.h"
 #include "ExtrinsicCalibrationSchema.h"
@@ -36,15 +31,18 @@
 #include "RunSchema.h"
 #include "TargetSchema.h"
 
-#include "Message.h"
-
-#include "Logging.h"
 
 #include "RoomsCollection.h"
 #include "CamerasCollection.h"
 #include "CameraPositionsCollection.h"
 #include "RobotsCollection.h"
 #include "TargetsCollection.h"
+
+#include "Message.h"
+#include "Logging.h"
+#include "UnknownLengthProgressDlg.h"
+#include "FileDialogs.h"
+#include "FileUtilities.h"
 
 #include <QtCore/QDir>
 #include <QtGui/QMessageBox>
@@ -210,7 +208,6 @@ void TrackRobotWidget::ConnectSignals()
                       this,
                       SLOT( SaveBtnClicked() ) );
 
-#if 0
     // Keyboard shorcuts
     QShortcut *playPauseTrackKey = new QShortcut(Qt::Key_Space, this);
     QShortcut *stepBackKey = new QShortcut(Qt::Key_Left, this);
@@ -238,7 +235,7 @@ void TrackRobotWidget::ConnectSignals()
              SIGNAL( activated() ),
              this,
              SLOT( StopButtonClicked() ) );
-#endif
+
 }
 
 void TrackRobotWidget::CreateMappers()
@@ -277,13 +274,6 @@ const QString TrackRobotWidget::GetSubSchemaDefaultFileName() const
 void TrackRobotWidget::ReloadCurrentConfigToolSpecific()
 {
     const WbConfig& config = GetCurrentConfig();
-
-#if 0
-    if ( m_ui->m_robotCombo->count() == 1 )
-    {
-        m_ui->m_robotCombo->setCurrentIndex( 0 );
-    }
-#endif
 
     FillOutCameraCombo( *m_ui->m_positionCombo );
 

@@ -120,13 +120,6 @@ void MainWindow::Start()
 
 MainWindow::~MainWindow()
 {
-#if 0
-    delete m_helpViewer;
-    delete m_cornerButton;
-
-    delete m_workbenchUi;
-#endif
-
     delete m_ui;
 }
 

@@ -353,13 +353,6 @@ void CaptureVideoWidget::RemoveAllVideoSources()
     m_ui->m_videoTable->setHorizontalHeaderLabels( headerlabels );
 
     m_ui->m_recordBtn->setEnabled(false);
-
-#if 0
-    WbConfig config(GetCurrentConfig());
-    config.KeepKeys(VideoCaptureSchema::cameraPositionIdKey);
-    config.KeepKeys(VideoCaptureSchema::videoFileNameKey);
-    config.KeepKeys(VideoCaptureSchema::timestampFileNameKey);
-#endif
 }
 
 void CaptureVideoWidget::ShowNoRoomError()
