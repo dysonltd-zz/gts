@@ -61,8 +61,8 @@ CamerasPage::CamerasPage( CameraHardware&   cameraHardware,
     m_camerasCollection      ( camerasCollection ),
     m_cameraHardware         ( cameraHardware ),
     m_cameraPageWidget       ( new QWidget( this ) ),
-    m_fromLiveCameraBtn      ( new QRadioButton( tr("&Physical") ) ),
-    m_fromFileCameraBtn      ( new QRadioButton( tr("&Virtual") ) ),
+    m_fromLiveCameraBtn      ( new QRadioButton( tr("&Online Camera") ) ),
+    m_fromFileCameraBtn      ( new QRadioButton( tr("&Offline Camera") ) ),
     m_cameraSelectionContent ( 0 )
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
