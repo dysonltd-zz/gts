@@ -17,55 +17,35 @@
  */
 
 #include "CreateFloorPlanWidget.h"
-
 #include "ui_CreateFloorPlanWidget.h"
 
 #include "RoomsCollection.h"
 #include "CamerasCollection.h"
 #include "CameraPositionsCollection.h"
-
 #include "CalibrationSchema.h"
 #include "ExtrinsicCalibrationSchema.h"
 #include "CameraPositionSchema.h"
 #include "RoomLayoutSchema.h"
-
 #include "FloorPlanSchema.h"
-
 #include "CameraRelationsTableMapper.h"
-
 #include "CaptureLiveDualController.h"
-
 #include "CalibrationAlgorithm.h"
-
 #include "WbConfigTools.h"
 #include "WbConfig.h"
-
 #include "GroundPlaneUtility.h"
 #include "OpenCvUtility.h"
-
 #include "FloorPlanning.h"
-
-#include <iostream>
-#include <algorithm>
-
-#include "RobotMetrics.h"
-#include "CameraCalibration.h"
-
 #include "ImageGrid.h"
 #include "ImageView.h"
-
 #include "FileUtilities.h"
 #include "FileDialogs.h"
-
 #include "Message.h"
-
 #include "ImageViewer.h"
-
 #include "CameraHardware.h"
-
 #include "WbConfigTools.h"
-
 #include "Logging.h"
+#include "RobotMetrics.h"
+#include "CameraCalibration.h"
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
@@ -73,6 +53,8 @@
 #include <QFileDialog>
 #include <QtGlobal>
 
+#include <iostream>
+#include <algorithm>
 
 namespace
 {
@@ -286,12 +268,12 @@ void CreateFloorPlanWidget::ConnectSignals()
                       this,
                       SLOT( CaptureCancelBtnClicked() ) );
 
-    QObject::connect( m_ui->btnRotate,
+    QObject::connect( m_ui->m_rotateBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BtnRotateClicked() ) );
 
-    QObject::connect( m_ui->btnMatch,
+    QObject::connect( m_ui->m_matchBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BtnMatchClicked() ) );
@@ -305,7 +287,7 @@ void CreateFloorPlanWidget::ConnectSignals()
                       this,
                       SLOT( BtnSaveClicked() ) );
 
-    QObject::connect( m_ui->btnCancel,
+    QObject::connect( m_ui->m_cancelBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BtnCancelClicked() ) );
@@ -389,8 +371,8 @@ void CreateFloorPlanWidget::ResetUi()
     m_ui->m_liveView2->Clear();
     m_ui->m_liveView2->update();
 
-    m_ui->btnRotate->setEnabled(false);
-    m_ui->btnMatch->setEnabled(false);
+    m_ui->m_rotateBtn->setEnabled(false);
+    m_ui->m_matchBtn->setEnabled(false);
     m_ui->btnStitch->setEnabled(false);
     m_ui->btnSave->setEnabled(false);
 }
@@ -521,7 +503,7 @@ void CreateFloorPlanWidget::BtnRotateClicked()
 
     ShowImage( m_cam2Img, m_ui->m_liveView2 );
 
-    m_ui->btnMatch->setEnabled( true );
+    m_ui->m_matchBtn->setEnabled( true );
     m_ui->btnStitch->setEnabled( false );
     m_ui->btnSave->setEnabled( false );
 }
@@ -1240,19 +1222,15 @@ void CreateFloorPlanWidget::CaptureLiveBtnClicked()
 
     m_ui->m_camera1Combo->setEnabled(false);
     m_ui->m_camera2Combo->setEnabled(false);
-
     m_ui->m_captureCancelBtn->setEnabled(true);
-
     m_ui->m_getImageFromFileBtn->setEnabled(false);
-
-    m_ui->btnCancel->setEnabled(false);
+    m_ui->m_cancelBtn->setEnabled(false);
 
     Collection camerasCollection( CamerasCollection() );
     Collection cameraPositionsCollection( CameraPositionsCollection() );
 
     camerasCollection.SetConfig( config );
     cameraPositionsCollection.SetConfig( config );
-
 
     const WbConfig camPosConfig1 = cameraPositionsCollection.ElementById( m_camPosId1 );
     const WbConfig camPosConfig2 = cameraPositionsCollection.ElementById( m_camPosId2 );
@@ -1310,11 +1288,9 @@ void CreateFloorPlanWidget::CaptureLiveBtnClicked()
          }
 
          m_ui->m_captureCancelBtn->setEnabled(false);
-
-         m_ui->btnRotate->setEnabled(true);
-         m_ui->btnMatch->setEnabled(true);
-
-         m_ui->btnCancel->setEnabled(true);
+         m_ui->m_rotateBtn->setEnabled(true);
+         m_ui->m_matchBtn->setEnabled(true);
+         m_ui->m_cancelBtn->setEnabled(true);
 
          m_rotAngle = 0;
      }
@@ -1323,11 +1299,9 @@ void CreateFloorPlanWidget::CaptureLiveBtnClicked()
 void CreateFloorPlanWidget::CaptureCancelBtnClicked()
 {
     m_ui->m_captureCancelBtn->setEnabled(false);
-
     m_ui->m_captureLiveBtn->setEnabled(true);
     m_ui->m_getImageFromFileBtn->setEnabled(true);
-
-    m_ui->btnCancel->setEnabled(true);
+    m_ui->m_cancelBtn->setEnabled(true);
 
     m_captureLiveDualController->CaptureCancelBtnClicked();
 }
@@ -1429,10 +1403,9 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
                 ShowImage(m_cam2Img, m_ui->m_liveView2);
             }
 
-            m_ui->btnRotate->setEnabled(true);
-            m_ui->btnMatch->setEnabled(true);
-
-            m_ui->btnCancel->setEnabled(true);
+            m_ui->m_rotateBtn->setEnabled(true);
+            m_ui->m_matchBtn->setEnabled(true);
+            m_ui->m_cancelBtn->setEnabled(true);
 
             m_rotAngle = 0;
         }
