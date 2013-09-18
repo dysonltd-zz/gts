@@ -51,11 +51,9 @@
 #include <sstream>
 #include <iostream>
 
-static const double rate[] = {VideoSource::FPS_3_75,
-                              VideoSource::FPS_7_5,
+static const double rate[] = {VideoSource::FPS_7_5,
                               VideoSource::FPS_15,
                               VideoSource::FPS_30,
-                              VideoSource::FPS_50,
                               VideoSource::FPS_60};
 
 static const int SOURCE_COLUMN = 0;
