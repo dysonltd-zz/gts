@@ -42,12 +42,9 @@
 #pragma warning ( disable : 4351 )
 #endif
 
-const double VideoSource::FPS_3_75 = 3.75;
 const double VideoSource::FPS_7_5  = 7.5;
 const double VideoSource::FPS_15   = 15.0;
 const double VideoSource::FPS_30   = 30.0;
-const double VideoSource::FPS_40   = 40.0;
-const double VideoSource::FPS_50   = 50.0;
 const double VideoSource::FPS_60   = 60.0;
 
 /** @brief Create a VideoSource.

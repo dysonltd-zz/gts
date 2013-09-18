@@ -580,11 +580,9 @@ void CaptureVideoWidget::AddTableRow(QTableWidgetItem* tableItem)
     m_ui->m_videoTable->setItem(newAppendedRow, SOURCE_COLUMN, tableItem);
 
     QComboBox* rateSpinBox = new QComboBox();
-    rateSpinBox->addItem( "3.75" );
     rateSpinBox->addItem( "7.5" );
     rateSpinBox->addItem( "15" );
     rateSpinBox->addItem( "30" );
-    rateSpinBox->addItem( "50" );
     rateSpinBox->addItem( "60" );
 
     rateSpinBox->setCurrentIndex(1); // default to 7.5fps
