@@ -277,12 +277,12 @@ void CreateFloorPlanWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BtnMatchClicked() ) );
-    QObject::connect( m_ui->btnStitch,
+    QObject::connect( m_ui->m_stitchBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BtnStitchClicked() ) );
 
-    QObject::connect( m_ui->btnSave,
+    QObject::connect( m_ui->m_saveBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BtnSaveClicked() ) );
@@ -292,7 +292,7 @@ void CreateFloorPlanWidget::ConnectSignals()
                       this,
                       SLOT( BtnCancelClicked() ) );
 
-    QObject::connect( m_ui->btnCreateFloorPlan,
+    QObject::connect( m_ui->m_createFloorPlanBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BtnCreateFloorPlanClicked() ) );
@@ -373,8 +373,8 @@ void CreateFloorPlanWidget::ResetUi()
 
     m_ui->m_rotateBtn->setEnabled(false);
     m_ui->m_matchBtn->setEnabled(false);
-    m_ui->btnStitch->setEnabled(false);
-    m_ui->btnSave->setEnabled(false);
+    m_ui->m_stitchBtn->setEnabled(false);
+    m_ui->m_saveBtn->setEnabled(false);
 }
 
 const QString CreateFloorPlanWidget::GetCamera1Id() const
@@ -504,8 +504,8 @@ void CreateFloorPlanWidget::BtnRotateClicked()
     ShowImage( m_cam2Img, m_ui->m_liveView2 );
 
     m_ui->m_matchBtn->setEnabled( true );
-    m_ui->btnStitch->setEnabled( false );
-    m_ui->btnSave->setEnabled( false );
+    m_ui->m_stitchBtn->setEnabled( false );
+    m_ui->m_saveBtn->setEnabled( false );
 }
 
 void CreateFloorPlanWidget::BtnMatchClicked()
@@ -531,8 +531,7 @@ void CreateFloorPlanWidget::BtnMatchClicked()
     if (foundCorners1 && foundCorners2)
     {
         DisplayMatched( imagePoints1, imagePoints2 );
-
-        m_ui->btnStitch->setEnabled(true);
+        m_ui->m_stitchBtn->setEnabled(true);
     }
     else
     {
@@ -622,7 +621,7 @@ void CreateFloorPlanWidget::BtnStitchClicked()
 
         DisplayStitched();
 
-        m_ui->btnSave->setEnabled(true);
+        m_ui->m_saveBtn->setEnabled(true);
     }
     else
     {
