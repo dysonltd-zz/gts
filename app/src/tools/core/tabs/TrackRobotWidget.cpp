@@ -218,7 +218,7 @@ void TrackRobotWidget::ConnectSignals()
     QObject::connect( playPauseTrackKey,
              SIGNAL( activated() ),
              this,
-             SLOT( PlayPauseTrackButtonClicked() ) );
+             SLOT( PlayPauseButtonClicked() ) );
     QObject::connect( stepBackKey,
              SIGNAL( activated() ),
              this,
