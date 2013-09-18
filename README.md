@@ -23,7 +23,10 @@ __Qt__ (4.8.1)
 __OpenCV__ (2.4.6)
 
 	git clone https://github.com/Itseez/opencv.git 
-	git checkout 2.4.5
+	git checkout 2.4.6
+	mkdir build && cd build
+	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/path/to/opencv/install
+	cmake --build . --target install
 
 __Unicap__ (0.9.12)
 
@@ -59,21 +62,21 @@ From root directory:
 
 	$ mkdir build && cd build
 	$ cmake [options] ../
-	    e.g. cmake -DOpenCV_ROOT_DIR=/home/username/opencv2.4.6/ -DCMAKE_BUILD_TYPE=Debug -DGTS_TESTS=ON -DCMAKE_INSTALL_PREFIX=/home/username/gts/ ../
+	    e.g. cmake -DOpenCV_ROOT_DIR=/path/to/opencv/install -DCMAKE_BUILD_TYPE=Debug -DGTS_TESTS=ON -DCMAKE_INSTALL_PREFIX=/home/username/gts/ ../
 	$ cmake --build . --target install
 
 __Windows (MinGW)__
 
 	MKDIR build
 	CD build
-	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" ..   
+	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV-INSTALL" ..   
 	cmake --build . --target install
 
 __Windows (VS2010)__
 
 	MKDIR build
 	CD build
-	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV ..
+	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV-INSTALL" ..
 	cmake --build . --target install
 	
 __CMake Options__
@@ -91,15 +94,14 @@ __MinGW__
 	
 	MKDIR build
 	CD build
-	SET OpenCV_DIR="C:\Software\OpenCV-2.2.0-MinGW\opencv"
-	cmake.exe -G"MinGW Makefiles" -DOpenCV_DIR="C:\Software\OpenCV-2.4.6-MinGW\opencv" ..
+	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\Software\OpenCV-2.4.6-MinGW\opencv" ..
 	mingw32-make package
 
 __VS2010__
   	
 	MKDIR build
 	CD build
-	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV" .. 
+	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\Software\OpenCV-2.4.6-VS2010\opencv" .. 
 	nmake package
 
 ## Unit Tests
