@@ -143,7 +143,9 @@ void CollectionToolWidget::AddSubTool( ToolInterface* const subTool )
 void CollectionToolWidget::AddToolDetail( QLabel*  const detailLabel,
                                           QWidget* const detailEntryBox )
 {
-    //m_ui->m_toolDetailsLayout->addRow( detailLabel, detailEntryBox );
+
+    m_ui->m_descriptionGridLayout->addWidget(detailLabel,1,0,1,1);
+    m_ui->m_descriptionGridLayout->addWidget(detailEntryBox,1,1,1,1);
     m_ownedWidgets.push_back( detailLabel );
     m_ownedWidgets.push_back( detailEntryBox );
 }
