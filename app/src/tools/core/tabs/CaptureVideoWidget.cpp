@@ -583,8 +583,6 @@ void CaptureVideoWidget::AddTableRow(QTableWidgetItem* tableItem)
     rateSpinBox->addItem( "30" );
     rateSpinBox->addItem( "60" );
 
-    rateSpinBox->setCurrentIndex(1); // default to 7.5fps
-
     m_ui->m_videoTable->setCellWidget( newAppendedRow, RATE_COLUMN, rateSpinBox );
 }
 
