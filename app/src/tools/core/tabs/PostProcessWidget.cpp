@@ -72,7 +72,7 @@ PostProcessWidget::PostProcessWidget( QWidget* parent ) :
                       SLOT( PostProcessButtonClicked() ) );
 
     // set up delete button
-    QAction* const toggleAction = new QAction( tr( "Toggle" ), m_ui->m_trackResults );
+    QAction* const toggleAction = new QAction( tr( "Toggle Data Point ON/OFF" ), m_ui->m_trackResults );
     toggleAction->setShortcut( QKeySequence( QKeySequence::Delete ) );
     toggleAction->setShortcutContext( Qt::WidgetShortcut );
     QObject::connect( toggleAction,
@@ -134,7 +134,7 @@ void PostProcessWidget::LoadDataButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Post Process Load");
+    LOG_TRACE("Post Process - Loading");
 
     const KeyId roomIdToCapture(GetRoomIdToCapture());
     if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
@@ -189,7 +189,7 @@ void PostProcessWidget::PostProcessButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Post Process");
+    LOG_TRACE("Post Process - Processing");
 
     bool successful = true;
 
@@ -370,21 +370,21 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
         }
         else
         {
-            LOG_ERROR("Could not load pixel offsets from text file!");
+            LOG_ERROR("Post Process - Could not load pixel offsets from text file!");
 
             return ExitStatus::ERRORS_OCCURRED;
         }
 
         if ( !metrics.LoadMetrics( metricsConfig, firstCamPosCalConfig, 1 ) )
         {
-            LOG_ERROR("Could not load robot metrics!");
+            LOG_ERROR("Post Process - Could not load robot metrics!");
 
             return ExitStatus::ERRORS_OCCURRED;
         }
 
         if ( !TrackHistory::ReadHistoryCsv( trackerResultsCsvFile, avg ) )
         {
-            LOG_ERROR(QObject::tr("Could not load track log from %1!").arg(trackerResultsCsvFile));
+            LOG_ERROR(QObject::tr("Post Process - Could not load track log from %1!").arg(trackerResultsCsvFile));
 
             return ExitStatus::ERRORS_OCCURRED;
         }
@@ -409,7 +409,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
 
         if ( !compImgCol )
         {
-            LOG_ERROR("Could not load floor plan image!");
+            LOG_ERROR("Post Process - Could not load floor plan image!");
 
             return ExitStatus::ERRORS_OCCURRED;
         }
@@ -447,7 +447,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
             float travelledDistance = 0.f;
             double lastIncTime = 0.0;
 
-            LOG_TRACE("Computing coverage");
+            LOG_TRACE("Post Process - Computing coverage");
 
             for ( unsigned int p=1; p<avgPx.size(); ++p )
             {
@@ -520,9 +520,9 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
                 }
             }
 
-            LOG_TRACE("Done.");
+            LOG_TRACE("Post Process - Coverage computation completed");
 
-            LOG_INFO(QObject::tr("Total distance travelled := %1(cm)\n")
+            LOG_INFO(QObject::tr("Post Process - Total distance travelled := %1(cm)\n")
                          .arg(travelledDistance / metrics.GetScaleFactor()));
 
             int missCount = coverage.MissedMask( coverageMissedFile );
@@ -555,13 +555,13 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
                 fclose( incCoverageFile );
             }
 
-            LOG_TRACE("Coverage data written - cleaning up");
+            LOG_TRACE("Post Process - Coverage data written. Cleaning up");
 
             delete tracker;
         }
         else
         {
-            LOG_WARN("No coverage results computed!");
+            LOG_WARN("Post Process - No coverage results computed!");
         }
 
         cvReleaseImage( &compImg );
@@ -570,7 +570,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
 
         PlotTrackLog( avg, floorPlanFile, trackerResultsImgFile );
 
-        LOG_TRACE("Finished.");
+        LOG_TRACE("Post Process - Post processing finished.");
     }
 
     return exitStatus;
