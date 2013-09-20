@@ -21,7 +21,6 @@
 #include "CaptureVideoWidget.h"
 #include "TrackRobotWidget.h"
 #include "PostProcessWidget.h"
-#include "TrackResultsWidget.h"
 
 #include "WbConfigTools.h"
 #include "RoomsCollection.h"
@@ -42,7 +41,6 @@ RunCollectionTool::RunCollectionTool( CameraHardware& cameraHardware,
     AddSubTool( new CaptureVideoWidget( cameraHardware, this ) );
     AddSubTool( new TrackRobotWidget( this ) );
     AddSubTool( new PostProcessWidget( this ) );
-    AddSubTool( new TrackResultsWidget( this ) );
 
     RegisterCollectionCombo( m_roomCombo, RoomsCollection() );
 }
