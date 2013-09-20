@@ -61,8 +61,6 @@ CamerasPage::CamerasPage( CameraHardware&   cameraHardware,
     m_camerasCollection      ( camerasCollection ),
     m_cameraHardware         ( cameraHardware ),
     m_cameraPageWidget       ( new QWidget( this ) ),
-    m_fromLiveCameraBtn      ( new QRadioButton( tr("&Online Camera") ) ),
-    m_fromFileCameraBtn      ( new QRadioButton( tr("&Offline Camera") ) ),
     m_cameraSelectionContent ( 0 )
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
@@ -71,39 +69,12 @@ CamerasPage::CamerasPage( CameraHardware&   cameraHardware,
     QVBoxLayout* cameraPageLayout = new QVBoxLayout;
     m_cameraPageWidget->setLayout(cameraPageLayout);
 
-    QGroupBox *cameraOrFileGroup = new QGroupBox(m_cameraPageWidget);
-    QVBoxLayout* cameraOrFileLayout = new QVBoxLayout;
-    cameraOrFileGroup->setLayout(cameraOrFileLayout);
-
-    cameraOrFileLayout->addWidget(m_fromLiveCameraBtn);
-    cameraOrFileLayout->addWidget(m_fromFileCameraBtn);
-
-    cameraPageLayout->addWidget(cameraOrFileGroup);
-
     QGroupBox *cameraSelectGroup = new QGroupBox(m_cameraPageWidget);
     QVBoxLayout* cameraSelectLayout = new QVBoxLayout;
     cameraSelectGroup->setLayout(cameraSelectLayout);
 
     AddCameraSelectionPage( cameraSelectLayout );
-
     cameraPageLayout->addWidget(cameraSelectGroup);
-
-    m_fromLiveCameraBtn->setChecked(true);
-    m_fromLiveCameraBtn->setToolTip(tr("Stream video direct from a connected camera."));
-    m_fromFileCameraBtn->setToolTip(tr("Load all camera images and videos from file."));
-
-    m_fromLiveCameraBtn->setEnabled(true);
-    m_fromFileCameraBtn->setEnabled(false);
-
-    QObject::connect( m_fromLiveCameraBtn,
-                      SIGNAL( clicked() ),
-                      this,
-                      SIGNAL( completeChanged() ) );
-    QObject::connect( m_fromFileCameraBtn,
-                      SIGNAL( clicked() ),
-                      this,
-                      SIGNAL( completeChanged() ) );
-
     setLayout( mainLayout );
 }
 
@@ -148,7 +119,6 @@ void CamerasPage::RemovePreviouslyChosenCameras( CameraApi::CameraList& connecte
 void CamerasPage::cleanupPage()
 {
     wizard()->setOption( QWizard::HaveCustomButton1, false );
-
     m_cameraSelectionContent->Shutdown();
 }
 
@@ -159,12 +129,5 @@ bool CamerasPage::isComplete() const
 
 const CameraDescription CamerasPage::GetChosenCamera() const
 {
-    if (m_fromLiveCameraBtn->isChecked())
-    {
-        return m_cameraSelectionContent->GetChosenCamera();
-    }
-    else
-    {
-        return CameraDescription::CreateOffline();
-    }
+    return m_cameraSelectionContent->GetChosenCamera();
 }

@@ -91,8 +91,8 @@ bool CameraSelectionFormContents::ChosenCameraIsValid() const
     return m_chosenCamera < m_cameras.size();
 }
 
-/** @brief Populate the table widget with the details of the cameras
- *
+/**
+ * @brief Populate the table widget with the details of the cameras
  *
 **/
 void CameraSelectionFormContents::FillOutCameraList()
@@ -104,6 +104,10 @@ void CameraSelectionFormContents::FillOutCameraList()
     tablewidget->setRowCount( m_cameras.size() );
     tablewidget->setColumnCount( 1 );
 
+    if (m_cameras.size() > 0)
+    {
+        m_ui->m_cameraLabel->setText(""); // clear label
+    }
     for ( size_t cameraIndex = 0; cameraIndex < m_cameras.size(); ++cameraIndex )
     {
         tablewidget->setItem( cameraIndex, ONLY_COLUMN,
@@ -122,7 +126,7 @@ QTableWidgetItem* const CameraSelectionFormContents::CreateTableItemForCamera( c
 {
     const CameraDescription& thisCamera( m_cameras.at( cameraIndex ) );
 
-    QTableWidgetItem* newItem = new QTableWidgetItem( QString::fromStdWString( thisCamera.Name() ) );
+    QTableWidgetItem* newItem = new QTableWidgetItem( QString::fromStdWString( thisCamera.UniqueId() ) );
     newItem->setData( Qt::UserRole, QVariant( (int) cameraIndex ) );
     newItem->setToolTip( thisCamera.ToRichText() );
     return newItem;

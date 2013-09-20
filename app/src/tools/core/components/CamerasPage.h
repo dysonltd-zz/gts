@@ -52,8 +52,6 @@ private:
     Collection                   m_camerasCollection;
     CameraHardware&              m_cameraHardware;
     QWidget*                     m_cameraPageWidget;
-    QRadioButton*                m_fromLiveCameraBtn;
-    QRadioButton*                m_fromFileCameraBtn;
     CameraSelectionFormContents* m_cameraSelectionContent;
 };
 
