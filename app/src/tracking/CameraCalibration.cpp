@@ -230,7 +230,7 @@ bool CameraCalibration::PerformExtrinsicCalibration( CvSize        boardSize,
                                                                             metrics.GetSquareSizeCm() );
             }
 
-            LOG_TRACE("Computing extrinsic params...");
+            LOG_TRACE("Computing extrinsic params");
             ComputeExtrinsicParams( objectPoints, imagePoints );
 
             LOG_INFO("Camera rotation:");
@@ -239,7 +239,7 @@ bool CameraCalibration::PerformExtrinsicCalibration( CvSize        boardSize,
             LOG_INFO("Camera translation:");
             OpenCvUtility::LogCvMat32F(&m_trans);
 
-            LOG_TRACE("Computing warp...");
+            LOG_TRACE("Computing warp");
 
             // Compute undistortion maps for the ground plane
             // (these will be used to undistort entire sequence)
@@ -253,7 +253,7 @@ bool CameraCalibration::PerformExtrinsicCalibration( CvSize        boardSize,
                                                                          &m_mapy,
                                                                          &m_offset );
 
-            LOG_TRACE("Warping ground plane image...");
+            LOG_TRACE("Warping ground plane image");
 
             cvSetZero( *viewWarp );
             cvRemap( viewGrey, *viewWarp, m_mapx, m_mapy, CV_INTER_LINEAR );

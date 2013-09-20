@@ -132,10 +132,10 @@ bool GtsScene::LoadCameraConfig( const KeyId               camPosId,
         }
     }
 
-    // Get the floor plan configuration...
+    // Get the floor plan configuration
     const WbConfig& floorPlanConfig = roomConfig.GetSubConfig( FloorPlanSchema::schemaName );
 
-    // Get the robot metrics configuration...
+    // Get the robot metrics configuration
     const WbConfig& metricsConfig = robotConfig.GetSubConfig( RobotMetricsSchema::schemaName );
 
     const WbConfig& camPosCalConfig = camPosConfig.GetSubConfig( ExtrinsicCalibrationSchema::schemaName );
@@ -389,13 +389,13 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
     {
         if (m_view[i].IsSetup())
         {
-            LOG_TRACE(QObject::tr("Processing view [ %1 ]...").arg(i));
+            LOG_TRACE(QObject::tr("Processing view [ %1 ]").arg(i));
 
             offset.x = -m_origin[i].x;
             offset.y = -m_origin[i].y;
 
             // Reverse effect of previous
-            // call to ConvertTrackToCm()...
+            // call to ConvertTrackToCm()
             ScanUtility::LogCmToPx( m_log[i],
                                     m_logPx[i],
                                     m_view[i].GetMetrics().GetScaleFactor(),
@@ -403,16 +403,16 @@ void GtsScene::PostProcessMultiCamera( TrackHistory::TrackLog& avg,
 
             TrackHistory::TrackLog m_logImage;
 
-            // Map px to image using scaled calibration parameters...
+            // Map px to image using scaled calibration parameters
             ScanUtility::LogPxToImage( m_logPx[i], m_logImage, m_view[i].GetScaledCalibration(),
                                                                m_view[i].GetScaledCalibration()->GetUnwarpOffset() );
 
-            // Map image (back) to px using non-scaled calibration parameters...
+            // Map image (back) to px using non-scaled calibration parameters
             ScanUtility::LogImageToPx( m_logImage, m_logPx[i], m_view[i].GetNormalCalibration(),
                                                                m_view[i].GetNormalCalibration()->GetUnwarpOffset() );
 
             TrackHistory::TrackLog tlog;
-            // Transform then overwrite old log with transformed log...
+            // Transform then overwrite old log with transformed log
             ScanUtility::TransformLog( m_logPx[i], tlog, m_view[i].GetTracker().GetCalibration()->GetCameraTransform() );
             m_logPx[i] = tlog;
 
@@ -516,7 +516,7 @@ void GtsScene::SaveData( char* floorPlanFile,
         TrackHistory::WriteHistoryCsv( trackerResultsCsvFile, avg );
     }
 
-    // Write origin-offset to file...
+    // Write origin-offset to file
     FILE* fp = fopen( pixelOffsetsFile, "w" );
 
     if ( fp )
@@ -531,7 +531,7 @@ void GtsScene::SaveData( char* floorPlanFile,
         LOG_ERROR("Could not write pixel offsets!");
     }
 
-    // Clean up...
+    // Clean up
     cvReleaseImage( &compImg );
     cvReleaseImage( &compImgCol );
 }

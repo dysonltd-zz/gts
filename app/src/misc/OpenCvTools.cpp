@@ -83,7 +83,7 @@ namespace OpenCvTools
         // count with
         IplImage* mask = cvCloneImage( rawCoverageImg );
 
-        // Find all pixels that were covered exactly 'nTimes' times...
+        // Find all pixels that were covered exactly 'nTimes' times
         cvCmpS( rawCoverageImg, nTimes, mask, cmp );
         const int nPixels = cvCountNonZero( mask );
 

@@ -261,7 +261,7 @@ void CaptureVideoWidget::StartRecordingInDirectory( const QString& outputDirecto
         const QString timestampFileName(FileUtilities::GetUniqueFileName(
                                             outputDirectory.absoluteFilePath(m_tname)));
 
-        // Identify frame rate...
+        // Identify frame rate
         QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(row, RATE_COLUMN);
         double frameRate = rate[combo->currentIndex()];
 

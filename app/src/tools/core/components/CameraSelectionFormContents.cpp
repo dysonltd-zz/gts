@@ -168,11 +168,12 @@ void CameraSelectionFormContents::UpdatePreview()
 {
     if ( ChosenCameraIsValid() )
     {
-        m_preview.reset(); // clear camera to free up old resources ...
+        // clear camera to free up old resources
+        m_preview.reset();
         CameraDescription& camera = m_cameras.at( m_chosenCamera );
 
-        m_preview.reset( // ... before creating a new one
-            new VideoSource( camera, *m_ui->m_previewImageWidget ) );
+        // before creating a new one
+        m_preview.reset( new VideoSource( camera, *m_ui->m_previewImageWidget ) );
 
         m_preview->StartUpdatingImage();
     }

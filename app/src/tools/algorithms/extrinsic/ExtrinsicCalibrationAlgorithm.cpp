@@ -179,7 +179,7 @@ bool ExtrinsicCalibrationAlgorithm::CalibrateCamera( const CvSize& gridSize,
     m_rot = cvCreateMat( 3, 3, CV_32F );
     m_trans = cvCreateMat( 1, 3, CV_32F );
 
-    LOG_TRACE("Computing extrinsic params...");
+    LOG_TRACE("Computing extrinsic params");
 
     GroundPlaneUtility::computeExtrinsicParameters( objectPoints,
                                                     m_imagePoints,

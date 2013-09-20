@@ -187,20 +187,20 @@ void CollateResultsWidget::LoadResultsButtonClicked()
         const QString runName = runConfig.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString();
         const QString roomName = roomConfig.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString();
 
-        // Create check box item...
+        // Create check box item
         QStandardItem* item = new QStandardItem(true);
         item->setCheckable(true);
         item->setCheckState(Qt::Unchecked);
         tableModel->setItem(n, TABLE_COL_USE, item);
 
-        // Create text item(s)...
+        // Create text item(s)
         tableModel->setItem(n, TABLE_COL_RUN, new QStandardItem(runName));
         tableModel->setItem(n, TABLE_COL_ROOM, new QStandardItem(roomName));
     }
 
     // resize header column
     m_ui->m_runsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    // Set model...
+    // Set model
     m_ui->m_runsTable->setModel( tableModel );
 
     m_ui->m_analyseBtn->setEnabled(true);
@@ -210,7 +210,7 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Analysing Results...");
+    LOG_TRACE("Analysing Results");
 
     bool successful = true;
 
@@ -218,7 +218,7 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
 
     // Check all selected runs have the same room
     // then get the floor plan and floor mask for
-    // that room to provide to the analysis...
+    // that room to provide to the analysis
 
     for (int n = 0; n < tableModel->rowCount() && successful; ++n)
     {
@@ -300,7 +300,7 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                 if ( successful )
                 {
                     UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-                    progressDialog->Start( tr( "Working..." ), tr( "" ) );
+                    progressDialog->Start( tr( "Working" ), tr( "" ) );
 
                     ExitStatus::Flags exitCode = AnalyseResults( floorPlanName.toAscii().data(),        // floorPlanName
                                                                  floorMaskName.toAscii().data(),        // floorMaskName
@@ -422,13 +422,13 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     LOG_INFO(QObject::tr("Total pixels (WxH) = %1.").arg(nTotalPixels));
     LOG_INFO(QObject::tr("Total floor pixels = %2.").arg(nFloorPixels));
 
-    // Overlay floor mask onto floor image...
+    // Overlay floor mask onto floor image
     OpenCvTools::DrawColouredOverlay( floorPlanImg,
                                       floorMaskImg,
                                       CV_RGB(100,0,0),
                                       std::bind2nd(std::equal_to<int>(), 255) );
 
-    // Keep track of total coverage counts in a separate map...
+    // Keep track of total coverage counts in a separate map
     IplImage* totalCoverageImg = cvCreateImage( cvSize( floorMaskImg->width,
                                                         floorMaskImg->height), IPL_DEPTH_8U, 1 );
     cvZero( totalCoverageImg );
@@ -443,7 +443,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
         LOG_INFO(QObject::tr("Run: %1 (file: %2).").arg(++run)
                                                    .arg(i->c_str()));
 
-        // Load the coverage mask, limit it to the floor mask area...
+        // Load the coverage mask, limit it to the floor mask area
         IplImage* coverageMaskImg = OpenCvTools::LoadSingleChannelImage( i->c_str() );
 
         if ((coverageMaskImg->height != floorMaskImg->height) ||
@@ -455,15 +455,15 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
             continue;
         }
 
-        // Constrain coverage to the floor mask area...
+        // Constrain coverage to the floor mask area
         cvAnd( coverageMaskImg, floorMaskImg, coverageMaskImg );
 
-        // Add this coverage to the total...
+        // Add this coverage to the total
         cvAdd( coverageMaskImg, totalCoverageImg, totalCoverageImg );
 
         CoverageMetrics::PrintCsvLineForPass(fp, run, totalCoverageImg, nFloorPixels);
 
-        // Clean up...
+        // Clean up
         cvReleaseImage( &coverageMaskImg );
     }
 
@@ -482,7 +482,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
                                       CV_RGB(0,255,0),
                                       std::bind2nd(std::greater_equal<int>(), 5 /*RunEntry::MAX_LEVEL*/) );
 
-    // Clean up...
+    // Clean up
     if ( f ) { fclose( f ); }
     if ( fp ) { fclose( fp ); }
 

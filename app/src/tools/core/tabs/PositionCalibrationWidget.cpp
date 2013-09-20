@@ -133,7 +133,7 @@ void PositionCalibrationWidget::CalibrateBtnClicked()
 {
     ExtrinsicCalibrationAlgorithm alg;
     UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-    progressDialog->Start( tr( "Calibrating..." ), tr( "" ) );
+    progressDialog->Start( tr( "Calibrating" ), tr( "" ) );
     const bool calibrationSuccessful = alg.Run( GetCurrentConfig() );
 
     if ( calibrationSuccessful )
@@ -168,7 +168,7 @@ void PositionCalibrationWidget::SetCalibrationImage( const QString& imageName,
 
 void PositionCalibrationWidget::FromFileBtnClicked()
 {
-    // Make sure folder is there before adding file...
+    // Make sure folder is there before adding file
     const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImage/" ) );
     const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
 
@@ -181,7 +181,7 @@ void PositionCalibrationWidget::FromFileBtnClicked()
         return;
     }
 
-    // Display file selection dialog...
+    // Display file selection dialog
     FileDialogs::ExtendedFileDialog fileDialog( this,
                                                 tr( "Select Image File" ),
                                                 GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),

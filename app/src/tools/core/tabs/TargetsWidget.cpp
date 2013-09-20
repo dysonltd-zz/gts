@@ -248,7 +248,7 @@ void TargetsWidget::TargetTypeChanged()
 
 QString TargetsWidget::BrowseTargetImage()
 {
-    // Make sure folder is there before adding file...
+    // Make sure folder is there before adding file
     const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "targetImage/" ) );
     const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
 
@@ -263,7 +263,7 @@ QString TargetsWidget::BrowseTargetImage()
 
     QString relImageFile;
 
-    // Display file selection dialog...
+    // Display file selection dialog
     FileDialogs::ExtendedFileDialog fileDialog( this,
                                                 tr( "Select Target File" ),
                                                 GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),

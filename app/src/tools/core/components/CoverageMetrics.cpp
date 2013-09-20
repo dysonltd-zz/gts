@@ -95,7 +95,7 @@ namespace CoverageMetrics
         {
             metrics.clear();
 
-			// Skip headers...
+            // Skip headers
             FileUtilities::LineSkip(fp);
 
             while (!feof(fp))
@@ -106,7 +106,7 @@ namespace CoverageMetrics
 
                 fscanf( fp, "%d", &run);
 
-				for (int i=0; i<RunEntry::MAX_LEVEL-1; i++)
+                for (int i=0; i<RunEntry::MAX_LEVEL-1; i++)
 				{
                     cnt += fscanf( fp, ", %f", &entry.level[i] );
 				}

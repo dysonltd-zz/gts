@@ -86,7 +86,7 @@ namespace
      */
     cv::Size rotatedImageBB(const cv::Mat &R, const cv::Rect &bb)
     {
-        // Rotate the rectangle...
+        // Rotate the rectangle
         std::vector<cv::Point2f> rp;
 
         rp.push_back( rotPoint(R, cv::Point2f(bb.x, bb.y)) );
@@ -94,7 +94,7 @@ namespace
         rp.push_back( rotPoint(R, cv::Point2f(bb.x + bb.width, bb.y + bb.height)) );
         rp.push_back( rotPoint(R, cv::Point2f(bb.x, bb.y + bb.height)) );
 
-        // Find box...
+        // Find box
         float x = rp[0].x;
         float y = rp[0].y;
         float left = x,
@@ -132,7 +132,7 @@ namespace
      */
     cv::Mat rotateImage(const cv::Mat &fromI, cv::Mat *toI, const cv::Rect &fromROI, double angle)
     {
-        // Make or get the "toI" matrix...
+        // Make or get the "toI" matrix
         cv::Point2f cx((float)fromROI.x + (float)fromROI.width/2.0,
                        (float)fromROI.y + (float)fromROI.height/2.0);
 
@@ -149,14 +149,14 @@ namespace
             rotI.create(rs, fromI.type());
         }
 
-        // Adjust for shifts...
+        // Adjust for shifts
         double wdiff = (double)((cx.x - rotI.cols/2.0));
         double hdiff = (double)((cx.y - rotI.rows/2.0));
 
         R.at<double>(0,2) -= wdiff; // Adjust the rotation point
         R.at<double>(1,2) -= hdiff; // to middle of the dst image
 
-        // Rotate...
+        // Rotate
         warpAffine(fromI, rotI, R, rotI.size(), cv::INTER_CUBIC,
                                                 cv::BORDER_CONSTANT,
                                                 cv::Scalar::all(0));
@@ -218,7 +218,7 @@ void CreateFloorPlanWidget::ReloadCurrentConfigToolSpecific()
 {
     WbConfig config = GetCurrentConfig();
 
-    // Check whether the room has more than one camera position...
+    // Check whether the room has more than one camera position
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
@@ -342,7 +342,7 @@ void CreateFloorPlanWidget::ResetUi()
 {
     WbConfig config = GetCurrentConfig();
 
-    //Check whether the room has more than one camera position...
+    //Check whether the room has more than one camera position
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                          .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
@@ -447,7 +447,7 @@ void CreateFloorPlanWidget::CameraComboChanged()
 
 void CreateFloorPlanWidget::ShowImage( IplImage* img, ImageView* view )
 {
-    // Convert image...
+    // Convert image
     IplImage* imgTmp = cvCreateImage( cvSize( img->width, img->height ), IPL_DEPTH_8U, 3 );
     cvConvertImage( img, imgTmp );
 
@@ -463,7 +463,7 @@ void CreateFloorPlanWidget::ShowImage( IplImage* img, ImageView* view )
 
     cvConvertImage( imgTmp, &mtxWrapper, 0 );
 
-    // Display image...
+    // Display image
     view->Clear();
     view->SetImage( qImg );
     view->update();
@@ -475,7 +475,7 @@ void CreateFloorPlanWidget::BtnRotateClicked()
 {
     m_rotAngle = (m_rotAngle + 90) % 360;
 
-    // Rotate image...
+    // Rotate image
 
 #if LOSSY_ROTATION
     IplImage* imgCpy = cvCloneImage( m_cam2Img );
@@ -550,7 +550,7 @@ void CreateFloorPlanWidget::DisplayMatched( std::vector< cv::Point2f > ip1,
     cv::Size gridSize = cv::Size( GetCurrentConfig().GetKeyValue( calGridColsKey ).ToInt(),
                                   GetCurrentConfig().GetKeyValue( calGridRowsKey ).ToInt() );
 
-    // Draw matches...
+    // Draw matches
     std::vector<cv::KeyPoint> keypoints1(gridSize.width * gridSize.height);
     std::vector<cv::KeyPoint> keypoints2(gridSize.width * gridSize.height);
 
@@ -616,7 +616,7 @@ void CreateFloorPlanWidget::BtnStitchClicked()
 
     if (foundCorners1 && foundCorners2)
     {
-        // Calculate the homography...
+        // Calculate the homography
         m_homography = cv::findHomography( cv::Mat(imagePoints2), cv::Mat(imagePoints1), 0 );
 
         DisplayStitched();
@@ -634,7 +634,7 @@ void CreateFloorPlanWidget::BtnStitchClicked()
 
 void CreateFloorPlanWidget::DisplayStitched()
 {
-    // Stitch the two images together...
+    // Stitch the two images together
     const IplImage* rootImg = m_cam1Img;
 
     CvMat* I = cvCreateMat( 3, 3, CV_32F );
@@ -799,7 +799,7 @@ void CreateFloorPlanWidget::BtnCreateFloorPlanClicked()
 
     WbConfig config = GetCurrentConfig();
 
-    // Remove all existing transforms...
+    // Remove all existing transforms
     config.KeepKeys( FloorPlanSchema::cameraIdKey );
     config.KeepKeys( FloorPlanSchema::transformKey );
     config.KeepKeys( FloorPlanSchema::offsetXKey );
@@ -844,13 +844,13 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
 
     CvPoint2D32f offset;
 
-    LOG_TRACE(QObject::tr("Creating (single) floor plan for %1...").arg(camPosId));
+    LOG_TRACE(QObject::tr("Creating (single) floor plan for %1").arg(camPosId));
 
     if (FloorPlanning::LoadFile( config, camPosId, &imgComposite, imgFile, &offset, true ))
     {
         LOG_INFO(QObject::tr("Loading image %1.").arg(imgFile));
 
-        // Convert image...
+        // Convert image
         IplImage* imgTmp = cvCreateImage( cvSize( imgComposite->width,
                                                   imgComposite->height ), IPL_DEPTH_8U, 3 );
         cvConvertImage( imgComposite, imgTmp );
@@ -902,7 +902,7 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
 
     cvSetIdentity( identity );
 
-    // Store transform for root camera...
+    // Store transform for root camera
     const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
                                                   KeyValue::from( *identity ) );
 
@@ -924,11 +924,11 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
 
 void CreateFloorPlanWidget::CreateFloorPlanMulti()
 {
-    LOG_TRACE("Creating (multi) floor plan...");
+    LOG_TRACE("Creating (multi) floor plan");
 
-    LOG_TRACE("Checking mapping...");
+    LOG_TRACE("Checking mapping");
 
-    // Check camera mapping(s)...
+    // Check camera mapping(s)
     if (!FloorPlanning::CheckMappingIsComplete(GetCurrentConfig()))
     {
         Message::Show( this,
@@ -937,16 +937,16 @@ void CreateFloorPlanWidget::CreateFloorPlanMulti()
                        Message::Severity_Warning );
     }
 
-    LOG_TRACE("Finding root...");
+    LOG_TRACE("Finding root");
 
-    // Find the base camera(s)...
+    // Find the base camera(s)
     std::vector<KeyId> rootCamera = FloorPlanning::FindRoot(GetCurrentConfig());
 
     if (rootCamera.size() == 1)
     {
         LOG_INFO(QObject::tr("Checking root mapping for %1.").arg(rootCamera.front()));
 
-        // Find a path from camera to the base...
+        // Find a path from camera to the base
         if (FloorPlanning::CheckRootMapping(GetCurrentConfig(), rootCamera.front()))
         {
             LOG_INFO(QObject::tr("Compositing images with %1.").arg(rootCamera.front()));
@@ -976,13 +976,13 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 {
     WbConfig config = GetCurrentConfig();
 
-    // Create composite...
+    // Create composite
     IplImage *imgComposite;
 
     CvMat* transform = cvCreateMat( 3, 3, CV_32F );
     CvMat* identity = cvCreateMat( 3, 3, CV_32F );
 
-    // Load root image...
+    // Load root image
     KeyValue rootImage;
 
     const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
@@ -1022,7 +1022,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
                                                                   .arg(cmpBox.pos.x)
                                                                   .arg(cmpBox.pos.y));
 
-    // Process remaining (non-root) cameras...
+    // Process remaining (non-root) cameras
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
@@ -1047,7 +1047,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
             cvSetIdentity(transform);
             FloorPlanning::ComputeTransform( config, camPosId, chain, transform );
 
-            // Load camera image...
+            // Load camera image
             KeyValue camImageFile;
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
@@ -1069,7 +1069,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
             CvPoint2D32f offset;
             FloorPlanning::LoadFile( GetCurrentConfig(), camPosId, &camImg, camFileName, &offset, true );
 
-            // Stitch the images together...
+            // Stitch the images together
             GroundPlaneUtility::compositeImageBoundingBox( transform, camImg, imgOrigin, baseOrigin, &cmpOrigin, &cmpBox );
 
             LOG_INFO(QObject::tr("Composite bounding box is %1 %2 %3 %4.").arg(cmpBox.dim.x)
@@ -1080,7 +1080,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
     }
 
 
-    // Store transform for root camera...
+    // Store transform for root camera
     const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
                                                   KeyValue::from( *identity ) );
 
@@ -1108,7 +1108,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
     GroundPlaneUtility::alignGroundPlane( identity, rootImg, imgComposite, imgOrigin, cmpOrigin );
 
-    // Process remaining (non-root) cameras...
+    // Process remaining (non-root) cameras
     for ( int i = 0; i < cameraPositionIds.size(); ++i )
     {
         const KeyId camPosId = cameraPositionIds.at( i );
@@ -1121,7 +1121,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
             FloorPlanning::ComputeTransform( GetCurrentConfig(), camPosId, chain, transform );
 
 
-            // Store transform for camera...
+            // Store transform for camera
             const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
                                                           KeyValue::from( *transform ) );
 
@@ -1137,7 +1137,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
                                 transformId );
 
 
-            // Load camera image...
+            // Load camera image
             KeyValue camImageFile;
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
@@ -1171,7 +1171,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
         }
     }
 
-    // Convert image...
+    // Convert image
     IplImage* imgTmp = cvCreateImage( cvSize( imgComposite->width,
                                               imgComposite->height ), IPL_DEPTH_8U, 3 );
     cvConvertImage( imgComposite, imgTmp );
@@ -1307,7 +1307,7 @@ void CreateFloorPlanWidget::CaptureCancelBtnClicked()
 
 void CreateFloorPlanWidget::FromFileBtnClicked()
 {
-    // Make sure folder is there before adding file...
+    // Make sure folder is there before adding file
     const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImage/" ) );
     const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
 
@@ -1333,7 +1333,7 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
     if ( !m_camPosId1.isEmpty() &&
          !m_camPosId2.isEmpty() )
     {
-        // Display file selection dialog...
+        // Display file selection dialog
         FileDialogs::ExtendedFileDialog fileDialog( this,
                                                     tr( "Select Image File" ),
                                                     config.GetAbsoluteFileInfo().absolutePath(),

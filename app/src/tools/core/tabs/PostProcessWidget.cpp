@@ -134,7 +134,7 @@ void PostProcessWidget::LoadDataButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Post Process Load...");
+    LOG_TRACE("Post Process Load");
 
     const KeyId roomIdToCapture(GetRoomIdToCapture());
     if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
@@ -189,7 +189,7 @@ void PostProcessWidget::PostProcessButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Post Process...");
+    LOG_TRACE("Post Process");
 
     bool successful = true;
 
@@ -245,7 +245,7 @@ void PostProcessWidget::PostProcessButtonClicked()
         if ( successful )
         {
             UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-            progressDialog->Start( tr( "Working..." ), tr( "" ) );
+            progressDialog->Start( tr( "Working" ), tr( "" ) );
 
             ExitStatus::Flags exitCode = PostProcess( config,
                                                       trackerResultsCsvName.toAscii().data(),    // trackerResultsName
@@ -310,24 +310,24 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
     m_rooms.SetConfig( postProcConfig );
     m_robots.SetConfig( postProcConfig );
 
-    // Get the run configuration...
+    // Get the run configuration
     const WbConfig& runConfig = postProcConfig.GetParent();
 
-    // Get the room configuration (for this run)...
+    // Get the room configuration (for this run)
     const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
     const WbConfig roomConfig = m_rooms.ElementById( roomId );
 
-    // Get the track configuration...
+    // Get the track configuration
     const WbConfig& trackConfig = runConfig.GetSubConfig( TrackRobotSchema::schemaName );
 
-    // Get the robot configuration (for this run)...
+    // Get the robot configuration (for this run)
     const KeyId robotId = trackConfig.GetKeyValue( TrackRobotSchema::robotIdKey ).ToKeyId();
     const WbConfig& robotConfig = m_robots.ElementById( robotId );
 
-    // Get the robot metrics configuration...
+    // Get the robot metrics configuration
     const WbConfig& metricsConfig = robotConfig.GetSubConfig( RobotMetricsSchema::schemaName );
 
-    // Get the first camera (position) configuration...
+    // Get the first camera (position) configuration
     std::vector<WbConfig> camPosConfigs = GetCameraPositionsConfigs(roomConfig);
 
     const WbConfig firstCamPosConfig(camPosConfigs.at(0));
@@ -424,12 +424,12 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
         // Colour copy of composite image.
         cvConvertImage( compImgCol, headingImg );
 
-        LOG_TRACE("Successfully read all inputs, processing...");
+        LOG_TRACE("Successfully read all inputs, processing");
 
         // Segmentation and coverage.
         TrackHistory::TrackLog avgPx = avg;
 
-        // Setup floor-coverage system...
+        // Setup floor-coverage system
         CoverageSystem coverage( cvSize( compImg->width, compImg->height ) );
 
         if ( floorMaskFile )
@@ -447,7 +447,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
             float travelledDistance = 0.f;
             double lastIncTime = 0.0;
 
-            LOG_TRACE("Computing coverage...");
+            LOG_TRACE("Computing coverage");
 
             for ( unsigned int p=1; p<avgPx.size(); ++p )
             {
@@ -463,7 +463,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
                 float dy = curr.y - prev.y;
                 travelledDistance += sqrtf( dx*dx + dy*dy );
 
-                // Time in seconds at this point...
+                // Time in seconds at this point
                 double dt = avgPx[p].GetTimeStamp() -
                             avgPx[p-1].GetTimeStamp();
 
@@ -489,7 +489,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
                             3,
                             CV_AA );
 
-                    // Do coverage updates for any sweepers...
+                    // Do coverage updates for any sweepers
                     for ( unsigned int i=0 ;i<sweepers.size(); ++i )
                     {
                         heading = avgPx[p-1].GetOrientation();
@@ -542,7 +542,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
 
             // Save the raw coverage-mask as a file, where
             // each pixel value represents the number of
-            // passes made over that location in this run...
+            // passes made over that location in this run
 #if 0
             char maskName[MAX_PATH] = "";
             sprintf( maskName, coverageRawFile, time(0) );
@@ -555,7 +555,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
                 fclose( incCoverageFile );
             }
 
-            LOG_TRACE("Coverage data written - cleaning up...");
+            LOG_TRACE("Coverage data written - cleaning up");
 
             delete tracker;
         }
@@ -611,10 +611,10 @@ void PostProcessWidget::PlotTrackLog( TrackHistory::TrackLog& log,
                           1,
                           timeThresh );
 
-    // Write composite image to file...
+    // Write composite image to file
     cvSaveImage( trackerResultsImgFile, compImgCol );
 
-    // Clean up...
+    // Clean up
     cvReleaseImage( &compImg );
     cvReleaseImage( &compImgCol );
 }

@@ -37,13 +37,13 @@ namespace GroundTruthUI
 {
     /**
      Draw the robot position in the original image sequence.
-     Need to know the entire camera calibration (and more) for this...
+     Need to know the entire camera calibration (and more) for this
      **/
     QImage showRobotTrackUndistorted( IplImage*           img,        ///< original avi image
                                       const RobotTracker* tracker,    ///< robot tracker
                                       int                 flip )      ///< flip output coords?
     {
-        // Convert from IplImage to QImage...
+        // Convert from IplImage to QImage
         const QSize imgSize( img->width,img->height );
         QImage qimage = QImage( imgSize, QImage::Format_RGB888 );
 
@@ -56,7 +56,7 @@ namespace GroundTruthUI
 
         cvConvertImage( img, &mtxWrapper, flip );
 
-        // Now draw on top of the QImage...
+        // Now draw on top of the QImage
 
         QPainter painter(&qimage);
         painter.setRenderHint(QPainter::Antialiasing, true);
@@ -268,7 +268,7 @@ namespace GroundTruthUI
                          CV_AA );
         }
 
-        // Convert from IplImage to QImage...
+        // Convert from IplImage to QImage
         const QSize imgSize( img->width, img->height );
         QImage qimage = QImage( imgSize, QImage::Format_RGB888 );
 

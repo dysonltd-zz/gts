@@ -294,14 +294,14 @@ void CollectionToolWidget::UpdateToolMenu( QMenu& toolMenu )
 {
     Tool::UpdateToolMenu( toolMenu );
     toolMenu.setTitle( m_userFriendlyElementName );
-    toolMenu.addAction( tr( "&New..." ),
+    toolMenu.addAction( tr( "&New" ),
                         this,
                         SLOT( NewElement() ),
                         QKeySequence( tr( "Ctrl+Shift+N" ) ) );
 
     if ( CurrentConfigIsElement() )
     {
-        toolMenu.addAction( tr( "&Rename..." ),
+        toolMenu.addAction( tr( "&Rename" ),
                             this,
                             SLOT( RenameElement() ),
                             QKeySequence( tr( "Ctrl+Shift+R" ) ) );

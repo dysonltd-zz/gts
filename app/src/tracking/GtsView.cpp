@@ -246,7 +246,7 @@ bool GtsView::SetupTracker( RobotTracker::trackerType type,
     switch ( type )
     {
         case RobotTracker::KLT_TRACKER:
-            LOG_TRACE("Creating target tracker...");
+            LOG_TRACE("Creating target tracker");
             m_tracker = new KltTracker( m_calScaled,
                                         &metrics,
                                         m_imgWarp[m_imgIndex],
@@ -410,7 +410,7 @@ const IplImage* GtsView::GetNextFrame()
 
     if ( m_sequencer )
     {
-        // New frame is available...
+        // New frame is available
         const IplImage* img = m_sequencer->RetrieveNextFrame();
 
         if ( m_imgFrame )

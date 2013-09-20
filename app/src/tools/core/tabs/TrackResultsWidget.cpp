@@ -78,7 +78,7 @@ void TrackResultsWidget::LoadDataButtonClicked()
 
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Track Results Load...");
+    LOG_TRACE("Track Results Load");
 
     if (m_motionData) delete m_motionData;
     if (m_rotationData) delete m_rotationData;

@@ -63,7 +63,7 @@ bool LoadFile( WbConfig config, KeyId cameraPosition, IplImage** camImg, QString
 {
     bool successful = true;
 
-    // Get configuration information...
+    // Get configuration information
     Collection camerasCollection( CamerasCollection() );
     Collection cameraPositionsCollection( CameraPositionsCollection() );
 
@@ -97,7 +97,7 @@ bool LoadFile( WbConfig config, KeyId cameraPosition, IplImage** camImg, QString
 
         if (successful)
         {
-            // Intrinsic Parameters...
+            // Intrinsic Parameters
             const WbConfig cameraIntrisicConfig( cameraConfig.GetSubConfig( CalibrationSchema::schemaName ) );
 
             if (cameraIntrisicConfig.IsNull()) successful = false;
@@ -124,7 +124,7 @@ bool LoadFile( WbConfig config, KeyId cameraPosition, IplImage** camImg, QString
                              inverseCoeffsValid;
             }
 
-            // Extrinsic Parameters...
+            // Extrinsic Parameters
             const WbConfig cameraExtrisicConfig(camPosConfig.GetSubConfig(ExtrinsicCalibrationSchema::schemaName));
 
             if (cameraExtrisicConfig.IsNull()) successful = false;
@@ -146,7 +146,7 @@ bool LoadFile( WbConfig config, KeyId cameraPosition, IplImage** camImg, QString
 
     if (successful)
     {
-        // Load file...
+        // Load file
         IplImage* imgGrey = cvLoadImage( fileName.toAscii(), CV_LOAD_IMAGE_GRAYSCALE );
 
 		if (unWarp)
@@ -371,12 +371,12 @@ bool CheckRootMapping(WbConfig config, KeyId rootId)
     //   for each camera
     //      if camera /= root
     //         if !FindChain (camera, root)
-    //            ... = false;
+    //             = false;
     //            break;
     //   if found
     //      theRoot = root
     //      break
-    //   else...
+    //   else
 
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig

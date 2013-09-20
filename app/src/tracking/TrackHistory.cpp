@@ -198,7 +198,7 @@ namespace TrackHistory
         {
             log.clear();
 
-            // Skip headders...
+            // Skip headers
             FileUtilities::LineSkip(fp);
 
             while (!feof(fp))

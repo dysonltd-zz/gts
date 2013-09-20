@@ -162,7 +162,7 @@ private:
                                                            imgWarp->height ), IPL_DEPTH_8U, 3 );
                     cvConvertImage( imgWarp, img );
 
-                    // Convert from IplImage to QImage...
+                    // Convert from IplImage to QImage
                     const QSize imgSize( img->width, img->height );
                     qimage = QImage( imgSize, QImage::Format_RGB888 );
 

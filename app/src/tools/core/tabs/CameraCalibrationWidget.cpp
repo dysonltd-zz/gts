@@ -159,7 +159,7 @@ void CameraCalibrationWidget::ImageTableItemChanged(QTableWidgetItem* current,
 
 void CameraCalibrationWidget::FromFileClicked()
 {
-    // Make sure folder is there before adding file...
+    // Make sure folder is there before adding file
     const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImages/" ) );
     const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
 
@@ -172,7 +172,7 @@ void CameraCalibrationWidget::FromFileClicked()
         return;
     }
 
-    // Display file selection dialog...
+    // Display file selection dialog
     FileDialogs::ExtendedFileDialog fileDialog( this,
                                                 tr( "Select Image(s) to Add" ),
                                                 GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),
@@ -222,7 +222,7 @@ void CameraCalibrationWidget::CalibrateBtnClicked()
 {
     CalibrationAlgorithm alg;
     UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-    progressDialog->Start( tr( "Calibrating..." ), tr( "" ) );
+    progressDialog->Start( tr( "Calibrating" ), tr( "" ) );
     const bool calibrationSuccessful = alg.Run( GetCurrentConfig() );
     ReloadCurrentConfig();
 

@@ -27,7 +27,7 @@
 #include "ScopedQtSignalsBlocker.h"
 #include "WbConfigTools.h"
 
-const QString Tool::selectItemString( tr( "Select..." ) );
+const QString Tool::selectItemString( tr( "Select" ) );
 
 /** @brief construct with the schema handled.
  *

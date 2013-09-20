@@ -31,7 +31,6 @@
 #include "RunSchema.h"
 #include "TargetSchema.h"
 
-
 #include "RoomsCollection.h"
 #include "CamerasCollection.h"
 #include "CameraPositionsCollection.h"
@@ -75,17 +74,17 @@ TrackRobotWidget::TrackRobotWidget( QWidget* parent ) :
 {
     SetupUi();
     ConnectSignals();
-
     CreateMappers();
-
     RegisterCollectionCombo(m_ui->m_robotCombo, RobotsCollection());
 
+    // forward button
     m_scanFwdIconRatePair.push_back(std::make_pair(":/scan.png", 1));
     m_scanFwdIconRatePair.push_back(std::make_pair(":/scan2x.png", 2));
     m_scanFwdIconRatePair.push_back(std::make_pair(":/scan4x.png", 4));
     m_scanFwdIconRatePair.push_back(std::make_pair(":/scan10x.png", 10));
     m_scanFwdIconRatePair.push_back(std::make_pair(":/scan20x.png", 20));
 
+    // reverse button
     m_scanBackIconRatePair.push_back(std::make_pair(":/revscan.png", 1));
     m_scanBackIconRatePair.push_back(std::make_pair(":/revscan2x.png", 2));
     m_scanBackIconRatePair.push_back(std::make_pair(":/revscan4x.png", 4));
@@ -113,14 +112,14 @@ void TrackRobotWidget::FillOutCameraCombo( QComboBox& comboBox )
 
     comboBox.clear();
 
-    // Get the run configuration...
+    // Get the run configuration
     const WbConfig& runConfig = config.GetParent();
 
-    // Get the room configuration (for this run)...
+    // Get the room configuration (for this run)
     const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
     const WbConfig roomConfig = rooms.ElementById( roomId );
 
-    // Get the room configuration...
+    // Get the room configuration
     const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList camPosIds( roomLayoutConfig
             .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
@@ -235,7 +234,6 @@ void TrackRobotWidget::ConnectSignals()
              SIGNAL( activated() ),
              this,
              SLOT( StopButtonClicked() ) );
-
 }
 
 void TrackRobotWidget::CreateMappers()
@@ -277,7 +275,7 @@ void TrackRobotWidget::ReloadCurrentConfigToolSpecific()
 
     FillOutCameraCombo( *m_ui->m_positionCombo );
 
-    // Get the selected room name...
+    // Get the selected room name
     const WbConfig& runConfig = config.GetParent();
     const WbConfig& videoConfig = runConfig.GetSubConfig( VideoCaptureSchema::schemaName );
 
@@ -300,13 +298,13 @@ void TrackRobotWidget::ReloadCurrentConfigToolSpecific()
     {
         WbKeyValues::ValueIdPair const &key = *p;
 
-        // For each camera position in the room...
+        // For each camera position in the room
         const QStringList& positionStrings = key.value.ToQStringList();
         for (auto ps = positionStrings.begin(); ps != positionStrings.end(); ++ps)
         {
             QString const &positionString = *ps;
 
-            // For every captured video...
+            // For every captured video
             for (auto cv = capturedVideos.begin(); cv != capturedVideos.end(); ++cv)
             {
                 WbKeyValues::ValueIdPair const &v = *cv;
@@ -437,18 +435,18 @@ void TrackRobotWidget::SaveBtnClicked()
 
     std::vector< KeyId > idsToKeep;
 
-    // Get the run configuration...
+    // Get the run configuration
     const WbConfig& runConfig = config.GetParent();
 
-    // Get the room configuration (for this run)...
+    // Get the room configuration (for this run)
     const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
     const WbConfig roomConfig = rooms.ElementById( roomId );
 
-    // Get the room configuration...
+    // Get the room configuration
     const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList camPosIds( roomLayoutConfig
-            .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-             .ToQStringList() );
+                                 .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
+                                 .ToQStringList() );
 
     for (auto camPosId = camPosIds.begin(); camPosId != camPosIds.end(); ++camPosId)
     {
@@ -471,12 +469,9 @@ void TrackRobotWidget::SaveBtnClicked()
 
     bool valid = true;
 
-    valid = valid &&
-             !(m_ui->m_camNccThresholdSpinBox->value() == 0.0);
-    valid = valid &&
-             !(m_ui->m_camResolutionSpinBox->value() == 0);
-    valid = valid &&
-             !(m_ui->m_camTrackerThresholdSpinBox->value() == 0);
+    valid = valid && !(m_ui->m_camNccThresholdSpinBox->value() == 0.0);
+    valid = valid && !(m_ui->m_camResolutionSpinBox->value() == 0);
+    valid = valid && !(m_ui->m_camTrackerThresholdSpinBox->value() == 0);
 
     if (valid)
     {
@@ -827,7 +822,7 @@ void TrackRobotWidget::TrackLoadButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Track Load...");
+    LOG_TRACE("Track Load");
 
     const KeyId roomIdToCapture(GetRoomIdToCapture());
     if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
@@ -842,7 +837,7 @@ void TrackRobotWidget::TrackLoadButtonClicked()
     if (successful)
     {
         UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-        progressDialog->Start( tr( "Loading..." ), tr( "" ) );
+        progressDialog->Start( tr( "Loading" ), tr( "" ) );
 
         ExitStatus::Flags exitCode = TrackLoad( config,
                                                 m_ui->m_imageGrid,
@@ -889,7 +884,7 @@ void TrackRobotWidget::TrackSaveButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Track Save Data...");
+    LOG_TRACE("Track Save Data");
 
     const WbConfig runConfig( config.GetParent() );
 
@@ -922,7 +917,7 @@ void TrackRobotWidget::TrackSaveButtonClicked()
          runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets_view%1.txt" ) );
 
     UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-    progressDialog->Start( tr( "Saving..." ), tr( "" ) );
+    progressDialog->Start( tr( "Saving" ), tr( "" ) );
 
     ExitStatus::Flags exitCode = TrackSaveData( floorPlanName.toAscii().data(),
                                                 trackerResultsTxtName.toAscii().data(),
@@ -1117,28 +1112,28 @@ const ExitStatus::Flags TrackRobotWidget::TrackLoad( const WbConfig&           t
     robots.SetConfig( trackConfig );
     targets.SetConfig( trackConfig );
 
-    // Get the run configuration...
+    // Get the run configuration
     const WbConfig& runConfig = trackConfig.GetParent();
 
-    // Get the room configuration (for this run)...
+    // Get the room configuration (for this run)
     const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
     const WbConfig roomConfig = rooms.ElementById( roomId );
 
-    // Get the robot configuration (for this run)...
+    // Get the robot configuration (for this run)
     const KeyId robotId = trackConfig.GetKeyValue( TrackRobotSchema::robotIdKey ).ToKeyId();
     const WbConfig& robotConfig = robots.ElementById( robotId );
 
-    // Get the robot metrics configuration...
+    // Get the robot metrics configuration
     const WbConfig& metricsConfig = robotConfig.GetSubConfig( RobotMetricsSchema::schemaName );
 
-    // Get the target configuration (for this robot)...
+    // Get the target configuration (for this robot)
     const KeyId targetId = metricsConfig.GetKeyValue( RobotMetricsSchema::targetTypeKey ).ToKeyId();
     const WbConfig& targetConfig = targets.ElementById( targetId );
 
-    // Get the target params configuration...
+    // Get the target params configuration
     const WbConfig& paramsConfig = targetConfig.GetSubConfig( TargetSchema::schemaName );
 
-    // Get the room configuration...
+    // Get the room configuration
     const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds( roomLayoutConfig
             .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)

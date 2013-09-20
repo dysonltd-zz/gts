@@ -161,7 +161,7 @@ endif()
 
 # GNUCXX for MinGW or UNIX
 if(CMAKE_COMPILER_IS_GNUCXX)
-    message(STATUS "GCC detected - Setting compiler flags...")
+    message(STATUS "GCC detected - Setting compiler flags")
     if(MINGW)
         set(CMAKE_CXX_FLAGS "-ggdb -Wextra -Wall -Wno-ignored-qualifiers -pedantic -std=gnu++0x")
 	else()

@@ -175,7 +175,7 @@ void MeasureFloorWidget::ShowImage()
         {
             IplImage* floorMaskImg = OpenCvTools::LoadSingleChannelImage( maskName.toAscii().data() );
 
-           // Overlay floor mask onto floor image...
+           // Overlay floor mask onto floor image
             OpenCvTools::DrawColouredOverlay( floorPlanImg,
                                               floorMaskImg,
                                               CV_RGB(100,0,0),
@@ -202,7 +202,7 @@ void MeasureFloorWidget::ShowImage()
             }
         }
 
-        // Convert image...
+        // Convert image
         IplImage* imgTmp = cvCreateImage( cvSize( floorPlanImg->width,
                                                   floorPlanImg->height ), IPL_DEPTH_8U, 3 );
         cvConvertImage( floorPlanImg, imgTmp );
@@ -219,7 +219,7 @@ void MeasureFloorWidget::ShowImage()
 
         cvConvertImage( imgTmp, &mtxWrapper, 0 );
 
-        // Display image...
+        // Display image
         m_imageView->Clear();
         m_imageView->SetImage( qImg );
         m_imageView->update();

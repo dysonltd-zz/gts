@@ -484,7 +484,7 @@ void CoverageSystem::CoverageHistogram( const char* file ) const
     double t = 1.0;
     for ( int i = 1; i < 256; ++i )
     {
-        cvCmpS( m_cvgMask, t, mask, CV_CMP_EQ ); // Find all pixels that were covered 't' times...
+        cvCmpS( m_cvgMask, t, mask, CV_CMP_EQ ); // Find all pixels that were covered 't' times
         cvAnd( mask, m_floorMask, count ); // then intersect those pixels with floor mask
         int nPixels = cvCountNonZero( count ); // then count the result
 

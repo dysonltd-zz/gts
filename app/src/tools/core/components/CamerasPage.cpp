@@ -126,7 +126,7 @@ void CamerasPage::AddCameraSelectionPage( QLayout* layout )
 
 void CamerasPage::initializePage()
 {
-    // Try to display connected (but unused) cameras...
+    // Try to display connected (but unused) cameras
     CameraApi::CameraList connectedCameras(m_cameraHardware.EnumerateConnectedCameras());
     RemovePreviouslyChosenCameras( connectedCameras );
     m_cameraSelectionContent->StartUp( connectedCameras );

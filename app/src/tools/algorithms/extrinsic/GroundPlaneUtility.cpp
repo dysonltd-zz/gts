@@ -107,7 +107,7 @@ namespace GroundPlaneUtility
         float H[9];
         CvMat homMat = cvMat(3,3, CV_32F, H);
 
-        LOG_TRACE("Extracting homography...");
+        LOG_TRACE("Extracting homography");
 
         OpenCvUtility::ExtractCvHomography(intrinsicMatrix,rotMat,trans,&homMat);
 
@@ -134,7 +134,7 @@ namespace GroundPlaneUtility
 
         // applyHomography(&invHomMat,4,(CvPoint3D32f*)imgCorners,cornerBuffer);
 
-        LOG_TRACE("Inverting projection...");
+        LOG_TRACE("Inverting projection");
 
         OpenCvUtility::InvertGroundPlanePoints( inverseCoeffs,
                                                 intrinsicMatrix,
@@ -144,7 +144,7 @@ namespace GroundPlaneUtility
                                                 (CvPoint3D32f*)imgCorners,
                                                 cornerBuffer );
 
-        LOG_TRACE("Computing bounding box...");
+        LOG_TRACE("Computing bounding box");
 
         float margin = 100.f;
         OpenCvUtility::BoundingBox( 4, cornerBuffer, &pos, &dim, margin ); // compute bounding box + a margin

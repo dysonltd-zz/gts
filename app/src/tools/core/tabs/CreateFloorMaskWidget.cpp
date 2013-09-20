@@ -146,7 +146,7 @@ const WbSchema CreateFloorMaskWidget::CreateSchema()
 
 void CreateFloorMaskWidget::ShowImage(ImageView* view, const IplImage* image)
 {
-    // Convert image...
+    // Convert image
     IplImage* imgTmp = cvCreateImage( cvSize( image->width, image->height ), IPL_DEPTH_8U, 3 );
     cvConvertImage( image, imgTmp );
 
@@ -162,7 +162,7 @@ void CreateFloorMaskWidget::ShowImage(ImageView* view, const IplImage* image)
 
     cvConvertImage( imgTmp, &mtxWrapper, 0 );
 
-    // Display image...
+    // Display image
     view->Clear();
     view->SetImage( qImg );
     view->update();
@@ -324,7 +324,7 @@ bool CreateFloorMaskWidget::ExportFloorPlanParts( const WbConfig& config )
 
     QDir directory;
 
-    // Process configured cameras...
+    // Process configured cameras
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
@@ -374,7 +374,7 @@ bool CreateFloorMaskWidget::ImportFloorMaskParts( const WbConfig& config )
 
     QDir directory;
 
-    // Process configured cameras...
+    // Process configured cameras
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
@@ -435,13 +435,13 @@ void CreateFloorMaskWidget::CreateFloorMaskSingle()
 
     CvPoint2D32f offset;
 
-    LOG_TRACE(QObject::tr("Creating (single) floor mask for %1...").arg(camPosId));
+    LOG_TRACE(QObject::tr("Creating (single) floor mask for %1").arg(camPosId));
 
     if (FloorPlanning::LoadFile( GetFloorPlanConfig(), camPosId, &imgComposite, imgFile, &offset, false ))
     {
         LOG_INFO(QObject::tr("Loading image %1.").arg(imgFile));
 
-        // Convert image...
+        // Convert image
         IplImage* imgTmp = cvCreateImage( cvSize( imgComposite->width,
                                                   imgComposite->height ), IPL_DEPTH_8U, 3 );
         cvConvertImage( imgComposite, imgTmp );
@@ -500,23 +500,23 @@ void CreateFloorMaskWidget::CreateFloorMaskSingle()
 
 void CreateFloorMaskWidget::CreateFloorMaskMulti()
 {
-    LOG_TRACE("Creating (multi) floor mask...");
+    LOG_TRACE("Creating (multi) floor mask");
 
-    LOG_TRACE("Checking mapping...");
+    LOG_TRACE("Checking mapping");
 
-    // Check camera mapping(s)...
+    // Check camera mapping(s)
     if (FloorPlanning::CheckMappingIsComplete(GetFloorPlanConfig()))
     {
-        LOG_TRACE("Finding root...");
+        LOG_TRACE("Finding root");
 
-        // Find the base camera(s)...
+        // Find the base camera(s)
         std::vector<KeyId> rootCamera = FloorPlanning::FindRoot(GetFloorPlanConfig());
 
         if (rootCamera.size() == 1)
         {
             LOG_INFO(QObject::tr("Checking root mapping for %1.").arg(rootCamera.front()));
 
-            // Find a path from camera to the base...
+            // Find a path from camera to the base
             if (FloorPlanning::CheckRootMapping(GetFloorPlanConfig(), rootCamera.front()))
             {
                 LOG_INFO(QObject::tr("Compositing images with %1.").arg(rootCamera.front()));
@@ -554,13 +554,13 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
 {
     WbConfig config = GetFloorPlanConfig();
 
-    // Create composite...
+    // Create composite
     IplImage *imgComposite;
 
     CvMat* transform = cvCreateMat( 3, 3, CV_32F );
     CvMat* identity = cvCreateMat( 3, 3, CV_32F );
 
-    // Load root image...
+    // Load root image
     KeyValue rootImage;
 
     const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
@@ -597,7 +597,7 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
                                                                   .arg(cmpBox.pos.x)
                                                                   .arg(cmpBox.pos.y));
 
-    // Process remaining (non-root) cameras...
+    // Process remaining (non-root) cameras
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
@@ -617,7 +617,7 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
             cvSetIdentity(transform);
             FloorPlanning::ComputeTransform( GetFloorPlanConfig(), camPosId, chain, transform );
 
-            // Load camera image...
+            // Load camera image
             KeyValue camImageFile;
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
@@ -639,7 +639,7 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
             CvPoint2D32f offset;
             FloorPlanning::LoadFile( GetFloorPlanConfig(), camPosId, &camImg, camFileName, &offset, false );
 
-            // Stitch the images together...
+            // Stitch the images together
             GroundPlaneUtility::compositeImageBoundingBox( transform, camImg, &cmpBox );
 
             LOG_INFO(QObject::tr("Composite bounding box is %1 %2 %3 %4.").arg(cmpBox.dim.x)
@@ -659,7 +659,7 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
     CvSize cmpSize = cvSize( sizex,sizey );
     imgComposite = cvCreateImage( cmpSize, rootImg->depth, rootImg->nChannels );
 
-    // Process remaining (non-root) cameras...
+    // Process remaining (non-root) cameras
     for ( int i = 0; i < cameraPositionIds.size(); ++i )
     {
         const KeyId camPosId = cameraPositionIds.at( i );
@@ -671,7 +671,7 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
             cvSetIdentity(transform);
             FloorPlanning::ComputeTransform( GetFloorPlanConfig(), camPosId, chain, transform );
 
-            // Load camera image...
+            // Load camera image
             KeyValue camImageFile;
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
@@ -711,7 +711,7 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
         }
     }
 
-    // Convert image...
+    // Convert image
     IplImage* imgTmp = cvCreateImage( cvSize( imgComposite->width,
                                               imgComposite->height ), IPL_DEPTH_8U, 3 );
     cvConvertImage( imgComposite, imgTmp );

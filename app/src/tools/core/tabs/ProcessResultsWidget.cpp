@@ -76,7 +76,7 @@ void ProcessResultsWidget::LoadResultsButtonClicked()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Loading Results...");
+    LOG_TRACE("Loading Results");
 
     m_ui->m_trackPlot->setCanvasBackground( Qt::white );
 
@@ -94,7 +94,7 @@ void ProcessResultsWidget::LoadResultsButtonClicked()
 
     d_barChartItem->setStyle( QwtPlotMultiBarChart::Grouped );
 
-    // Set legends...
+    // Set legends
     QList<QwtText> titles;
 
     for ( int i = 0; i < RunEntry::MAX_LEVEL; i++ )
@@ -116,7 +116,7 @@ void ProcessResultsWidget::LoadResultsButtonClicked()
         d_barChartItem->setSymbol( i, symbol );
     }
 
-    // Load the coverage metrics...
+    // Load the coverage metrics
     CoverageMetrics::RunMetrics metrics;
 
     QVector< QVector<double> > series;
