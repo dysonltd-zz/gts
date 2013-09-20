@@ -305,6 +305,7 @@ bool KltTracker::Track( double timestampInMillisecs, bool flipCorrect, bool init
 
         // If we found a good track and the 2nd stage was a success then store the result
         const float error = GetError();
+        Q_UNUSED(error);
 
 #if 0
         #if !defined(__MINGW32__) && !defined(_MSC_VER)
