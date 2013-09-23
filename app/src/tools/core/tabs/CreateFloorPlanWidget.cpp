@@ -37,15 +37,16 @@
 #include "FloorPlanning.h"
 #include "ImageGrid.h"
 #include "ImageView.h"
-#include "FileUtilities.h"
-#include "FileDialogs.h"
-#include "Message.h"
 #include "ImageViewer.h"
 #include "CameraHardware.h"
 #include "WbConfigTools.h"
 #include "Logging.h"
 #include "RobotMetrics.h"
 #include "CameraCalibration.h"
+
+#include "FileUtilities.h"
+#include "FileDialogs.h"
+#include "Message.h"
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
@@ -175,10 +176,10 @@ CreateFloorPlanWidget::CreateFloorPlanWidget( CameraHardware& cameraHardware,
     SetupUi();
 
     m_captureLiveDualController.reset(
-        new CaptureLiveDualController( *m_ui->m_captureLiveBtn,
-                                       *m_ui->m_captureCancelBtn,
-                                       *this,
-                                       cameraHardware ) );
+            new CaptureLiveDualController( *m_ui->m_captureLiveBtn,
+                                           *m_ui->m_captureCancelBtn,
+                                           *this,
+                                           cameraHardware ) );
 
     ConnectSignals();
     CreateMappers();
@@ -1330,8 +1331,7 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
 
     m_ui->m_captureLiveBtn->setEnabled(false);
 
-    if ( !m_camPosId1.isEmpty() &&
-         !m_camPosId2.isEmpty() )
+    if ( !m_camPosId1.isEmpty() && !m_camPosId2.isEmpty() )
     {
         // Display file selection dialog
         FileDialogs::ExtendedFileDialog fileDialog( this,
@@ -1339,6 +1339,8 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
                                                     config.GetAbsoluteFileInfo().absolutePath(),
                                                     "Images( *.png *.jpg *.bmp *.ppm );;All Files( * )",
                                                     true );
+
+        // get first file
         const int result1 = fileDialog.exec();
         if ( result1 == QFileDialog::Accepted )
         {
@@ -1363,6 +1365,7 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
             }
         }
 
+        // get second file
         const int result2 = fileDialog.exec();
         if ( result2 == QFileDialog::Accepted )
         {
@@ -1389,8 +1392,7 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
 
         CvPoint2D32f offset;
 
-        if ( !m_camera1FileName.isEmpty() &&
-             !m_camera2FileName.isEmpty() )
+        if ( !m_camera1FileName.isEmpty() && !m_camera2FileName.isEmpty() )
         {
             if (FloorPlanning::LoadFile( config, m_camPosId1, &m_cam1Img, m_camera1FileName, &offset, true ))
             {
@@ -1407,6 +1409,14 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
             m_ui->m_cancelBtn->setEnabled(true);
 
             m_rotAngle = 0;
+        }
+        else
+        {
+            // reset the ui and try again
+            m_ui->m_camera1Combo->setEnabled(true);
+            m_ui->m_camera2Combo->setEnabled(true);
+            m_ui->m_captureLiveBtn->setEnabled(true);
+            m_ui->m_getImageFromFileBtn->setEnabled(true);
         }
     }
 }

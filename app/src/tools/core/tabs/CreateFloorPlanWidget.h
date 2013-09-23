@@ -48,7 +48,7 @@ class CreateFloorPlanWidget : public Tool
 
 public:
     explicit CreateFloorPlanWidget( CameraHardware& cameraHardware,
-                                        QWidget* parent = 0 );
+                                    QWidget* parent = 0 );
     virtual ~CreateFloorPlanWidget();
 
     virtual const QString Name() const { return tr( "Create Floor Plan" ); }
@@ -95,7 +95,6 @@ private slots:
     void BtnStitchClicked();
     void BtnSaveClicked();
     void BtnCancelClicked();
-
     void BtnCreateFloorPlanClicked();
 
     void FromFileBtnClicked();
