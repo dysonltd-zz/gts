@@ -377,7 +377,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
 
         /// @todo not handling multiple camera resolutions
 
-        int resolution = trackConfig.GetKeyValue( TrackRobotSchema::GlobalTrackingParams::resolution ).ToInt();
+        float resolution = trackConfig.GetKeyValue( TrackRobotSchema::GlobalTrackingParams::resolution ).ToDouble();
 
         if ( !metrics.LoadMetrics( metricsConfig, firstCamPosCalConfig, resolution ) )
         {
