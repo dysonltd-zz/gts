@@ -53,7 +53,6 @@
 
 #define MATCH_BASE 0
 #define MATCH_REFN 1
-
 #define MATCH_NONE -1
 
 GtsScene::GtsScene( ) :
