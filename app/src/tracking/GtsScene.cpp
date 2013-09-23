@@ -249,20 +249,13 @@ GtsScene::TrackStatus GtsScene::StepTrackers( const bool forward, const bool see
             if ( seek )
             {
                 ready = m_view[i].ReadySeekFrame( m_filePositionInMilliseconds );
-                std::cout << "Seeking to Frame ms := " << m_filePositionInMilliseconds << std::endl;
             }
             else
             {
                 ready = m_view[i].ReadyNextFrame();
-                std::cout << "Readying Next Frame" << std::endl;
                 if ( ready )
                 {
                     m_filePositionInMilliseconds = m_view[i].GetSeekPositionInMilliseconds();
-                    std::cout << "New file pos := " << m_filePositionInMilliseconds << std::endl;
-                }
-                else
-                {
-                    std::cout << "No more frames, file pos := " << m_filePositionInMilliseconds << std::endl;
                 }
             }
 
