@@ -75,8 +75,7 @@ IplImage* TrackView::loadFloorPlan( const WbConfig& runConfig )
     const WbConfig roomLayoutConfig(
                 roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
 
-    const QString floorPlanName(
-                roomLayoutConfig.GetAbsoluteFileNameFor( "floor_plan.png" ) );
+    const QString floorPlanName( roomLayoutConfig.GetAbsoluteFileNameFor( "floor_plan.png" ) );
 
     m_baseImg = cvLoadImage(floorPlanName.toAscii().data(), CV_LOAD_IMAGE_GRAYSCALE);
 
@@ -93,8 +92,8 @@ bool TrackView::loadMetrics( const WbConfig& runConfig )
     const KeyValue roomId = runConfig.GetKeyValue( RunSchema::roomIdKey );
     const WbConfig roomConfig = m_rooms.ElementById( roomId.ToKeyId() );
 
-    std::vector<WbConfig> camPosConfigs = GetCameraPositionsConfigs(roomConfig);
-    const WbConfig firstCamPosConfigForThisRun(camPosConfigs.at(0));
+    std::vector<WbConfig> camPosConfigs = GetCameraPositionsConfigs( roomConfig );
+    const WbConfig firstCamPosConfigForThisRun( camPosConfigs.at(0) );
 
     WbConfig firstCamPosCalibrationCfg;
     firstCamPosCalibrationCfg = firstCamPosConfigForThisRun.GetSubConfig( ExtrinsicCalibrationSchema::schemaName );

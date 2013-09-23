@@ -24,6 +24,7 @@
 #include "CoverageSystem.h"
 #include "KltTracker.h"
 #include "TrackModel.h"
+#include "RobotMetrics.h"
 
 #include "RoomsCollection.h"
 #include "RobotsCollection.h"
@@ -35,7 +36,6 @@
 #include "RobotMetricsSchema.h"
 #include "FloorPlanSchema.h"
 #include "RunSchema.h"
-#include "Sweeper.h"
 
 #include "Message.h"
 #include "Logging.h"
@@ -47,6 +47,9 @@
 #include <QApplication>
 #include <QItemSelectionModel>
 #include <QAction>
+
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 
 #include <sstream>
 
@@ -337,8 +340,6 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
     {
         FILE* incCoverageFile = 0;
 
-        std::vector<Sweeper> sweepers;
-
         if ( coverageFile )
         {
             incCoverageFile = fopen( coverageFile, "w" );
@@ -468,8 +469,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
                 travelledDistance += sqrtf( dx*dx + dy*dy );
 
                 // Time in seconds at this point...
-                double dt = avgPx[p].GetTimeStamp() -
-                            avgPx[p-1].GetTimeStamp();
+                double dt = avgPx[p].GetTimeStamp() - avgPx[p-1].GetTimeStamp();
 
                  // Pairs must be close enough that there
                  // was no loss of tracking between them.
@@ -492,20 +492,6 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
                             cvScalar( 0, 0, 255 ),
                             3,
                             CV_AA );
-
-                    // Do coverage updates for any sweepers...
-                    for ( unsigned int i=0 ;i<sweepers.size(); ++i )
-                    {
-                        heading = avgPx[p-1].GetOrientation();
-                        pl = sweepers[i].GetLeft( metrics, prev, heading );
-                        pr = sweepers[i].GetRight( metrics, prev, heading );
-
-                        heading = avgPx[p].GetOrientation();
-                        cl = sweepers[i].GetLeft( metrics, curr, heading );
-                        cr = sweepers[i].GetRight( metrics, curr, heading );
-
-                        coverage.BrushBarUpdate( pl, pr, cl, cr );
-                    }
                 }
 
                 if ( incCoverageFile )
