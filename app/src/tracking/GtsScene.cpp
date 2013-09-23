@@ -158,7 +158,6 @@ bool GtsScene::LoadCameraConfig( const KeyId               camPosId,
     if ( !status )
     {
         LOG_ERROR("Calibration setup failed!");
-
         return false;
     };
 
@@ -172,7 +171,6 @@ bool GtsScene::LoadCameraConfig( const KeyId               camPosId,
     if ( !status )
     {
         LOG_ERROR("Tracker setup failed!");
-
         return false;
     };
 
@@ -292,7 +290,7 @@ void GtsScene::SetupThread( TrackRobotWidget* tool )
 {
     m_thread = new TrackThread( *this );
 
-    // Note, thread "runs" on creation)!
+    // Note, thread "runs" on creation!
 
     QObject::connect((QObject*)m_thread,
                      SIGNAL( paused( bool ) ),
@@ -483,7 +481,7 @@ void GtsScene::SaveData( char* floorPlanFile,
     float tx = 0.f;
     float ty = 0.f;
 
-    // Seconds - prob not discts within half sec. using
+    // Seconds - probably not discts within half sec. using
     const float timeThresh = 0.5f; // 2.0f / (float)m_fps;
 
     if ( baseLog < 0)
