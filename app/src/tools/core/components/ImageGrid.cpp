@@ -197,7 +197,7 @@ ImageView* const ImageGrid::AddImage( const QImage& image, const QString& captio
     newImageView->setAutoFillBackground( false );
     newImageView->SetImage( image );
 
-    static const bool PRESERVE_ASPECT_RATIO  = true;
+    static const bool PRESERVE_ASPECT_RATIO = true;
     newImageView->SetPreserveAspectRatio( PRESERVE_ASPECT_RATIO );
     newImageView->SetCaption( caption );
 

@@ -35,7 +35,8 @@ namespace Ui
     class ImageGrid;
 }
 
-/** @brief A class to show a grid of images, laid out in order to make each
+/**
+ *  @brief A class to show a grid of images, laid out in order to make each
  *  image as large as possible.
  *
  */
