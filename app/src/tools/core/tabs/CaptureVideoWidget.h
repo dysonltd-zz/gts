@@ -148,17 +148,17 @@ private:
 
     static const WbSchema CreateSchema();
 
-    Ui::CaptureVideoWidget*  m_ui;
-    CameraHardware&              m_cameraHardware;
-    double                       m_fps;
-    VideoSourcesCollection       m_videoSources;
+    Ui::CaptureVideoWidget*     m_ui;
+    CameraHardware&             m_cameraHardware;
+    double                      m_fps;
+    VideoSourcesCollection      m_videoSources;
 
-    AviWriter::codecType         m_codec;
-    QString                      m_fname;
-    QString                      m_tname;
+    AviWriter::codecType        m_codec;
+    QString                     m_fname;
+    QString                     m_tname;
 
-    bool                         m_videoSourcesAdded;
-    bool                         m_videoSourcesOpen;
+    bool                        m_videoSourcesAdded;
+    bool                        m_videoSourcesOpen;
 };
 
 #endif // CAPTUREVIDEOTOOLWIDGET_H

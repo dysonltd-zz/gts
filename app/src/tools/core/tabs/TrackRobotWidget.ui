@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>644</width>
+    <width>757</width>
     <height>480</height>
    </rect>
   </property>
@@ -34,7 +34,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../res/resources.qrc">
+        <iconset resource="../../../res/resources.qrc">
          <normaloff>:/revscan.png</normaloff>:/revscan.png</iconset>
        </property>
        <property name="checkable">
@@ -60,7 +60,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../res/resources.qrc">
+        <iconset resource="../../../res/resources.qrc">
          <normaloff>:/revstep.png</normaloff>:/revstep.png</iconset>
        </property>
        <property name="checkable">
@@ -92,7 +92,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../res/resources.qrc">
+        <iconset resource="../../../res/resources.qrc">
          <normaloff>:/play.png</normaloff>:/play.png</iconset>
        </property>
        <property name="checkable">
@@ -121,7 +121,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../res/resources.qrc">
+        <iconset resource="../../../res/resources.qrc">
          <normaloff>:/step.png</normaloff>:/step.png</iconset>
        </property>
        <property name="checkable">
@@ -156,7 +156,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../res/resources.qrc">
+        <iconset resource="../../../res/resources.qrc">
          <normaloff>:/scan.png</normaloff>:/scan.png</iconset>
        </property>
        <property name="checkable">
@@ -188,7 +188,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../../res/resources.qrc">
+        <iconset resource="../../../res/resources.qrc">
          <normaloff>:/stop.png</normaloff>:/stop.png</iconset>
        </property>
        <property name="checkable">
@@ -817,7 +817,7 @@ p, li { white-space: pre-wrap; }
                    <string/>
                   </property>
                   <property name="icon">
-                   <iconset resource="../../res/resources.qrc">
+                   <iconset resource="../../../res/resources.qrc">
                     <normaloff>:/apply.png</normaloff>:/apply.png</iconset>
                   </property>
                  </widget>
@@ -862,7 +862,7 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../res/resources.qrc"/>
+  <include location="../../../res/resources.qrc"/>
  </resources>
  <connections/>
 </ui>

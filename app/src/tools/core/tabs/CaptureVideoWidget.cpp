@@ -29,8 +29,6 @@
 #include "VideoCaptureSchema.h"
 #include "RunSchema.h"
 
-#include "Message.h"
-
 #include "RoomsCollection.h"
 #include "CamerasCollection.h"
 #include "CameraPositionsCollection.h"
@@ -38,6 +36,7 @@
 
 #include "FileUtilities.h"
 #include "FileDialogs.h"
+#include "Message.h"
 
 #include "WbConfigTools.h"
 #include "WbDefaultKeys.h"
@@ -51,10 +50,10 @@
 #include <sstream>
 #include <iostream>
 
-static const double rate[] = {VideoSource::FPS_7_5,
-                              VideoSource::FPS_15,
-                              VideoSource::FPS_30,
-                              VideoSource::FPS_60};
+static const double rate[] = { VideoSource::FPS_7_5,
+                               VideoSource::FPS_15,
+                               VideoSource::FPS_30,
+                               VideoSource::FPS_60 };
 
 static const int SOURCE_COLUMN = 0;
 static const int RATE_COLUMN = 1;
@@ -70,7 +69,7 @@ static const int NUM_COLS = 2;
  * @param parent
  */
 CaptureVideoWidget::CaptureVideoWidget( CameraHardware& cameraHardware,
-                                                QWidget* parent ) :
+                                        QWidget* parent ) :
     Tool                ( parent, CreateSchema() ),
     m_ui                ( new Ui::CaptureVideoWidget ),
     m_cameraHardware    ( cameraHardware ),
@@ -82,7 +81,6 @@ CaptureVideoWidget::CaptureVideoWidget( CameraHardware& cameraHardware,
     m_videoSourcesOpen  ( false )
 {
     SetupUi();
-
     ConnectSignals();
 }
 
@@ -203,9 +201,9 @@ bool CaptureVideoWidget::AnyViewIsRecording() const
     return false;
 }
 
-void CaptureVideoWidget::AddVideoFileConfigKey(const KeyId& camPosId,
-                                                   const QString& videoFileName,
-                                                   const QString& timestampFileName)
+void CaptureVideoWidget::AddVideoFileConfigKey( const KeyId& camPosId,
+                                                const QString& videoFileName,
+                                                const QString& timestampFileName )
 {
     WbConfig config(GetCurrentConfig());
 
@@ -255,11 +253,11 @@ void CaptureVideoWidget::StartRecordingInDirectory( const QString& outputDirecto
         /// timestamps for video1.avi could be in the file timestamps0.txt if there was
         /// a stray file named video0.avi already in the capture directory. Are we ok
         /// with this?
-        const QString videoFileName(FileUtilities::GetUniqueFileName(
-                                     outputDirectory.absoluteFilePath(m_fname)));
+        const QString videoFileName( FileUtilities::GetUniqueFileName(
+                                        outputDirectory.absoluteFilePath(m_fname) ) );
 
-        const QString timestampFileName(FileUtilities::GetUniqueFileName(
-                                            outputDirectory.absoluteFilePath(m_tname)));
+        const QString timestampFileName( FileUtilities::GetUniqueFileName(
+                                            outputDirectory.absoluteFilePath(m_tname) ) );
 
         // Identify frame rate
         QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(row, RATE_COLUMN);
