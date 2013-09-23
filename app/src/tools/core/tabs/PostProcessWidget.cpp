@@ -375,7 +375,11 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
             return ExitStatus::ERRORS_OCCURRED;
         }
 
-        if ( !metrics.LoadMetrics( metricsConfig, firstCamPosCalConfig, 1 ) )
+        /// @todo not handling multiple camera resolutions
+
+        int resolution = trackConfig.GetKeyValue( TrackRobotSchema::GlobalTrackingParams::resolution ).ToInt();
+
+        if ( !metrics.LoadMetrics( metricsConfig, firstCamPosCalConfig, resolution ) )
         {
             LOG_ERROR("Could not load robot metrics!");
 
