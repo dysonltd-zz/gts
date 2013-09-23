@@ -57,10 +57,10 @@
 #define MATCH_NONE -1
 
 GtsScene::GtsScene( ) :
-    m_thread      ( 0 ),
-    m_filePositionInMilliseconds        ( 0.0 ),
+    m_thread                    ( 0 ),
+    m_filePositionInMilliseconds( 0.0 ),
     m_rateInMilliseconds        ( 0.0 ),
-	m_ln          ( 0 )
+    m_ln                        ( 0 )
 {
 }
 
