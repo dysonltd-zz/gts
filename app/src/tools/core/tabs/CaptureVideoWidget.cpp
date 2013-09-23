@@ -506,6 +506,7 @@ void CaptureVideoWidget::CaptureLiveConnectDisconnectButtonClicked()
         {
             m_ui->m_captureLiveConnectDisconnectBtn->setText("&Disconnect");
         }
+        m_ui->m_videoTable->setEnabled(false);
     }
     else
     {
@@ -513,6 +514,7 @@ void CaptureVideoWidget::CaptureLiveConnectDisconnectButtonClicked()
 
         m_ui->m_captureLiveConnectDisconnectBtn->setText("&Connect");
         m_ui->m_time->setText( QString("00:00:00:000") );
+        m_ui->m_videoTable->setEnabled(true);
     }
 }
 
