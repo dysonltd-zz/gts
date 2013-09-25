@@ -248,7 +248,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="TrackView" name="m_trackView" native="true">
+       <widget class="ImageView" name="m_analysisImage" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>100</horstretch>
@@ -264,9 +264,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TrackView</class>
+   <class>ImageView</class>
    <extends>QWidget</extends>
-   <header>TrackView.h</header>
+   <header location="global">ImageView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

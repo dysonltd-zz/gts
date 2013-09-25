@@ -20,8 +20,6 @@
 
 #include "ui_CollateResultsWidget.h"
 
-#include "UnknownLengthProgressDlg.h"
-
 #include "CoverageMetrics.h"
 
 #include "Collection.h"
@@ -37,7 +35,7 @@
 #include "FileUtilities.h"
 #include "FileDialogs.h"
 #include "Message.h"
-
+#include "UnknownLengthProgressDlg.h"
 #include "Logging.h"
 
 #include <opencv/cv.h>
@@ -200,6 +198,7 @@ void CollateResultsWidget::LoadResultsButtonClicked()
 
     // resize header column
     m_ui->m_runsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+
     // Set model
     m_ui->m_runsTable->setModel( tableModel );
 
@@ -314,6 +313,7 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                     {
                         progressDialog->Complete( tr( "Results Analysis Successful" ),
                                                   tr( "Results have been computed." ) );
+
                     }
                     else
                     {
@@ -323,6 +323,14 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                                        tr( "Results Analysis Failed" ),
                                        tr( "See the log for details!" ),
                                        Message::Severity_Critical );
+
+                        IplImage* img = cvLoadImage(totalCoverageImgName.toAscii(), CV_LOAD_IMAGE_COLOR);
+
+                        if (img)
+                        {
+                            ShowImage(m_ui->m_analysisImage, img);
+                            cvReleaseImage( &img );
+                        }
                     }
                 }
             }
@@ -341,6 +349,33 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                               tr( "Runs must common room!" ));
     }
 }
+
+void CollateResultsWidget::ShowImage(ImageView* view, const IplImage* image)
+{
+    // Convert image
+    IplImage* imgTmp = cvCreateImage( cvSize( image->width, image->height ), IPL_DEPTH_8U, 3 );
+    cvConvertImage( image, imgTmp );
+
+    const QSize imgSize( imgTmp->width, imgTmp->height );
+    QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
+
+    CvMat mtxWrapper;
+    cvInitMatHeader( &mtxWrapper,
+                     imgTmp->height,
+                     imgTmp->width,
+                     CV_8UC3,
+                     qImg.bits() );
+
+    cvConvertImage( imgTmp, &mtxWrapper, 0 );
+
+    // Display image
+    view->Clear();
+    view->SetImage( qImg );
+    view->update();
+
+    cvReleaseImage( &imgTmp );
+}
+
 
 // ----------------------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------------------
