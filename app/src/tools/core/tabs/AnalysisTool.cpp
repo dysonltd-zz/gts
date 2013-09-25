@@ -19,7 +19,6 @@
 #include "AnalysisTool.h"
 
 #include "CollateResultsWidget.h"
-#include "ProcessResultsWidget.h"
 
 #include <QtGui/QComboBox>
 
@@ -36,7 +35,6 @@ AnalysisTool::AnalysisTool( QWidget* parent,
                           &mainWindow )
 {
     AddSubTool( new CollateResultsWidget( this ) );
-    AddSubTool( new ProcessResultsWidget( this ) );
 }
 
 AnalysisTool::~AnalysisTool()
