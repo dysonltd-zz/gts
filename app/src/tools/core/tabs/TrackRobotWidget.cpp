@@ -604,17 +604,7 @@ bool TrackRobotWidget::IsDataValid() const
     valid = valid &&
              !(m_ui->m_robotCombo->currentText().isEmpty());
 
-    valid = valid &&
-             !(m_ui->m_nccThresholdSpinBox->value() == 0.0);
-    valid = valid &&
-             !(m_ui->m_resolutionSpinBox->value() == 0);
-    valid = valid &&
-             !(m_ui->m_trackerThresholdSpinBox->value() == 0);
-
 	Tool::HighlightLabel(m_ui->m_robotLabel, !valid);
-	Tool::HighlightLabel(m_ui->m_nccThresholdLabel, !valid);
-	Tool::HighlightLabel(m_ui->m_resolutionLabel, !valid);
-	Tool::HighlightLabel(m_ui->m_trackerThresholdLabel, !valid);
 
     return valid;
 }
