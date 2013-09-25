@@ -307,6 +307,19 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                                                                  totalCoverageCsvName.toAscii().data(),
                                                                  totalCoverageImgName.toAscii().data() );
 
+                    IplImage* img = cvLoadImage(totalCoverageImgName.toAscii(), CV_LOAD_IMAGE_COLOR);
+
+                    if (img)
+                    {
+                        ShowImage(m_ui->m_analysisImage, img);
+                        cvReleaseImage( &img );
+                    }
+                    else
+                    {
+                        successful = false;
+                        LOG_ERROR("Could not load total coverage image to show on screen!");
+                    }
+
                     successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
 
                     if ( successful )
@@ -323,14 +336,6 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                                        tr( "Results Analysis Failed" ),
                                        tr( "See the log for details!" ),
                                        Message::Severity_Critical );
-
-                        IplImage* img = cvLoadImage(totalCoverageImgName.toAscii(), CV_LOAD_IMAGE_COLOR);
-
-                        if (img)
-                        {
-                            ShowImage(m_ui->m_analysisImage, img);
-                            cvReleaseImage( &img );
-                        }
                     }
                 }
             }
