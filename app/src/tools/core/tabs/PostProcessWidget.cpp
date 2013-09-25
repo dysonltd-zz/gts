@@ -270,8 +270,11 @@ void PostProcessWidget::PostProcessButtonClicked()
 
             if ( successful )
             {
+                const QString trackerResultsDirectory(
+                            runConfig.GetAbsoluteFileNameFor( "results" ) );
                 progressDialog->Complete( tr( "Post Processing Successful" ),
-                                          tr( "Results have been computed." ) );
+                                          tr( "Results have been computed.\nFiles located at %1" )
+                                          .arg( trackerResultsDirectory ) );
             }
             else
             {
