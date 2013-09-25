@@ -265,7 +265,7 @@
         <bool>true</bool>
        </property>
        <property name="text">
-        <string>&amp;Load</string>
+        <string>&amp;Load Track</string>
        </property>
       </widget>
      </item>
@@ -275,7 +275,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>&amp;Reset</string>
+        <string>&amp;Reset Track</string>
        </property>
       </widget>
      </item>
@@ -285,7 +285,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>&amp;Save</string>
+        <string>&amp;Save Track</string>
        </property>
       </widget>
      </item>
