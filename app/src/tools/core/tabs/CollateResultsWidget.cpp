@@ -325,7 +325,10 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                     if ( successful )
                     {
                         progressDialog->Complete( tr( "Results Analysis Successful" ),
-                                                  tr( "Results have been computed." ) );
+                                                  tr( "Total coverage results located at: %1\n"
+                                                      "Total coverage image located at: %2" )
+                                                  .arg( totalCoverageCsvName )
+                                                  .arg( totalCoverageImgName ) );
 
                     }
                     else
