@@ -23,6 +23,7 @@
 
 #include "Tool.h"
 #include "AlgorithmInterface.h"
+#include "ImageView.h"
 
 namespace Ui
 {
@@ -54,6 +55,7 @@ private:
                                             char* totalCoverageImgName );
 
     bool CreateAnalysisResultDirectory(const WbConfig& config);
+    void ShowImage(ImageView* view, const IplImage* image);
 
 private slots:
     void LoadResultsButtonClicked();
