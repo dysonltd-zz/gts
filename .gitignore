@@ -55,4 +55,3 @@ install_manifest.txt
 #*#
 *.tmp
 gts.log
-bump_version.sh
