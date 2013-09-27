@@ -41,7 +41,6 @@ if(UNIX)
 endif()
 
 add_subdirectory(lib/log4qt)
-add_subdirectory(lib/qwt-6.1.0)
 
 # ----------------------------------------------------------------------------
 #  Files
@@ -66,8 +65,7 @@ set(GTS_INCLS src/main
               src/video/input/fake
               src/video/output
               src/workbench
-              lib/log4qt/src
-              lib/qwt-6.1.0/src)
+              lib/log4qt/src)
 
 # add platform specific camera apis
 if(MINGW)
@@ -183,11 +181,11 @@ else()
 endif()
 
 if(MINGW)
-    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt Qwt )
+    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt )
 elseif(MSVC)
-    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt Qwt strmiids.lib )
+    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt strmiids.lib )
 elseif(UNIX)
-    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt Qwt )
+    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt )
 endif()
 
 # ----------------------------------------------------------------------------
@@ -226,12 +224,12 @@ if(GTS_TESTS)
     add_executable( gts_test ${GTS_TEST_SOURCES} ${GTS_TEST_MOC_SRCS} ${GTS_TESTED_UI_SRCS} ${GTS_TESTED_MOC_SRCS} ${GTS_TESTED_SRCS} ${GTS_TESTED_SRCS_PLATFORM} )
 
     if(MINGW)
-        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt Qwt gtest )
+        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt gtest )
     elseif(MSVC)
         link_directories( ${gtest_BINARY_DIR} )
-        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt Qwt gtest strmiids.lib )
+        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt gtest strmiids.lib )
     elseif(UNIX)
-        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt Qwt gtest )
+        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt gtest )
     endif()
 
 endif()
