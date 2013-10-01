@@ -381,7 +381,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
 
         /// @todo not handling multiple camera resolutions
 
-        float resolution = trackConfig.GetKeyValue( TrackRobotSchema::GlobalTrackingParams::resolution ).ToDouble();
+        float resolution = m_ui->m_postProcessResolutionSpinBox->value();
 
         if ( !metrics.LoadMetrics( metricsConfig, firstCamPosCalConfig, resolution ) )
         {
@@ -573,8 +573,8 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
 // ----------------------------------------------------------------------------------------------------------------------------
 
 void PostProcessWidget::PlotTrackLog( TrackHistory::TrackLog& log,
-                                          char*                   floorPlanFile,
-                                          char*                   trackerResultsImgFile )
+                                      char* floorPlanFile,
+                                      char* trackerResultsImgFile )
 {
     // Seconds - prob not discts within half sec. using
     const float timeThresh = 0.5f; // 2.0f / (float)m_fps;
@@ -589,7 +589,17 @@ void PostProcessWidget::PlotTrackLog( TrackHistory::TrackLog& log,
 
     IplImage* baseImg = cvLoadImage(floorPlanFile, CV_LOAD_IMAGE_GRAYSCALE);
 
-    compImg = cvCloneImage( baseImg );
+    if (baseImg != NULL)
+    {
+        compImg = cvCloneImage( baseImg );
+    }
+    else
+    {
+        LOG_WARN("Post Process - Error with base image!");
+        LOG_TRACE("Post Process - Error with base image when running PlotTrackLog!");
+    }
+
+
 
     // Plot logs - colour copy of composite image
     compImgCol = cvCreateImage( cvSize( compImg->width,
