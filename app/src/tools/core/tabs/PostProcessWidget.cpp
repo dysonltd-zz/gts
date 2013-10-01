@@ -59,7 +59,7 @@
 #define MAX_PATH 255
 #endif
 
-PostProcessWidget::PostProcessWidget( QWidget* parent ) :
+PostProcessWidget::PostProcessWidget( QWidget* const parent ) :
     Tool( parent, CreateSchema() ),
     m_ui( new Ui::PostProcessWidget )
 {
@@ -144,8 +144,7 @@ void PostProcessWidget::LoadDataButtonClicked()
 
     const WbConfig runConfig( config.GetParent() );
 
-     const QString fileName(
-         runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.csv" ) );
+     const QString fileName(runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.csv" ) );
 
     m_ui->m_trackView->loadFloorPlan( runConfig );
     m_ui->m_trackView->loadMetrics( runConfig );
@@ -248,7 +247,7 @@ void PostProcessWidget::PostProcessButtonClicked()
         if ( successful )
         {
             UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-            progressDialog->Start( tr( "Working" ), tr( "" ) );
+            progressDialog->Start( tr( "Processing" ), tr( "" ) );
 
             ExitStatus::Flags exitCode = PostProcess( config,
                                                       trackerResultsCsvName.toAscii().data(),    // trackerResultsName

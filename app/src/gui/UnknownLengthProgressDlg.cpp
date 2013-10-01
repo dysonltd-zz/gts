@@ -38,16 +38,16 @@ UnknownLengthProgressDlg::UnknownLengthProgressDlg( QWidget* const parent )
     setAttribute( Qt::WA_DeleteOnClose );
 }
 
-void UnknownLengthProgressDlg::Start( const QString& title, const QString message )
+void UnknownLengthProgressDlg::Start( const QString& title, const QString& message )
 {
     setWindowTitle( title );
     SetLabelText( message );
-    AdjustGeometry();
     show();
+    AdjustGeometry();
 }
 
 void UnknownLengthProgressDlg::Complete( const QString& title, const QString& message )
-    {
+{
     setWindowTitle( title );
     SetLabelText( message );
     const int maxVal = 1;
