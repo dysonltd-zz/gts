@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QFrame" name="frame_1">
+     <widget class="QFrame" name="frame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
         <horstretch>100</horstretch>
@@ -118,9 +118,9 @@
         <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2_0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_1">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="margin">
             <number>0</number>
            </property>
