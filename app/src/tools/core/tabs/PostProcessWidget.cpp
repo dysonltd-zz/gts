@@ -104,7 +104,7 @@ bool PostProcessWidget::CanClose() const
 
 const QString PostProcessWidget::CannotCloseReason() const
 {
-    return tr("Please complete data before leaving tab.");
+    return tr("Please complete all highlighted boxes before leaving this tab.");
 }
 
 const WbSchema PostProcessWidget::CreateSchema()

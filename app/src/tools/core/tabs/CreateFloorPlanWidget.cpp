@@ -1454,5 +1454,5 @@ bool CreateFloorPlanWidget::CanClose() const
 
 const QString CreateFloorPlanWidget::CannotCloseReason() const
 {
-    return tr("Please complete data before leaving tab.");
+    return tr("Please complete all highlighted boxes before leaving this tab.");
 }

@@ -621,7 +621,7 @@ bool TrackRobotWidget::CanClose() const
 
 const QString TrackRobotWidget::CannotCloseReason() const
 {
-    return tr("Please complete data before leaving tab.");
+    return tr("Please complete all highlighted boxes before leaving this tab.");
 }
 
 const WbSchema TrackRobotWidget::CreateSchema()

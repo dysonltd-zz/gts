@@ -103,7 +103,7 @@ bool CollateResultsWidget::CanClose() const
 
 const QString CollateResultsWidget::CannotCloseReason() const
 {
-    return tr("Please complete data before leaving tab.");
+    return tr("Please complete all highlighted boxes before leaving this tab.");
 }
 
 const WbSchema CollateResultsWidget::CreateSchema()

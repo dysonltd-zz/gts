@@ -364,5 +364,5 @@ bool PositionCalibrationWidget::CanClose() const
 
 const QString PositionCalibrationWidget::CannotCloseReason() const
 {
-    return tr("Please complete data or capture before leaving tab.");
+    return tr("Please complete all highlighted boxes before leaving this tab.");
 }

@@ -351,7 +351,7 @@ bool CameraCalibrationWidget::CanClose() const
 
 const QString CameraCalibrationWidget::CannotCloseReason() const
 {
-    return tr("Please complete data or capture before leaving tab.");
+    return tr("Please complete all highlighted boxes before leaving this tab.");
 }
 
 const WbSchema CameraCalibrationWidget::CreateSchema()
