@@ -232,8 +232,7 @@ void CreateFloorMaskWidget::BtnCreateMaskClicked()
 
 bool CreateFloorMaskWidget::ExportFloorPlan( const WbConfig& config )
 {
-    const QString floorPlanSrcFileName(
-        config.GetAbsoluteFileNameFor( "floor_plan.png" ) );
+    const QString floorPlanSrcFileName( config.GetAbsoluteFileNameFor( "floor_plan.png" ) );
 
     if ( !QFile::exists( floorPlanSrcFileName ) )
     {
@@ -243,10 +242,10 @@ bool CreateFloorMaskWidget::ExportFloorPlan( const WbConfig& config )
         return false;
     }
 
-    QString floorPlanDstFileName( QFileDialog::getSaveFileName( 0,
-                                                                     QObject::tr( "Choose where to save the floor plan" ),
-                                                                     QDir::homePath(),
-                                                                     tr("Images (*.png)") ) );
+    QString floorPlanDstFileName( QFileDialog::getSaveFileName(  0,
+                                                                 QObject::tr( "Choose where to save the floor plan" ),
+                                                                 config.GetAbsoluteFileInfo().absolutePath(),
+                                                                 tr("Images (*.png)") ) );
 
     QFileInfo file(floorPlanDstFileName);
 
@@ -283,14 +282,16 @@ bool CreateFloorMaskWidget::ExportFloorPlan( const WbConfig& config )
 
 bool CreateFloorMaskWidget::ImportFloorMask( const WbConfig& config )
 {
-    const QString floorMaskSrcFileName( QFileDialog::getOpenFileName( 0,
-                                                                      QObject::tr( "Choose where to find the floor mask" ),
-                                                                      QDir::homePath() ) );
+
+    const QString floorMaskSrcFileName(
+                QFileDialog::getOpenFileName( 0,
+                                              QObject::tr( "Choose where to find the floor mask" ),
+                                              config.GetAbsoluteFileInfo().absolutePath() )
+                );
 
     if ( !floorMaskSrcFileName.isEmpty() )
     {
-        const QString floorMaskDstFileName(
-            config.GetAbsoluteFileNameFor( "floor_mask.png" ) );
+        const QString floorMaskDstFileName( config.GetAbsoluteFileNameFor( "floor_mask.png" ) );
 
         if ( QFile::exists(floorMaskDstFileName) )
         {
