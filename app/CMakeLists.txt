@@ -202,16 +202,16 @@ if(GTS_TESTS)
     list(REMOVE_ITEM GTS_TESTED_SRCS
         "${PROJECT_SOURCE_DIR}/src/main/main.cpp")
 
-	# Compile the GTest library
+    # Compile the GTest library
     add_subdirectory(lib/gtest-1.6.0)
 
-	message(STATUS ${gtest_SOURCE_DIR})
-	message(STATUS ${gtest_BINARY_DIR})
+    message(STATUS ${gtest_SOURCE_DIR})
+    message(STATUS ${gtest_BINARY_DIR})
 
-	# Include the Google Test library
+    # Include the Google Test library
     include_directories(${gtest_SOURCE_DIR}/include)
 
-	# find all test files by recursively searching in test dir
+    # find all test files by recursively searching in test dir
     file(GLOB_RECURSE GTS_TEST_SOURCES ${PROJECT_SOURCE_DIR}/test/*.cpp)
     file(GLOB_RECURSE GTS_TEST_HEADERS ${PROJECT_SOURCE_DIR}/test/*.h )
 
@@ -231,8 +231,8 @@ if(GTS_TESTS)
     elseif(UNIX)
         target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt gtest )
     endif()
-
 endif()
+
 
 INSTALL(TARGETS gts RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
 # ----------------------------------------------------------------------------

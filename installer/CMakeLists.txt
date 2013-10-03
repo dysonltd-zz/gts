@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------
 # 
-# CMake file for GTS (Win_Installer)
+# CMake file for GTS Windows Installer
 #
 # ----------------------------------------------------------------------------
 
@@ -17,33 +17,30 @@ find_package(Qt4 COMPONENTS QtCore QtGui QtOpenGL QtXml REQUIRED )
 find_package(OpenCV COMPONENTS opencv_calib3d
                                opencv_contrib
                                opencv_core
-							   opencv_features2d
-							   opencv_ffmpeg
-							   opencv_flann
-							   opencv_gpu
-							   opencv_highgui
-							   opencv_imgproc
-							   opencv_legacy
-							   opencv_ml
-							   opencv_objdetect
-							   opencv_ts
-							   opencv_video REQUIRED )
+                               opencv_features2d
+                               opencv_ffmpeg
+                               opencv_flann
+                               opencv_gpu
+                               opencv_highgui
+                               opencv_imgproc
+                               opencv_legacy
+                               opencv_ml
+                               opencv_objdetect
+                               opencv_ts
+                               opencv_video REQUIRED )
 
-
-if(NOT QT_ASSISTANT_EXECUTABLE)
-    if(MSVC)
-        find_program(QT_ASSISTANT_EXECUTABLE assistant)
-    else()
-        find_program(QT_ASSISTANT_EXECUTABLE assistant.exe)
-    endif()
+if(MSVC)
+    find_program(QT_ASSISTANT_EXECUTABLE assistant.exe)
+else()
+    find_program(QT_ASSISTANT_EXECUTABLE assistant)
 endif()
 
 if(MINGW)
     get_filename_component( MINGW_PATH ${CMAKE_CXX_COMPILER} PATH )
 
     set( CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS ${MINGW_PATH}/mingwm10.dll
-	                                       ${MINGW_PATH}/libgcc_s_dw2-1.dll
-										   ${MINGW_PATH}/libstdc++-6.dll )
+                                           ${MINGW_PATH}/libgcc_s_dw2-1.dll
+                                           ${MINGW_PATH}/libstdc++-6.dll )
 endif()
 
 include( ${QT_USE_FILE} )
@@ -60,15 +57,15 @@ add_definitions( ${QT_DEFINITIONS} )
 if(MSVC)
     install( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/../build/bin/gts.exe"
              DESTINATION bin
-		     COMPONENT Application )
+             COMPONENT Application )
 elseif(MINGW)
     install( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/../build/bin/gts"
              DESTINATION bin
-		     COMPONENT Application )
+             COMPONENT Application )
 endif()
 
 install( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE"
-				  "${CMAKE_CURRENT_SOURCE_DIR}/../OPENSOURCE_LICENSES"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/../OPENSOURCE_LICENSES"
                   "${CMAKE_CURRENT_SOURCE_DIR}/../help/doc/gts_userguide.qch"
                   "${CMAKE_CURRENT_SOURCE_DIR}/../help/doc/gts_userguide.qhc"
          DESTINATION doc
@@ -96,40 +93,46 @@ install( FILES "${QT_LIBRARY_DIR}/../plugins/imageformats/qjpeg4.dll"
          DESTINATION bin/imageformats
          COMPONENT Qt )
 
-install( PROGRAMS ${QT_ASSISTANT_EXECUTABLE}
-         DESTINATION bin
-		 COMPONENT Qt )
+if(MSVC)
+    install( PROGRAMS "${QT_LIBRARY_DIR}/../bin/assistant.exe"
+             DESTINATION bin
+             COMPONENT Qt )
+elseif(MINGW)
+    install( PROGRAMS "${QT_LIBRARY_DIR}/../bin/assistant"
+             DESTINATION bin
+             COMPONENT Qt )
+endif()
 
 if(MSVC)
-    install( FILES "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_calib3d246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_contrib246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_core246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_features2d246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_flann246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_gpu246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_highgui246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_imgproc246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_legacy246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_ml246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_objdetect246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_ts246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/opencv_video246.dll"
+    install( FILES "${OpenCV_ROOT_DIR}/bin/opencv_calib3d246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_contrib246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_core246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_features2d246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_flann246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_gpu246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_highgui246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_imgproc246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_legacy246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_ml246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_objdetect246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_ts246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/opencv_video246.dll"
              DESTINATION bin
              COMPONENT OpenCV )
 elseif(MINGW)
-    install( FILES "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_calib3d246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_contrib246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_core246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_features2d246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_flann246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_gpu246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_highgui246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_imgproc246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_legacy246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_ml246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_objdetect246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_ts246.dll"
-                   "${OpenCV_ROOT_DIR}/build/x86/vc10/bin/libopencv_video246.dll"
+    install( FILES "${OpenCV_ROOT_DIR}/bin/libopencv_calib3d246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_contrib246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_core246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_features2d246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_flann246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_gpu246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_highgui246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_imgproc246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_legacy246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_ml246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_objdetect246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_ts246.dll"
+                   "${OpenCV_ROOT_DIR}/bin/libopencv_video246.dll"
              DESTINATION bin
              COMPONENT OpenCV )
 endif()
@@ -137,7 +140,7 @@ endif()
 if(MSVC)
     install( PROGRAMS "${CMAKE_CURRENT_SOURCE_DIR}/files/DOWNLOADS"
              DESTINATION ext
-		     COMPONENT Other )
+             COMPONENT Other )
 endif()
 
 set( CPACK_GENERATOR "NSIS" )
