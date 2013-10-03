@@ -365,10 +365,19 @@ void CollectionToolWidget::DeleteElement()
     // Look to see if there are dependencies on this item.
     if ( !selectedElement.DependentExists( KeyValue::from(id) ) )
     {
-        GetCollection().DeleteElement( id );
-        std::cerr << parent.GetAbsoluteFileNameFor(id);
-        FileUtilities::DeleteDirectory( parent.GetAbsoluteFileNameFor(id) );
-        ReloadAll( parent );
+        const int result = QMessageBox::question( this,
+                                                  "Confirm delete",
+                                                  QObject::tr("Deleting this item will remove all files associated with it.\n"
+                                                              "Are you sure you want to delete %1?")
+                                                  .arg( selectedElement.GetKeyValue( WbDefaultKeys::displayNameKey).ToQString() ),
+                                                  QMessageBox::Yes|QMessageBox::No );
+
+        if( result == QMessageBox::Yes )
+        {
+            GetCollection().DeleteElement( id );
+            FileUtilities::DeleteDirectory( parent.GetAbsoluteFileNameFor(id) );
+            ReloadAll( parent );
+        }
     }
     else
     {
