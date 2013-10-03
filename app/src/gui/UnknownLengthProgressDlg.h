@@ -30,7 +30,7 @@ class UnknownLengthProgressDlg : public QWidget
 public:
     UnknownLengthProgressDlg( QWidget* const parent = 0 );
 
-    void Start( const QString& title, const QString message );
+    void Start( const QString& title, const QString& message );
     void Complete( const QString& title, const QString& message );
     void ForceClose();
 

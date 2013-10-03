@@ -38,7 +38,7 @@ class PostProcessWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit PostProcessWidget( QWidget* parent = 0 );
+    explicit PostProcessWidget(QWidget* const parent = 0 );
     ~PostProcessWidget();
 
     virtual const QString Name() const { return tr( "Post Process" ); }
