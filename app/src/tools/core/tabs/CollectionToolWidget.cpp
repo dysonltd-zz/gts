@@ -31,8 +31,8 @@
 #include <QtCore/QString>
 #include <QtGui/QMessageBox>
 
-
 #include "Debugging.h"
+#include "FileUtilities.h"
 
 CollectionToolWidget::CollectionToolWidget( const QString&  userFriendlyElementName,
                                             const WbSchema& collectionSchema,
@@ -366,7 +366,8 @@ void CollectionToolWidget::DeleteElement()
     if ( !selectedElement.DependentExists( KeyValue::from(id) ) )
     {
         GetCollection().DeleteElement( id );
-
+        std::cerr << parent.GetAbsoluteFileNameFor(id);
+        FileUtilities::DeleteDirectory( parent.GetAbsoluteFileNameFor(id) );
         ReloadAll( parent );
     }
     else
