@@ -52,6 +52,8 @@ public:
     virtual ~CreateFloorPlanWidget();
 
     virtual const QString Name() const { return tr( "Create Floor Plan" ); }
+    virtual bool CanClose() const;
+    virtual const QString CannotCloseReason() const;
     virtual QWidget* Widget();
 
 private:
@@ -84,6 +86,8 @@ private:
     void DisplayMatched( std::vector< cv::Point2f > ip1,
                          std::vector< cv::Point2f > ip2 );
     void DisplayStitched();
+
+    bool IsDataValid() const;
 
     Ui::CreateFloorPlanWidget* m_ui;
 

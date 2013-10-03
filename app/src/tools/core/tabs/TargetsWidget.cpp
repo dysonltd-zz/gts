@@ -91,23 +91,29 @@ bool TargetsWidget::IsDataValid() const
 
     bool valid = true;
 
-    valid = valid &&
-             !(m_ui->m_trackingTargetFileNameEdit->text().isEmpty());
-    valid = valid &&
-             !(m_ui->m_printableTargetFileNameEdit->text().isEmpty());
-
-	Tool::HighlightLabel(m_ui->m_trackingTargetFileNameLabel, !valid);
-	Tool::HighlightLabel(m_ui->m_printableTargetFileNameLabel, !valid);
+    if ( m_ui->m_trackingTargetFileNameEdit->text().isEmpty() )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_trackingTargetFileNameLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->m_trackingTargetFileNameLabel, false);
+    }
+    if ( m_ui->m_printableTargetFileNameEdit->text().isEmpty() )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_printableTargetFileNameLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->m_printableTargetFileNameLabel, false);
+    }
 
     return valid;
 }
 
 bool TargetsWidget::CanClose() const
 {
-    if ( !IsDataValid() )
-        return false;
-
-    return true;
+    return IsDataValid();
 }
 
 const QString TargetsWidget::CannotCloseReason() const

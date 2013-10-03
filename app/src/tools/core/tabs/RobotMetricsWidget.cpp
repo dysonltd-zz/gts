@@ -59,22 +59,40 @@ bool RobotMetricsWidget::IsDataValid() const
 
     bool valid = true;
 
-    valid = valid &&
-             !(m_ui->m_dimensionsHeightSpinBox->value() == 0.0);
-    valid = valid &&
-             !(m_ui->m_dimensionsTopRadiusSpinBox->value() == 0.0);
-    valid = valid &&
-             !(m_ui->m_dimensionsBaseRadiusSpinBox->value() == 0.0);
+    if ( m_ui->m_dimensionsHeightSpinBox->value() == 0.0 )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_dimensionsHeightLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->m_dimensionsHeightLabel, false);
+    }
+    if ( m_ui->m_dimensionsTopRadiusSpinBox->value() == 0.0 )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_dimensionsTopRadiusLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->m_dimensionsTopRadiusLabel, false);
+    }
+    if ( m_ui->m_dimensionsBaseRadiusSpinBox->value() == 0.0 )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_dimensionsBaseRadiusLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->m_dimensionsBaseRadiusLabel, false);
+    }
 
-    valid = valid &&
-             !(m_ui->m_targetTypeComboBox->currentText().isEmpty());
-
-	Tool::HighlightLabel(m_ui->m_dimensionsHeightLabel, !valid);
-	Tool::HighlightLabel(m_ui->m_dimensionsTopRadiusLabel, !valid);
-	Tool::HighlightLabel(m_ui->m_dimensionsBaseRadiusLabel, !valid);
-	Tool::HighlightLabel(m_ui->m_targetTypeLabel, !valid);
-
-    return valid;
+    if ( m_ui->m_targetTypeComboBox->currentText().isEmpty() )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_targetTypeLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->m_targetTypeLabel, false);
+    }
+        return valid;
 }
 
 bool RobotMetricsWidget::CanClose() const

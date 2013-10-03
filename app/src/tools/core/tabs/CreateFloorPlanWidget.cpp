@@ -1420,3 +1420,39 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
         }
     }
 }
+
+bool CreateFloorPlanWidget::IsDataValid() const
+{
+    if (GetCurrentConfig().IsNull()) return true;
+
+    bool valid = true;
+
+    if ( m_ui->m_gridRowsSpinBox->value() == 0 )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->rowsLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->rowsLabel, false);
+    }
+    if ( m_ui->m_gridColumnsSpinBox->value() == 0 )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->columnsLabel, true);
+    }
+    else
+    {
+        Tool::HighlightLabel(m_ui->columnsLabel, false);
+    }
+    return valid;
+}
+
+bool CreateFloorPlanWidget::CanClose() const
+{
+    return IsDataValid();
+}
+
+const QString CreateFloorPlanWidget::CannotCloseReason() const
+{
+    return tr("Please complete data before leaving tab.");
+}

@@ -316,16 +316,30 @@ bool CameraCalibrationWidget::IsDataValid() const
 
     bool valid = true;
 
-    valid = valid &&
-             !(m_ui->m_gridSquareSizeSpinBox->value() == 0.0);
-    valid = valid &&
-             !(m_ui->m_gridRowsSpinBox->value() == 0);
-    valid = valid &&
-             !(m_ui->m_gridColumnsSpinBox->value() == 0);
-
-	Tool::HighlightLabel(m_ui->m_gridSquareSizeLabel, !valid);
-	Tool::HighlightLabel(m_ui->m_gridRowsLabel, !valid);
-	Tool::HighlightLabel(m_ui->m_gridColumnsLabel, !valid);
+    if ( m_ui->m_gridSquareSizeSpinBox->value() == 0.0 )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_gridSquareSizeLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->m_gridSquareSizeLabel, false);
+    }
+    if ( m_ui->m_gridRowsSpinBox->value() == 0 )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_gridRowsLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->m_gridRowsLabel, false);
+    }
+    if ( m_ui->m_gridColumnsSpinBox->value() == 0 )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_gridColumnsLabel, true);
+    }
+    else {
+        Tool::HighlightLabel(m_ui->m_gridColumnsLabel, false);
+    }
 
     return valid;
 }

@@ -601,10 +601,15 @@ bool TrackRobotWidget::IsDataValid() const
 
     bool valid = true;
 
-    valid = valid &&
-             !(m_ui->m_robotCombo->currentText().isEmpty());
-
-	Tool::HighlightLabel(m_ui->m_robotLabel, !valid);
+    if ( m_ui->m_robotCombo->currentText().isEmpty() )
+    {
+        valid = valid && false;
+        Tool::HighlightLabel(m_ui->m_robotLabel, true);
+    }
+    else
+    {
+        Tool::HighlightLabel(m_ui->m_robotLabel, false);
+    }
 
     return valid;
 }
