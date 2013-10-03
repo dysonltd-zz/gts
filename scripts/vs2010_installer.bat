@@ -8,5 +8,9 @@ if [%1]==[] goto usage
 goto :eof
 :usage
 	@echo Call from scripts folder
-	@echo Usage: %0 ^<PATH-TO-OPENCV^>
+	@echo Usage: %0 OpenCV Location:^<PATH-TO-OPENCV^>
+	@echo 	set ^<param^> values
+	@echo 	e.g. %0 C:/opencv/
 exit /B 1
+
+@echo OFF
