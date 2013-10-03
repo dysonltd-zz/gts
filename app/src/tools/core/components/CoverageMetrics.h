@@ -30,11 +30,9 @@
 class RunEntry
 {
 public:
-    static constexpr int MAX_LEVEL = 5;
-
+    static const int MAX_LEVEL = 5;
     static const QColor colours[MAX_LEVEL];
-
-    static constexpr int GetMaxLevel() { return MAX_LEVEL; }; // < trick the buggy compiler
+    static const int GetMaxLevel() { return MAX_LEVEL; }; // < trick the buggy compiler
 
 public:
     RunEntry() {};
