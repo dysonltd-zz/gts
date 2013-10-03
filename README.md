@@ -94,14 +94,14 @@ __MinGW__
 	
 	MKDIR build
 	CD build
-	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\Software\OpenCV-2.4.6-MinGW\opencv" ..
+	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV-INSTALL" ..
 	mingw32-make package
 
 __VS2010__
   	
 	MKDIR build
 	CD build
-	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\Software\OpenCV-2.4.6-VS2010\opencv" .. 
+	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV-INSTALL" .. 
 	nmake package
 
 ## Unit Tests
