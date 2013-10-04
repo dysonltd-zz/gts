@@ -303,7 +303,7 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                 if ( successful )
                 {
                     UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-                    progressDialog->Start( tr( "Working" ), tr( "" ) );
+                    progressDialog->Start( tr( "Processing" ), tr( "" ) );
 
                     ExitStatus::Flags exitCode = AnalyseResults( floorPlanName.toAscii().data(),        // floorPlanName
                                                                  floorMaskName.toAscii().data(),        // floorMaskName
@@ -600,18 +600,20 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
 
     if (resultDirParent.exists( resultDirName ))
     {
-        QMessageBox mb;
-        mb.setText(QObject::tr("Track Results Analysis"));
-        mb.setInformativeText(QObject::tr( "Are you sure you want to overwrite already saved data?"));
-        mb.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-        int ret = mb.exec();
 
-        if (ret == QMessageBox::Cancel)
+        const int result = QMessageBox::question( this,
+                                                  "Confirm delete",
+                                                  QObject::tr("Are you sure you want to overwrite already saved data."),
+                                                  QMessageBox::Yes|QMessageBox::No );
+
+        if (result == QMessageBox::No)
         {
             return false;
         }
-
-        FileUtilities::DeleteDirectory( resultDirParent.absoluteFilePath(resultDirName) );
+        else
+        {
+            FileUtilities::DeleteDirectory( resultDirParent.absoluteFilePath(resultDirName) );
+        }
     }
 
     if ( !resultDirParent.mkdir( resultDirName ) || !resultDirParent.cd( resultDirName ))
