@@ -437,7 +437,10 @@ bool CaptureVideoWidget::TryToAddLiveVideoFor(const KeyId& camPosId)
     const CameraDescription camera(CameraTools::GetCameraForStreamingIfOk(m_cameraHardware, cameraConfig));
 
     if (!camera.IsValid())
-    { /** @todo show error */
+    {
+        QMessageBox::critical( 0,
+                               QObject::tr( "Error" ),
+                               QObject::tr( "%1 camera is not valid" ).arg( camPosId ) );
         return FAILURE;
     }
 
