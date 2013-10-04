@@ -791,7 +791,7 @@ const WbConfig WbConfig::GetFromPath( const WbPath& path ) const
 const KeyId WbConfig::GenerateNewId( const KeyName& keyName,
                                      const QString& keyIdFormat ) const
 {
-    size_t counter = 0;
+    size_t counter = 1;
     KeyId newId;
     do
     {
