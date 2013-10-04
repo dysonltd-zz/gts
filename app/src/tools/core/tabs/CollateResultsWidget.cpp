@@ -321,6 +321,10 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                     {
                         successful = false;
                         LOG_ERROR("Could not load total coverage image to show on screen!");
+                        Message::Show( 0,
+                                       tr( "Results Analysis Failed" ),
+                                       tr( "Could not load coverage image to display." ),
+                                       Message::Severity_Critical );
                     }
 
                     successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
@@ -337,10 +341,9 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
                     else
                     {
                         progressDialog->ForceClose();
-
                         Message::Show( 0,
                                        tr( "Results Analysis Failed" ),
-                                       tr( "See the log for details!" ),
+                                       tr( "See the log for details." ),
                                        Message::Severity_Critical );
                     }
                 }
@@ -350,14 +353,14 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
         {
             QMessageBox::critical(this,
                                   tr( "Results Analysis Failed" ),
-                                  tr( "Temporary file missing!" ));
+                                  tr( "Temporary file missing." ));
         }
     }
     else
     {
         QMessageBox::critical(this,
                               tr( "Results Analysis Failed" ),
-                              tr( "Runs must common room!" ));
+                              tr( "Runs must have a common room." ));
     }
 }
 
@@ -424,7 +427,10 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     if ( !floorMaskImg )
     {
         LOG_ERROR("Could not load floor mask image!");
-
+        Message::Show( this,
+                       QObject::tr("Track Results Analysis" ),
+                       QObject::tr("Could not load floor mask image."),
+                       Message::Severity_Critical );
         return ExitStatus::ERRORS_OCCURRED;
     }
 
@@ -438,6 +444,10 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     if ( !floorPlanImg )
     {
         LOG_ERROR("Could not load floor plan image!");
+        Message::Show( this,
+                       QObject::tr("Track Results Analysis" ),
+                       QObject::tr("Could not load floor plan image."),
+                       Message::Severity_Critical );
 
         cvReleaseImage( &floorMaskImg );
 
@@ -447,6 +457,11 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
              (floorPlanImg->height != floorMaskImg->height))
     {
         LOG_ERROR("Floor plan and mask sizes differ!");
+        Message::Show( this,
+                       QObject::tr("Track Results Analysis" ),
+                       QObject::tr("Floor plan and floor mask sizes differ."
+                                   "\nPlease check sizes and reload.").arg(i->c_str()),
+                       Message::Severity_Critical );
 
         cvReleaseImage( &floorMaskImg );
         cvReleaseImage( &floorPlanImg );
@@ -473,6 +488,10 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     if ( fileNames.size() == 0 )
     {
         LOG_WARN("No coverage images supplied!");
+        Message::Show( this,
+                       QObject::tr( "Track Results Analysis" ),
+                       QObject::tr("No coverage images supplied."),
+                       Message::Severity_Critical );
     }
 
     // Number of non-zero pixels in floor mask is total number of
@@ -511,7 +530,11 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
             (coverageMaskImg->width != floorMaskImg->width))
         {
             LOG_ERROR(QObject::tr("Coverage image (%1) and floor mask sizes differ!").arg(i->c_str()));
-
+            Message::Show( this,
+                           QObject::tr("Track Results Analysis" ),
+                           QObject::tr("Coverage image (%1) and floor mask sizes differ."
+                                       "\nPlease check sizes of floor plan and mask and then reload.").arg(i->c_str()),
+                           Message::Severity_Critical );
             cvReleaseImage( &coverageMaskImg );
             continue;
         }
@@ -552,7 +575,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     cvReleaseImage( &floorMaskImg );
     cvReleaseImage( &floorPlanImg );
 
-    LOG_TRACE("Finished.");
+    LOG_TRACE("Analysis complete");
 
     return exitStatus;
 }
@@ -569,7 +592,7 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
     {
         Message::Show( this,
                        tr( "Track Results Analysis" ),
-                       tr( "Error - Save Workbench!" ),
+                       tr( "Please save your workbench before continuing" ),
                        Message::Severity_Critical );
         return false;
     }
@@ -578,7 +601,7 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
     {
         QMessageBox mb;
         mb.setText(QObject::tr("Track Results Analysis"));
-        mb.setInformativeText(QObject::tr( "Query - Overwrite data?"));
+        mb.setInformativeText(QObject::tr( "Are you sure you want to overwrite already saved data?"));
         mb.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         int ret = mb.exec();
 
@@ -594,7 +617,7 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
     {
         Message::Show( this,
                        tr( "Track Results Analysis" ),
-                       tr( "Error - Missing folder!" ),
+                       tr( "Analysis results folder cannot be found!" ),
                        Message::Severity_Critical );
         return false;
     }
