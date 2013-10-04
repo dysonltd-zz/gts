@@ -30,14 +30,11 @@ namespace FileUtilities
     const QString GetUniqueFileName( const QString& fileNameFormat );
 
     bool DeleteDirectory( const QString& dirName );
-
     bool FileIsExternal( const QString& fileName, const WbConfig& config );
-
+    bool FileExists( const char* file );
+    void ShowInGraphicalShell( const QString &dirName );
     void LineSkip( FILE* f );
-
 	int LineCount( FILE* fp );
-
-	bool FileExists( const char* file );
 }
 
 #endif // FILEUTILITIES_H
