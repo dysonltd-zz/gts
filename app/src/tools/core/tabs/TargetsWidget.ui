@@ -47,32 +47,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="m_clearTrackingBtn">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Reset value</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../../res/resources.qrc">
-             <normaloff>:/clear.png</normaloff>:/clear.png</iconset>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QToolButton" name="m_browseTrackingBtn">
            <property name="enabled">
             <bool>true</bool>
@@ -92,6 +66,32 @@
            <property name="icon">
             <iconset resource="../../../res/resources.qrc">
              <normaloff>:/search.png</normaloff>:/search.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="m_clearTrackingBtn">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Reset value</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../../../res/resources.qrc">
+             <normaloff>:/clear.png</normaloff>:/clear.png</iconset>
            </property>
            <property name="checkable">
             <bool>true</bool>
@@ -132,7 +132,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="m_trackingTargetFileNameLabel">
          <property name="text">
-          <string>Tracking</string>
+          <string>Tracking Target</string>
          </property>
         </widget>
        </item>
@@ -212,7 +212,7 @@
        <item row="2" column="0">
         <widget class="QLabel" name="m_printableTargetFileNameLabel">
          <property name="text">
-          <string>Printable</string>
+          <string>Printable Target</string>
          </property>
         </widget>
        </item>
@@ -269,7 +269,6 @@
       <zorder>m_trackingTargetFileNameLabel</zorder>
       <zorder>m_printableTargetFileNameLabel</zorder>
       <zorder>m_imageView</zorder>
-      <zorder>m_trackingTargetFileNameEdit</zorder>
       <zorder>m_printTargetBtn</zorder>
       <zorder>robotFrontLabel</zorder>
       <zorder>arrow</zorder>

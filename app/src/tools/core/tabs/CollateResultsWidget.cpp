@@ -460,7 +460,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
         Message::Show( this,
                        QObject::tr("Track Results Analysis" ),
                        QObject::tr("Floor plan and floor mask sizes differ."
-                                   "\nPlease check sizes and reload.").arg(i->c_str()),
+                                   "\nPlease check sizes and reload."),
                        Message::Severity_Critical );
 
         cvReleaseImage( &floorMaskImg );
