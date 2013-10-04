@@ -10,15 +10,28 @@
     <height>480</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_1">
-   <item>
-    <layout class="QGridLayout" name="gridLayout" rowstretch="0,0">
-     <property name="spacing">
-      <number>0</number>
-     </property>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="floor_plan_file_label">
+       <property name="text">
+        <string>&amp;Floor Plan File  </string>
+       </property>
+       <property name="buddy">
+        <cstring>m_floorPlanFileNameEdit</cstring>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="m_floorPlanFileNameEdit">
        <property name="enabled">
@@ -61,14 +74,11 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="m_floorMaskFileNameEdit">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
       <widget class="QLabel" name="floor_mask_file_label">
        <property name="text">
         <string>&amp;Floor Mask File</string>
@@ -78,7 +88,14 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="m_floorMaskFileNameEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
       <widget class="QToolButton" name="m_browseMaskBtn">
        <property name="enabled">
         <bool>true</bool>
@@ -110,24 +127,17 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="floor_plan_file_label">
-       <property name="text">
-        <string>&amp;Floor Plan File  </string>
-       </property>
-       <property name="buddy">
-        <cstring>m_floorPlanFileNameEdit</cstring>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
-   <item>
+   <item row="2" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_splitter">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <widget class="QSplitter" name="splitter">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>100</verstretch>
         </sizepolicy>
@@ -265,7 +275,7 @@
        </widget>
        <widget class="ImageView" name="m_analysisImage" native="true">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>100</horstretch>
           <verstretch>100</verstretch>
          </sizepolicy>
