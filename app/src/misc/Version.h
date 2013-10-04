@@ -2,6 +2,6 @@
 #define VERSION_H
 
 #define GTS_BUILD_DATE "04/10/2013"
-#define GTS_BUILD_REVN "0.4.2"
+#define GTS_BUILD_REVN "0.4.3"
 
 #endif // VERSION_H
