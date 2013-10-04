@@ -318,8 +318,7 @@ void CollectionToolWidget::NewElement()
     std::auto_ptr< NewElementWizard > newElementWizard( CreateNewElementWizard() );
     if ( newElementWizard->exec() )
     {
-        const KeyValue newElementName(
-            KeyValue::from( newElementWizard
+        const KeyValue newElementName( KeyValue::from( newElementWizard
                                        ->field( WizardStartPage::nameField )
                                        .toString() ) );
 
