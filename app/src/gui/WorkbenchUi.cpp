@@ -462,20 +462,13 @@ void WorkbenchUi::SaveWorkbench()
     if ( m_workbench->Save() )
     {
         Reload();
-        GetCornerWidget()->setVisible( false );
-    }
-    else
-    {
-        Message::Show( this,
-                       tr( "Save Workbench" ),
-                       tr( "Error - Failed to save workbench!" ),
-                       Message::Severity_Critical );
     }
 }
 
 void WorkbenchUi::ConfigChanged()
 {
-    GetCornerWidget()->setVisible( true );
+    // Save automagically...
+    SaveWorkbench();
 }
 
 void WorkbenchUi::MergeWithActivePath( const WbPath& desiredPath )

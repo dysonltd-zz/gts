@@ -44,7 +44,6 @@ public:
 
     void Reload();
     void MergeWithActivePath( const WbPath& desiredPath );
-
     void Start();
 
 protected:
@@ -57,7 +56,6 @@ private slots:
 
 private:
     Ui::MainWindow* m_ui;
-
     WorkbenchUi* m_workbenchUi;
     HelpViewer*  m_helpViewer;
     QToolButton* m_cornerButton;

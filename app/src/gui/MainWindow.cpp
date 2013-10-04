@@ -107,13 +107,7 @@ void MainWindow::Start()
                       SIGNAL( triggered() ),
                       this,
                       SLOT( ShowAboutQt() ) );
-    QObject::connect( m_cornerButton,
-	                  SIGNAL( clicked() ),
-                      m_workbenchUi,
-	                  SLOT( SaveWorkbench() ) );
-
     m_workbenchUi->Reload();
-
     show();
 
 }

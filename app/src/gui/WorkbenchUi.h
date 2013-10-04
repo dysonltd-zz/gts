@@ -59,7 +59,6 @@ public slots:
     void OpenWorkbench();
     void NewWorkbench();
     void SaveWorkbench();
-
     void ConfigChanged();
 
 private slots:
