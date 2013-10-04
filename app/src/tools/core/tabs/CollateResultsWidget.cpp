@@ -206,6 +206,7 @@ void CollateResultsWidget::LoadResultsButtonClicked()
     m_ui->m_runsTable->setModel( tableModel );
 
     m_ui->m_analyseBtn->setEnabled(true);
+    m_ui->m_selectAllCheckBox->setEnabled(true);
 }
 
 void CollateResultsWidget::AnalyseResultsButtonClicked()

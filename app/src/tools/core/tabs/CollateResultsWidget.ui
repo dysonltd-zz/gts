@@ -163,6 +163,9 @@
          </property>
          <item>
           <widget class="QCheckBox" name="m_selectAllCheckBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="layoutDirection">
             <enum>Qt::RightToLeft</enum>
            </property>
@@ -258,8 +261,6 @@
          </item>
         </layout>
         <zorder>m_runsTable</zorder>
-        <zorder>checkBox</zorder>
-        <zorder>checkBox</zorder>
         <zorder>m_selectAllCheckBox</zorder>
        </widget>
        <widget class="ImageView" name="m_analysisImage" native="true">
@@ -280,7 +281,7 @@
   <customwidget>
    <class>ImageView</class>
    <extends>QWidget</extends>
-   <header location="global">ImageView.h</header>
+   <header>ImageView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
