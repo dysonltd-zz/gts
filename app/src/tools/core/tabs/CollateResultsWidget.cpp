@@ -81,7 +81,10 @@ CollateResultsWidget::CollateResultsWidget( QWidget* parent ) :
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BrowseForFloorMaskClicked() ) );
-
+    QObject::connect( m_ui->m_selectAllCheckBox,
+                      SIGNAL( stateChanged(int) ),
+                      this,
+                      SLOT( SelectAllCheckBoxChecked(int) ) );
     AddMapper( KeyName( "floorPlanName" ), m_ui->m_floorPlanFileNameEdit );
     AddMapper( KeyName( "floorMaskName" ), m_ui->m_floorMaskFileNameEdit );
 }
@@ -384,6 +387,21 @@ void CollateResultsWidget::ShowImage(ImageView* view, const IplImage* image)
     cvReleaseImage( &imgTmp );
 }
 
+void CollateResultsWidget::SelectAllCheckBoxChecked(int state)
+{
+    for (int n = 0; n < tableModel->rowCount(); ++n)
+    {
+        QStandardItem* item = tableModel->item(n, TABLE_COL_USE);
+        if ( state == Qt::Checked )
+        {
+            item->setCheckState( Qt::Checked );
+        }
+        else
+        {
+            item->setCheckState( Qt::Unchecked);
+        }
+    }
+}
 
 // ----------------------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------------------

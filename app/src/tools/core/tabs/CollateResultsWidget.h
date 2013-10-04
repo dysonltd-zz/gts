@@ -62,6 +62,7 @@ private slots:
     void AnalyseResultsButtonClicked();
     void BrowseForFloorPlanClicked();
     void BrowseForFloorMaskClicked();
+    void SelectAllCheckBoxChecked(int state);
 
 private:
     Ui::CollateResultsWidget* m_ui;

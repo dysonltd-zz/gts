@@ -19,16 +19,6 @@
      <property name="spacing">
       <number>0</number>
      </property>
-     <item row="0" column="0">
-      <widget class="QLabel" name="floor_plan_file_label">
-       <property name="text">
-        <string>&amp;Floor Plan File  </string>
-       </property>
-       <property name="buddy">
-        <cstring>m_floorPlanFileNameEdit</cstring>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="1">
       <widget class="QLineEdit" name="m_floorPlanFileNameEdit">
        <property name="enabled">
@@ -120,6 +110,16 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="floor_plan_file_label">
+       <property name="text">
+        <string>&amp;Floor Plan File  </string>
+       </property>
+       <property name="buddy">
+        <cstring>m_floorPlanFileNameEdit</cstring>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -161,6 +161,16 @@
          <property name="margin">
           <number>0</number>
          </property>
+         <item>
+          <widget class="QCheckBox" name="m_selectAllCheckBox">
+           <property name="layoutDirection">
+            <enum>Qt::RightToLeft</enum>
+           </property>
+           <property name="text">
+            <string>Select All</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QTableView" name="m_runsTable">
            <property name="sizePolicy">
@@ -247,6 +257,10 @@
           </layout>
          </item>
         </layout>
+        <zorder>m_runsTable</zorder>
+        <zorder>checkBox</zorder>
+        <zorder>checkBox</zorder>
+        <zorder>m_selectAllCheckBox</zorder>
        </widget>
        <widget class="ImageView" name="m_analysisImage" native="true">
         <property name="sizePolicy">
