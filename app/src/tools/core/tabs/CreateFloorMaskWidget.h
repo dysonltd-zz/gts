@@ -71,17 +71,11 @@ private:
 
 private slots:
     void BtnCombinePartsClicked();
-
-    void BtnExportPlanClicked();
     void BtnImportMaskClicked();
-
     void BtnCreateMaskClicked();
 
 private:
-    bool ExportFloorPlan( const WbConfig& config );
     bool ImportFloorMask( const WbConfig& config );
-
-    bool ExportFloorPlanParts( const WbConfig& config );
     bool ImportFloorMaskParts( const WbConfig& config );
 };
 

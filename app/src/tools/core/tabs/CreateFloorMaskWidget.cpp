@@ -66,16 +66,10 @@ void CreateFloorMaskWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BtnCombinePartsClicked() ) );
-
-    QObject::connect( m_ui->m_exportPlanBtn,
-                      SIGNAL( clicked() ),
-                      this,
-                      SLOT( BtnExportPlanClicked() ) );
     QObject::connect( m_ui->m_importMaskBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( BtnImportMaskClicked() ) );
-
     QObject::connect( m_ui->m_createMaskBtn,
                       SIGNAL( clicked() ),
                       this,
@@ -108,7 +102,6 @@ void CreateFloorMaskWidget::ReloadCurrentConfigToolSpecific()
 
     if ( QFile::exists( planName ) )
     {
-        m_ui->m_exportPlanBtn->setEnabled(true);
         m_ui->m_importMaskBtn->setEnabled(true);
 
         IplImage* img = cvLoadImage(planName.toAscii(), CV_LOAD_IMAGE_GRAYSCALE);
@@ -175,22 +168,12 @@ void CreateFloorMaskWidget::BtnCombinePartsClicked()
     if (m_ui->m_combineParts->isChecked())
     {
         m_ui->m_createMaskBtn->setEnabled(true);
+        m_ui->m_importMaskBtn->setText("&Import Mask Parts");
     }
     else
     {
         m_ui->m_createMaskBtn->setEnabled(false);
-    }
-}
-
-void CreateFloorMaskWidget::BtnExportPlanClicked()
-{
-    if (m_ui->m_combineParts->isChecked())
-    {
-        ExportFloorPlanParts( GetCurrentConfig() );
-    }
-    else
-    {
-        ExportFloorPlan( GetCurrentConfig() );
+        m_ui->m_importMaskBtn->setText("&Import Complete Floor Mask");
     }
 }
 
@@ -227,56 +210,6 @@ void CreateFloorMaskWidget::BtnCreateMaskClicked()
         {
             CreateFloorMaskSingle();
         }
-    }
-}
-
-bool CreateFloorMaskWidget::ExportFloorPlan( const WbConfig& config )
-{
-    const QString floorPlanSrcFileName( config.GetAbsoluteFileNameFor( "floor_plan.png" ) );
-
-    if ( !QFile::exists( floorPlanSrcFileName ) )
-    {
-        QMessageBox::critical( 0,
-                               QObject::tr( "Error" ),
-                               QObject::tr( "Floor plan image not found." ) );
-        return false;
-    }
-
-    QString floorPlanDstFileName( QFileDialog::getSaveFileName(  0,
-                                                                 QObject::tr( "Choose where to save the floor plan" ),
-                                                                 config.GetAbsoluteFileInfo().absolutePath(),
-                                                                 tr("Images (*.png)") ) );
-
-    QFileInfo file(floorPlanDstFileName);
-
-    if ( !floorPlanDstFileName.isEmpty() )
-    {
-        if(file.fileName() != "" && file.suffix().isEmpty())
-        {
-            floorPlanDstFileName += ".png";
-        }
-
-        if ( QFile::exists( floorPlanDstFileName ) )
-        {
-            QFile::remove( floorPlanDstFileName );
-        }
-
-        bool copySuccessFul = QFile::copy( floorPlanSrcFileName, floorPlanDstFileName );
-
-        if ( !copySuccessFul )
-        {
-            QMessageBox::critical( 0,
-                                   QObject::tr( "Error" ),
-                                   QObject::tr( "Failed to copy file '%1' to '%2'" )
-                                            .arg( floorPlanSrcFileName )
-                                            .arg( floorPlanDstFileName ) );
-        }
-
-        return copySuccessFul;
-    }
-    else
-    {
-        return true;
     }
 }
 
@@ -319,95 +252,33 @@ bool CreateFloorMaskWidget::ImportFloorMask( const WbConfig& config )
     }
 }
 
-bool CreateFloorMaskWidget::ExportFloorPlanParts( const WbConfig& config )
-{
-    bool successful = true;
-
-    QDir directory;
-
-    // Process configured cameras
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
-    const QStringList cameraPositionIds(roomLayoutConfig
-                                        .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList() );
-
-    QString path = QFileDialog::getExistingDirectory (this, tr("Select Destination Directory"), directory.path());
-
-    if ( !path.isNull() )
-    {
-        directory.setPath(path);
-
-        for ( int i = 0; i < cameraPositionIds.size(); ++i )
-        {
-            const KeyId camPosId = cameraPositionIds.at( i );
-
-
-            const QString floorPlanSrcFileName(
-                config.GetAbsoluteFileNameFor( "plan_" + camPosId + ".png" ) );
-
-            const QString floorPlanDstFileName( directory.absoluteFilePath( "plan_" + camPosId + ".png" ) );
-
-            if ( QFile::exists(floorPlanDstFileName) )
-            {
-                QFile::remove(floorPlanDstFileName);
-            }
-
-            successful = QFile::copy( floorPlanSrcFileName, floorPlanDstFileName );
-
-            if ( !successful )
-            {
-                QMessageBox::critical( 0,
-                                       QObject::tr( "Error" ),
-                                       QObject::tr( "Failed to copy file '%1' to '%2'" )
-                                                .arg( floorPlanSrcFileName )
-                                                .arg( floorPlanDstFileName ) );
-                break;
-            }
-        }
-    }
-
-    return successful;
-}
-
 bool CreateFloorMaskWidget::ImportFloorMaskParts( const WbConfig& config )
-{
+{    
     bool successful = true;
-
-    QDir directory;
 
     // Process configured cameras
     const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
                                         .ToQStringList() );
-
-    QString path = QFileDialog::getExistingDirectory (this, tr("Select Source Directory"), directory.path());
-
-    if ( !path.isNull() )
+    for ( int i = 0; i < cameraPositionIds.size(); ++i )
     {
-        directory.setPath(path);
+        const KeyId camPosId = cameraPositionIds.at( i );
+        const QString floorMaskSrcFileName(
+                    QFileDialog::getOpenFileName( 0,
+                                                  QObject::tr( "Select floor mask for %1" ).arg( camPosId ),
+                                                  config.GetAbsoluteFileInfo().absolutePath() ) );
+        const QString floorMaskDstFileName( config.GetAbsoluteFileNameFor( "mask_" + camPosId + ".png" ) );
 
-        for ( int i = 0; i < cameraPositionIds.size(); ++i )
+        if ( floorMaskSrcFileName != floorMaskDstFileName)
         {
-            const KeyId camPosId = cameraPositionIds.at( i );
-
-            const QString floorMaskDstFileName(
-                config.GetAbsoluteFileNameFor( "mask_" + camPosId + ".png" ) );
-
-            const QString floorMaskSrcFileName( directory.absoluteFilePath( "mask_" + camPosId + ".png" ) );
-
-            if ( QFile::exists(floorMaskDstFileName) )
-            {
-                QFile::remove(floorMaskDstFileName);
-            }
-
             successful = QFile::copy( floorMaskSrcFileName, floorMaskDstFileName );
 
             if ( !successful )
             {
                 QMessageBox::critical( 0,
                                         QObject::tr( "Error" ),
-                                        QObject::tr( "Failed to copy file '%1' to '%2'" )
+                                        QObject::tr( "Failed to copy file '%1' to '%2'." )
                                                 .arg( floorMaskSrcFileName )
                                                 .arg( floorMaskDstFileName ) );
                 break;
@@ -748,7 +619,7 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
     ImageViewer(imgTmp, this).exec();
     cvReleaseImage( &imgTmp );
     Message::Show( this,
-                   tr( "Floor Mask Information" ),
+                   tr( "Floor Mask" ),
                    tr( "Multi-position floor mask successfully created." ),
                    Message::Severity_Information );
 }

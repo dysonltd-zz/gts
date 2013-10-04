@@ -887,7 +887,8 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
         cvReleaseImage( &imgTmp );
         Message::Show( this,
                        tr( "Floor Plan Information" ),
-                       tr( "Single-position floor plan successfully created.\n\nPlease Create a floor mask if you wish to calculate coverage." ),
+                       tr( "Single-position floor plan successfully created."
+                           "\nFloor plan saved to: %1").arg(fileName),
                        Message::Severity_Information );
     }
     else
@@ -1189,8 +1190,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
     cvConvertImage( imgTmp, &mtxWrapper, 0 );
 
-     const QString fileName(
-         config.GetAbsoluteFileNameFor( "floor_plan.png" ) );
+    const QString fileName( config.GetAbsoluteFileNameFor( "floor_plan.png" ) );
 
     if (!qImg.save( fileName ))
     {
@@ -1208,8 +1208,9 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
     ImageViewer(imgTmp, this).exec();
     cvReleaseImage( &imgTmp );
     Message::Show( this,
-                   tr( "Floor Plan Information" ),
-                   tr( "Multi-position floor plan successfully created.\n\nPlease Create a floor mask if you wish to calculate coverage." ),
+                   tr( "Floor Plan" ),
+                   tr( "Multi-position floor plan successfully created."
+                       "\nFloor plan saved to: %1").arg(fileName),
                    Message::Severity_Information );
 }
 

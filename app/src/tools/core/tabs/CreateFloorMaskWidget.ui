@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="floorPlanAndMaskFrame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
         <horstretch>100</horstretch>
@@ -91,7 +91,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QFrame" name="frame_2">
+     <widget class="QFrame" name="toolboxFrame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
         <horstretch>1</horstretch>
@@ -100,7 +100,7 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>160</width>
+        <width>220</width>
         <height>0</height>
        </size>
       </property>
@@ -129,18 +129,11 @@
              <property name="enabled">
               <bool>true</bool>
              </property>
-             <property name="text">
-              <string>Combine Parts</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="m_exportPlanBtn">
-             <property name="enabled">
-              <bool>false</bool>
+             <property name="toolTip">
+              <string>Combine each cameras image to generate a floor mask</string>
              </property>
              <property name="text">
-              <string>&amp;Export Floor Plan(s)</string>
+              <string>Combine Individual Floor Parts</string>
              </property>
             </widget>
            </item>
@@ -150,7 +143,17 @@
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>&amp;Import Floor Mask(s)</string>
+              <string>&amp;Import Complete Floor Mask</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="m_createMaskBtn">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>&amp;Create Floor Mask From Parts</string>
              </property>
             </widget>
            </item>
@@ -166,16 +169,6 @@
               </size>
              </property>
             </spacer>
-           </item>
-           <item>
-            <widget class="QPushButton" name="m_createMaskBtn">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>&amp;Create Floor Mask</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </item>
