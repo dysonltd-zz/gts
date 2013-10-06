@@ -72,7 +72,7 @@ __Windows (MinGW)__
 	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL ..   
 	cmake --build . --target install
 
-Alternatively, call scripts/minGW_app.bat from root directory.
+Alternatively, call __scripts/minGW_app.bat__ from root directory.
 
 __Windows (VS2010)__
 
@@ -81,7 +81,7 @@ __Windows (VS2010)__
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL ..
 	cmake --build . --target install
 	
-Alternatively, call scripts/vs2010_app.bat from root directory.
+Alternatively, call __scripts/vs2010_app.bat__ from root directory.
 	
 __CMake Options__
 
@@ -108,7 +108,7 @@ __VS2010__
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL .. 
 	nmake package
 	
-Alternatively, call scripts/vs2010_installer.bat from root directory.
+Alternatively, call __scripts/vs2010_installer.bat__ from root directory.
 
 ## Unit Tests
 
