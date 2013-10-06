@@ -72,7 +72,7 @@ __Windows (MinGW)__
 	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL ..   
 	cmake --build . --target install
 
-Alternatively, call __scripts/minGW_app.bat__ from root directory.
+Alternatively, call [scripts/minGW_app.bat](scripts/minGW_app.bat) from root directory.
 
 __Windows (VS2010)__
 
@@ -81,8 +81,8 @@ __Windows (VS2010)__
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL ..
 	cmake --build . --target install
 	
-Alternatively, call __scripts/vs2010_app.bat__ from root directory.
-	
+Alternatively, call [scripts/vs2010_app.bat](scripts/vs2010_app.bat) from root directory.
+
 __CMake Options__
 
 - `OpenCV_ROOT_DIR` - Path to OpenCV libraries and includes (REQUIRED on Windows, looks in standard places on Linux)
@@ -101,6 +101,8 @@ __MinGW__
 	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL ..
 	mingw32-make package
 
+Alternatively, call [scripts/minGW_installer.bat](scripts/minGW_installer.bat) from root directory.
+
 __VS2010__
   	
 	mkdir build
@@ -108,7 +110,7 @@ __VS2010__
 	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL .. 
 	nmake package
 	
-Alternatively, call __scripts/vs2010_installer.bat__ from root directory.
+Alternatively, call [scripts/vs2010_installer.bat](scripts/vs2010_installer.bat) from root directory.
 
 ## Unit Tests
 
