@@ -56,9 +56,9 @@ __Visual Studio Only__
 
 ## Compiling
 
-__Linux__
-
 From root directory:
+
+__Linux__
 
 	$ mkdir build && cd build
 	$ cmake [options] ../
@@ -67,17 +67,21 @@ From root directory:
 
 __Windows (MinGW)__
 
-	MKDIR build
-	CD build
-	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV-INSTALL" ..   
+	mkdir build
+	cd build
+	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL ..   
 	cmake --build . --target install
+
+Alternatively, call scripts/minGW_app.bat from root directory.
 
 __Windows (VS2010)__
 
-	MKDIR build
-	CD build
-	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV-INSTALL" ..
+	mkdir build
+	cd build
+	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL ..
 	cmake --build . --target install
+	
+Alternatively, call scripts/vs2010_app.bat from root directory.
 	
 __CMake Options__
 
@@ -92,17 +96,19 @@ To redistribute this application on Windows, an installer is available. You will
 
 __MinGW__
 	
-	MKDIR build
-	CD build
-	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV-INSTALL" ..
+	mkdir build
+	cd build
+	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL ..
 	mingw32-make package
 
 __VS2010__
   	
-	MKDIR build
-	CD build
-	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR="C:\PATH-TO-OPENCV-INSTALL" .. 
+	mkdir build
+	cd build
+	cmake.exe -G"NMake Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL .. 
 	nmake package
+	
+Alternatively, call scripts/vs2010_installer.bat from root directory.
 
 ## Unit Tests
 
@@ -115,7 +121,7 @@ Therefore cameras that are supported by these libraries should work on the GTS.
 
 ## Issues
 
-Bugs and feature requests should be added to the Issues section of this repository. If you have a fix for such, please see below to have it considered to be merged in.
+Bugs and feature requests should be added to the [Issues](https://github.com/dysonltd/gts/issues) section of this repository. If you have a fix for such, please see below to have it considered to be merged in.
 
 ## Contributions
 
@@ -123,7 +129,7 @@ For contributions to be considered we require that users first read and follow t
 
 ## Documentation 
 
-In addition to the __help__ tool that can be compiled alongside the app, the documentation can be found in this wiki.
+In addition to the __help__ tool that can be compiled alongside the app, the documentation can be found in the [Wiki](https://github.com/dysonltd/gts/wiki).
 
 ## License
 
