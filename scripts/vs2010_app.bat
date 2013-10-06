@@ -2,7 +2,6 @@
 
 if [%1]==[] goto usage
 	call "C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
-	cd ..
 	mkdir build
 	cd build
 	cmake.exe -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DOpenCV_ROOT_DIR="%1" -DGTS_HELP="%2" -DGTS_TESTS="%3" ..
