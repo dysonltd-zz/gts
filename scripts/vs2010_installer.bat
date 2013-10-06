@@ -5,6 +5,7 @@ if [%1]==[] goto usage
 	cd ../installer
 	cmake.exe -G"NMake Makefiles" -DCMAKE_BUILD_TYPE=RELEASE -DOpenCV_ROOT_DIR="%1" .
 	nmake package
+	cd ..
 goto :eof
 :usage
 	@echo Call from scripts folder
@@ -12,5 +13,3 @@ goto :eof
 	@echo 	set ^<param^> values
 	@echo 	e.g. %0 C:/opencv/
 exit /B 1
-
-@echo OFF
