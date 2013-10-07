@@ -219,37 +219,43 @@ bool CreateFloorMaskWidget::ImportFloorMask( const WbConfig& config )
     const QString floorMaskSrcFileName(
                 QFileDialog::getOpenFileName( 0,
                                               QObject::tr( "Choose where to find the floor mask" ),
-                                              config.GetAbsoluteFileInfo().absolutePath() )
-                );
+                                              config.GetAbsoluteFileInfo().absolutePath() ) );
 
-    if ( !floorMaskSrcFileName.isEmpty() )
+    const QString floorMaskDstFileName( config.GetAbsoluteFileNameFor( "floor_mask.png" ) );
+    if ( floorMaskSrcFileName != floorMaskDstFileName ) // if not the same files
     {
-        const QString floorMaskDstFileName( config.GetAbsoluteFileNameFor( "floor_mask.png" ) );
-
-        if ( QFile::exists(floorMaskDstFileName) )
+        if ( QFile::exists(floorMaskDstFileName) ) // if a floor mask exists
         {
-            QFile::remove(floorMaskDstFileName);
+            const int result = QMessageBox::question( this,
+                                                      "Confirm overwrite",
+                                                      QObject::tr("Floor mask file alredys exists in this directory and will be overwritten. Are you sure?"),
+                                                      QMessageBox::Yes|QMessageBox::No );
+            if( result == QMessageBox::Yes )
+            {
+                if ( !QFile::remove(floorMaskDstFileName) ) // delete it, throw error if it fails
+                {
+                    QMessageBox::critical( 0,
+                                           QObject::tr( "Error" ),
+                                           QObject::tr( "Failed to remove %1")
+                                                    .arg( floorMaskDstFileName ) );
+                    return false;
+                }
+                if ( !QFile::copy( floorMaskSrcFileName, floorMaskDstFileName ) ) // copy new one across, throw error if it fails
+                {
+                    QMessageBox::critical( 0,
+                                           QObject::tr( "Error" ),
+                                           QObject::tr( "Failed to copy file %1 to %2" )
+                                                    .arg( floorMaskSrcFileName )
+                                                    .arg( floorMaskDstFileName ) );
+                    return false;
+                }
+
+                ReloadCurrentConfig(); // all good - reload config
+                return true;
+            }
         }
-
-        bool copySuccessFul = QFile::copy( floorMaskSrcFileName, floorMaskDstFileName );
-
-        if ( !copySuccessFul )
-        {
-            QMessageBox::critical( 0,
-                                   QObject::tr( "Error" ),
-                                   QObject::tr( "Failed to copy file '%1' to '%2'" )
-                                            .arg( floorMaskSrcFileName )
-                                            .arg( floorMaskDstFileName ) );
-        }
-
-        ReloadCurrentConfig();
-
-        return copySuccessFul;
     }
-    else
-    {
-        return false;
-    }
+    return true;
 }
 
 bool CreateFloorMaskWidget::ImportFloorMaskParts( const WbConfig& config )
