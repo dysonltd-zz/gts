@@ -262,7 +262,7 @@
      <item>
       <widget class="QPushButton" name="m_loadBtn">
        <property name="enabled">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="text">
         <string>&amp;Load Track</string>

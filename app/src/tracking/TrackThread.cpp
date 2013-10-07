@@ -163,7 +163,6 @@ void TrackThread::SetBackward()
     m_forward = false;
 }
 
-
 void TrackThread::Release()
 {
     QMutexLocker mutexLock( &m_mutex );

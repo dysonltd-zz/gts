@@ -163,8 +163,9 @@ private:
     bool m_loaded;
     bool m_fpsSet;
     double m_fps;
-
     double m_optimumRate;
+
+    void SetupKeyboardShortcuts();
 
     std::vector<std::pair<std::string, uint>> m_scanFwdIconRatePair;
     std::vector<std::pair<std::string, uint>> m_scanBackIconRatePair;

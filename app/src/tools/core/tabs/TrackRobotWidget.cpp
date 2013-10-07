@@ -206,7 +206,10 @@ void TrackRobotWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( SaveBtnClicked() ) );
+}
 
+void TrackRobotWidget::SetupKeyboardShortcuts()
+{
     // Keyboard shorcuts
     QShortcut *playPauseTrackKey = new QShortcut(Qt::Key_Space, this);
     QShortcut *stepBackKey = new QShortcut(Qt::Key_Left, this);
@@ -283,6 +286,10 @@ void TrackRobotWidget::ReloadCurrentConfigToolSpecific()
     KeyId roomId = GetRoomIdToCapture();
     const WbKeyValues::ValueIdPairList positions = GetCameraPositionPairList( roomId );
     const WbKeyValues::ValueIdPairList capturedVideos = videoConfig.GetKeyValues( VideoCaptureSchema::cameraPositionIdKey );
+    if ( !capturedVideos.empty() )
+    {
+        m_ui->m_loadBtn->setEnabled(true);
+    }
 
     // Create a map from positions to lists of video file names:
     m_ui->m_videoTable->clear();
@@ -331,7 +338,6 @@ void TrackRobotWidget::ReloadCurrentConfigToolSpecific()
     foreach( QString pos, m_mapPositionsToFiles.keys() )
     {
         const QStringList& videos = m_mapPositionsToFiles.value( pos ).first;
-
         const QString position = WbConfigTools::DisplayNameOf(camPosCollection.ElementById(pos));
 
         AddTableRow( position, videos );
@@ -871,6 +877,8 @@ void TrackRobotWidget::TrackLoadButtonClicked()
         m_ui->m_camResolutionSpinBox->setEnabled(false);
         m_ui->m_camTrackerThresholdSpinBox->setEnabled(false);
 
+        SetupKeyboardShortcuts();
+
         m_loaded = true;
     }
 }
@@ -1087,7 +1095,7 @@ void TrackRobotWidget::SetPosition( double position )
 // ----------------------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------------------
 
-const ExitStatus::Flags TrackRobotWidget::TrackLoad( const WbConfig&           trackConfig,
+const ExitStatus::Flags TrackRobotWidget::TrackLoad( const WbConfig&               trackConfig,
 											             ImageGrid*                imageGrid,
 											             RobotTracker::trackerType tracker )
 {
@@ -1150,8 +1158,17 @@ const ExitStatus::Flags TrackRobotWidget::TrackLoad( const WbConfig&           t
 
         QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(i, FILE_COLUMN);
 
-        const VideoCaptureEntry& captureEntry = m_mapPositionsToFiles.value( camPosId );
+        if (!combo)
+        {
+            Message::Show( 0,
+                           tr( "Robot Tracking Tool" ),
+                           tr( "No videos found for this run" ),
+                           Message::Severity_Critical );
+            ResetUi();
+            return ExitStatus::ERRORS_OCCURRED;;
+        }
 
+        const VideoCaptureEntry& captureEntry = m_mapPositionsToFiles.value( camPosId );
         const QString videoFileName =
            trackConfig.GetAbsoluteFileNameFor( captureEntry.first.at(combo->currentIndex()) );
         const QString timestampFileName =
@@ -1171,7 +1188,6 @@ const ExitStatus::Flags TrackRobotWidget::TrackLoad( const WbConfig&           t
     if (successful)
     {
         m_scene.SetupViewWindows( this, imageGrid );
-
         m_scene.SetupThread( this );
     }
 
@@ -1190,9 +1206,7 @@ const ExitStatus::Flags TrackRobotWidget::TrackRun( double rate, bool trackingAc
     ExitStatus::Flags exitStatus = ExitStatus::OK_TO_CONTINUE;
 
     Playing();
-
     m_running = true;
-
     m_scene.StartThread( rate, trackingActive, singleStep, runForward );
 
     return exitStatus;
@@ -1239,9 +1253,7 @@ const ExitStatus::Flags TrackRobotWidget::TrackSaveData( char* floorPlanFile,
 const ExitStatus::Flags TrackRobotWidget::TrackReset( ImageGrid* imageGrid )
 {
     ExitStatus::Flags exitStatus = ExitStatus::OK_TO_CONTINUE;
-
     m_scene.DestroyViewWindows( imageGrid );
-
     m_scene.Reset();
 
     return exitStatus;
@@ -1270,13 +1282,11 @@ bool TrackRobotWidget::CreateRunResultDirectory(const WbConfig& config)
 
     if (resultDirParent.exists( resultDirName ))
     {
-        QMessageBox mb;
-        mb.setText(QObject::tr("Robot Tracking Tool"));
-        mb.setInformativeText(QObject::tr( "Are you sure you want overwrite previous track data?"));
-        mb.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        int ret = mb.exec();
-
-        if (ret == QMessageBox::Yes)
+        const int result = QMessageBox::question( this,
+                                                  "Confirm delete",
+                                                  QObject::tr("Are you sure you want to overwrite already saved track data."),
+                                                  QMessageBox::Yes|QMessageBox::No );
+        if (result == QMessageBox::No)
         {
             return false;
         }
