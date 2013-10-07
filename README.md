@@ -54,6 +54,10 @@ __Visual Studio Only__
 
 * [Qt Visual Studio 2010 Libraries](http://download.qt-project.org/official_releases/qt/4.8/4.8.5/qt-win-opensource-4.8.5-vs2010.exe)(4.8.3)
 
+__Installer__
+
+* [NSIS (Nullsoft Scriptable Install System)](http://nsis.sourceforge.net/)
+
 ## Compiling
 
 From root directory:
