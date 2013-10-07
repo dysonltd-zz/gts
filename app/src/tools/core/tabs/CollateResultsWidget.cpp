@@ -364,7 +364,7 @@ void CollateResultsWidget::ShowImage(ImageView* view, const IplImage* image)
 {
     // Convert image
     IplImage* imgTmp = cvCreateImage( cvSize( image->width, image->height ), IPL_DEPTH_8U, 3 );
-    cvConvertImage( image, imgTmp );
+    cvConvertImage( image, imgTmp, CV_CVTIMG_SWAP_RB);
 
     const QSize imgSize( imgTmp->width, imgTmp->height );
     QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
