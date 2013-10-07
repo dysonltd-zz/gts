@@ -6,7 +6,7 @@ Ground Truth System - A tool for visually tracking a moving target on a calibrat
 
 ![Screenshot](help/doc/gts_userguide_files/screenshot.png?raw=true)
 
-Several additional functions are included that allow for post-processing of the tracking data to generate [IEC](http://www.iec.ch/) specific results.
+Additionaly functionality is included to facilitate the generation of [IEC](http://www.iec.ch/) specific results.
 
 ## Requirements
 
