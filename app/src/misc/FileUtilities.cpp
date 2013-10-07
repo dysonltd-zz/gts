@@ -21,6 +21,7 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
+#include <QtCore/QProcess>
 
 namespace FileUtilities
 {
@@ -126,4 +127,34 @@ namespace FileUtilities
 
         return false;
     }
+
+    void ShowInGraphicalShell( const QString &dirName )
+    {
+    #ifdef Q_WS_MAC
+        QStringList args;
+        args << "-e";
+        args << "tell application \"Finder\"";
+        args << "-e";
+        args << "activate";
+        args << "-e";
+        args << "select POSIX file \""+dirName+"\"";
+        args << "-e";
+        args << "end tell";
+        QProcess::startDetached("osascript", args);
+    #endif
+
+    #ifdef Q_WS_WIN
+        QStringList args;
+        args << "/root," << QDir::toNativeSeparators(dirName);
+        QProcess::startDetached("explorer", args);
+    #endif
+
+    #ifdef Q_OS_LINUX
+        QStringList args;
+        args << dirName;
+        QProcess::startDetached("xdg-open", args);
+    #endif
+    }
 }
+
+

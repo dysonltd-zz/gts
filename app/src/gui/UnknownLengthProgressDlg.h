@@ -22,29 +22,36 @@
 #include <QtGui/QProgressBar>
 #include <QtGui/QWidget>
 #include <QtGui/QVBoxLayout>
+#include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
 #include <QtGui/QCloseEvent>
 
 class UnknownLengthProgressDlg : public QWidget
 {
+    Q_OBJECT
+
 public:
     UnknownLengthProgressDlg( QWidget* const parent = 0 );
 
     void Start( const QString& title, const QString& message );
-    void Complete( const QString& title, const QString& message );
+    void Complete( const QString& title, const QString& message, const QString& filePath = "");
     void ForceClose();
 
 protected:
     virtual void closeEvent( QCloseEvent* event );
+
+private slots:
+    void ShowInGraphicalShell(const QString &dirPath);
 
 private:
     void SetLabelText( const QString& message );
     void AdjustGeometry();
 
     QProgressBar* m_bar;
-    QVBoxLayout*  m_layout;
+    QGridLayout*  m_layout;
     QLabel*       m_label;
     bool          m_allowClose;
+    QString*      m_filePath;
 };
 
 

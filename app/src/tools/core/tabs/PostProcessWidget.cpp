@@ -40,6 +40,7 @@
 #include "Message.h"
 #include "Logging.h"
 #include "UnknownLengthProgressDlg.h"
+#include "FileUtilities.h"
 
 #include <QtCore/QDir>
 #include <QtGui/QMessageBox>
@@ -272,8 +273,9 @@ void PostProcessWidget::PostProcessButtonClicked()
                 const QString trackerResultsDirectory(
                             runConfig.GetAbsoluteFileNameFor( "results" ) );
                 progressDialog->Complete( tr( "Post Processing Successful" ),
-                                          tr( "Results have been computed.\nFiles located at %1" )
-                                          .arg( trackerResultsDirectory ) );
+                                          tr( "Results located at %1" )
+                                          .arg( trackerResultsDirectory ),
+                                          trackerResultsDirectory );
             }
             else
             {
