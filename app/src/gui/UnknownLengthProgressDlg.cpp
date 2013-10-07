@@ -19,11 +19,16 @@
 #include "UnknownLengthProgressDlg.h"
 #include <QtGui/QPushButton>
 
+#include <QtCore/QProcess>
+#include <QSignalMapper>
+
+#include "FileUtilities.h"
+
 UnknownLengthProgressDlg::UnknownLengthProgressDlg( QWidget* const parent )
 :
     QWidget( parent ),
     m_bar( new QProgressBar( this ) ),
-    m_layout( new QVBoxLayout( this ) ),
+    m_layout( new QGridLayout( this ) ),
     m_label( new QLabel( this ) ),
     m_allowClose( false )
 {
@@ -33,8 +38,8 @@ UnknownLengthProgressDlg::UnknownLengthProgressDlg( QWidget* const parent )
     m_bar->setRange( 0, 0 );
     setWindowModality( Qt::ApplicationModal );
     setWindowFlags( Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint );
-    layout()->addWidget( m_label );
     layout()->addWidget( m_bar );
+    layout()->addWidget( m_label );
     setAttribute( Qt::WA_DeleteOnClose );
 }
 
@@ -46,7 +51,7 @@ void UnknownLengthProgressDlg::Start( const QString& title, const QString& messa
     AdjustGeometry();
 }
 
-void UnknownLengthProgressDlg::Complete( const QString& title, const QString& message )
+void UnknownLengthProgressDlg::Complete( const QString& title, const QString& message, const QString& dirPath)
 {
     setWindowTitle( title );
     SetLabelText( message );
@@ -61,9 +66,34 @@ void UnknownLengthProgressDlg::Complete( const QString& title, const QString& me
                       this,
                       SLOT( close() ) );
 
-    m_layout->addWidget( okBtn, 0, Qt::AlignHCenter );
+    QGridLayout* childGridLayout = new QGridLayout();
+
     okBtn->setFocus();
     okBtn->setDefault( true );
+    childGridLayout->addWidget(okBtn,0,1,1,1);
+
+    // if directory passed in, create open button
+    if ( !dirPath.isEmpty() )
+    {
+        QPushButton* const openBtn = new QPushButton( "Open", this );
+
+        QSignalMapper* signalMapper = new QSignalMapper(this) ;
+        QObject::connect( openBtn,
+                          SIGNAL( clicked() ),
+                          signalMapper,
+                          SLOT( map() ) );
+
+        signalMapper->setMapping(openBtn, dirPath);
+        QObject::connect(signalMapper,
+                         SIGNAL( mapped(const QString &)),
+                         this,
+                         SLOT( ShowInGraphicalShell(const QString &) ) ) ;
+
+        childGridLayout->addWidget(openBtn,0,2,1,1);
+        openBtn->setFocus();
+    }
+
+    m_layout->addLayout(childGridLayout,2,0,1,1);
     AdjustGeometry();
 }
 
@@ -98,4 +128,9 @@ void UnknownLengthProgressDlg::AdjustGeometry()
         const QRect  rect( pos, size() );
         setGeometry( rect );
     }
+}
+
+void UnknownLengthProgressDlg::ShowInGraphicalShell(const QString &dirPath)
+{
+    FileUtilities::ShowInGraphicalShell(dirPath);
 }

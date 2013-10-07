@@ -290,15 +290,10 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
 
             if (CreateAnalysisResultDirectory( config ))
             {
-                const QString floorPlanName(
-                    config.GetKeyValue( KeyName( "floorPlanName" ) ).ToQString() );
-                const QString floorMaskName(
-                    config.GetKeyValue( KeyName( "floorMaskName" ) ).ToQString() );
-
-                const QString totalCoverageCsvName(
-                    config.GetAbsoluteFileNameFor( "results/total_coverage.csv" ) );
-                const QString totalCoverageImgName(
-                    config.GetAbsoluteFileNameFor( "results/total_coverage.png" ) );
+                const QString floorPlanName( config.GetKeyValue( KeyName( "floorPlanName" ) ).ToQString() );
+                const QString floorMaskName( config.GetKeyValue( KeyName( "floorMaskName" ) ).ToQString() );
+                const QString totalCoverageCsvName( config.GetAbsoluteFileNameFor( "results/total_coverage.csv" ) );
+                const QString totalCoverageImgName( config.GetAbsoluteFileNameFor( "results/total_coverage.png" ) );
 
                 if ( successful )
                 {
@@ -332,17 +327,17 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
 
                     if ( successful )
                     {
+                        const QString analysisResultsDirectory( config.GetAbsoluteFileNameFor( "results" ) );
                         progressDialog->Complete( tr( "Results Analysis Successful" ),
-                                                  tr( "Total coverage results located at: %1"
-                                                      "\nTotal coverage image located at: %2" )
-                                                  .arg( totalCoverageCsvName )
-                                                  .arg( totalCoverageImgName ) );
+                                                  tr( "Total coverage results located at: %1")
+                                                  .arg( analysisResultsDirectory ),
+                                                  analysisResultsDirectory );
 
                     }
                     else
                     {
                         progressDialog->ForceClose();
-                        Message::Show( 0,
+                        Message::Show( this,
                                        tr( "Results Analysis Failed" ),
                                        tr( "See the log for details." ),
                                        Message::Severity_Critical );

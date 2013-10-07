@@ -66,7 +66,6 @@ private slots:
 
 private:
     Ui::CollateResultsWidget* m_ui;
-
     QStandardItemModel* tableModel;
 };
 
