@@ -62,19 +62,18 @@ void UnknownLengthProgressDlg::Complete( const QString& title, const QString& me
 
     QGridLayout* childGridLayout = new QGridLayout();
 
-    QPushButton* const okBtn = new QPushButton( "OK", this );
+    QPushButton* const okBtn = new QPushButton( "O&K", this );
     QObject::connect( okBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( close() ) );
     okBtn->setFocus();
     okBtn->setDefault( true );
-    childGridLayout->addWidget(okBtn,0,1,1,1);
-
+    childGridLayout->addWidget(okBtn,0,0,1,1,Qt::AlignRight);
     // if directory passed in, create open button
     if ( !dirPath.isEmpty() )
     {
-        QPushButton* const openBtn = new QPushButton( "Open", this );
+        QPushButton* const openBtn = new QPushButton( "&Open", this );
 
         QSignalMapper* signalMapper = new QSignalMapper(this) ;
         QObject::connect( openBtn,
@@ -89,10 +88,10 @@ void UnknownLengthProgressDlg::Complete( const QString& title, const QString& me
                          SLOT( ShowInGraphicalShell(const QString &) ) ) ;
 
         openBtn->setFocus();
-        childGridLayout->addWidget(openBtn,0,2,1,1);
+        childGridLayout->addWidget(openBtn,0,1,1,1,Qt::AlignRight);
     }
 
-    m_layout->addLayout(childGridLayout,2,0,1,1);
+    m_layout->addLayout(childGridLayout,2,0,1,1,Qt::AlignRight);
     AdjustGeometry();
 }
 
