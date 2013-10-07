@@ -145,7 +145,7 @@ namespace FileUtilities
 
     #ifdef Q_WS_WIN
         QStringList args;
-        args << "/select," << QDir::toNativeSeparators(dirName);
+        args << "/root," << QDir::toNativeSeparators(dirName);
         QProcess::startDetached("explorer", args);
     #endif
 
