@@ -58,16 +58,15 @@ void UnknownLengthProgressDlg::Complete( const QString& title, const QString& me
     const int maxVal = 1;
     m_bar->setRange( 0, maxVal );
     m_bar->setValue( maxVal );
-    QPushButton* const okBtn = new QPushButton( "OK", this );
     m_allowClose = true;
 
+    QGridLayout* childGridLayout = new QGridLayout();
+
+    QPushButton* const okBtn = new QPushButton( "OK", this );
     QObject::connect( okBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( close() ) );
-
-    QGridLayout* childGridLayout = new QGridLayout();
-
     okBtn->setFocus();
     okBtn->setDefault( true );
     childGridLayout->addWidget(okBtn,0,1,1,1);
@@ -89,8 +88,8 @@ void UnknownLengthProgressDlg::Complete( const QString& title, const QString& me
                          this,
                          SLOT( ShowInGraphicalShell(const QString &) ) ) ;
 
-        childGridLayout->addWidget(openBtn,0,2,1,1);
         openBtn->setFocus();
+        childGridLayout->addWidget(openBtn,0,2,1,1);
     }
 
     m_layout->addLayout(childGridLayout,2,0,1,1);
