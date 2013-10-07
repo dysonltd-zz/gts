@@ -100,7 +100,6 @@ private:
     Tool( const Tool& );
     Tool& operator =( const Tool& );
 
-
     virtual const WbSchema GetFullWorkbenchSchemaSubTree() const;
     virtual const QString GetSubSchemaDefaultFileName() const;
     virtual const WbConfig GetMappedConfig() const;

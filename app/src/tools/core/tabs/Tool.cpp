@@ -240,7 +240,9 @@ void Tool::AddMapper( ConfigKeyMapper* const mapper )
 
 void Tool::CommitDataAndUpdate( ConfigKeyMapper& mapper )
 {
-    mapper.CommitData( GetCurrentConfig() );
+    WbConfig& config = GetCurrentConfig();
+    mapper.CommitData(config);
+    config.ChangeCompleted();
     ReloadCurrentConfig( &mapper );
 }
 

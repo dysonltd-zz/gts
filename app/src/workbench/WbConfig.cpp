@@ -495,6 +495,11 @@ void WbConfig::SetListener( ConfigListener* listener )
     }
 }
 
+void WbConfig::ChangeCompleted() const
+{
+    if (QueryData().m_listener.get()) QueryData().m_listener->NotifyChanged();
+}
+
 /** @brief Clear all data stored in this config.
  *
  *  No effect if this is a null config.
@@ -827,9 +832,6 @@ WbConfig::WbConfigData& WbConfig::ModifyData()
 {
     assert( !IsNull() );
     ModifyMutableData().m_modified = true;
-
-    if (QueryData().m_listener.get()) QueryData().m_listener->NotifyChanged();
-
     return *m_internalData;
 }
 

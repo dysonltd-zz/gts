@@ -25,8 +25,8 @@ public:
     ConfigKeyMapper( const KeyName& keyToMap ):
         m_keyName( keyToMap )
         {
-        };
-    virtual ~ConfigKeyMapper(){};
+        }
+    virtual ~ConfigKeyMapper(){}
 
     virtual void SetConfig( const WbConfig& config ) = 0;
     virtual void CommitData( WbConfig& config ) = 0;

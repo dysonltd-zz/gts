@@ -121,6 +121,8 @@ public:
     const WbConfig GetFromPath( const WbPath& path ) const;
 
     void SetListener( ConfigListener* listener );
+    // The pending change has been completed
+    void ChangeCompleted() const;
 
 private:
     void SetParent( WbConfig& parent );
