@@ -120,7 +120,7 @@ void PostProcessWidget::ShowNoRoomError()
 {
     Message::Show( this,
                    tr( "Post Process" ),
-                   tr( "Error - There is no room selected!" ),
+                   tr( "There is no room selected!" ),
                    Message::Severity_Critical );
 }
 

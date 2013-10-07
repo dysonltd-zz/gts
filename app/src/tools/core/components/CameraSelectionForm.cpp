@@ -75,7 +75,7 @@ CameraSelectionForm::ChooseConnectedCamera( const CameraApi::CameraList& cameras
     {
         Message::Show( parentWidget(),
                        tr( "Camera Selection" ),
-                       tr( "Error - No cameras found!" ),
+                       tr( "No cameras found!" ),
                        Message::Severity_Critical );
     }
 

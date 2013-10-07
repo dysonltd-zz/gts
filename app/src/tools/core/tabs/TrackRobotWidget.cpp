@@ -521,7 +521,7 @@ const bool TrackRobotWidget::CreateVideoDirectory( const QString& videoDirectory
     {
         Message::Show( this,
                        tr( "Track Robot" ),
-                       tr( "Error - Failed to create directory: %1!" )
+                       tr( "Failed to create directory: %1!" )
                          .arg( outputDirectory.absolutePath() ),
                        Message::Severity_Critical );
         return false;
@@ -534,7 +534,7 @@ void TrackRobotWidget::ShowNoRoomError()
 {
     Message::Show( this,
                    tr( "Track Robot" ),
-                   tr( "Error - There is no room selected!" ),
+                   tr( "There is no room selected!" ),
                    Message::Severity_Critical );
 }
 
@@ -542,7 +542,7 @@ void TrackRobotWidget::ShowEmptyRoomError()
 {
     Message::Show( this,
                    tr( "Track Robot" ),
-                   tr( "Error - The selected room is empty!" ),
+                   tr( "The selected room is empty!" ),
                    Message::Severity_Critical );
 }
 
@@ -1262,7 +1262,7 @@ bool TrackRobotWidget::CreateRunResultDirectory(const WbConfig& config)
     {
         Message::Show( this,
                        tr( "Robot Tracking Tool" ),
-                       tr( "Error - Save Workbench!" ),
+                       tr( "Please save your workbench" ),
                        Message::Severity_Critical );
 
         return false;
@@ -1272,11 +1272,11 @@ bool TrackRobotWidget::CreateRunResultDirectory(const WbConfig& config)
     {
         QMessageBox mb;
         mb.setText(QObject::tr("Robot Tracking Tool"));
-        mb.setInformativeText(QObject::tr( "Query - Overwrite data?"));
-        mb.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        mb.setInformativeText(QObject::tr( "Are you sure you want overwrite previous track data?"));
+        mb.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         int ret = mb.exec();
 
-        if (ret == QMessageBox::Cancel)
+        if (ret == QMessageBox::Yes)
         {
             return false;
         }
@@ -1288,7 +1288,7 @@ bool TrackRobotWidget::CreateRunResultDirectory(const WbConfig& config)
     {
         Message::Show( this,
                        tr( "Robot Tracking Tool" ),
-                       tr( "Error - Missing folder!" ),
+                       tr( "Results directory cannot be found" ),
                        Message::Severity_Critical );
 
         return false;

@@ -538,7 +538,7 @@ void CreateFloorPlanWidget::BtnMatchClicked()
     {
         Message::Show( this,
                        tr( "Create Floor Plan" ),
-                       tr( "Error - Cannot find chessboard!" ),
+                       tr( "Cannot find chessboard!" ),
                        Message::Severity_Critical );
     }
 }
@@ -628,7 +628,7 @@ void CreateFloorPlanWidget::BtnStitchClicked()
     {
         Message::Show( this,
                        tr( "Create Floor Plan" ),
-                       tr( "Error - Cannot find chessboard!" ),
+                       tr( "Cannot find chessboard!" ),
                        Message::Severity_Critical );
     }
 }
@@ -781,7 +781,7 @@ void CreateFloorPlanWidget::BtnSaveClicked()
     {
         Message::Show( this,
                        tr( "Create Floor Plan" ),
-                       tr( "Error - Camera already mapped!" ),
+                       tr( "Camera already mapped!" ),
                        Message::Severity_Critical );
     }
 }
@@ -875,7 +875,7 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
         {
             Message::Show( this,
                            tr( "Create Floor Plan" ),
-                           tr( "Error - Cannot write to: %1" )
+                           tr( "Cannot write to: %1" )
                                .arg( fileName ),
                            Message::Severity_Critical );
         }
@@ -895,7 +895,7 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
     {
         Message::Show( this,
                        tr( "Create Floor Plan" ),
-                       tr( "Error - Cannot load from: %1!" )
+                       tr( "Cannot load from: %1!" )
                            .arg( imgFile ),
                        Message::Severity_Critical );
     }
@@ -959,7 +959,7 @@ void CreateFloorPlanWidget::CreateFloorPlanMulti()
         {
             Message::Show( this,
                            tr( "Create Floor Plan" ),
-                           tr( "Error - Mapping incomplete!" ),
+                           tr( "Mapping incomplete!" ),
                            Message::Severity_Critical );
         }
     }
@@ -967,7 +967,7 @@ void CreateFloorPlanWidget::CreateFloorPlanMulti()
     {
         Message::Show( this,
                        tr( "Create Floor Plan" ),
-                       tr( "Error - Need one root camera!" ),
+                       tr( "Need one root camera!" ),
                        Message::Severity_Critical );
     }
 
@@ -1196,7 +1196,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
     {
         Message::Show( this,
                        tr( "Create Floor Plan" ),
-                       tr( "Error - Cannot write to: %1!" )
+                       tr( "Cannot write to: %1!" )
                            .arg( fileName ),
                        Message::Severity_Critical );
     }
@@ -1317,7 +1317,7 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
     {
         Message::Show( this,
                        tr( "Floor Plan Creation Tool" ),
-                       tr( "Error - Folder is missing!"),
+                       tr( "Folder is missing!"),
                        Message::Severity_Critical );
         return;
     }

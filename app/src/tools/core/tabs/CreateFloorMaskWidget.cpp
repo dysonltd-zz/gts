@@ -343,7 +343,7 @@ void CreateFloorMaskWidget::CreateFloorMaskSingle()
         {
             Message::Show( this,
                            tr( "Create Floor Mask" ),
-                           tr( "Error - Cannot write to: %1" )
+                           tr( "Cannot write to: %1" )
                                .arg( fileName ),
                            Message::Severity_Critical );
         }
@@ -362,7 +362,7 @@ void CreateFloorMaskWidget::CreateFloorMaskSingle()
     {
         Message::Show( this,
                        tr( "Create Floor Mask" ),
-                       tr( "Error - Cannot load from: %1!" )
+                       tr( "Cannot load from: %1!" )
                            .arg( imgFile ),
                        Message::Severity_Critical );
     }
@@ -405,7 +405,7 @@ void CreateFloorMaskWidget::CreateFloorMaskMulti()
             {
                 Message::Show( this,
                                tr( "Create Floor Mask" ),
-                               tr( "Error - Mapping is incomplete!" ),
+                               tr( "Mapping is incomplete!" ),
                                Message::Severity_Critical );
             }
         }
@@ -413,7 +413,7 @@ void CreateFloorMaskWidget::CreateFloorMaskMulti()
         {
             Message::Show( this,
                            tr( "Create Floor Mask" ),
-                           tr( "Error - Need one root camera!" ),
+                           tr( "Need one root camera!" ),
                            Message::Severity_Critical );
         }
     }
@@ -421,7 +421,7 @@ void CreateFloorMaskWidget::CreateFloorMaskMulti()
     {
         Message::Show( this,
                        tr( "Create Floor Mask" ),
-                       tr( "Error - Must map every camera!" ),
+                       tr( "Must map every camera!" ),
                        Message::Severity_Critical );
     }
 
@@ -613,7 +613,7 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
     {
         Message::Show( this,
                        tr( "Create Floor Mask" ),
-                       tr( "Error - Cannot write to: %1!" )
+                       tr( "Cannot write to: %1!" )
                            .arg( fileName ),
                        Message::Severity_Critical );
     }

@@ -235,7 +235,7 @@ void CaptureVideoWidget::StartRecordingInDirectory( const QString& outputDirecto
     {
         Message::Show( this,
                        tr( "Capture Video" ),
-                       tr( "Error - Failed to create directory: %1!" )
+                       tr( "Failed to create directory: %1!" )
                          .arg( outputDirectory.absolutePath() ),
                        Message::Severity_Critical );
         return;
@@ -281,7 +281,7 @@ void CaptureVideoWidget::StartRecordingInDirectory( const QString& outputDirecto
             StopRecording();
             Message::Show( this,
                            tr( "Capture Video" ),
-                           tr( "Error - Cannot write video: %1!" )
+                           tr( "Cannot write video: %1!" )
                              .arg(videoFileName),
                            Message::Severity_Critical );
             return;
@@ -355,7 +355,7 @@ void CaptureVideoWidget::ShowNoRoomError()
 {
     Message::Show( this,
                    tr( "Capture Video" ),
-                   tr( "Error - There is no room selected!" ),
+                   tr( "There is no room selected!" ),
                    Message::Severity_Critical );
 }
 
@@ -363,7 +363,7 @@ void CaptureVideoWidget::ShowEmptyRoomError()
 {
     Message::Show( this,
                    tr( "Capture Video" ),
-                   tr( "Error - The selected room is empty!" ),
+                   tr( "The selected room is empty!" ),
                    Message::Severity_Critical );
 }
 
@@ -371,7 +371,7 @@ void CaptureVideoWidget::ShowNullCameraPosError()
 {
     Message::Show( this,
                    tr( "Capture Video" ),
-                   tr( "Error - One of the camera positions is invalid!" ),
+                   tr( "One of the camera positions is invalid!" ),
                    Message::Severity_Critical );
 }
 
@@ -379,7 +379,7 @@ void CaptureVideoWidget::ShowMissingCameraError(const QString& cameraPosDisplayN
 {
     Message::Show( this,
                    tr( "Capture Video" ),
-                   tr( "Error - Camera position %1 is missing camera!" )
+                   tr( "Camera position %1 is missing camera!" )
                       .arg(cameraPosDisplayName),
                    Message::Severity_Critical );
 }

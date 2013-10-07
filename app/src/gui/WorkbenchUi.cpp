@@ -452,7 +452,7 @@ void WorkbenchUi::NewWorkbench()
     {
         Message::Show( this,
                        tr( "New Workbench" ),
-                       tr( "Error - Failed to create workbench!" ),
+                       tr( "Failed to create workbench!" ),
                        Message::Severity_Critical );
     }
 }

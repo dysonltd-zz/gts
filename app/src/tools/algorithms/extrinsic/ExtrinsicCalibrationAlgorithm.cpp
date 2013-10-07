@@ -140,7 +140,7 @@ bool ExtrinsicCalibrationAlgorithm::LoadCameraConfig( const WbConfig& calibCfg,
     if ( cameraCfg == 0 )
     {
         m_errorString =
-            QObject::tr( "Error - cameraCfg cannot be null",
+            QObject::tr( "cameraCfg cannot be null",
                          "ExtrinsicCalibrationAlgorithm" );
         successful = false;
     }
@@ -157,7 +157,7 @@ bool ExtrinsicCalibrationAlgorithm::LoadCameraConfig( const WbConfig& calibCfg,
 
         if ( cameraCfg->IsNull() )
         {
-            m_errorString = QObject::tr( "Error - Configuration missing for camera: %1!" )
+            m_errorString = QObject::tr( "Configuration missing for camera: %1!" )
                                        .arg( cameraId );
             successful = false;
         }

@@ -109,7 +109,7 @@ void PositionCalibrationWidget::ShowNoCameraError()
 {
     Message::Show( this,
                    tr( "Calibrate Position" ),
-                   tr( "Error - There is no camera selected!" ),
+                   tr( "There is no camera selected!" ),
                    Message::Severity_Critical );
 }
 
@@ -176,7 +176,7 @@ void PositionCalibrationWidget::FromFileBtnClicked()
     {
         Message::Show( this,
                        tr( "Position Calibration Tool" ),
-                       tr( "Error - Folder is missing!"),
+                       tr( "Folder is missing!"),
                        Message::Severity_Critical );
         return;
     }

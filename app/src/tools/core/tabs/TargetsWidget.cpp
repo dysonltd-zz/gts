@@ -239,7 +239,7 @@ void TargetsWidget::TargetTypeChanged()
         {
             Message::Show( this,
                            tr( "Target Configuration Tool" ),
-                           tr( "Error - Failed to save)!" ),
+                           tr( "Failed to save)!" ),
                            Message::Severity_Critical );
         }
     }
@@ -247,7 +247,7 @@ void TargetsWidget::TargetTypeChanged()
     {
         Message::Show( this,
                        tr( "Target Configuration Tool" ),
-                       tr( "Error - Save Workbench!" ),
+                       tr( "Save Workbench!" ),
                        Message::Severity_Critical );
     }
 }
@@ -262,7 +262,7 @@ QString TargetsWidget::BrowseTargetImage()
     {
         Message::Show( this,
                        tr( "Target Configuration Tool" ),
-                       tr( "Error - Folder is missing!"),
+                       tr( "Folder is missing!"),
                        Message::Severity_Critical );
         return QString();
     }

@@ -167,7 +167,7 @@ void CameraCalibrationWidget::FromFileClicked()
     {
         Message::Show( this,
                        tr( "Camera Calibration Tool" ),
-                       tr( "Error - Folder is missing!"),
+                       tr( "Folder is missing!"),
                        Message::Severity_Critical );
         return;
     }

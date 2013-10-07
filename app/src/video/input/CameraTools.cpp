@@ -36,7 +36,7 @@ namespace CameraTools
 
         CameraDescription camera;
         bool isValid = !cameraConfig.IsNull();
-        QString errorMsg = QObject::tr( "Error - No camera specified!" );
+        QString errorMsg = QObject::tr( "No camera specified!" );
 
         const KeyValue uniqueIdKeyValue(
                     cameraConfig.GetKeyValue( KeyName( CameraSchema::uniqueIdKey ) ) );
@@ -44,7 +44,7 @@ namespace CameraTools
         if ( isValid )
         {
             isValid = !uniqueIdKeyValue.IsNull();
-            errorMsg = QObject::tr( "Error - Camera %1 has no unique id!" )
+            errorMsg = QObject::tr( "Camera %1 has no unique id!" )
                                     .arg( cameraName );
         }
 
@@ -53,7 +53,7 @@ namespace CameraTools
             camera = cameraHardware.GetCameraDescriptionFromUniqueId(
                                                     uniqueIdKeyValue.ToWString() );
             isValid = camera.IsValid();
-            errorMsg =  QObject::tr( "Error - Camera %1 not connected!")
+            errorMsg =  QObject::tr( "Camera %1 not connected!")
                                      .arg( cameraName );
         }
 

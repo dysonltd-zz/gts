@@ -191,7 +191,7 @@ const QString CaptureLiveBtnController::CaptureImageAndStopStreamingLiveSource(
         {
             Message::Show( &m_toolWidget,
                            tr( "Capture Live (Btn) Controller" ),
-                           tr( "Error - Cannot write to: %1!" )
+                           tr( "Cannot write to: %1!" )
                                .arg( fileNameToCapture ),
                            Message::Severity_Critical );
         }
