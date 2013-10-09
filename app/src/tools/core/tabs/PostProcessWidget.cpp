@@ -29,7 +29,6 @@
 #include "RoomsCollection.h"
 #include "RobotsCollection.h"
 #include "CameraPositionsCollection.h"
-
 #include "TrackRobotSchema.h"
 #include "ExtrinsicCalibrationSchema.h"
 #include "RoomLayoutSchema.h"
@@ -41,6 +40,7 @@
 #include "Logging.h"
 #include "UnknownLengthProgressDlg.h"
 #include "FileUtilities.h"
+#include "PostProcessSchema.h"
 
 #include <QtCore/QDir>
 #include <QtGui/QMessageBox>
@@ -136,16 +136,16 @@ const KeyId PostProcessWidget::GetRoomIdToCapture() const
 
 void PostProcessWidget::LoadDataButtonClicked()
 {
-    const WbConfig& config = GetCurrentConfig();
-
     LOG_TRACE("Post Process - Loading");
 
+    const WbConfig& config = GetCurrentConfig();
     const KeyId roomIdToCapture(GetRoomIdToCapture());
+
     if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
 
     const WbConfig runConfig( config.GetParent() );
 
-     const QString fileName(runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.csv" ) );
+    const QString fileName(runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.csv" ) );
 
     m_ui->m_trackView->loadFloorPlan( runConfig );
     m_ui->m_trackView->loadMetrics( runConfig );

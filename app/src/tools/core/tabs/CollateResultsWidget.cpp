@@ -157,6 +157,7 @@ void CollateResultsWidget::LoadRunsButtonClicked()
 
         // Create text item(s)
         tableModel->setItem(n, TABLE_COL_RUN, new QStandardItem(runName));
+        tableModel->setItem(n, TABLE_COL_ROOM, new QStandardItem(roomName));
 
     }
 
