@@ -232,9 +232,9 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
     }
     else
     {
-        LOG_ERROR("Analysing results - failed to create temporary directory.");
+        LOG_ERROR("Coverage Collation - failed to create temporary directory.");
         QMessageBox::critical(this,
-                              tr( "Results Analysis Failed" ),
+                              tr( "Coverage Collation Failed" ),
                               tr( "Temporary file missing." ));
         return;
     }
@@ -242,8 +242,8 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
     if ( !CreateAnalysisResultDirectory( config ) )
     {
         Message::Show( this,
-                       tr( "Results Analysis Failed" ),
-                       tr( "Failed to create Analysis results directory." ),
+                       tr( "Coverage Collation Successful" ),
+                       tr( "Failed to create results directory." ),
                        Message::Severity_Critical );
 
         return;
@@ -269,10 +269,10 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
     else
     {
         successful = false;
-        LOG_ERROR("Could not load total coverage image to disply on screen");
+        LOG_ERROR("Could not load collated coverage image to display on screen");
         Message::Show( this,
-                       tr( "Results Analysis Failed" ),
-                       tr( "Could not load coverage image from analysis."),
+                       tr( "Coverage Collation Failed" ),
+                       tr( "Could not load collated coverage image to display on screen"),
                        Message::Severity_Critical );
     }
 
@@ -281,19 +281,19 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
     if ( successful )
     {
         const QString analysisResultsDirectory( config.GetAbsoluteFileNameFor( "results" ) );
-        progressDialog->Complete( tr( "Results Analysis Successful" ),
-                                  tr( "Total coverage results located at: %1")
+        progressDialog->Complete( tr( "Coverage Collation Successful" ),
+                                  tr( "Results located at: %1")
                                   .arg( analysisResultsDirectory ),
                                   analysisResultsDirectory );
 
     }
     else
     {
-        LOG_ERROR("Could not complete analysis");
+        LOG_ERROR("Could not complete coverage collation");
         progressDialog->ForceClose();
         Message::Show( this,
-                       tr( "Results Analysis Failed" ),
-                       tr( "Analysis failed, please check log file." ),
+                       tr( "Coverage Collation Failed" ),
+                       tr( "Coverage collation failed, please check log file." ),
                        Message::Severity_Critical );
     }
 }
@@ -360,9 +360,9 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
 
     if ( !floorMaskImg )
     {
-        LOG_ERROR("Could not load floor mask image!");
+        LOG_ERROR("Could not load floor mask image");
         Message::Show( this,
-                       QObject::tr("Track Results Analysis" ),
+                       QObject::tr("Coverage Collation Failed" ),
                        QObject::tr("Could not load floor mask image."
                                    "\nPlease generate a floor mask from the 'Rooms' tab"),
                        Message::Severity_Critical );
@@ -378,9 +378,9 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
 
     if ( !floorPlanImg )
     {
-        LOG_ERROR("Could not load floor plan image!");
+        LOG_ERROR("Could not load floor plan image");
         Message::Show( this,
-                       QObject::tr("Track Results Analysis" ),
+                       QObject::tr("Coverage Collation Failed" ),
                        QObject::tr("Could not load floor plan image."
                                    "\nPlease generate a floor plan from the 'Rooms' tab"),
                        Message::Severity_Critical );
@@ -392,9 +392,9 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     else if ((floorPlanImg->width != floorMaskImg->width) ||
              (floorPlanImg->height != floorMaskImg->height))
     {
-        LOG_ERROR("Floor plan and mask sizes differ!");
+        LOG_ERROR("Coverage Collation - Floor plan and mask sizes differ!");
         Message::Show( this,
-                       QObject::tr("Track Results Analysis" ),
+                       QObject::tr("Coverage Collation Failed" ),
                        QObject::tr("Floor plan and floor mask sizes differ."
                                    "\nPlease check sizes."),
                        Message::Severity_Critical );
@@ -425,8 +425,8 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     {
         LOG_WARN("No coverage images supplied!");
         Message::Show( this,
-                       QObject::tr( "Track Results Analysis" ),
-                       QObject::tr("No coverage image(s) generaed from run(s). Please re-process runs and try again."),
+                       QObject::tr( "Coverage Collation Failed" ),
+                       QObject::tr("No coverage image(s) generated from run(s). Please re-process runs and try again."),
                        Message::Severity_Critical );
     }
 
@@ -467,7 +467,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
         {
             LOG_ERROR(QObject::tr("Coverage image (%1) and floor mask sizes differ!").arg(i->c_str()));
             Message::Show( this,
-                           QObject::tr("Track Results Analysis" ),
+                           QObject::tr("Coverage Collation Failed" ),
                            QObject::tr("Coverage image (%1) and floor mask sizes differ."
                                        "\nPlease check sizes of floor plan and mask and then reload.").arg(i->c_str()),
                            Message::Severity_Critical );
@@ -527,7 +527,7 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
     if ( !resultDirParent.cdUp() )
     {
         Message::Show( this,
-                       tr( "Track Results Analysis" ),
+                       tr( "Coverage Collation Failed" ),
                        tr( "Please save your workbench before continuing." ),
                        Message::Severity_Critical );
         return false;
@@ -554,7 +554,7 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
     if ( !resultDirParent.mkdir( resultDirName ) || !resultDirParent.cd( resultDirName ))
     {
         Message::Show( this,
-                       tr( "Track Results Analysis" ),
+                       tr( "Coverage Collation Failed" ),
                        tr( "Analysis results folder cannot be found or is currently open. Please close and try again." ),
                        Message::Severity_Critical );
         return false;

@@ -868,8 +868,7 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
 
         cvConvertImage( imgTmp, &mtxWrapper, 0 );
 
-        const QString fileName(
-            config.GetAbsoluteFileNameFor( "floor_plan.png" ) );
+        const QString fileName( config.GetAbsoluteFileNameFor( "floor_plan.png" ) );
 
         if (!qImg.save( fileName ))
         {
