@@ -179,11 +179,18 @@ void CaptureVideoWidget::RecordButtonClicked( const bool shouldRecord )
 
 void CaptureVideoWidget::StopRecording()
 {
-    for (auto videoSource = m_videoSources.begin();
-              videoSource != m_videoSources.end();
-              ++videoSource)
+    const int result = QMessageBox::question( this,
+                                              "Confirm stop recording",
+                                              QObject::tr("Are you sure you want to stop recording?"),
+                                              QMessageBox::Yes|QMessageBox::No );
+    if (result == QMessageBox::Yes)
     {
-        (*videoSource)->videoSource->StopRecording();
+        for (auto videoSource = m_videoSources.begin();
+                  videoSource != m_videoSources.end();
+                  ++videoSource)
+        {
+            (*videoSource)->videoSource->StopRecording();
+        }
     }
 }
 
