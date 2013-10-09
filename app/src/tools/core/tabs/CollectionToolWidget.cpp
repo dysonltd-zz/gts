@@ -380,10 +380,10 @@ void CollectionToolWidget::DeleteElement()
     }
     else
     {
-        QMessageBox::information( 0,
-                               QObject::tr( "Error" ),
-                               QObject::tr( "Object is in use - cannot delete. "
-                                            "Remove references then try again." ) );
+        QMessageBox::information( this,
+                                  QObject::tr( "Error" ),
+                                  QObject::tr( "This item is being used in the workbench and cannot be deleted. "
+                                                "Please remove any reference(s) to it and try again." ) );
     }
 }
 

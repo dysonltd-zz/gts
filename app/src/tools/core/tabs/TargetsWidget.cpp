@@ -157,10 +157,8 @@ void TargetsWidget::UseStandardBtnClicked()
     if ( m_ui->m_useStandard->isChecked() )
 	{
 	    m_ui->m_targetTypeComboBox->setEnabled(true);
-
 	    m_ui->m_browseTrackingBtn->setEnabled(false);
 	    m_ui->m_clearTrackingBtn->setEnabled(false);
-
 	    m_ui->m_browsePrintableBtn->setEnabled(false);
 	    m_ui->m_clearPrintableBtn->setEnabled(false);
 
@@ -169,13 +167,10 @@ void TargetsWidget::UseStandardBtnClicked()
 	else
 	{
 	    m_ui->m_targetTypeComboBox->setEnabled(false);
-
 	    m_ui->m_browseTrackingBtn->setEnabled(true);
 	    m_ui->m_clearTrackingBtn->setEnabled(true);
-
 	    m_ui->m_browsePrintableBtn->setEnabled(true);
 	    m_ui->m_clearPrintableBtn->setEnabled(true);
-
         m_ui->m_trackingTargetFileNameEdit->setText("");
         m_ui->m_printableTargetFileNameEdit->setText("");
 	}
@@ -238,16 +233,16 @@ void TargetsWidget::TargetTypeChanged()
         else
         {
             Message::Show( this,
-                           tr( "Target Configuration Tool" ),
-                           tr( "Failed to save)!" ),
+                           tr( "Target Tool" ),
+                           tr( "Failed to save target" ),
                            Message::Severity_Critical );
         }
     }
     else
     {
         Message::Show( this,
-                       tr( "Target Configuration Tool" ),
-                       tr( "Save Workbench!" ),
+                       tr( "Target Tool" ),
+                       tr( "Please save workbench" ),
                        Message::Severity_Critical );
     }
 }
@@ -262,7 +257,7 @@ QString TargetsWidget::BrowseTargetImage()
     {
         Message::Show( this,
                        tr( "Target Configuration Tool" ),
-                       tr( "Folder is missing!"),
+                       tr( "Target directory is missing"),
                        Message::Severity_Critical );
         return QString();
     }
@@ -324,7 +319,6 @@ QString TargetsWidget::BrowseTargetImage()
 void TargetsWidget::BrowseTrackingBtnClicked()
 {
     const QString relImageFile = BrowseTargetImage();
-
     m_ui->m_trackingTargetFileNameEdit->setText(relImageFile);
 }
 
@@ -336,7 +330,6 @@ void TargetsWidget::ClearTrackingBtnClicked()
 void TargetsWidget::BrowsePrintableBtnClicked()
 {
     const QString relImageFile = BrowseTargetImage();
-
     m_ui->m_printableTargetFileNameEdit->setText(relImageFile);
 }
 
