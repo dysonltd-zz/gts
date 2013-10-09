@@ -81,8 +81,6 @@ public:
 
     void SetPosition( CvPoint2D32f robotPosition )
     {
-        fprintf( stderr, "KltTracker::SetPosition\n");
-
         m_pos = robotPosition;
     }
 
