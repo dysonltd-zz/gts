@@ -103,7 +103,7 @@ const QString CollateResultsWidget::CannotCloseReason() const
 const WbSchema CollateResultsWidget::CreateSchema()
 {
     WbSchema schema( CreateWorkbenchSubSchema( KeyName( "collatedCoverageResults" ),
-                                               tr( "Collated Coverage Results" ) ) );
+                                               tr( "Collated Coverage" ) ) );
 
     schema.AddSingleValueKey( KeyName( "room" ),
                               WbSchemaElement::Multiplicity::One );
