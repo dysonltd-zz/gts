@@ -25,6 +25,7 @@
 #include "Collection.h"
 #include "RunsCollection.h"
 #include "RoomsCollection.h"
+#include "RoomLayoutSchema.h"
 #include "RunSchema.h"
 
 #include "WbConfigTools.h"
@@ -68,25 +69,15 @@ CollateResultsWidget::CollateResultsWidget( QWidget* parent ) :
     QObject::connect( m_ui->m_loadBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( LoadResultsButtonClicked() ) );
+                      SLOT( LoadRunsButtonClicked() ) );
     QObject::connect( m_ui->m_analyseBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( AnalyseResultsButtonClicked() ) );
-    QObject::connect( m_ui->m_browsePlanBtn,
-                      SIGNAL( clicked() ),
-                      this,
-                      SLOT( BrowseForFloorPlanClicked() ) );
-    QObject::connect( m_ui->m_browseMaskBtn,
-                      SIGNAL( clicked() ),
-                      this,
-                      SLOT( BrowseForFloorMaskClicked() ) );
     QObject::connect( m_ui->m_selectAllCheckBox,
                       SIGNAL( stateChanged(int) ),
                       this,
                       SLOT( SelectAllCheckBoxChecked(int) ) );
-    AddMapper( KeyName( "floorPlanName" ), m_ui->m_floorPlanFileNameEdit );
-    AddMapper( KeyName( "floorMaskName" ), m_ui->m_floorMaskFileNameEdit );
 }
 
 CollateResultsWidget::~CollateResultsWidget()
@@ -114,60 +105,29 @@ const WbSchema CollateResultsWidget::CreateSchema()
     WbSchema schema( CreateWorkbenchSubSchema( KeyName( "collateResults" ),
                                                tr( "Collate Results" ) ) );
 
-    schema.AddSingleValueKey( KeyName( "floorPlanName" ),
+    schema.AddSingleValueKey( KeyName( "room" ),
                               WbSchemaElement::Multiplicity::One );
-    schema.AddSingleValueKey( KeyName( "floorMaskName" ),
-                              WbSchemaElement::Multiplicity::One );
-
     return schema;
 }
 
-void CollateResultsWidget::BrowseForFloorPlanClicked()
+const KeyId CollateResultsWidget::GetRoomIdToCollate() const
 {
-    FileDialogs::ExtendedFileDialog fileDialog( this,
-                                                tr( "Select Image File" ),
-                                                GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),
-                                                "Images( *.png *.jpg *.bmp *.ppm );;All Files( * )",
-                                                true );
-    const int result = fileDialog.exec();
-    if ( result == QFileDialog::Accepted )
-    {
-        QString floorPlanName( fileDialog.selectedFiles().front() );
+    const WbConfig collateResultsConfig( GetCurrentConfig() );
+    const WbConfig analysisResultsConfig( collateResultsConfig.GetParent() );
+    const KeyId roomIdToCollate( analysisResultsConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId() );
 
-        if ( !floorPlanName.isEmpty() )
-        {
-            m_ui->m_floorPlanFileNameEdit->setText( floorPlanName );
-        }
-    }
-}
-
-void CollateResultsWidget::BrowseForFloorMaskClicked()
-{
-    FileDialogs::ExtendedFileDialog fileDialog( this,
-                                                tr( "Select Image File" ),
-                                                GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),
-                                                "Images( *.png *.jpg *.bmp *.ppm );;All Files( * )",
-                                                true );
-    const int result = fileDialog.exec();
-    if ( result == QFileDialog::Accepted )
-    {
-        QString floorMaskName( fileDialog.selectedFiles().front() );
-
-        if ( !floorMaskName.isEmpty() )
-        {
-            m_ui->m_floorMaskFileNameEdit->setText( floorMaskName );
-        }
-    }
+    return roomIdToCollate;
 }
 
 #define TABLE_COL_USE  0
 #define TABLE_COL_RUN  1
 #define TABLE_COL_ROOM 2
 
-void CollateResultsWidget::LoadResultsButtonClicked()
+void CollateResultsWidget::LoadRunsButtonClicked()
 {
-    tableModel = new QStandardItemModel();
+    const KeyId roomIdToCollate = GetRoomIdToCollate();
 
+    tableModel = new QStandardItemModel();
     tableModel->setHorizontalHeaderItem(TABLE_COL_USE, new QStandardItem(QString("")));
     tableModel->setHorizontalHeaderItem(TABLE_COL_RUN, new QStandardItem(QString("Run")));
     tableModel->setHorizontalHeaderItem(TABLE_COL_ROOM, new QStandardItem(QString("Room")));
@@ -180,11 +140,12 @@ void CollateResultsWidget::LoadResultsButtonClicked()
     for (int n = 0; n < (int)runsCollection.NumElements(); ++n)
     {
         const WbConfig runConfig = runsCollection.ElementAt( n ).value;
-
         const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
-
+        if (roomId != roomIdToCollate)
+        {
+            break;
+        }
         const WbConfig roomConfig = roomsCollection.ElementById( roomId );
-
         const QString runName = runConfig.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString();
         const QString roomName = roomConfig.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString();
 
@@ -196,7 +157,7 @@ void CollateResultsWidget::LoadResultsButtonClicked()
 
         // Create text item(s)
         tableModel->setItem(n, TABLE_COL_RUN, new QStandardItem(runName));
-        tableModel->setItem(n, TABLE_COL_ROOM, new QStandardItem(roomName));
+
     }
 
     // resize header column
@@ -204,159 +165,135 @@ void CollateResultsWidget::LoadResultsButtonClicked()
 
     // Set model
     m_ui->m_runsTable->setModel( tableModel );
-
     m_ui->m_analyseBtn->setEnabled(true);
     m_ui->m_selectAllCheckBox->setEnabled(true);
+
+    if ( m_ui->m_selectAllCheckBox->isChecked() )
+    {
+        SelectAllCheckBoxChecked( Qt::Checked );
+    }
 }
 
 void CollateResultsWidget::AnalyseResultsButtonClicked()
 {
-    const WbConfig& config = GetCurrentConfig();
-
-    LOG_TRACE("Analysing Results");
+    LOG_TRACE("Analysing results");
 
     bool successful = true;
+    const WbConfig& config = GetCurrentConfig();
+    const KeyId roomIdToCollate = GetRoomIdToCollate();
 
-    QString selectedRoom;
+    Collection rooms = RoomsCollection();
+    rooms.SetConfig( config );
 
-    // Check all selected runs have the same room
-    // then get the floor plan and floor mask for
-    // that room to provide to the analysis
+    Collection runsCollection = RunsCollection();
+    runsCollection.SetConfig( config );
 
-    for (int n = 0; n < tableModel->rowCount() && successful; ++n)
+    const WbConfig roomConfig = rooms.ElementById( roomIdToCollate );
+    const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
+
+    const QString floorPlanName( roomLayoutConfig.GetAbsoluteFileNameFor( "floor_plan.png" ) );
+    const QString floorMaskName( roomLayoutConfig.GetAbsoluteFileNameFor( "floor_mask.png" ) );
+    const QString totalCoverageCsvName( config.GetAbsoluteFileNameFor( "results/total_coverage.csv" ) );
+    const QString totalCoverageImgName( config.GetAbsoluteFileNameFor( "results/total_coverage.png" ) );
+
+    QTemporaryFile tmpFile( QDir::tempPath() + "/files.txt");
+    if (tmpFile.open())
     {
-        QStandardItem* itemCheck = tableModel->item(n, TABLE_COL_USE);
-        QStandardItem* itemRoom = tableModel->item(n, TABLE_COL_ROOM);
-
-        QString room = itemRoom->data().toString();
-
-        if ( itemCheck->checkState() == Qt::Checked )
+        QTextStream fileStrm( &tmpFile );
+        for (int n = 0; n < tableModel->rowCount(); ++n)
         {
-            if ( selectedRoom.isEmpty() )
+            QStandardItem* item = tableModel->item(n, TABLE_COL_USE);
+
+            if ( item->checkState() == Qt::Checked )
             {
-                selectedRoom = room;
-            }
+                QFileInfo runDir = runsCollection.ElementAt( n ).value.GetAbsoluteFileInfo();
+                QDirIterator dirIterator(runDir.absolutePath(),
+                                         QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot,
+                                         QDirIterator::Subdirectories);
 
-            if ( room != selectedRoom )
-            {
-                successful = false;
-            }
-        }
-    }
-
-    if (successful)
-    {
-        QTemporaryFile tmpFile( QDir::tempPath() + "/files.txt");
-
-        successful = tmpFile.open();
-
-        if (successful)
-        {
-            QTextStream fileStrm( &tmpFile );
-
-            Collection runsCollection = RunsCollection();
-            runsCollection.SetConfig( config );
-
-            for (int n = 0; n < tableModel->rowCount(); ++n)
-            {
-                QStandardItem* item = tableModel->item(n, TABLE_COL_USE);
-
-                if ( item->checkState() == Qt::Checked )
+                while (dirIterator.hasNext())
                 {
-                    QFileInfo runDir = runsCollection.ElementAt( n ).value
-                                                   .GetAbsoluteFileInfo();
+                    dirIterator.next();
 
-                    QDirIterator dirIterator(runDir.absolutePath(),
-                                             QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot,
-                                             QDirIterator::Subdirectories);
-
-                    while (dirIterator.hasNext())
+                    if (dirIterator.fileInfo().isDir())
                     {
-                        dirIterator.next();
-
-                        if (dirIterator.fileInfo().isDir())
+                        foreach( QFileInfo fileInfo, QDir(dirIterator.filePath()).entryInfoList( QStringList("coverage_overlay.png"),
+                                                                                                 QDir::Files | QDir::NoDotAndDotDot ) )
                         {
-                            foreach( QFileInfo fileInfo, QDir(dirIterator.filePath()).entryInfoList( QStringList("coverage_overlay.png"),
-                                                                                                     QDir::Files | QDir::NoDotAndDotDot ) )
-                            {
-                                fileStrm << fileInfo.filePath() << "\n";
-                            }
+                            fileStrm << fileInfo.filePath() << "\n";
                         }
                     }
                 }
             }
-
-            tmpFile.close();
-
-            if (CreateAnalysisResultDirectory( config ))
-            {
-                const QString floorPlanName( config.GetKeyValue( KeyName( "floorPlanName" ) ).ToQString() );
-                const QString floorMaskName( config.GetKeyValue( KeyName( "floorMaskName" ) ).ToQString() );
-                const QString totalCoverageCsvName( config.GetAbsoluteFileNameFor( "results/total_coverage.csv" ) );
-                const QString totalCoverageImgName( config.GetAbsoluteFileNameFor( "results/total_coverage.png" ) );
-
-                if ( successful )
-                {
-                    UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-                    progressDialog->Start( tr( "Processing" ), tr( "" ) );
-
-                    ExitStatus::Flags exitCode = AnalyseResults( floorPlanName.toAscii().data(),        // floorPlanName
-                                                                 floorMaskName.toAscii().data(),        // floorMaskName
-                                                                 tmpFile.fileName().toAscii().data(),   // inputFileList
-                                                                 totalCoverageCsvName.toAscii().data(),
-                                                                 totalCoverageImgName.toAscii().data() );
-
-                    IplImage* img = cvLoadImage(totalCoverageImgName.toAscii(), CV_LOAD_IMAGE_COLOR);
-
-                    if (img)
-                    {
-                        ShowImage(m_ui->m_analysisImage, img);
-                        cvReleaseImage( &img );
-                    }
-                    else
-                    {
-                        successful = false;
-                        LOG_ERROR("Could not load total coverage image to show on screen!");
-                        Message::Show( 0,
-                                       tr( "Results Analysis Failed" ),
-                                       tr( "Could not load coverage image to display." ),
-                                       Message::Severity_Critical );
-                    }
-
-                    successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
-
-                    if ( successful )
-                    {
-                        const QString analysisResultsDirectory( config.GetAbsoluteFileNameFor( "results" ) );
-                        progressDialog->Complete( tr( "Results Analysis Successful" ),
-                                                  tr( "Total coverage results located at: %1")
-                                                  .arg( analysisResultsDirectory ),
-                                                  analysisResultsDirectory );
-
-                    }
-                    else
-                    {
-                        progressDialog->ForceClose();
-                        Message::Show( this,
-                                       tr( "Results Analysis Failed" ),
-                                       tr( "See the log for details." ),
-                                       Message::Severity_Critical );
-                    }
-                }
-            }
         }
-        else
-        {
-            QMessageBox::critical(this,
-                                  tr( "Results Analysis Failed" ),
-                                  tr( "Temporary file missing." ));
-        }
+
+        tmpFile.close();
     }
     else
     {
+        LOG_ERROR("Analysing results - failed to create temporary directory.");
         QMessageBox::critical(this,
                               tr( "Results Analysis Failed" ),
-                              tr( "Runs must have a common room." ));
+                              tr( "Temporary file missing." ));
+        return;
+    }
+
+    if ( !CreateAnalysisResultDirectory( config ) )
+    {
+        Message::Show( this,
+                       tr( "Results Analysis Failed" ),
+                       tr( "Failed to create Analysis results directory." ),
+                       Message::Severity_Critical );
+
+        return;
+    }
+
+    // Run data analysis
+    UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
+    progressDialog->Start( tr( "Processing" ), tr( "" ) );
+
+    ExitStatus::Flags exitCode = AnalyseResults( floorPlanName.toAscii().data(),        // floorPlanName
+                                                 floorMaskName.toAscii().data(),        // floorMaskName
+                                                 tmpFile.fileName().toAscii().data(),   // inputFileList
+                                                 totalCoverageCsvName.toAscii().data(),
+                                                 totalCoverageImgName.toAscii().data() );
+
+    IplImage* img = cvLoadImage(totalCoverageImgName.toAscii(), CV_LOAD_IMAGE_COLOR);
+
+    if( img )
+    {
+        ShowImage(m_ui->m_analysisImage, img);
+        cvReleaseImage( &img );
+    }
+    else
+    {
+        successful = false;
+        LOG_ERROR("Could not load total coverage image to disply on screen");
+        Message::Show( this,
+                       tr( "Results Analysis Failed" ),
+                       tr( "Could not load coverage image from analysis."),
+                       Message::Severity_Critical );
+    }
+
+    successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
+
+    if ( successful )
+    {
+        const QString analysisResultsDirectory( config.GetAbsoluteFileNameFor( "results" ) );
+        progressDialog->Complete( tr( "Results Analysis Successful" ),
+                                  tr( "Total coverage results located at: %1")
+                                  .arg( analysisResultsDirectory ),
+                                  analysisResultsDirectory );
+
+    }
+    else
+    {
+        LOG_ERROR("Could not complete analysis");
+        progressDialog->ForceClose();
+        Message::Show( this,
+                       tr( "Results Analysis Failed" ),
+                       tr( "Analysis failed, please check log file." ),
+                       Message::Severity_Critical );
     }
 }
 
@@ -425,7 +362,8 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
         LOG_ERROR("Could not load floor mask image!");
         Message::Show( this,
                        QObject::tr("Track Results Analysis" ),
-                       QObject::tr("Could not load floor mask image."),
+                       QObject::tr("Could not load floor mask image."
+                                   "\nPlease generate a floor mask from the 'Rooms' tab"),
                        Message::Severity_Critical );
         return ExitStatus::ERRORS_OCCURRED;
     }
@@ -442,7 +380,8 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
         LOG_ERROR("Could not load floor plan image!");
         Message::Show( this,
                        QObject::tr("Track Results Analysis" ),
-                       QObject::tr("Could not load floor plan image."),
+                       QObject::tr("Could not load floor plan image."
+                                   "\nPlease generate a floor mask from the 'Rooms' tab"),
                        Message::Severity_Critical );
 
         cvReleaseImage( &floorMaskImg );
@@ -456,7 +395,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
         Message::Show( this,
                        QObject::tr("Track Results Analysis" ),
                        QObject::tr("Floor plan and floor mask sizes differ."
-                                   "\nPlease check sizes and reload."),
+                                   "\nPlease check sizes."),
                        Message::Severity_Critical );
 
         cvReleaseImage( &floorMaskImg );
@@ -598,7 +537,7 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
 
         const int result = QMessageBox::question( this,
                                                   "Confirm delete",
-                                                  QObject::tr("Are you sure you want to overwrite already saved data."),
+                                                  QObject::tr("Are you sure you want to overwrite already saved data?"),
                                                   QMessageBox::Yes|QMessageBox::No );
 
         if (result == QMessageBox::No)

@@ -23,6 +23,8 @@
 
 #include "CollectionToolWidget.h"
 
+class QComboBox;
+
 class AnalysisTool : public CollectionToolWidget
 {
     Q_OBJECT
@@ -39,6 +41,8 @@ private:
 
     static const WbSchema CreateCollectionSchema();
     static const WbSchema CreateElementSchema();
+
+    QComboBox* m_roomCombo;
 };
 
 #endif // ANALYSISTOOL_H

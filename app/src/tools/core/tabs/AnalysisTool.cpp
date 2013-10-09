@@ -19,12 +19,12 @@
 #include "AnalysisTool.h"
 
 #include "CollateResultsWidget.h"
-
-#include <QtGui/QComboBox>
-
 #include "WbConfigTools.h"
 #include "ResultsCollection.h"
+#include "RoomsCollection.h"
 #include "ResultsSchema.h"
+
+#include <QtGui/QComboBox>
 
 AnalysisTool::AnalysisTool( QWidget* parent,
                                         MainWindow& mainWindow ) :
@@ -32,9 +32,13 @@ AnalysisTool::AnalysisTool( QWidget* parent,
                           CreateCollectionSchema(),
                           CreateElementSchema(),
                           parent,
-                          &mainWindow )
+                          &mainWindow ),
+    m_roomCombo( new QComboBox )
 {
+    AddToolDetail( new QLabel( tr( "Room" ) ), m_roomCombo );
+    AddMapper( ResultsSchema::roomIdKey, m_roomCombo );
     AddSubTool( new CollateResultsWidget( this ) );
+    RegisterCollectionCombo( m_roomCombo, RoomsCollection() );
 }
 
 AnalysisTool::~AnalysisTool()
@@ -61,5 +65,6 @@ const WbSchema AnalysisTool::CreateElementSchema()
 {
     using namespace ResultsSchema;
     WbSchema elementSchema(CreateElementWorkbenchSubSchema( schemaName, Unnamed( tr( "Results" ) ) ) );
+    elementSchema.AddSingleValueKey( roomIdKey, WbSchemaElement::Multiplicity::One );
     return elementSchema;
 }

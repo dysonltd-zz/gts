@@ -42,29 +42,23 @@ public:
     virtual bool CanClose() const;
     const QString CannotCloseReason() const;
 
+private slots:
+    void LoadRunsButtonClicked();
+    void AnalyseResultsButtonClicked();
+    void SelectAllCheckBoxChecked(int state);
+
 private:
     virtual const QString GetSubSchemaDefaultFileName() const;
-
     const WbSchema CreateSchema();
-
-private:
+    bool CreateAnalysisResultDirectory(const WbConfig& config);
+    void ShowImage(ImageView* view, const IplImage* image);
+    const KeyId GetRoomIdToCollate() const;
     const ExitStatus::Flags AnalyseResults( char* floorPlanName,
                                             char* floorMaskName,
                                             char* overlayListFileName,
                                             char* totalCoverageCsvName,
                                             char* totalCoverageImgName );
 
-    bool CreateAnalysisResultDirectory(const WbConfig& config);
-    void ShowImage(ImageView* view, const IplImage* image);
-
-private slots:
-    void LoadResultsButtonClicked();
-    void AnalyseResultsButtonClicked();
-    void BrowseForFloorPlanClicked();
-    void BrowseForFloorMaskClicked();
-    void SelectAllCheckBoxChecked(int state);
-
-private:
     Ui::CollateResultsWidget* m_ui;
     QStandardItemModel* tableModel;
 };
