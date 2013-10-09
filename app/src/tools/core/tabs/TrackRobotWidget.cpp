@@ -74,6 +74,7 @@ TrackRobotWidget::TrackRobotWidget( QWidget* parent ) :
 {
     SetupUi();
     ConnectSignals();
+    SetupKeyboardShortcuts();
     CreateMappers();
     RegisterCollectionCombo(m_ui->m_robotCombo, RobotsCollection());
 
@@ -865,7 +866,7 @@ void TrackRobotWidget::TrackLoadButtonClicked()
 
         if (successful)
         {
-            m_ui->m_loadBtn->setText("Reload Track");
+            m_ui->m_loadBtn->setText("Reload Tracking");
             m_ui->m_loadBtn->setEnabled(false);
             m_ui->m_saveBtn->setEnabled(false);
             m_ui->m_playBtn->setEnabled(true);
@@ -883,8 +884,6 @@ void TrackRobotWidget::TrackLoadButtonClicked()
             m_ui->m_camNccThresholdSpinBox->setEnabled(false);
             m_ui->m_camResolutionSpinBox->setEnabled(false);
             m_ui->m_camTrackerThresholdSpinBox->setEnabled(false);
-
-            SetupKeyboardShortcuts();
 
             m_loaded = true;
         }
