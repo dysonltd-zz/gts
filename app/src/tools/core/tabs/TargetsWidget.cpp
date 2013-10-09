@@ -124,7 +124,7 @@ const QString TargetsWidget::CannotCloseReason() const
 const WbSchema TargetsWidget::CreateSchema()
 {
    using namespace TargetSchema;
-   WbSchema schema( CreateWorkbenchSubSchema( schemaName, tr( "Params" ) ) );
+   WbSchema schema( CreateWorkbenchSubSchema( schemaName, tr( "Parameters" ) ) );
 
     schema.AddKeyGroup( TargetSchema::targetGroup,
                         WbSchemaElement::Multiplicity::One,
