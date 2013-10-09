@@ -149,6 +149,9 @@ void TrackRobotWidget::ResetUi()
     m_ui->m_nccThresholdSpinBox->setEnabled(true);
     m_ui->m_resolutionSpinBox->setEnabled(true);
     m_ui->m_trackerThresholdSpinBox->setEnabled(true);
+    m_ui->m_useGlobalCheckBox->setEnabled(true);
+    m_ui->m_cameraTrackParamsSaveBtn->setEnabled(true);
+    m_ui->m_positionCombo->setEnabled(true);
 
     // enable camera specific parameters
     m_ui->m_camNccThresholdSpinBox->setEnabled(true);
@@ -190,10 +193,6 @@ void TrackRobotWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( TrackSaveButtonClicked() ) );
-    QObject::connect( m_ui->m_resetBtn,
-                      SIGNAL( clicked() ),
-                      this,
-                      SLOT( TrackResetButtonClicked() ) );
     QObject::connect( m_ui->m_positionCombo,
                       SIGNAL( currentIndexChanged (int) ),
                       this,
@@ -202,7 +201,7 @@ void TrackRobotWidget::ConnectSignals()
                       SIGNAL( clicked() ),
                       this,
                       SLOT( UseGlobalBtnClicked() ) );
-    QObject::connect( m_ui->btnSave,
+    QObject::connect( m_ui->m_cameraTrackParamsSaveBtn,
                       SIGNAL( clicked() ),
                       this,
                       SLOT( SaveBtnClicked() ) );
@@ -821,66 +820,85 @@ void TrackRobotWidget::StopButtonClicked()
 
 void TrackRobotWidget::TrackLoadButtonClicked()
 {
-    const WbConfig& config = GetCurrentConfig();
 
-    LOG_TRACE("Track Load");
-
-    const KeyId roomIdToCapture(GetRoomIdToCapture());
-    if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
-
-    const QStringList cameraPositionIds(GetCameraPositionIds(roomIdToCapture));
-    if (cameraPositionIds.size() == 0) { ShowEmptyRoomError(); return; }
-
-    const WbConfig runConfig( config.GetParent() );
-
-    bool successful = CreateRunResultDirectory( runConfig );
-
-    if (successful)
+    if( !m_loaded )
     {
-        UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-        progressDialog->Start( tr( "Loading" ), tr( "" ) );
+        const WbConfig& config = GetCurrentConfig();
 
-        ExitStatus::Flags exitCode = TrackLoad( config,
-                                                m_ui->m_imageGrid,
-                                                RobotTracker::KLT_TRACKER );
+        LOG_TRACE("Track Load");
 
-        successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
+        const KeyId roomIdToCapture(GetRoomIdToCapture());
+        if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
 
-        if ( successful )
+        const QStringList cameraPositionIds(GetCameraPositionIds(roomIdToCapture));
+        if (cameraPositionIds.size() == 0) { ShowEmptyRoomError(); return; }
+
+        const WbConfig runConfig( config.GetParent() );
+
+        bool successful = CreateRunResultDirectory( runConfig );
+
+        if (successful)
         {
-            progressDialog->ForceClose();
+            UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
+            progressDialog->Start( tr( "Loading" ), tr( "" ) );
+
+            ExitStatus::Flags exitCode = TrackLoad( config,
+                                                    m_ui->m_imageGrid,
+                                                    RobotTracker::KLT_TRACKER );
+
+            successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
+
+            if ( successful )
+            {
+                progressDialog->ForceClose();
+            }
+            else
+            {
+                progressDialog->ForceClose();
+
+                Message::Show( this,
+                               tr( "Robot Tracking Tool" ),
+                               tr( "See the log for details!" ),
+                               Message::Severity_Critical );
+            }
         }
-        else
-        {
-            progressDialog->ForceClose();
 
-            Message::Show( 0,
-                           tr( "Robot Tracking Tool" ),
-                           tr( "See the log for details!" ),
-                           Message::Severity_Critical );
+        if (successful)
+        {
+            m_ui->m_loadBtn->setText("Reload Track");
+            m_ui->m_loadBtn->setEnabled(false);
+            m_ui->m_saveBtn->setEnabled(false);
+            m_ui->m_playBtn->setEnabled(true);
+            m_ui->m_stepBtn->setEnabled(true);
+
+            // enable global paramaters
+            m_ui->m_nccThresholdSpinBox->setEnabled(false);
+            m_ui->m_resolutionSpinBox->setEnabled(false);
+            m_ui->m_trackerThresholdSpinBox->setEnabled(false);
+            m_ui->m_positionCombo->setEnabled(false);
+            m_ui->m_useGlobalCheckBox->setEnabled(false);
+            m_ui->m_cameraTrackParamsSaveBtn->setEnabled(false);
+
+            // enable camera specific parameters
+            m_ui->m_camNccThresholdSpinBox->setEnabled(false);
+            m_ui->m_camResolutionSpinBox->setEnabled(false);
+            m_ui->m_camTrackerThresholdSpinBox->setEnabled(false);
+
+            SetupKeyboardShortcuts();
+
+            m_loaded = true;
         }
     }
-
-    if (successful)
+    else
     {
-        m_ui->m_loadBtn->setEnabled(false);
-        m_ui->m_playBtn->setEnabled(true);
-        m_ui->m_stepBtn->setEnabled(true);
+        m_loaded = false;
+        SetPosition(0);
+        TrackReset( m_ui->m_imageGrid );
 
-        // enable global paramaters
-        m_ui->m_nccThresholdSpinBox->setEnabled(false);
-        m_ui->m_resolutionSpinBox->setEnabled(false);
-        m_ui->m_trackerThresholdSpinBox->setEnabled(false);
-
-        // enable camera specific parameters
-        m_ui->m_camNccThresholdSpinBox->setEnabled(false);
-        m_ui->m_camResolutionSpinBox->setEnabled(false);
-        m_ui->m_camTrackerThresholdSpinBox->setEnabled(false);
-
-        SetupKeyboardShortcuts();
-
-        m_loaded = true;
+        m_fpsSet = false;
+        TrackLoadButtonClicked();
     }
+
 }
 
 void TrackRobotWidget::TrackSaveButtonClicked()
@@ -944,31 +962,6 @@ void TrackRobotWidget::TrackSaveButtonClicked()
     }
 }
 
-void TrackRobotWidget::TrackResetButtonClicked()
-{
-    m_loaded = false;
-
-    SetPosition(0);
-
-    TrackReset( m_ui->m_imageGrid );
-
-    m_ui->m_loadBtn->setEnabled(true);
-    m_ui->m_saveBtn->setEnabled(false);
-    m_ui->m_resetBtn->setEnabled(false);
-
-    // disable global params
-    m_ui->m_nccThresholdSpinBox->setEnabled(true);
-    m_ui->m_resolutionSpinBox->setEnabled(true);
-    m_ui->m_trackerThresholdSpinBox->setEnabled(true);
-
-    // disable camera specific params
-    m_ui->m_camNccThresholdSpinBox->setEnabled(true);
-    m_ui->m_camResolutionSpinBox->setEnabled(true);
-    m_ui->m_camTrackerThresholdSpinBox->setEnabled(true);
-
-    m_fpsSet = false;
-}
-
 void TrackRobotWidget::Playing()
 {
 #if 0
@@ -1004,7 +997,7 @@ void TrackRobotWidget::Stopped()
 {
     // tracking finished
     m_ui->m_stopBtn->setEnabled(false);
-    m_ui->m_resetBtn->setEnabled(true);
+    m_ui->m_loadBtn->setEnabled(true);
     m_ui->m_saveBtn->setEnabled(true);
 
     // switch to (non-tracking) icons
@@ -1148,19 +1141,16 @@ const ExitStatus::Flags TrackRobotWidget::TrackLoad( const WbConfig&            
     for ( int i = 0; i < cameraPositionIds.size() && successful; ++i )
     {
         const KeyId camPosId( cameraPositionIds.at( i ) );
-        const WbConfig camPosConfig(
-                    camerasPositions.ElementById( camPosId ) );
+        const WbConfig camPosConfig( camerasPositions.ElementById( camPosId ) );
 
-        const KeyId cameraId( camPosConfig.GetKeyValue(
-                    CameraPositionSchema::cameraIdKey )
-                        .ToQString() );
+        const KeyId cameraId( camPosConfig.GetKeyValue( CameraPositionSchema::cameraIdKey ).ToQString() );
         const WbConfig cameraConfig( cameras.ElementById( cameraId ) );
 
         QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(i, FILE_COLUMN);
 
         if (!combo)
         {
-            Message::Show( 0,
+            Message::Show( this,
                            tr( "Robot Tracking Tool" ),
                            tr( "No videos found for this run" ),
                            Message::Severity_Critical );

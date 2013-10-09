@@ -270,16 +270,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="m_resetBtn">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>&amp;Reset Track</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="m_saveBtn">
        <property name="enabled">
         <bool>false</bool>
@@ -339,7 +329,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="m_globalParamsPage">
           <attribute name="title">
@@ -552,7 +542,7 @@ p, li { white-space: pre-wrap; }
                  <bool>true</bool>
                 </property>
                 <attribute name="horizontalHeaderVisible">
-                 <bool>true</bool>
+                 <bool>false</bool>
                 </attribute>
                 <attribute name="horizontalHeaderCascadingSectionResizes">
                  <bool>false</bool>
@@ -800,7 +790,7 @@ p, li { white-space: pre-wrap; }
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QToolButton" name="btnSave">
+                 <widget class="QToolButton" name="m_cameraTrackParamsSaveBtn">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>

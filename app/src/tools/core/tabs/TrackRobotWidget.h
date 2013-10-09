@@ -148,7 +148,6 @@ private slots:
 
     void TrackLoadButtonClicked();
     void TrackSaveButtonClicked();
-    void TrackResetButtonClicked();
 
 private:
     Ui::TrackRobotWidget* m_ui;
