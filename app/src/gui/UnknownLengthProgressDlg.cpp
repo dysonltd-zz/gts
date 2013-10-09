@@ -131,4 +131,5 @@ void UnknownLengthProgressDlg::AdjustGeometry()
 void UnknownLengthProgressDlg::ShowInGraphicalShell(const QString &dirPath)
 {
     FileUtilities::ShowInGraphicalShell(dirPath);
+    this->ForceClose();
 }
