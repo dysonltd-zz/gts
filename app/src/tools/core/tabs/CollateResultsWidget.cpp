@@ -382,7 +382,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
         Message::Show( this,
                        QObject::tr("Track Results Analysis" ),
                        QObject::tr("Could not load floor plan image."
-                                   "\nPlease generate a floor mask from the 'Rooms' tab"),
+                                   "\nPlease generate a floor plan from the 'Rooms' tab"),
                        Message::Severity_Critical );
 
         cvReleaseImage( &floorMaskImg );
@@ -426,7 +426,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
         LOG_WARN("No coverage images supplied!");
         Message::Show( this,
                        QObject::tr( "Track Results Analysis" ),
-                       QObject::tr("No coverage images supplied."),
+                       QObject::tr("No coverage image(s) generaed from run(s). Please re-process runs and try again."),
                        Message::Severity_Critical );
     }
 
@@ -528,7 +528,7 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
     {
         Message::Show( this,
                        tr( "Track Results Analysis" ),
-                       tr( "Please save your workbench before continuing" ),
+                       tr( "Please save your workbench before continuing." ),
                        Message::Severity_Critical );
         return false;
     }
@@ -555,7 +555,7 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
     {
         Message::Show( this,
                        tr( "Track Results Analysis" ),
-                       tr( "Analysis results folder cannot be found!" ),
+                       tr( "Analysis results folder cannot be found or is currently open. Please close and try again." ),
                        Message::Severity_Critical );
         return false;
     }
