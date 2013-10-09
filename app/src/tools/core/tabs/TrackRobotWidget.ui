@@ -265,7 +265,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>&amp;Load Track</string>
+        <string>&amp;Load Tracking</string>
        </property>
       </widget>
      </item>
