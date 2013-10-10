@@ -138,6 +138,16 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="m_openFloorPlanBtn">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>&amp;Open Floor Plan Directory</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="m_importMaskBtn">
              <property name="enabled">
               <bool>false</bool>

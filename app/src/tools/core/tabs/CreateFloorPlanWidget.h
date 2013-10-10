@@ -50,77 +50,55 @@ public:
     explicit CreateFloorPlanWidget( CameraHardware& cameraHardware,
                                     QWidget* parent = 0 );
     virtual ~CreateFloorPlanWidget();
-
     virtual const QString Name() const { return tr( "Create Floor Plan" ); }
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
     virtual QWidget* Widget();
 
-private:
-    void SetupUi();
-    void ConnectSignals();
-    void ResetUi();
-
-    void CreateMappers();
-    virtual const QString GetSubSchemaDefaultFileName() const;
-
-    const WbSchema CreateSchema();
-
-    const QString GetCamera1Id() const;
-    const QString GetCamera2Id() const;
-
-    void FillOutCameraCombo( QComboBox& comboBox );
-
-    void ShowImage( IplImage* img, ImageView* view );
-
-    void CreateFloorPlanSingle();
-    void CreateFloorPlanMulti();
-
-    void Stitch(KeyId rootId);
-
-    virtual void ReloadCurrentConfigToolSpecific();
-
-    ImageView* const GetStreamingView1( const QSize& imageSize );
-    ImageView* const GetStreamingView2( const QSize& imageSize );
-
-    void DisplayMatched( std::vector< cv::Point2f > ip1,
-                         std::vector< cv::Point2f > ip2 );
-    void DisplayStitched();
-
-    bool IsDataValid() const;
-
-    Ui::CreateFloorPlanWidget* m_ui;
-
 private slots:
     void CameraComboChanged();
-
-    void BtnRotateClicked();
-    void BtnMatchClicked();
-    void BtnStitchClicked();
-    void BtnSaveClicked();
-    void BtnCancelClicked();
-    void BtnCreateFloorPlanClicked();
-
+    void RotateBtnClicked();
+    void MatchBtnClicked();
+    void StitchBtnClicked();
+    void SaveBtnClicked();
+    void CancelBtnClicked();
+    void CreateFloorPlanBtnClicked();
     void FromFileBtnClicked();
     void CaptureLiveBtnClicked();
     void CaptureCancelBtnClicked();
 
 private:
+    void SetupUi();
+    void ConnectSignals();
+    void ResetUi();
+    void CreateMappers();
+    virtual const QString GetSubSchemaDefaultFileName() const;
+    const WbSchema CreateSchema();
+    const QString GetCamera1Id() const;
+    const QString GetCamera2Id() const;
+    void FillOutCameraCombo( QComboBox& comboBox );
+    void ShowImage( IplImage* img, ImageView* view );
+    void CreateFloorPlanSingle();
+    void CreateFloorPlanMulti();
+    void Stitch(KeyId rootId);
+    virtual void ReloadCurrentConfigToolSpecific();
+    ImageView* const GetStreamingView1( const QSize& imageSize );
+    ImageView* const GetStreamingView2( const QSize& imageSize );
+    void DisplayMatched( std::vector< cv::Point2f > ip1,
+                         std::vector< cv::Point2f > ip2 );
+    void DisplayStitched();
+    bool IsDataValid() const;
+
+    Ui::CreateFloorPlanWidget* m_ui;
     KeyId m_camPosId1;
     KeyId m_camPosId2;
-
     QString m_camera1FileName;
     QString m_camera2FileName;
-
     IplImage* m_cam1Img;
     IplImage* m_cam2Img;
-
     cv::Mat m_homography;
-
     CameraRelationsTableMapper* m_relationsMapper;
-
     std::auto_ptr< CaptureLiveDualController > m_captureLiveDualController;
-
     int m_rotAngle;
 };
 

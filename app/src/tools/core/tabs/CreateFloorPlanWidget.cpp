@@ -272,31 +272,31 @@ void CreateFloorPlanWidget::ConnectSignals()
     QObject::connect( m_ui->m_rotateBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( BtnRotateClicked() ) );
+                      SLOT( RotateBtnClicked() ) );
 
     QObject::connect( m_ui->m_matchBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( BtnMatchClicked() ) );
+                      SLOT( MatchBtnClicked() ) );
     QObject::connect( m_ui->m_stitchBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( BtnStitchClicked() ) );
+                      SLOT( StitchBtnClicked() ) );
 
     QObject::connect( m_ui->m_saveBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( BtnSaveClicked() ) );
+                      SLOT( SaveBtnClicked() ) );
 
     QObject::connect( m_ui->m_cancelBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( BtnCancelClicked() ) );
+                      SLOT( CancelBtnClicked() ) );
 
     QObject::connect( m_ui->m_createFloorPlanBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( BtnCreateFloorPlanClicked() ) );
+                      SLOT( CreateFloorPlanBtnClicked() ) );
 }
 
 void CreateFloorPlanWidget::CreateMappers()
@@ -472,7 +472,7 @@ void CreateFloorPlanWidget::ShowImage( IplImage* img, ImageView* view )
     cvReleaseImage( &imgTmp );
 }
 
-void CreateFloorPlanWidget::BtnRotateClicked()
+void CreateFloorPlanWidget::RotateBtnClicked()
 {
     m_rotAngle = (m_rotAngle + 90) % 360;
 
@@ -509,7 +509,7 @@ void CreateFloorPlanWidget::BtnRotateClicked()
     m_ui->m_saveBtn->setEnabled( false );
 }
 
-void CreateFloorPlanWidget::BtnMatchClicked()
+void CreateFloorPlanWidget::MatchBtnClicked()
 {
     using namespace FloorPlanSchema;
 
@@ -595,7 +595,7 @@ void CreateFloorPlanWidget::DisplayMatched( std::vector< cv::Point2f > ip1,
     ImageViewer(&img_comp, this).exec();
 }
 
-void CreateFloorPlanWidget::BtnStitchClicked()
+void CreateFloorPlanWidget::StitchBtnClicked()
 {
     using namespace FloorPlanSchema;
 
@@ -689,7 +689,7 @@ void CreateFloorPlanWidget::DisplayStitched()
     cvReleaseMat(&I);
 }
 
-void CreateFloorPlanWidget::BtnSaveClicked()
+void CreateFloorPlanWidget::SaveBtnClicked()
 {
     WbConfig config = GetCurrentConfig();
 
@@ -786,7 +786,7 @@ void CreateFloorPlanWidget::BtnSaveClicked()
     }
 }
 
-void CreateFloorPlanWidget::BtnCancelClicked()
+void CreateFloorPlanWidget::CancelBtnClicked()
 {
     if (m_cam1Img) cvReleaseImage(&m_cam1Img);
     if (m_cam2Img) cvReleaseImage(&m_cam2Img);
@@ -794,7 +794,7 @@ void CreateFloorPlanWidget::BtnCancelClicked()
     ResetUi();
 }
 
-void CreateFloorPlanWidget::BtnCreateFloorPlanClicked()
+void CreateFloorPlanWidget::CreateFloorPlanBtnClicked()
 {
     using namespace FloorPlanSchema;
 

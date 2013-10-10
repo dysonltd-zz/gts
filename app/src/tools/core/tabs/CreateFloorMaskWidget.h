@@ -47,32 +47,25 @@ public:
     virtual const QString Name() const { return tr( "Create Floor Mask" ); }
     virtual QWidget* Widget();
 
+private slots:
+    void CombinePartsBtnClicked();
+    void ImportMaskBtnClicked();
+    void CreateMaskBtnClicked();
+    void OpenFloorPlanBtnClicked();
+
 private:
-    void SetupUi();
     void ConnectSignals();
-
     void CreateMappers();
-    virtual const QString GetSubSchemaDefaultFileName() const;
-
     void ReloadCurrentConfigToolSpecific();
-
     void ShowImage(ImageView* view, const IplImage* image);
-
-    const WbSchema CreateSchema();
-
     void CreateFloorMaskMulti();
     void CreateFloorMaskSingle();
-
     void Stitch(KeyId rootId);
+    const WbSchema CreateSchema();
+    virtual const QString GetSubSchemaDefaultFileName() const;
 
     WbConfig GetFloorPlanConfig();
-
     Ui::CreateFloorMaskWidget* m_ui;
-
-private slots:
-    void BtnCombinePartsClicked();
-    void BtnImportMaskClicked();
-    void BtnCreateMaskClicked();
 
 private:
     bool ImportFloorMask( const WbConfig& config );

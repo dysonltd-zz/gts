@@ -23,41 +23,28 @@
 #include "RoomLayoutSchema.h"
 #include "FloorPlanSchema.h"
 #include "FloorMaskSchema.h"
-
+#include "FloorPlanning.h"
 #include "GroundPlaneUtility.h"
 #include "OpenCvUtility.h"
-
-#include "FloorPlanning.h"
-
 #include "ImageView.h"
-
-#include "Message.h"
-
 #include "ImageViewer.h"
-
+#include "Message.h"
+#include "FileUtilities.h"
 #include "Logging.h"
-
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
 
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QDir>
+
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 
 CreateFloorMaskWidget::CreateFloorMaskWidget( QWidget* parent ) :
     Tool ( parent, CreateSchema() ),
     m_ui ( new Ui::CreateFloorMaskWidget )
 {
-    SetupUi();
-
-    ConnectSignals();
-
-    CreateMappers();
-}
-
-void CreateFloorMaskWidget::SetupUi()
-{
     m_ui->setupUi( this );
+    ConnectSignals();
+    CreateMappers();
 }
 
 void CreateFloorMaskWidget::ConnectSignals()
@@ -65,15 +52,19 @@ void CreateFloorMaskWidget::ConnectSignals()
     QObject::connect( m_ui->m_combineParts,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( BtnCombinePartsClicked() ) );
+                      SLOT( CombinePartsBtnClicked() ) );
+    QObject::connect( m_ui->m_openFloorPlanBtn,
+                      SIGNAL( clicked() ),
+                      this,
+                      SLOT( OpenFloorPlanBtnClicked() ) );
     QObject::connect( m_ui->m_importMaskBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( BtnImportMaskClicked() ) );
+                      SLOT( ImportMaskBtnClicked() ) );
     QObject::connect( m_ui->m_createMaskBtn,
                       SIGNAL( clicked() ),
                       this,
-                      SLOT( BtnCreateMaskClicked() ) );
+                      SLOT( CreateMaskBtnClicked() ) );
 }
 
 void CreateFloorMaskWidget::CreateMappers()
@@ -97,12 +88,12 @@ const QString CreateFloorMaskWidget::GetSubSchemaDefaultFileName() const
 
 void CreateFloorMaskWidget::ReloadCurrentConfigToolSpecific()
 {
-    const QString planName(
-        GetCurrentConfig().GetAbsoluteFileNameFor( "floor_plan.png" ) );
+    const QString planName( GetCurrentConfig().GetAbsoluteFileNameFor( "floor_plan.png" ) );
 
     if ( QFile::exists( planName ) )
     {
         m_ui->m_importMaskBtn->setEnabled(true);
+        m_ui->m_openFloorPlanBtn->setEnabled(true);
 
         IplImage* img = cvLoadImage(planName.toAscii(), CV_LOAD_IMAGE_GRAYSCALE);
 
@@ -163,7 +154,7 @@ void CreateFloorMaskWidget::ShowImage(ImageView* view, const IplImage* image)
 	cvReleaseImage( &imgTmp );
 }
 
-void CreateFloorMaskWidget::BtnCombinePartsClicked()
+void CreateFloorMaskWidget::CombinePartsBtnClicked()
 {
     if (m_ui->m_combineParts->isChecked())
     {
@@ -177,7 +168,13 @@ void CreateFloorMaskWidget::BtnCombinePartsClicked()
     }
 }
 
-void CreateFloorMaskWidget::BtnImportMaskClicked()
+void CreateFloorMaskWidget::OpenFloorPlanBtnClicked()
+{
+    FileUtilities::ShowInGraphicalShell( GetCurrentConfig().GetAbsoluteFileInfo().absolutePath() );
+}
+
+
+void CreateFloorMaskWidget::ImportMaskBtnClicked()
 {
     if (m_ui->m_combineParts->isChecked())
     {
@@ -189,7 +186,7 @@ void CreateFloorMaskWidget::BtnImportMaskClicked()
     }
 }
 
-void CreateFloorMaskWidget::BtnCreateMaskClicked()
+void CreateFloorMaskWidget::CreateMaskBtnClicked()
 {
     using namespace FloorPlanSchema;
 
