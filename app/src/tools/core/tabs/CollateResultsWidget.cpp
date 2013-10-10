@@ -253,7 +253,7 @@ void CollateResultsWidget::AnalyseResultsButtonClicked()
     UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
     progressDialog->Start( tr( "Processing" ), tr( "" ) );
 
-    ExitStatus::Flags exitCode = AnalyseResults( floorPlanName.toAscii().data(),        // floorPlanName
+    ExitStatus::Flags exitCode = CollateCoverageResults( floorPlanName.toAscii().data(),        // floorPlanName
                                                  floorMaskName.toAscii().data(),        // floorMaskName
                                                  tmpFile.fileName().toAscii().data(),   // inputFileList
                                                  totalCoverageCsvName.toAscii().data(),
@@ -343,16 +343,15 @@ void CollateResultsWidget::SelectAllCheckBoxChecked(int state)
 // ----------------------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------------------
 
-const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanName,
-                                                              char* floorMaskName,         // -flr
-                                                              char* overlayListFileName,   // -files
-                                                              char* totalCoverageCsvName,
-                                                              char* totalCoverageImgName ) // -out
+const ExitStatus::Flags CollateResultsWidget::CollateCoverageResults( char* floorPlanName,
+                                                                      char* floorMaskName,         // -flr
+                                                                      char* overlayListFileName,   // -files
+                                                                      char* totalCoverageCsvName,
+                                                                      char* totalCoverageImgName ) // -out
 {
     ExitStatus::Flags exitStatus = ExitStatus::OK_TO_CONTINUE;
 
     IplImage* floorMaskImg = NULL;
-
     if ( floorMaskName )
     {
         floorMaskImg = OpenCvTools::LoadSingleChannelImage( floorMaskName );
@@ -370,7 +369,6 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     }
 
     IplImage* floorPlanImg = NULL;
-
     if ( floorPlanName )
     {
         floorPlanImg = cvLoadImage( floorPlanName );
@@ -385,7 +383,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
                                    "\nPlease generate a floor plan from the 'Rooms' tab"),
                        Message::Severity_Critical );
 
-        cvReleaseImage( &floorMaskImg );
+        cvReleaseImage( &floorMaskImg ); // release floor mask image as it won't be used now
 
         return ExitStatus::ERRORS_OCCURRED;
     }
@@ -399,6 +397,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
                                    "\nPlease check sizes."),
                        Message::Severity_Critical );
 
+        // release floor mask and plan image as they won't be used
         cvReleaseImage( &floorMaskImg );
         cvReleaseImage( &floorPlanImg );
 
@@ -406,9 +405,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     }
 
     std::vector<std::string> fileNames;
-
     FILE* f = fopen( overlayListFileName, "r" );
-
     while (f && !feof(f))
     {
         char fileName[MAX_PATH];
@@ -428,6 +425,12 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
                        QObject::tr( "Coverage Collation Failed" ),
                        QObject::tr("No coverage image(s) generated from run(s). Please re-process runs and try again."),
                        Message::Severity_Critical );
+
+        // release floor mask and plan image as they won't be used
+        cvReleaseImage( &floorMaskImg );
+        cvReleaseImage( &floorPlanImg );
+
+        return ExitStatus::ERRORS_OCCURRED;
     }
 
     // Number of non-zero pixels in floor mask is total number of
@@ -456,8 +459,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
     int run = 0;
     for (std::vector<std::string>::const_iterator i = fileNames.begin(); i != fileNames.end(); ++i)
     {
-        LOG_INFO(QObject::tr("Run: %1 (file: %2).").arg(++run)
-                                                   .arg(i->c_str()));
+        LOG_INFO(QObject::tr("Run: %1 (file: %2).").arg(++run).arg(i->c_str()));
 
         // Load the coverage mask, limit it to the floor mask area
         IplImage* coverageMaskImg = OpenCvTools::LoadSingleChannelImage( i->c_str() );
@@ -481,14 +483,15 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
         // Add this coverage to the total
         cvAdd( coverageMaskImg, totalCoverageImg, totalCoverageImg );
 
+        // Write to CSV the collated coverage results
         CoverageMetrics::PrintCsvLineForPass(fp, run, totalCoverageImg, nFloorPixels);
 
         // Clean up
         cvReleaseImage( &coverageMaskImg );
     }
 
-    // Update floor plan image with total coverage.
 
+    // Update floor plan image with total coverage.
     for (int level = 1; level < RunEntry::MAX_LEVEL; ++level)
     {
         OpenCvTools::DrawColouredOverlay( floorPlanImg,
@@ -497,21 +500,20 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
                                           std::bind2nd(std::equal_to<int>(), level) );
     }
 
+    /*
     OpenCvTools::DrawColouredOverlay( floorPlanImg,
                                       totalCoverageImg,
                                       CV_RGB(0,255,0),
-                                      std::bind2nd(std::greater_equal<int>(), 5 /*RunEntry::MAX_LEVEL*/) );
-
+                                      std::bind2nd(std::greater_equal<int>(), 10) );
+*/
     // Clean up
     if ( f ) { fclose( f ); }
     if ( fp ) { fclose( fp ); }
-
     cvSaveImage( totalCoverageImgName, floorPlanImg );
-
     cvReleaseImage( &floorMaskImg );
     cvReleaseImage( &floorPlanImg );
 
-    LOG_TRACE("Analysis complete");
+    LOG_TRACE("Collating coverage results complete");
 
     return exitStatus;
 }
@@ -519,9 +521,7 @@ const ExitStatus::Flags CollateResultsWidget::AnalyseResults( char* floorPlanNam
 bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
 {
     QDir m_resultDir( config.GetAbsoluteFileNameFor( "results" ) );
-
     const QString resultDirName = m_resultDir.dirName();
-
     QDir resultDirParent( m_resultDir );
 
     if ( !resultDirParent.cdUp() )

@@ -23,12 +23,6 @@
 
 #include "Logging.h"
 
-const QColor RunEntry::colours[MAX_LEVEL] = { QColor("cyan"),
-                                              QColor("magenta"),
-                                              QColor("red"),
-                                              QColor("green"),
-                                              QColor("blue") };
-
 namespace CoverageMetrics
 {
     void PrintCsvHeaders( FILE* fp )

@@ -30,8 +30,7 @@
 class RunEntry
 {
 public:
-    static const int MAX_LEVEL = 20;
-    static const QColor colours[MAX_LEVEL];
+    static const int MAX_LEVEL = 10;
     static const int GetMaxLevel() { return MAX_LEVEL; };
 
 public:

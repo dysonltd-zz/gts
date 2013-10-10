@@ -53,7 +53,7 @@ private:
     bool CreateAnalysisResultDirectory(const WbConfig& config);
     void ShowImage(ImageView* view, const IplImage* image);
     const KeyId GetRoomIdToCollate() const;
-    const ExitStatus::Flags AnalyseResults( char* floorPlanName,
+    const ExitStatus::Flags CollateCoverageResults( char* floorPlanName,
                                             char* floorMaskName,
                                             char* overlayListFileName,
                                             char* totalCoverageCsvName,
