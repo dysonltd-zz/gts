@@ -25,10 +25,26 @@
 #include "AlgorithmInterface.h"
 #include "ImageView.h"
 
+#include <fstream>
+#include <vector>
+
 namespace Ui
 {
     class CollateResultsWidget;
 }
+
+class RunEntry
+{
+
+public:
+    static const int MAX_LEVEL = 10;
+    static const int GetMaxLevel() { return MAX_LEVEL; };
+
+    RunEntry() {};
+    ~RunEntry() {};
+
+    float level[MAX_LEVEL];
+};
 
 class CollateResultsWidget : public Tool
 {
@@ -48,6 +64,8 @@ private slots:
     void SelectAllCheckBoxChecked(int state);
 
 private:
+    typedef std::vector<RunEntry> RunMetrics;
+
     virtual const QString GetSubSchemaDefaultFileName() const;
     const WbSchema CreateSchema();
     bool CreateAnalysisResultDirectory(const WbConfig& config);
@@ -58,6 +76,13 @@ private:
                                             char* overlayListFileName,
                                             char* totalCoverageCsvName,
                                             char* totalCoverageImgName );
+    void PrintCsvHeaders(FILE* fp , const int maxLevel);
+    void PrintCsvLineForPass( FILE* fp,
+                              const int run,
+                              IplImage* totalCoverageImg,
+                              const int nFloorPixels , const int maxLevel);
+
+    bool ReadCsv(const char* filename, RunMetrics& metrics , const int maxLevel);
 
     Ui::CollateResultsWidget* m_ui;
     QStandardItemModel* tableModel;

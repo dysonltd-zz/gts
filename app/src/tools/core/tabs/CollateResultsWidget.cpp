@@ -20,8 +20,6 @@
 
 #include "ui_CollateResultsWidget.h"
 
-#include "CoverageMetrics.h"
-
 #include "Collection.h"
 #include "RunsCollection.h"
 #include "RoomsCollection.h"
@@ -168,6 +166,7 @@ void CollateResultsWidget::LoadRunsButtonClicked()
     m_ui->m_runsTable->setModel( tableModel );
     m_ui->m_analyseBtn->setEnabled(true);
     m_ui->m_selectAllCheckBox->setEnabled(true);
+    m_ui->m_passCapSpinBox->setEnabled(true);
 
     if ( m_ui->m_selectAllCheckBox->isChecked() )
     {
@@ -340,9 +339,6 @@ void CollateResultsWidget::SelectAllCheckBoxChecked(int state)
     }
 }
 
-// ----------------------------------------------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------------------------------------------
-
 const ExitStatus::Flags CollateResultsWidget::CollateCoverageResults( char* floorPlanName,
                                                                       char* floorMaskName,         // -flr
                                                                       char* overlayListFileName,   // -files
@@ -454,7 +450,7 @@ const ExitStatus::Flags CollateResultsWidget::CollateCoverageResults( char* floo
 
     FILE* fp = fopen( totalCoverageCsvName, "w" );
 
-    CoverageMetrics::PrintCsvHeaders(fp);
+    PrintCsvHeaders(fp, m_ui->m_passCapSpinBox->value());
 
     int run = 0;
     for (std::vector<std::string>::const_iterator i = fileNames.begin(); i != fileNames.end(); ++i)
@@ -484,7 +480,7 @@ const ExitStatus::Flags CollateResultsWidget::CollateCoverageResults( char* floo
         cvAdd( coverageMaskImg, totalCoverageImg, totalCoverageImg );
 
         // Write to CSV the collated coverage results
-        CoverageMetrics::PrintCsvLineForPass(fp, run, totalCoverageImg, nFloorPixels);
+        PrintCsvLineForPass(fp, run, totalCoverageImg, nFloorPixels, m_ui->m_passCapSpinBox->value());
 
         // Clean up
         cvReleaseImage( &coverageMaskImg );
@@ -492,7 +488,7 @@ const ExitStatus::Flags CollateResultsWidget::CollateCoverageResults( char* floo
 
 
     // Update floor plan image with total coverage.
-    for (int level = 1; level < RunEntry::MAX_LEVEL; ++level)
+    for (int level = 1; level < m_ui->m_passCapSpinBox->value(); ++level)
     {
         OpenCvTools::DrawColouredOverlay( floorPlanImg,
                                           totalCoverageImg,
@@ -500,12 +496,12 @@ const ExitStatus::Flags CollateResultsWidget::CollateCoverageResults( char* floo
                                           std::bind2nd(std::equal_to<int>(), level) );
     }
 
-    /*
+
     OpenCvTools::DrawColouredOverlay( floorPlanImg,
                                       totalCoverageImg,
                                       CV_RGB(0,255,0),
                                       std::bind2nd(std::greater_equal<int>(), 10) );
-*/
+
     // Clean up
     if ( f ) { fclose( f ); }
     if ( fp ) { fclose( fp ); }
@@ -557,6 +553,112 @@ bool CollateResultsWidget::CreateAnalysisResultDirectory(const WbConfig& config)
                        tr( "Coverage Collation Failed" ),
                        tr( "Analysis results folder cannot be found or is currently open. Please close and try again." ),
                        Message::Severity_Critical );
+        return false;
+    }
+
+    return true;
+}
+
+void CollateResultsWidget::PrintCsvHeaders( FILE* fp, const int passCap )
+{
+    fprintf(fp, "Run, ");
+
+    for (int i = 0; i < passCap; ++i)
+    {
+        int numberOfPasses = i + 1;
+        fprintf(fp, "%d Pass", numberOfPasses);
+
+        if (numberOfPasses > 1)
+        {
+            fprintf(fp, "es");
+        }
+        if (i < passCap-1)
+        {
+            fprintf(fp, ", ");
+        }
+        else
+        {
+            fprintf(fp, "+\n");
+        }
+    }
+}
+
+void CollateResultsWidget::PrintCsvLineForPass( FILE* fp,
+                          const int run,
+                          IplImage* totalCoverageImg,
+                          const int nFloorPixels,
+                          const int passCap)
+{
+    fprintf( fp, "%d", run);
+
+    for (int level = 0; level < passCap; ++level)
+    {
+        const int numTimesCovered = level+1;
+        const bool isTopNumPasses = (level == (passCap-1));
+        int comparisonOp = CV_CMP_EQ;
+
+        if ( isTopNumPasses )
+        {
+            comparisonOp = CV_CMP_GE;
+        }
+
+        int nPixels = OpenCvTools::GetPixelCoverageCount( totalCoverageImg,
+                                                          numTimesCovered,
+                                                          comparisonOp );
+        float percent = nPixels * (100.f / nFloorPixels);
+        fprintf(fp, ", %f", percent);
+
+        LOG_INFO(QObject::tr("%1 pixels (%2%) were covered %3 time(s).").arg(nPixels)
+                                                                         .arg(percent)
+                                                                         .arg(numTimesCovered));
+    }
+
+    fprintf(fp, "\n");
+}
+
+bool CollateResultsWidget::ReadCsv( const char* filename, RunMetrics& metrics, const int passCap )
+{
+    FILE* fp = fopen( filename, "r" );
+
+    if (fp)
+    {
+        metrics.clear();
+
+        // Skip headers
+        FileUtilities::LineSkip(fp);
+
+        while (!feof(fp))
+        {
+            int run;
+            int cnt = 0;
+            RunEntry entry;
+
+            fscanf( fp, "%d", &run);
+
+            for (int i=0; i < passCap-1; i++)
+            {
+                cnt += fscanf( fp, ", %f", &entry.level[i] );
+            }
+
+            cnt += fscanf( fp, ", %f\n", &entry.level[passCap-1]);
+
+            if ( cnt == passCap )
+            {
+                metrics.push_back( entry );
+            }
+            else
+            {
+                LOG_ERROR(QObject::tr("Unexpected data (%1) in %2!").arg(cnt).arg(filename));
+            }
+        }
+
+        fclose(fp);
+    }
+    else
+    {
+        LOG_ERROR(QObject::tr("Unable to read coverage metrics file: %1!")
+                     .arg(filename));
+
         return false;
     }
 
