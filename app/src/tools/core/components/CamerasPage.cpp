@@ -101,9 +101,6 @@ void CamerasPage::initializePage()
     CameraApi::CameraList connectedCameras(m_cameraHardware.EnumerateConnectedCameras());
     RemovePreviouslyChosenCameras( connectedCameras );
     m_cameraSelectionContent->StartUp( connectedCameras );
-
-    wizard()->setOption( QWizard::HaveHelpButton, false );
-    wizard()->setOption( QWizard::HelpButtonOnRight, false );
 }
 
 void CamerasPage::RemovePreviouslyChosenCameras( CameraApi::CameraList& connectedCameras )
@@ -118,7 +115,6 @@ void CamerasPage::RemovePreviouslyChosenCameras( CameraApi::CameraList& connecte
 
 void CamerasPage::cleanupPage()
 {
-    wizard()->setOption( QWizard::HaveCustomButton1, false );
     m_cameraSelectionContent->Shutdown();
 }
 

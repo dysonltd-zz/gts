@@ -65,13 +65,6 @@ bool CameraSelectionFormContents::StartUp( const CameraApi::CameraList& cameras 
     return HasCameras();
 }
 
-void CameraSelectionFormContents::AddHelpBtn( QPushButton* const button )
-{
-    Q_UNUSED(button);
-
-    m_ui->m_cameraTableWidget->setFocus();
-}
-
 /** @brief Set the @a m_chosenCamera member to an invalid value.
  *
  *

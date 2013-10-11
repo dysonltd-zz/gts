@@ -34,17 +34,16 @@ class CamerasPage : public NewElementWizardPage
     Q_PROPERTY( CameraDescription chosenCamera READ GetChosenCamera USER true )
 
 public:
+    static const QString chosenCameraField;
+
     CamerasPage( CameraHardware& cameraHardware, const Collection& camerasCollection );
 
     virtual void initializePage();
     virtual void cleanupPage();
     virtual bool isComplete() const;
 
-    static const QString chosenCameraField;
-
 private:
     void RemovePreviouslyChosenCameras( CameraApi::CameraList& connectedCameras );
-
     void AddCameraSelectionPage( QLayout* layout );
 
     const CameraDescription GetChosenCamera() const;
