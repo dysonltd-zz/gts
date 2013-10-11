@@ -119,7 +119,8 @@ QTableWidgetItem* const CameraSelectionFormContents::CreateTableItemForCamera( c
 {
     const CameraDescription& thisCamera( m_cameras.at( cameraIndex ) );
 
-    QTableWidgetItem* newItem = new QTableWidgetItem( QString::fromStdWString( thisCamera.UniqueId() ) );
+
+    QTableWidgetItem* newItem = new QTableWidgetItem( QString::fromStdWString( thisCamera.Description() ) );
     newItem->setData( Qt::UserRole, QVariant( (int) cameraIndex ) );
     newItem->setToolTip( thisCamera.ToRichText() );
     return newItem;
