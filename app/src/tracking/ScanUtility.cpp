@@ -123,7 +123,8 @@ namespace ScanUtility
 	    CvPoint pos = cvPoint( scale*entry.x()+xoffset,
                                scale*entry.y()+yoffset );
 
-	    cvCircle( img, pos, 3, col, 1, CV_AA );
+        const int halfWidth = 3;
+        cvRectangle(img, cvPoint(pos.x - halfWidth, pos.y - halfWidth), cvPoint(pos.x + halfWidth, pos.y + halfWidth), col, 1, CV_AA);
     }
 
     /**
