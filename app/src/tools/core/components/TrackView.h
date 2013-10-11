@@ -36,32 +36,23 @@ class TrackView : public QScrollArea
 
 public:
     TrackView( QWidget *parent = 0 );
-
     IplImage* loadFloorPlan( const WbConfig& runConfig );
     bool loadMetrics( const WbConfig& runConfig );
-
     void setModel(QAbstractItemModel *model);
-
     QAbstractItemModel *model() const { return m_model; }
 
 public slots:
     void rowsRemoved ();
-
     void dataChanged ( const QModelIndex& topLeft,
                        const QModelIndex& bottomRight );
-
     void selectionChanged ( const QItemSelection& selected,
                             const QItemSelection& deselected );
 
 private:
     void updateView();
-
     IplImage*           m_baseImg;
-
     double              m_metricsScaleFactor;
-
     QAbstractItemModel* m_model;
-
     ImageView           m_imageView;
 };
 
