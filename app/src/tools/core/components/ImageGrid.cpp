@@ -246,9 +246,9 @@ void ImageGrid::wheelEvent( QWheelEvent* event )
 
         for ( size_t i = 0; i < m_imageViews.size(); ++i )
         {
-            m_imageViews[i].get()->setZoom( m_zoom );
+            m_imageViews[i].get()->setZoom( m_zoom );            
         }
-
+        ensureVisible(event->pos().x(), event->pos().y());
         event->accept();
     }
     else

@@ -48,6 +48,13 @@ class TrackRobotWidget : public Tool
 {
     Q_OBJECT
 
+public slots:
+     void SetPosition( double position );
+     void SelectTrack( int id, int x, int y );
+     void ClearTrack( int id );
+     void ThreadPaused( bool trackingLost );
+     void ThreadFinished();
+
 public:
     explicit TrackRobotWidget( QWidget* parent = 0 );
     ~TrackRobotWidget();
@@ -55,13 +62,10 @@ public:
     virtual const QString Name() const { return tr( "Track Robot" ); }
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
-
     void ReloadCurrentConfigToolSpecific();
-
     void Playing();
     void Paused();
     void Stopped();
-
     void ImageUpdate( int id, const QImage& image, double fps );
     void ImageSet( int id, const QImage& image, double fps );
 
@@ -69,60 +73,49 @@ signals:
      void UpdateImage( int id, const QImage& image, double fps );
      void SetImage( int id, const QImage& image, double fps );
 
-public slots:
-     void SetPosition( double position );
-
-     void SelectTrack( int id, int x, int y );
-     void ClearTrack( int id );
-
-     void ThreadPaused( bool trackingLost );
-     void ThreadFinished();
+private slots:
+    void CameraComboChanged();
+    void UseGlobalBtnClicked();
+    void SaveBtnClicked();
+    void PlayPauseButtonClicked();
+    void StepButtonClicked();
+    void StepBackButtonClicked();
+    void ScanBackButtonClicked();
+    void ScanForwardButtonClicked();
+    void StopButtonClicked();
+    void TrackLoadButtonClicked();
+    void TrackSaveButtonClicked();
 
 private:
     void SetupUi();
     void ResetUi();
     void ConnectSignals();
-
     void FillOutCameraCombo( QComboBox& comboBox );
-
     void SetButtonIcon(QToolButton* button, QString iconImage);
-
     const KeyId GetRoomIdToCapture() const;
     const WbConfig GetRoomLayoutConfig(const KeyId &roomIdToCapture);
     const WbKeyValues::ValueIdPairList GetCameraPositionPairList(const KeyId& roomIdToCapture);
     const QStringList GetCameraPositionIds(const KeyId& roomIdToCapture);
-
     typedef QPair< QStringList, QStringList > VideoCaptureEntry;
     void AddVideoFileConfigKey(const QString& videoFileName, const KeyId& camPosId);
     void AddTableRow( const QString& roomPosition, const QStringList& videoFileNames );
-
     void ShowNoRoomError();
     void ShowEmptyRoomError();
-
     virtual const QString GetSubSchemaDefaultFileName() const;
-
     void CreateMappers();
-
     const QString GetCameraId() const;
     void PopulateCameraParams();
-
     const WbSchema CreateSchema();
-
     bool IsDataValid() const;
-
     bool CreateRunResultDirectory(const WbConfig& config);
-
     const bool CreateVideoDirectory( const QString& videoDirectoryName );
-
     const ExitStatus::Flags TrackLoad( const WbConfig&           trackConfig,
                                        ImageGrid*                imageGrid,
                                        RobotTracker::trackerType tracker );
-
     const ExitStatus::Flags TrackRun( double rate,
                                       bool trackingActive,
                                       bool singleStep,
                                       bool runForward );
-
     const ExitStatus::Flags TrackPause();
     const ExitStatus::Flags TrackStop();
     const ExitStatus::Flags TrackSaveData( char* floorPlanFile,
@@ -134,26 +127,8 @@ private:
                                            QString pixelOffsetsTemplate );
     const ExitStatus::Flags TrackReset( ImageGrid* imageGrid );
 
-private slots:
-    void CameraComboChanged();
-    void UseGlobalBtnClicked();
-    void SaveBtnClicked();
-
-    void PlayPauseButtonClicked();
-    void StepButtonClicked();
-    void StepBackButtonClicked();
-    void ScanBackButtonClicked();
-    void ScanForwardButtonClicked();
-    void StopButtonClicked();
-
-    void TrackLoadButtonClicked();
-    void TrackSaveButtonClicked();
-
-private:
     Ui::TrackRobotWidget* m_ui;
-
     GtsScene m_scene;
-
     QMap< QString, VideoCaptureEntry > m_mapPositionsToFiles;
 
     bool m_running;  // thread running
@@ -163,7 +138,6 @@ private:
     bool m_fpsSet;
     double m_fps;
     double m_optimumRate;
-
     void SetupKeyboardShortcuts();
 
     std::vector<std::pair<std::string, uint>> m_scanFwdIconRatePair;

@@ -74,7 +74,6 @@ TrackRobotWidget::TrackRobotWidget( QWidget* parent ) :
 {
     SetupUi();
     ConnectSignals();
-    SetupKeyboardShortcuts();
     CreateMappers();
     RegisterCollectionCombo(m_ui->m_robotCombo, RobotsCollection());
 
@@ -96,7 +95,6 @@ TrackRobotWidget::TrackRobotWidget( QWidget* parent ) :
 void TrackRobotWidget::SetupUi()
 {
     m_ui->setupUi( this );
-
     m_ui->m_videoTable->setColumnCount( NUM_COLS );
     m_ui->m_videoTable->setSortingEnabled( false );
 }
@@ -242,12 +240,9 @@ void TrackRobotWidget::SetupKeyboardShortcuts()
 void TrackRobotWidget::CreateMappers()
 {
     AddMapper( TrackRobotSchema::robotIdKey, m_ui->m_robotCombo );
-
-    using namespace TrackRobotSchema::GlobalTrackingParams;
-
-    AddMapper(biLevelThreshold, m_ui->m_trackerThresholdSpinBox);
-    AddMapper(nccThreshold,     m_ui->m_nccThresholdSpinBox);
-    AddMapper(resolution,       m_ui->m_resolutionSpinBox);
+    AddMapper(TrackRobotSchema::GlobalTrackingParams::biLevelThreshold, m_ui->m_trackerThresholdSpinBox);
+    AddMapper(TrackRobotSchema::GlobalTrackingParams::nccThreshold,     m_ui->m_nccThresholdSpinBox);
+    AddMapper(TrackRobotSchema::GlobalTrackingParams::resolution,       m_ui->m_resolutionSpinBox);
 }
 
 const QString TrackRobotWidget::GetCameraId() const
@@ -852,6 +847,7 @@ void TrackRobotWidget::TrackLoadButtonClicked()
             if ( successful )
             {
                 progressDialog->ForceClose();
+                SetupKeyboardShortcuts();
             }
             else
             {
