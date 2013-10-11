@@ -241,6 +241,7 @@ void CreateFloorPlanWidget::ReloadCurrentConfigToolSpecific()
         m_ui->m_camera1Combo->setCurrentIndex( -1 );
         m_ui->m_camera2Combo->setCurrentIndex( -1 );
         m_ui->m_mappingsTable->setDisabled(true);
+        m_ui->m_createFloorPlanBtn->setStyleSheet("color: blue"); // highlight button in red
     }
 }
 
