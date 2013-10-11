@@ -48,19 +48,16 @@ public:
     explicit ImageView( QWidget* parent = 0, int id = -1 );
 
     void Clear();
-
     void SetImage( const QString& imageName );
     void SetImage( const QImage&  image );
     void SetPreserveAspectRatio( const bool preserveAspectRatio );
     void SetCaption( const QString& caption );
-
     const QSize GetImageSize  () const { return m_image.size(); }
     double GetImageAspectRatio() const { return ( double )m_image.width () /
                                                 ( double )m_image.height(); }
     const QImage GetCurrentImage() const;
     void SetConversionMethod( const ConversionMethod& method );
-
-    void setZoom( double zoom ) { m_zoom = zoom; };
+    void setZoom( double zoom );
 
  signals:
     void onLeftClick( int id, int x, int y );
@@ -69,7 +66,6 @@ public:
 protected:
     virtual void resizeEvent( QResizeEvent* );
     virtual void paintEvent ( QPaintEvent* );
-
     virtual void mousePressEvent( QMouseEvent* event );
 
 private:

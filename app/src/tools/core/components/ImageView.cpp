@@ -118,6 +118,11 @@ void ImageView::SetConversionMethod( const ConversionMethod& method )
     m_conversionMethod = method;
 }
 
+void ImageView::setZoom( double zoom )
+{
+    m_zoom = zoom;
+}
+
 /** Scale #m_image to fit the available space and store it as a pixmap at the correct size.
  *
  *  The reduces recalculation if the image doen't change.  We only calculate the image scaling and

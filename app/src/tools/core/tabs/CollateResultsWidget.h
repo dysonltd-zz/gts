@@ -81,9 +81,6 @@ private:
                               const int run,
                               IplImage* totalCoverageImg,
                               const int nFloorPixels , const int maxLevel);
-
-    bool ReadCsv(const char* filename, RunMetrics& metrics , const int maxLevel);
-
     Ui::CollateResultsWidget* m_ui;
     QStandardItemModel* tableModel;
 };
