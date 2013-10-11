@@ -30,7 +30,6 @@ CameraSelectionFormContents::CameraSelectionFormContents( QWidget* parent ) :
     m_cameras     ()
 {
     m_ui->setupUi( this );
-
     InvalidateChosenCamera();
 
     QObject::connect( m_ui->m_cameraTableWidget,

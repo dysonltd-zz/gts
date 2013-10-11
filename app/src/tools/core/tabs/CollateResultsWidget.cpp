@@ -124,54 +124,66 @@ const KeyId CollateResultsWidget::GetRoomIdToCollate() const
 void CollateResultsWidget::LoadRunsButtonClicked()
 {
     const KeyId roomIdToCollate = GetRoomIdToCollate();
-
-    tableModel = new QStandardItemModel();
-    tableModel->setHorizontalHeaderItem(TABLE_COL_USE, new QStandardItem(QString("")));
-    tableModel->setHorizontalHeaderItem(TABLE_COL_RUN, new QStandardItem(QString("Run")));
-    tableModel->setHorizontalHeaderItem(TABLE_COL_ROOM, new QStandardItem(QString("Room")));
-
     Collection runsCollection = RunsCollection();
     Collection roomsCollection = RoomsCollection();
     runsCollection.SetConfig( GetCurrentConfig() );
     roomsCollection.SetConfig( GetCurrentConfig() );
 
-    for (int n = 0; n < (int)runsCollection.NumElements(); ++n)
+    int relevantRuns = 0;
+    if ( (int)runsCollection.NumElements() > 0 && (int)roomsCollection.NumElements() > 0 )
     {
-        const WbConfig runConfig = runsCollection.ElementAt( n ).value;
-        const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
-        if (roomId != roomIdToCollate)
+        tableModel = new QStandardItemModel();
+        tableModel->setHorizontalHeaderItem(TABLE_COL_USE, new QStandardItem(QString("")));
+        tableModel->setHorizontalHeaderItem(TABLE_COL_RUN, new QStandardItem(QString("Run")));
+        tableModel->setHorizontalHeaderItem(TABLE_COL_ROOM, new QStandardItem(QString("Room")));
+
+        for (int n = 0; n < (int)runsCollection.NumElements(); ++n)
         {
-            break;
+            const WbConfig runConfig = runsCollection.ElementAt( n ).value;
+            const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
+            if (roomId == roomIdToCollate)
+            {
+                relevantRuns++;
+            }
+            else
+            {
+                break;
+            }
+            const WbConfig roomConfig = roomsCollection.ElementById( roomId );
+            const QString runName = runConfig.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString();
+            const QString roomName = roomConfig.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString();
+
+            // Create check box item
+            QStandardItem* item = new QStandardItem(true);
+            item->setCheckable(true);
+            item->setCheckState(Qt::Unchecked);
+            tableModel->setItem(n, TABLE_COL_USE, item);
+
+            // Create text item(s)
+            tableModel->setItem(n, TABLE_COL_RUN, new QStandardItem(runName));
+            tableModel->setItem(n, TABLE_COL_ROOM, new QStandardItem(roomName));
         }
-        const WbConfig roomConfig = roomsCollection.ElementById( roomId );
-        const QString runName = runConfig.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString();
-        const QString roomName = roomConfig.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString();
-
-        // Create check box item
-        QStandardItem* item = new QStandardItem(true);
-        item->setCheckable(true);
-        item->setCheckState(Qt::Unchecked);
-        tableModel->setItem(n, TABLE_COL_USE, item);
-
-        // Create text item(s)
-        tableModel->setItem(n, TABLE_COL_RUN, new QStandardItem(runName));
-        tableModel->setItem(n, TABLE_COL_ROOM, new QStandardItem(roomName));
-
     }
+
 
     // resize header column
     m_ui->m_runsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-
     // Set model
     m_ui->m_runsTable->setModel( tableModel );
-    m_ui->m_analyseBtn->setEnabled(true);
-    m_ui->m_selectAllCheckBox->setEnabled(true);
-    m_ui->m_passCapSpinBox->setEnabled(true);
 
-    if ( m_ui->m_selectAllCheckBox->isChecked() )
+    // only enable buttons if there are relevant runs
+    if ( relevantRuns > 0 )
     {
-        SelectAllCheckBoxChecked( Qt::Checked );
+        m_ui->m_analyseBtn->setEnabled(true);
+        m_ui->m_selectAllCheckBox->setEnabled(true);
+        m_ui->m_passCapSpinBox->setEnabled(true);
+
+        if ( m_ui->m_selectAllCheckBox->isChecked() )
+        {
+            SelectAllCheckBoxChecked( Qt::Checked );
+        }
     }
+
 }
 
 void CollateResultsWidget::AnalyseResultsButtonClicked()
