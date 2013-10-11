@@ -45,16 +45,16 @@ public:
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
 
+private slots:
+    void LoadDataButtonClicked();
+    void PostProcessButtonClicked();
+    void ToggleItemTriggered();
+
 private:
     const KeyId GetRoomIdToCapture() const;
-
     void ShowNoRoomError();
-
     virtual const QString GetSubSchemaDefaultFileName() const;
-
     const WbSchema CreateSchema();
-
-private:
     const ExitStatus::Flags PostProcess( const WbConfig& postProcConfig,
                                          char*           trackerResultsCsvFile,
                                          char*           trackerResultsTxtFile,
@@ -75,15 +75,8 @@ private:
                        char*                   floorPlanFile,
                        char*                   trackerResultsImgFile );
 
-private slots:
-    void LoadDataButtonClicked();
-    void PostProcessButtonClicked();
 
-    void ToggleItemTriggered();
-
-private:
     Ui::PostProcessWidget* m_ui;
-
     TrackModel *m_resultsModel;
     QItemSelectionModel *m_selectionModel;
 };

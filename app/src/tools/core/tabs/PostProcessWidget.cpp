@@ -179,11 +179,9 @@ void PostProcessWidget::LoadDataButtonClicked()
 void PostProcessWidget::ToggleItemTriggered()
 {
     QModelIndexList indexList = m_selectionModel->selectedRows();
-
     foreach (QModelIndex index, indexList)
     {
         bool value = m_resultsModel->data(m_resultsModel->index(index.row(), 0), TrackModel::IS_DELETED).toBool();
-
         m_resultsModel->setData(index, QVariant(!value), TrackModel::IS_DELETED);
     }
 }
