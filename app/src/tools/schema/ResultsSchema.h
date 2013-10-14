@@ -25,6 +25,7 @@ namespace ResultsSchema
 {
     extern const KeyName schemaName;
     extern const KeyName roomIdKey;
+    extern const KeyName passCapKey;
 }
 
 #endif // RESULTSSCHEMA_H_

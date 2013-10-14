@@ -25,6 +25,7 @@
 #include "RoomsCollection.h"
 #include "RoomLayoutSchema.h"
 #include "RunSchema.h"
+#include "ResultsSchema.h"
 
 #include "WbConfigTools.h"
 #include "WbDefaultKeys.h"
@@ -58,6 +59,8 @@
 #define MAX_PATH 255
 #endif
 
+static const int MAX_PASS_CAP_DEFAULT = 10;
+
 CollateResultsWidget::CollateResultsWidget( QWidget* parent ) :
     Tool( parent, CreateSchema() ),
     m_ui( new Ui::CollateResultsWidget )
@@ -76,6 +79,7 @@ CollateResultsWidget::CollateResultsWidget( QWidget* parent ) :
                       SIGNAL( stateChanged(int) ),
                       this,
                       SLOT( SelectAllCheckBoxChecked(int) ) );
+    AddMapper(ResultsSchema::passCapKey, m_ui->m_passCapSpinBox);
 }
 
 CollateResultsWidget::~CollateResultsWidget()
@@ -105,6 +109,9 @@ const WbSchema CollateResultsWidget::CreateSchema()
 
     schema.AddSingleValueKey( KeyName( "room" ),
                               WbSchemaElement::Multiplicity::One );
+    schema.AddSingleValueKey( KeyName( "passCap"),
+                              WbSchemaElement::Multiplicity::One,
+                              KeyValue::from(MAX_PASS_CAP_DEFAULT));
     return schema;
 }
 
@@ -165,7 +172,6 @@ void CollateResultsWidget::LoadRunsButtonClicked()
         }
     }
 
-
     // resize header column
     m_ui->m_runsTable->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     // Set model
@@ -182,6 +188,12 @@ void CollateResultsWidget::LoadRunsButtonClicked()
         {
             SelectAllCheckBoxChecked( Qt::Checked );
         }
+    }
+    else
+    {
+        m_ui->m_analyseBtn->setEnabled(false);
+        m_ui->m_selectAllCheckBox->setEnabled(false);
+        m_ui->m_passCapSpinBox->setEnabled(false);
     }
 
 }

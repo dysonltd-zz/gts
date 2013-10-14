@@ -20,6 +20,7 @@
 
 namespace ResultsSchema
 {
-    const KeyName schemaName( "resultParams" );
-    const KeyName roomIdKey ( "roomId" );
+    const KeyName schemaName    ( "resultParams" );
+    const KeyName roomIdKey     ( "roomId" );
+    const KeyName passCapKey    ( "passCap" );
 }
