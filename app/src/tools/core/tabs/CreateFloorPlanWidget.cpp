@@ -495,12 +495,17 @@ void CreateFloorPlanWidget::RotateBtnClicked()
 
     cvReleaseMat( &rotMat );
 #else
-    cv::Mat imgCpy = rotateImage( m_cam2Img, 0, cv::Rect(0, 0, m_cam2Img->width, m_cam2Img->height), 90.0 );
+    IplImage *imageRotated = cvCloneImage(m_cam2Img);
+    CvMat* rot_mat = cvCreateMat(2,3,CV_32FC1);
 
+    // Compute rotation matrix
+    CvPoint2D32f center = cvPoint2D32f( cvGetSize(imageRotated).width/2, cvGetSize(imageRotated).height/2 );
+    cv2DRotationMatrix( center, 90.0, 1, rot_mat );
+
+    // Do the transformation
+    cvWarpAffine( m_cam2Img, imageRotated, rot_mat );
     cvReleaseImage( &m_cam2Img );
-
-    IplImage ipl_imgCpy  = IplImage(imgCpy);
-    m_cam2Img = cvCloneImage( &ipl_imgCpy );
+    m_cam2Img = cvCloneImage( imageRotated );
 #endif
 
     ShowImage( m_cam2Img, m_ui->m_liveView2 );
