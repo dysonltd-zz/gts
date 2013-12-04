@@ -53,9 +53,9 @@ struct VideoSourceAndCameraPosition
     std::auto_ptr<VideoSource> videoSource;
     KeyId                      cameraPositionId;
 
-    VideoSourceAndCameraPosition( VideoSource* vs, const KeyId& camPosId ) :
-        videoSource( vs ),
-        cameraPositionId( camPosId )
+    VideoSourceAndCameraPosition(VideoSource* vs, const KeyId& camPosId) :
+        videoSource(vs),
+        cameraPositionId(camPosId)
     {}
 };
 
@@ -72,7 +72,7 @@ typedef std::vector<std::unique_ptr<VideoSourceAndCameraPosition> > VideoSources
  *  @todo Make a 'return-to-default' option for frame rate
  *  @todo display actual frame-rate somewhere
  *
- *  @note all cameras use the same frame rate ( or as close as possible ).
+ *  @note all cameras use the same frame rate (or as close as possible).
  *
  *  @todo Improve this:
  *  @note If one (or more) camera doesn't show a moving image,
@@ -92,15 +92,15 @@ class CaptureVideoWidget : public Tool
 #endif
 
 public:
-    explicit CaptureVideoWidget( CameraHardware& cameraHardware, QWidget* parent = 0 );
+    explicit CaptureVideoWidget(CameraHardware& cameraHardware, QWidget* parent = 0);
     ~CaptureVideoWidget();
 
-    virtual const QString Name() const { return tr( "Video Source" ); }
+    virtual const QString Name() const { return tr("Video Source"); }
     virtual bool CanClose() const;
     const QString CannotCloseReason() const;
 
 private slots:
-    void RecordButtonClicked( const bool shouldRecord );
+    void RecordButtonClicked(const bool shouldRecord);
     void CaptureLiveConnectDisconnectButtonClicked();
     void CaptureLoadResetButtonClicked();
 
@@ -110,7 +110,7 @@ private slots:
 private:
     void SetupUi();
     void ConnectSignals();
-    void AddLiveVideo( const CameraDescription& chosenCamera, const KeyId& camPosId );
+    void AddLiveVideo(const CameraDescription& chosenCamera, const KeyId& camPosId);
 
     const KeyId GetRoomIdToCapture() const;
     const QStringList GetCameraPositionIds(const KeyId& roomIdToCapture);
@@ -124,7 +124,7 @@ private:
     void StopVideoSources();
 
     void TryToGetOutputDirectoryAndStartRecording();
-    void StartRecordingInDirectory( const QString& outputDirectoryName );
+    void StartRecordingInDirectory(const QString& outputDirectoryName);
     void StopRecording();
 
     bool AnyViewIsRecording() const;
@@ -136,7 +136,7 @@ private:
 #endif
     void AddVideoFileConfigKey(const KeyId& camPosId, const QString& videoFileName, const QString &timestampFileName);
     void AddTableRow(QTableWidgetItem* tableItem);
-    void RemovePreviouslyChosenCameras( CameraApi::CameraList& connectedCameras );
+    void RemovePreviouslyChosenCameras(CameraApi::CameraList& connectedCameras);
     void RemoveAllVideoSources();
 
     void ShowNoRoomError();

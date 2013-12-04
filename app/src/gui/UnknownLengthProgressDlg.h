@@ -26,25 +26,62 @@
 #include <QtGui/QLabel>
 #include <QtGui/QCloseEvent>
 
+/**
+  @brief A dialog that displays an ever-loading loading bar, to be used
+  when you don't know how lunch an operation is going to take or
+  the stage of it's current progress.
+  **/
 class UnknownLengthProgressDlg : public QWidget
 {
     Q_OBJECT
 
 public:
-    UnknownLengthProgressDlg( QWidget* const parent = 0 );
+    /**
+      @brief Sets up layout and dialog items
+      @param parent Widget calling this dialog
+    **/
+    UnknownLengthProgressDlg(QWidget* const parent = 0);
 
-    void Start( const QString& title, const QString& message );
-    void Complete( const QString& title, const QString& message, const QString& filePath = "");
+    /**
+      @brief Starts the loading bar moving
+      @param title Text to place in title bar
+      @param message Text to display above loading bar
+     */
+    void Start(const QString& title, const QString& message);
+
+    /**
+      @brief Called after start. Replaces bar with title and text
+      @param title Text to place in title bar
+      @param message Text to display above loading bar
+      @param filePath Used if you wish to present file location of outputs
+      **/
+    void Complete(const QString& title, const QString& message, const QString& filePath = "");
     void ForceClose();
 
 protected:
-    virtual void closeEvent( QCloseEvent* event );
+    /**
+      @brief Handles the close event fired when a user quits the dialog
+      @param event Close event received from widget
+     **/
+    virtual void closeEvent(QCloseEvent* event);
 
 private slots:
+    /**
+      @brief Wrapper to call OS specific explorer/finder to display output if user presses 'Open'
+      @param dirPath File path to directory of relevant outputs
+     **/
     void ShowInGraphicalShell(const QString &dirPath);
 
 private:
-    void SetLabelText( const QString& message );
+    /**
+      @brief Relaces just the dialog's main message
+      @param message Text to be displayed
+     */
+    void SetLabelText(const QString& message);
+
+    /**
+      @brief Resizes widget accordingly
+     **/
     void AdjustGeometry();
 
     QProgressBar* m_bar;

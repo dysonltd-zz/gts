@@ -42,56 +42,56 @@ class CollectionToolWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit CollectionToolWidget( const QString&  userFriendlyElementName,
+    explicit CollectionToolWidget(const QString&  userFriendlyElementName,
                                    const WbSchema& collectionSchema,
                                    const WbSchema& elementSchema,
                                    QWidget* parent,
-                                   MainWindow* mainWindow );
+                                   MainWindow* mainWindow);
     ~CollectionToolWidget();
 
-    virtual bool TryToOpenTool( const WbConfig& config );
-    virtual void CallOnSelfAndActiveSubTools( ToolFunction& func );
+    virtual bool TryToOpenTool(const WbConfig& config);
+    virtual void CallOnSelfAndActiveSubTools(ToolFunction& func);
 
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
 
 protected:
-    void AddToolDetail( QLabel* const detailLabel, QWidget* const detailEntryBox );
-    void AddSubTool( ToolInterface* const subTool );
+    void AddToolDetail(QLabel* const detailLabel, QWidget* const detailEntryBox);
+    void AddSubTool(ToolInterface* const subTool);
 
-    void SetName( const QString& name );
+    void SetName(const QString& name);
     Collection GetCollection() const;
 
-    void ReloadAll( const WbConfig& configToUse );
+    void ReloadAll(const WbConfig& configToUse);
 
-    virtual void UpdateToolMenu( QMenu& toolMenu );
+    virtual void UpdateToolMenu(QMenu& toolMenu);
 
-    virtual void SetEnabled(const bool shouldEnable );
+    virtual void SetEnabled(const bool shouldEnable);
 
     virtual void hideEvent(QHideEvent*);
     virtual void showEvent(QShowEvent*);
 
-    virtual void AddExtraNewElementWizardPages( NewElementWizard* const wizard );
-    virtual void AddExtraRenameElementWizardPages( RenameElementWizard* const wizard );
+    virtual void AddExtraNewElementWizardPages(NewElementWizard* const wizard);
+    virtual void AddExtraRenameElementWizardPages(RenameElementWizard* const wizard);
 
-    virtual void SetToolSpecificConfigItems( WbConfig newElement,
-                                             NewElementWizard& wizard );
-    virtual void SetToolSpecificConfigItems( WbConfig newElement,
-                                             RenameElementWizard& wizard );
+    virtual void SetToolSpecificConfigItems(WbConfig newElement,
+                                             NewElementWizard& wizard);
+    virtual void SetToolSpecificConfigItems(WbConfig newElement,
+                                             RenameElementWizard& wizard);
 
-    static const WbSchema CreateElementWorkbenchSubSchema( const KeyName& schemaName,
-                                                           const QString& defaultName );
+    static const WbSchema CreateElementWorkbenchSubSchema(const KeyName& schemaName,
+                                                           const QString& defaultName);
 
 private slots:
-    void NameComboActivated( const int comboIndex );
+    void NameComboActivated(const int comboIndex);
     void NewElement();
     void RenameElement();
     void DeleteElement();
 
 private:
-    void CreateSubToolTabs( MainWindow* const mainWindow );
-    void ReloadToElement( const KeyId& elementId );
-    void ReloadToConfig( const WbConfig newConfig );
+    void CreateSubToolTabs(MainWindow* const mainWindow);
+    void ReloadToElement(const KeyId& elementId);
+    void ReloadToConfig(const WbConfig newConfig);
     void ReloadToCollection();
 
     NewElementWizard* const CreateNewElementWizard();
@@ -106,8 +106,8 @@ private:
 
     const WbConfig GetElementConfig() const;
 
-    static const WbSchema CreateCombinedSchema( const WbSchema& collectionSchema,
-                                                const WbSchema& elementSchema );
+    static const WbSchema CreateCombinedSchema(const WbSchema& collectionSchema,
+                                                const WbSchema& elementSchema);
 
     const QString  m_userFriendlyElementName;
     const WbSchema m_collectionSchema;

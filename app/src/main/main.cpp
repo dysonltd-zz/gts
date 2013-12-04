@@ -23,7 +23,6 @@
 #include "CameraDescription.h"
 #include "GTSApplication.h"
 #include "Version.h"
-
 #include "Logging.h"
 
 #include <QVariant>
@@ -32,15 +31,15 @@
 
 namespace
 {
-    void InitialiseMessageHandler( MainWindow& mainWindow )
+    void InitialiseMessageHandler(MainWindow& mainWindow)
     {
-        Message::SetHandler( std::unique_ptr< MessageHandler >( new QtMessageHandler( mainWindow ) ) );
+        Message::SetHandler(std::unique_ptr< MessageHandler >(new QtMessageHandler(mainWindow)));
     }
 }
 
-int main( int argc, char** argv )
+int main(int argc, char** argv)
 {
-    GTSApplication app( argc, argv );
+    GTSApplication app(argc, argv);
 
     QCoreApplication::setOrganizationName("GTS");
     QCoreApplication::setApplicationName("Ground Truth System");
@@ -51,7 +50,7 @@ int main( int argc, char** argv )
 
     MainWindow mainWindow;
 
-    InitialiseMessageHandler( mainWindow );
+    InitialiseMessageHandler(mainWindow);
 
     mainWindow.Start();
 

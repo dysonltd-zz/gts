@@ -26,7 +26,7 @@
 
 class TrackEntry
 {
-    friend TrackEntry Interpolate( TrackEntry a, TrackEntry b, float w );
+    friend TrackEntry Interpolate(TrackEntry a, TrackEntry b, float w);
 
 public:
     TrackEntry() :
@@ -39,7 +39,7 @@ public:
     {
 	};
 
-    TrackEntry( CvPoint2D32f pos, float angle, float error, double time, float wgm ) :
+    TrackEntry(CvPoint2D32f pos, float angle, float error, double time, float wgm) :
       m_robotPosition         (pos),
       m_robotAngle            (angle),
       m_nccError              (error),
@@ -49,7 +49,7 @@ public:
     {
 	};
 
-    TrackEntry( CvPoint2D32f pos, float angle, float error, double time, std::string &str ) :
+    TrackEntry(CvPoint2D32f pos, float angle, float error, double time, std::string &str) :
       m_robotPosition         (pos),
       m_robotAngle            (angle),
       m_nccError              (error),
@@ -112,13 +112,13 @@ public:
 
     float GetWeighting() const { return m_warpGradientMagnitude*(m_nccError+1.0f)*0.5f; }; ///< Return the weight to be used in averaging.
 
-    void SetPosition( CvPoint2D32f v ) { m_robotPosition = v; };
-    void SetOrientation( float v )     { m_robotAngle = v; };
-    void SetNccError( float v )        { m_nccError = v; };
-    void SetTimeStamp( double v )      { m_timeStamp = v; };
-    void SetWarpGradMag( float v )     { m_warpGradientMagnitude = v; };
+    void SetPosition(CvPoint2D32f v) { m_robotPosition = v; };
+    void SetOrientation(float v)     { m_robotAngle = v; };
+    void SetNccError(float v)        { m_nccError = v; };
+    void SetTimeStamp(double v)      { m_timeStamp = v; };
+    void SetWarpGradMag(float v)     { m_warpGradientMagnitude = v; };
 
-    //static TrackEntry Break() { return TrackEntry( cvPoint2D32f(0.f,0.f),-1000.f,0.f,-10000.0 ); };
+    //static TrackEntry Break() { return TrackEntry(cvPoint2D32f(0.f,0.f),-1000.f,0.f,-10000.0); };
     //bool IsBreak() const { return (m_angle < -900.f); };
 
 private:
@@ -129,9 +129,9 @@ private:
     std::string* m_additionalInfo;        ///< additional information - e.g. img name
     float        m_warpGradientMagnitude; ///< warp gradient magnitude at tracked point
 
-    inline void CopyStr( const std::string* str )
+    inline void CopyStr(const std::string* str)
     {
-        if ( str )
+        if (str)
         {
             if(!m_additionalInfo)
                 m_additionalInfo = new std::string(*str);
@@ -150,13 +150,13 @@ namespace TrackHistory
 {
     typedef std::vector<TrackEntry> TrackLog;
 
-    bool WriteHistoryLog( const char* filename, const TrackLog& hist );
-    bool WriteHistoryCsv( const char* filename, const TrackLog& hist );
+    bool WriteHistoryLog(const char* filename, const TrackLog& hist);
+    bool WriteHistoryCsv(const char* filename, const TrackLog& hist);
 
-    bool ReadHistoryLog( const char* filename, TrackLog& hist );
-    bool ReadHistoryCsv( const char* filename, TrackLog& hist );
+    bool ReadHistoryLog(const char* filename, TrackLog& hist);
+    bool ReadHistoryCsv(const char* filename, TrackLog& hist);
 
-    TrackEntry InterpolateEntries( TrackEntry a, TrackEntry b, float w );
+    TrackEntry InterpolateEntries(TrackEntry a, TrackEntry b, float w);
 }
 
 #endif // TRACKHISTORY_H

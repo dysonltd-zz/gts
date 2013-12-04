@@ -18,11 +18,11 @@
 
 #include "WbSchemaElement.h"
 
-WbSchemaElement::WbSchemaElement( const KeyName& name,
+WbSchemaElement::WbSchemaElement(const KeyName& name,
                                   const Multiplicity::Type& muliplicity)
     :
-    m_keyName( name ),
-    m_muliplicity( muliplicity )
+    m_keyName(name),
+    m_muliplicity(muliplicity)
 {}
 
 WbSchemaElement::~WbSchemaElement() {}

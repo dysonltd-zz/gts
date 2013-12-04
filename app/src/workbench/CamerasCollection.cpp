@@ -22,6 +22,6 @@
 
 Collection CamerasCollection()
 {
-    return Collection( KeyName( "cameras" ), CameraSchema::schemaName );
+    return Collection(KeyName("cameras"), CameraSchema::schemaName);
 }
 

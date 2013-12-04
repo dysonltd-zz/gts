@@ -30,11 +30,10 @@
 
 class WbConfig;
 
-/** @brief Class to calculate the intrinsic parameters of a camera.
- *
- *  Adapted from opencv/samples/c/calibration.cpp
- *
-*/
+/**
+ @brief Class to calculate the intrinsic parameters of a camera.
+ Adapted from opencv/samples/c/calibration.cpp
+**/
 
 class CalibrationAlgorithm
 {
@@ -42,22 +41,20 @@ public:
     CalibrationAlgorithm();
     ~CalibrationAlgorithm();
 
-    bool Run( WbConfig config );
+    bool Run(WbConfig config);
 
 private:
     typedef std::vector< cv::Point2f > PointsVec2D;
     typedef std::vector< cv::Point3f > PointsVec3D;
 
-    void SetupParameters( const WbConfig& config );
+    void SetupParameters(const WbConfig& config);
 
-    bool RunCalibration( const cv::Size& imgSize );
-    double ComputeReprojectionError( const std::vector< cv::Mat >& rotationVectors,
-                                     const std::vector< cv::Mat >& translationVectors );
+    bool RunCalibration(const cv::Size& imgSize);
+    double ComputeReprojectionError(const std::vector< cv::Mat >& rotationVectors,
+                                    const std::vector< cv::Mat >& translationVectors);
     void InitialisePointMatrices();
 
-    void SaveCalibrationResults( WbConfig config,
-                                 const CvSize& imgSize,
-                                 const bool wasSuccessful );
+    void SaveCalibrationResults(WbConfig config, const CvSize& imgSize, const bool wasSuccessful);
     void CalculateInverseDistortionParameters();
 
     int NumInputImages() const;
@@ -65,21 +62,27 @@ private:
     const size_t NumImagesWithCorners() const;
     int NumGridPoints() const;
 
-    void CalculateCameraSpaceGridCoords( const std::vector< cv::Mat >& rot_vects,
-                                         const std::vector< cv::Mat >& trans_vects );
+    void CalculateCameraSpaceGridCoords(const std::vector< cv::Mat >& rot_vects,
+                                        const std::vector< cv::Mat >& trans_vects);
 
-    bool TryToCapturePoints( const WbConfig& config,
-                                   cv::Size& imgSize );
+    bool TryToCapturePoints(const WbConfig& config, cv::Size& imgSize);
 
-    IplImage* const TryToLoadImage( const WbConfig& config,
-                                    const int       imgIndex ) const;
+    IplImage* const TryToLoadImage(const WbConfig& config, const int imgIndex) const;
+    //std::shared_ptr<cv::Mat> const TryToLoadImage(const WbConfig& config, const int imgIndex) const;
 
-    void FlipImageIfNecessary( IplImage& image ) const;
+    void FlipImageIfNecessary(IplImage& image) const;
+    void FlipImageIfNecessary(cv::Mat& image) const;
 
-    bool TryToFindImagePoints( IplImage& image, PointsVec2D& imagePoints,
-                                     const int imageIndex ) const;
+    bool TryToFindImagePoints(IplImage& image,
+                              PointsVec2D& imagePoints,
+                              const int imageIndex) const;
 
-    void ImproveCornerAccuracy( IplImage& image, PointsVec2D& imagePoints );
+    bool TryToFindImagePoints(cv::Mat& image,
+                              PointsVec2D& imagePoints,
+                              const int imageIndex) const;
+
+    void ImproveCornerAccuracy(IplImage& image, PointsVec2D& imagePoints);
+    void ImproveCornerAccuracy(cv::Mat& image, PointsVec2D& imagePoints);
 
 
     cv::Size                     m_gridSize;
@@ -91,6 +94,7 @@ private:
     std::vector< KeyId >         m_imageWithCornersIds;
 
     typedef CvPoint2D32f PointType;
+    //typedef cv::Point2f PointType // new C++ API
 
     std::vector<double> m_reprojectionErrors;
     std::unique_ptr<cv::Mat> m_cameraMtx;

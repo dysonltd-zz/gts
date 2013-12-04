@@ -33,7 +33,7 @@ namespace CrossCorrelation
 	    unsigned char pData[PATCH_SIZE];
     };
 
-    float Ncc2d( const IplImage*,
+    float Ncc2d(const IplImage*,
                  const IplImage*,
                  int x1,
                  int y1,
@@ -42,7 +42,7 @@ namespace CrossCorrelation
                  int w,
                  int h);
 
-    float Ncc2dRadial( const IplImage*,
+    float Ncc2dRadial(const IplImage*,
                        const IplImage*,
                        int x1,
                        int y1,
@@ -53,7 +53,7 @@ namespace CrossCorrelation
 
     void GetPatch(Patch* patch);
 
-    float NccPatch( const IplImage* img, int x1, int y1, const unsigned char* patch, int width, int height);
+    float NccPatch(const IplImage* img, int x1, int y1, const unsigned char* patch, int width, int height);
 }
 
 #endif // CROSSCORRELATION_H

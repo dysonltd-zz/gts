@@ -18,14 +18,14 @@
 
 #include "ScopedQtSignalsBlocker.h"
 
-ScopedQtSignalsBlocker::ScopedQtSignalsBlocker( QObject& objectToBlock )
+ScopedQtSignalsBlocker::ScopedQtSignalsBlocker(QObject& objectToBlock)
 :
-m_objectToBlock( objectToBlock ),
-m_previousBlockState( objectToBlock.blockSignals( true ) )
+m_objectToBlock(objectToBlock),
+m_previousBlockState(objectToBlock.blockSignals(true))
 {
 }
 
 ScopedQtSignalsBlocker::~ScopedQtSignalsBlocker()
 {
-    m_objectToBlock.blockSignals( m_previousBlockState );
+    m_objectToBlock.blockSignals(m_previousBlockState);
 }

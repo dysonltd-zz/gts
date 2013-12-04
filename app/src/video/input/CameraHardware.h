@@ -36,7 +36,7 @@ public:
     const CameraApi::CameraList EnumerateConnectedCameras() const;
 
     const CameraDescription
-    GetCameraDescriptionFromUniqueId( const std::wstring& uniqueId ) const;
+    GetCameraDescriptionFromUniqueId(const std::wstring& uniqueId) const;
 
 private:
     std::vector< std::unique_ptr< CameraApi > > m_apis;

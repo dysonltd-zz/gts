@@ -20,26 +20,26 @@
 
 namespace ChessboardImage
 {
-    const QImage CreateImage( const int rows,
+    const QImage CreateImage(const int rows,
                               const int cols,
-                              const int squareSizePxls )
+                              const int squareSizePxls)
     {
-        QImage img( cols*squareSizePxls, rows*squareSizePxls, QImage::Format_Mono );
+        QImage img(cols*squareSizePxls, rows*squareSizePxls, QImage::Format_Mono);
 
-        for ( int r = 0; r < rows; ++r )
+        for (int r = 0; r < rows; ++r)
         {
             bool black = r % 2;
 
-            for ( int c = 0; c < cols; ++c )
+            for (int c = 0; c < cols; ++c)
             {
                 uint colour = black ? 0 : 1;
                 black = !black;
 
-                for ( int imgX = c*squareSizePxls; imgX < (c+1)*squareSizePxls; ++imgX )
+                for (int imgX = c*squareSizePxls; imgX < (c+1)*squareSizePxls; ++imgX)
                 {
-                    for ( int imgY = r*squareSizePxls; imgY < (r+1)*squareSizePxls; ++imgY )
+                    for (int imgY = r*squareSizePxls; imgY < (r+1)*squareSizePxls; ++imgY)
                     {
-                        img.setPixel( imgX, imgY, colour );
+                        img.setPixel(imgX, imgY, colour);
                     }
                 }
             }

@@ -20,6 +20,7 @@
 #define CAPTURELIVEBTNCONTROLLER_H_
 
 #include <QtGui/QPushButton>
+
 #include <memory>
 
 #if defined(__MINGW32__) || defined(__GNUC__)
@@ -45,15 +46,15 @@ class CaptureLiveBtnController : public QObject
 #endif
     Q_OBJECT
 public:
-    CaptureLiveBtnController( QPushButton&    captureLiveBtn,
+    CaptureLiveBtnController(QPushButton&    captureLiveBtn,
                               QPushButton&    captureCancelBtn,
                               Tool&           toolWidget,
-                              CameraHardware& cameraHardware );
+                              CameraHardware& cameraHardware);
 
-    const QString CaptureLiveBtnClicked( const WbConfig& cameraConfig,
+    const QString CaptureLiveBtnClicked(const WbConfig& cameraConfig,
                                          const QString& newImageFileNameFormat,
 #if defined(__MINGW32__) || defined(__GNUC__)
-										 CreateStreamViewCallback* createStreamView  );
+										 CreateStreamViewCallback* createStreamView );
 #else
                                          CreateStreamViewCallback createStreamView);
 #endif
@@ -65,13 +66,12 @@ private:
     void TryToStartStreamingLiveSource(
         const WbConfig& cameraConfig,
 #if defined(__MINGW32__) || defined(__GNUC__)
-		std::auto_ptr< CreateStreamViewCallback > createStreamView );
+		std::auto_ptr< CreateStreamViewCallback > createStreamView);
 #else
         CreateStreamViewCallback createStreamView);
 #endif
 
-    const QString CaptureImageAndStopStreamingLiveSource(
-                                const QString& newImageFileNameFormat );
+    const QString CaptureImageAndStopStreamingLiveSource(const QString& newImageFileNameFormat);
 
     QPushButton& m_captureLiveBtn;
     QPushButton& m_captureCancelBtn;

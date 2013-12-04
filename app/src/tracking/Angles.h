@@ -24,22 +24,22 @@
 namespace Angles
 {
     // Calculates poses of th2 at the times of th1 - dt, returns poses at res
-    void InterpolatePose( double dt,
+    void InterpolatePose(double dt,
                           TrackHistory::TrackLog *th1,
                           TrackHistory::TrackLog *th2,
-                          TrackHistory::TrackLog *res );
+                          TrackHistory::TrackLog *res);
 
-    double NormAngle( double fi );///< normalize angle to (-pi,pi>
+    double NormAngle(double fi);///< normalize angle to (-pi,pi>
 
-    double DiffAngle( double a, double b );///< calculate the shorter difference between 2 angles
+    double DiffAngle(double a, double b);///< calculate the shorter difference between 2 angles
 
     //interpolate; set angle=true for angles
-    double Interpolate( double t1,
+    double Interpolate(double t1,
                         double v1,
                         double t2,
                         double v2,
                         double t,
-                        bool angle );
+                        bool angle);
 }
 
 #endif // ANGLES_H

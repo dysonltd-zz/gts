@@ -25,10 +25,10 @@
 class FileSeq
 {
 public:
-	FileSeq( const char* prefix, const char* postfix );
+	FileSeq(const char* prefix, const char* postfix);
 	~FileSeq();
 	
-	const char* Make( unsigned int index );
+	const char* Make(unsigned int index);
 	const char* Get() const { return m_name; };
 
 private:

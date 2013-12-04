@@ -28,9 +28,9 @@
 
 #include <iostream>
 
-Workbench::Workbench( QTreeWidget& treeWidget, ToolContainer& toolContainer ) :
-    m_treeWidget      ( treeWidget ),
-    m_toolContainer   ( toolContainer ),
+Workbench::Workbench(QTreeWidget& treeWidget, ToolContainer& toolContainer) :
+    m_treeWidget      (treeWidget),
+    m_toolContainer   (toolContainer),
     m_handlerTools    (),
     m_workbenchConfig ()
 {
@@ -40,32 +40,32 @@ Workbench::~Workbench()
 {
 }
 
-bool Workbench::Open( const QFileInfo& configFileInfo )
+bool Workbench::Open(const QFileInfo& configFileInfo)
 {
-    WbConfig openedConfig( m_schema, configFileInfo );
+    WbConfig openedConfig(m_schema, configFileInfo);
 
     XmlConfigFileReader reader;
-    QFile configFile( configFileInfo.absoluteFilePath() );
+    QFile configFile(configFileInfo.absoluteFilePath());
 
-    bool successful = openedConfig.ReadUsing( reader );
+    bool successful = openedConfig.ReadUsing(reader);
 
-    if ( successful )
+    if (successful)
     {
-        SwitchConfig( openedConfig );
+        SwitchConfig(openedConfig);
     }
 
     return successful;
 }
 
-bool Workbench::New( const QFileInfo& configFileInfo )
+bool Workbench::New(const QFileInfo& configFileInfo)
 {
-    WbConfig newConfig( m_schema, configFileInfo );
+    WbConfig newConfig(m_schema, configFileInfo);
 
-    const bool successful = TryWriteConfig( newConfig );
+    const bool successful = TryWriteConfig(newConfig);
 
-    if ( successful )
+    if (successful)
     {
-        SwitchConfig( newConfig );
+        SwitchConfig(newConfig);
     }
 
     return successful;
@@ -78,14 +78,14 @@ bool Workbench::Save()
     if (!m_toolContainer.ActiveToolCanClose())
         return false;
 
-    return TryWriteConfig( m_workbenchConfig );
+    return TryWriteConfig(m_workbenchConfig);
 }
 
-bool Workbench::TryWriteConfig( const WbConfig& config )
+bool Workbench::TryWriteConfig(const WbConfig& config)
 {
     XmlConfigFileWriter writer;
-    QFile configFile( config.GetAbsoluteFileInfo().absoluteFilePath() );
-    return config.WriteUsing( writer );
+    QFile configFile(config.GetAbsoluteFileInfo().absoluteFilePath());
+    return config.WriteUsing(writer);
 }
 
 const WbSchema Workbench::Schema() const
@@ -97,25 +97,25 @@ void Workbench::ReloadConfig()
 {
     m_treeWidget.clear();
 
-    m_workbenchConfig.AddTo( m_treeWidget );
+    m_workbenchConfig.AddTo(m_treeWidget);
 }
 
-void Workbench::SwitchConfig( const WbConfig& newConfig )
+void Workbench::SwitchConfig(const WbConfig& newConfig)
 {
     m_workbenchConfig = newConfig;
 
     ReloadConfig();
 
-    m_workbenchConfig.SetListener( &m_configListener );
+    m_workbenchConfig.SetListener(&m_configListener);
 }
 
-bool Workbench::ActivateToolFor( const QTreeWidgetItem& newItem )
+bool Workbench::ActivateToolFor(const QTreeWidgetItem& newItem)
 {
     bool succeeded = false;
-    if ( m_toolContainer.ActiveToolCanClose() )
+    if (m_toolContainer.ActiveToolCanClose())
     {
-        const WbConfig itemsConfig( WbConfig::FromTreeItem( newItem ) );
-        succeeded = m_toolContainer.TryToOpenTool( itemsConfig );
+        const WbConfig itemsConfig(WbConfig::FromTreeItem(newItem));
+        succeeded = m_toolContainer.TryToOpenTool(itemsConfig);
     }
     else
     {
@@ -125,7 +125,7 @@ bool Workbench::ActivateToolFor( const QTreeWidgetItem& newItem )
     return succeeded;
 }
 
-void Workbench::SetSchema( const WbSchema& newSchema )
+void Workbench::SetSchema(const WbSchema& newSchema)
 {
     m_schema = newSchema;
 }

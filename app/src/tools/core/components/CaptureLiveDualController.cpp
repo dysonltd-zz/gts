@@ -37,51 +37,51 @@
 
 namespace
 {
-    void DisableAllChildrenExcept( QList<QWidget*> const childrenToKeepEnabled,
-                                   QWidget* const parentWidget )
+    void DisableAllChildrenExcept(QList<QWidget*> const childrenToKeepEnabled,
+                                   QWidget* const parentWidget)
     {
-        if ( parentWidget )
+        if (parentWidget)
         {
-            foreach( QWidget* childWidget, parentWidget->findChildren< QWidget* >() )
+            foreach(QWidget* childWidget, parentWidget->findChildren< QWidget* >())
             {
-                childWidget->setEnabled( false );
+                childWidget->setEnabled(false);
             }
-            foreach( QWidget* widgetToReEnable, childrenToKeepEnabled )
+            foreach(QWidget* widgetToReEnable, childrenToKeepEnabled)
             {
-                while ( widgetToReEnable != 0 )
+                while (widgetToReEnable != 0)
                 {
-                    widgetToReEnable->setEnabled( true );
+                    widgetToReEnable->setEnabled(true);
                     widgetToReEnable = widgetToReEnable->parentWidget();
                 }
             }
         }
     }
 
-    void EnableAllChildren( QWidget* const parentWidget )
+    void EnableAllChildren(QWidget* const parentWidget)
     {
-        if ( parentWidget )
+        if (parentWidget)
         {
-            foreach( QWidget* childWidget, parentWidget->findChildren< QWidget* >() )
+            foreach(QWidget* childWidget, parentWidget->findChildren< QWidget* >())
             {
-                childWidget->setEnabled( true );
+                childWidget->setEnabled(true);
             }
         }
     }
 }
 
-CaptureLiveDualController::CaptureLiveDualController( QPushButton&    captureLiveBtn,
+CaptureLiveDualController::CaptureLiveDualController(QPushButton&    captureLiveBtn,
                                                       QPushButton&    captureCancelBtn,
                                                       Tool&           toolWidget,
-                                                      CameraHardware& cameraHardware ) :
-    m_captureLiveBtn  ( captureLiveBtn ),
-    m_captureCancelBtn( captureCancelBtn ),
-    m_toolWidget      ( toolWidget ),
-    m_capturingLive   ( false ),
-    m_cameraHardware  ( cameraHardware ),
+                                                      CameraHardware& cameraHardware) :
+    m_captureLiveBtn  (captureLiveBtn),
+    m_captureCancelBtn(captureCancelBtn),
+    m_toolWidget      (toolWidget),
+    m_capturingLive   (false),
+    m_cameraHardware  (cameraHardware),
     m_videoSource1    (),
     m_videoSource2    (),
-    m_liveView1       ( 0 ),
-    m_liveView2       ( 0 )
+    m_liveView1       (0),
+    m_liveView2       (0)
 {
 }
 
@@ -89,33 +89,33 @@ CaptureLiveDualController::CaptureLiveDualController( QPushButton&    captureLiv
     CaptureLiveDualController::~CaptureLiveDualController() = default;
 #endif
 
-bool CaptureLiveDualController::CaptureLiveBtnClicked( const WbConfig& cameraConfig1,
+bool CaptureLiveDualController::CaptureLiveBtnClicked(const WbConfig& cameraConfig1,
                                                              const WbConfig& cameraConfig2,
                                                              const QString& newImageFileNameFormat,
 #if defined(__MINGW32__) || defined(__GNUC__)
 															 CreateStreamViewCallback* createStreamView1,
-															 CreateStreamViewCallback* createStreamView2 )
+															 CreateStreamViewCallback* createStreamView2)
 #else
                                                              CreateStreamViewCallback createStreamView1,
-                                                             CreateStreamViewCallback createStreamView2 )
+                                                             CreateStreamViewCallback createStreamView2)
 #endif
 {
 
     bool captured = false;
 
-    if ( CurrentlyStreamingLiveSource() )
+    if (CurrentlyStreamingLiveSource())
     {
-        captured = CaptureImageAndStopStreamingLiveSource( newImageFileNameFormat );
+        captured = CaptureImageAndStopStreamingLiveSource(newImageFileNameFormat);
     }
     else
     {
 #if defined(__MINGW32__) || defined(__GNUC__)
-        TryToStartStreamingLiveSource( cameraConfig1,
+        TryToStartStreamingLiveSource(cameraConfig1,
 		                               cameraConfig2,
                                        std::unique_ptr< CreateStreamViewCallback >(
-                                                       createStreamView1 ),
+                                                       createStreamView1),
                                        std::unique_ptr< CreateStreamViewCallback >(
-                                                       createStreamView2 ) );
+                                                       createStreamView2));
 #else
         TryToStartStreamingLiveSource(cameraConfig1,
                                       cameraConfig2,
@@ -125,13 +125,13 @@ bool CaptureLiveDualController::CaptureLiveBtnClicked( const WbConfig& cameraCon
     }
 
     // NB: we need to check if Starting succeeded
-    if ( CurrentlyStreamingLiveSource() )
+    if (CurrentlyStreamingLiveSource())
     {
-        m_captureLiveBtn.setText( tr( "&Capture" ) );
+        m_captureLiveBtn.setText(tr("&Capture"));
     }
     else
     {
-        m_captureLiveBtn.setText( tr( "Li&ve" ) );
+        m_captureLiveBtn.setText(tr("Li&ve"));
         m_captureLiveBtn.setEnabled(false);
     }
 
@@ -140,14 +140,14 @@ bool CaptureLiveDualController::CaptureLiveBtnClicked( const WbConfig& cameraCon
 
 const void CaptureLiveDualController::CaptureCancelBtnClicked()
 {
-    if ( CurrentlyStreamingLiveSource() )
+    if (CurrentlyStreamingLiveSource())
     {
         m_videoSource1.reset();
         m_videoSource2.reset();
-        m_liveView1->SetCaption( "" );
-        m_liveView2->SetCaption( "" );
+        m_liveView1->SetCaption("");
+        m_liveView2->SetCaption("");
 
-        m_captureLiveBtn.setText( tr( "Li&ve" ) );
+        m_captureLiveBtn.setText(tr("Li&ve"));
     }
 }
 
@@ -156,29 +156,29 @@ void CaptureLiveDualController::TryToStartStreamingLiveSource(
     const WbConfig& cameraConfig2,
 #if defined(__MINGW32__) || defined(__GNUC__)
 	std::unique_ptr< Callback_1< ImageView* const, const QSize& > > createStreamView1,
-	std::unique_ptr< Callback_1< ImageView* const, const QSize& > > createStreamView2 )
+	std::unique_ptr< Callback_1< ImageView* const, const QSize& > > createStreamView2)
 #else
     CreateStreamViewCallback createStreamView1,
-    CreateStreamViewCallback createStreamView2 )
+    CreateStreamViewCallback createStreamView2)
 #endif
 {
-    CameraDescription camera1( CameraTools::GetCameraForStreamingIfOk( m_cameraHardware,
-                                                                       cameraConfig1 ) );
-    CameraDescription camera2( CameraTools::GetCameraForStreamingIfOk( m_cameraHardware,
-                                                                       cameraConfig2 ) );
-    if ( camera1.IsValid() && camera2.IsValid() )
+    CameraDescription camera1(CameraTools::GetCameraForStreamingIfOk(m_cameraHardware,
+                                                                       cameraConfig1));
+    CameraDescription camera2(CameraTools::GetCameraForStreamingIfOk(m_cameraHardware,
+                                                                       cameraConfig2));
+    if (camera1.IsValid() && camera2.IsValid())
     {
 #if defined(__MINGW32__) || defined(__GNUC__)
-        m_liveView1 = (*createStreamView1)( camera1.GetImageSize() );
-        m_liveView2 = (*createStreamView2)( camera2.GetImageSize() );
+        m_liveView1 = (*createStreamView1)(camera1.GetImageSize());
+        m_liveView2 = (*createStreamView2)(camera2.GetImageSize());
 #else
-        m_liveView1 = createStreamView1( camera1.GetImageSize() );
-        m_liveView2 = createStreamView2( camera2.GetImageSize() );
+        m_liveView1 = createStreamView1(camera1.GetImageSize());
+        m_liveView2 = createStreamView2(camera2.GetImageSize());
 #endif
-        if ( m_liveView1 && m_liveView2 )
+        if (m_liveView1 && m_liveView2)
         {
-            m_videoSource1.reset( new VideoSource( camera1, *m_liveView1 ) );
-            m_videoSource2.reset( new VideoSource( camera2, *m_liveView2 ) );
+            m_videoSource1.reset(new VideoSource(camera1, *m_liveView1));
+            m_videoSource2.reset(new VideoSource(camera2, *m_liveView2));
 
             m_videoSource1->StartUpdatingImage();
             m_videoSource2->StartUpdatingImage();
@@ -186,58 +186,58 @@ void CaptureLiveDualController::TryToStartStreamingLiveSource(
     }
 }
 
-const QString CaptureLiveDualController::CaptureImage( const QImage capturedImage,
-                                                       const QString& newImageFileNameFormat )
+const QString CaptureLiveDualController::CaptureImage(const QImage capturedImage,
+                                                       const QString& newImageFileNameFormat)
 {
     QString capturedFileName;
 
     const QString fileNameToCapture(
-                    FileUtilities::GetUniqueFileName( newImageFileNameFormat ) );
+                    FileUtilities::GetUniqueFileName(newImageFileNameFormat));
 
-    const QFileInfo fileInfo( fileNameToCapture );
-    const QString fileDirPath( fileInfo.absolutePath() );
-    const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
+    const QFileInfo fileInfo(fileNameToCapture);
+    const QString fileDirPath(fileInfo.absolutePath());
+    const bool mkPathSuccessful = QDir().mkpath(fileDirPath);
     bool saveSuccessful = false;
 
-    if ( mkPathSuccessful )
+    if (mkPathSuccessful)
     {
-        saveSuccessful = capturedImage.save( fileNameToCapture );
+        saveSuccessful = capturedImage.save(fileNameToCapture);
     }
 
-    if ( saveSuccessful )
+    if (saveSuccessful)
     {
         capturedFileName = fileNameToCapture;
     }
     else
     {
-        Message::Show( &m_toolWidget,
-                       tr( "Capture Live (Dual) Controller" ),
-                       tr( "Cannot write to: %1!")
-                           .arg( fileNameToCapture ),
-                       Message::Severity_Critical );
+        Message::Show(&m_toolWidget,
+                       tr("Capture Live (Dual) Controller"),
+                       tr("Cannot write to: %1!")
+                           .arg(fileNameToCapture),
+                       Message::Severity_Critical);
     }
 
     return capturedFileName;
 }
 
 bool CaptureLiveDualController::CaptureImageAndStopStreamingLiveSource(
-                                            const QString& newImageFileNameFormat )
+                                            const QString& newImageFileNameFormat)
 {
     m_videoSource1.reset();
     m_videoSource2.reset();
-    m_liveView1->SetCaption( "" );
-    m_liveView2->SetCaption( "" );
+    m_liveView1->SetCaption("");
+    m_liveView2->SetCaption("");
 
-    if ( m_liveView1 && m_liveView2 )
+    if (m_liveView1 && m_liveView2)
     {
         const QImage capturedImage1 = m_liveView1->GetCurrentImage();
         const QImage capturedImage2 = m_liveView2->GetCurrentImage();
 
-        m_capturedFileName1 = CaptureImage( capturedImage1,
-                                            newImageFileNameFormat );
+        m_capturedFileName1 = CaptureImage(capturedImage1,
+                                            newImageFileNameFormat);
 
-        m_capturedFileName2 = CaptureImage( capturedImage2,
-                                            newImageFileNameFormat );
+        m_capturedFileName2 = CaptureImage(capturedImage2,
+                                            newImageFileNameFormat);
     }
 
     m_toolWidget.ReloadCurrentConfig();

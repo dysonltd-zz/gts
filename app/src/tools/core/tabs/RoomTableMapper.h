@@ -47,38 +47,38 @@ class ComboEditor : public QComboBox
     Q_PROPERTY(QString id READ Id WRITE SetId USER true)
 
 public:
-    ComboEditor( const QModelIndex& tableIndex,
+    ComboEditor(const QModelIndex& tableIndex,
                  const Collection& collection,
-                 QWidget* parent = 0 )
+                 QWidget* parent = 0)
     :
-        QComboBox( parent ),
-        m_tableIndex( tableIndex )
+        QComboBox(parent),
+        m_tableIndex(tableIndex)
     {
-        WbConfigTools::FillOutComboBoxWithCollectionElements( *this, collection );
+        WbConfigTools::FillOutComboBoxWithCollectionElements(*this, collection);
 
-        QObject::connect( this,
-                          SIGNAL( currentIndexChanged( int ) ),
+        QObject::connect(this,
+                          SIGNAL(currentIndexChanged(int)),
                           this,
-                          SLOT( NotifyCurrentIdChanged() ) );
+                          SLOT(NotifyCurrentIdChanged()));
     }
 
     const QString Id() const
     {
-        return qVariantValue<QString>( itemData( currentIndex(), Qt::UserRole ) );
+        return qVariantValue<QString>(itemData(currentIndex(), Qt::UserRole));
     }
 
-    void SetId( const QString& id )
+    void SetId(const QString& id)
     {
-        setCurrentIndex( findData( id, Qt::UserRole ) );
+        setCurrentIndex(findData(id, Qt::UserRole));
     }
 
 signals:
-    void CurrentIdChanged( const QModelIndex& tableIndex, const QString& newId ) const;
+    void CurrentIdChanged(const QModelIndex& tableIndex, const QString& newId) const;
 
 private slots:
     void NotifyCurrentIdChanged() const
     {
-        emit CurrentIdChanged( m_tableIndex, Id() );
+        emit CurrentIdChanged(m_tableIndex, Id());
     }
 
 private:
@@ -90,34 +90,34 @@ class ComboDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    ComboDelegate( const Collection& collection )
+    ComboDelegate(const Collection& collection)
     :
         QStyledItemDelegate(),
-        m_collection ( collection )
+        m_collection (collection)
         {
         }
 
     virtual ~ComboDelegate() {}
 
-    void setEditorData( QWidget *editor, const QModelIndex& index ) const
+    void setEditorData(QWidget *editor, const QModelIndex& index) const
     {
-        const QString id( index.model()->data( index, Qt::UserRole ).toString() );
+        const QString id(index.model()->data(index, Qt::UserRole).toString());
 
         ComboEditor* comboEditor = static_cast<ComboEditor*>(editor);
-        comboEditor->SetId( id );
+        comboEditor->SetId(id);
     }
 
 
-    void setModelData( QWidget* editor,
+    void setModelData(QWidget* editor,
                        QAbstractItemModel* model,
-                       const QModelIndex& index ) const
+                       const QModelIndex& index) const
     {
         ComboEditor* comboEditor = static_cast<ComboEditor*>(editor);
 
-        const QString newDisplayName( comboEditor->currentText() );
-        const QString newId( comboEditor->Id() );
-        model->setData( index, newDisplayName, Qt::DisplayRole );
-        model->setData( index, newId,          Qt::UserRole );
+        const QString newDisplayName(comboEditor->currentText());
+        const QString newId(comboEditor->Id());
+        model->setData(index, newDisplayName, Qt::DisplayRole);
+        model->setData(index, newId,          Qt::UserRole);
     }
 
     QWidget* createEditor(QWidget* parent,
@@ -127,19 +127,19 @@ public:
         Q_UNUSED(option);
         Q_UNUSED(index);
 
-        ComboEditor* newComboEditor = new ComboEditor( index, m_collection, parent );
+        ComboEditor* newComboEditor = new ComboEditor(index, m_collection, parent);
 
-        QObject::connect( newComboEditor,
-                          SIGNAL( CurrentIdChanged( const QModelIndex&,
-                                                    const QString& ) ),
+        QObject::connect(newComboEditor,
+                          SIGNAL(CurrentIdChanged(const QModelIndex&,
+                                                    const QString&)),
                           this,
-                          SIGNAL( CurrentIdChanged( const QModelIndex&,
-                                                    const QString& ) ) );
+                          SIGNAL(CurrentIdChanged(const QModelIndex&,
+                                                    const QString&)));
         return newComboEditor;
     }
 
 signals:
-    void CurrentIdChanged( const QModelIndex& tableIndex, const QString& newId ) const;
+    void CurrentIdChanged(const QModelIndex& tableIndex, const QString& newId) const;
 
 private:
     Collection m_collection;
@@ -149,124 +149,124 @@ class RoomTableMapper: public ConfigKeyMapper
 {
     Q_OBJECT
 public:
-    RoomTableMapper( QTableWidget& layoutTable )
+    RoomTableMapper(QTableWidget& layoutTable)
     :
-        ConfigKeyMapper( RoomLayoutSchema::cameraPositionIdsKey ),
-        m_table( layoutTable ),
-        m_cameraPositionsCollection( CameraPositionsCollection() )
+        ConfigKeyMapper(RoomLayoutSchema::cameraPositionIdsKey),
+        m_table(layoutTable),
+        m_cameraPositionsCollection(CameraPositionsCollection())
     {
     }
 
     void AddRow()
     {
         const int addedRow = m_table.rowCount();
-        m_table.insertRow( addedRow );
+        m_table.insertRow(addedRow);
         // @todo could make this auto-select next UNUSED cameraPosition
         QString camPosId;
-        if ( m_cameraPositionsCollection.NumElements() > 0 )
+        if (m_cameraPositionsCollection.NumElements() > 0)
         {
-            camPosId = m_cameraPositionsCollection.ElementAt( 0 ).id;
+            camPosId = m_cameraPositionsCollection.ElementAt(0).id;
         }
-        SetCameraPositionRow( addedRow, camPosId );
+        SetCameraPositionRow(addedRow, camPosId);
         DataChanged();
     }
 
     void RemoveCurrentRow()
     {
         const QList<QTableWidgetItem*> selectedItems = m_table.selectedItems();
-        if ( selectedItems.size() > 0 )
+        if (selectedItems.size() > 0)
         {
-            const int currentRow = selectedItems.at( 0 )->row();
-            if ( ( currentRow >= 0 ) && ( currentRow < m_table.rowCount() ) )
+            const int currentRow = selectedItems.at(0)->row();
+            if ((currentRow >= 0) && (currentRow < m_table.rowCount()))
             {
-                m_table.removeRow( currentRow );
+                m_table.removeRow(currentRow);
                 DataChanged();
             }
         }
     }
 
-    virtual void CommitData( WbConfig& config )
+    virtual void CommitData(WbConfig& config)
     {
         KeyValue cameraPosIds;
-        for ( int row = 0; row < m_table.rowCount(); ++row )
+        for (int row = 0; row < m_table.rowCount(); ++row)
         {
-            const QString cameraPosId( m_table.item( row, nameColumn )
-                                               ->data( Qt::UserRole ).toString() );
-            if ( !cameraPosId.isEmpty() )
+            const QString cameraPosId(m_table.item(row, nameColumn)
+                                               ->data(Qt::UserRole).toString());
+            if (!cameraPosId.isEmpty())
             {
                 cameraPosIds << cameraPosId;
             }
         }
-        config.SetKeyValue( m_keyName, cameraPosIds );
+        config.SetKeyValue(m_keyName, cameraPosIds);
     }
 
-    virtual void SetConfig( const WbConfig& config )
+    virtual void SetConfig(const WbConfig& config)
     {
         m_table.clearContents();
         const QStringList cameraPositionIds(
-                            config.GetKeyValue( m_keyName ).ToQStringList() );
-        m_table.setRowCount( cameraPositionIds.size() );
+                            config.GetKeyValue(m_keyName).ToQStringList());
+        m_table.setRowCount(cameraPositionIds.size());
 
         const Collection::StatusType status =
-                                        m_cameraPositionsCollection.SetConfig( config );
+                                        m_cameraPositionsCollection.SetConfig(config);
 
-        if ( status == Collection::Status_Ok )
+        if (status == Collection::Status_Ok)
         {
-            ComboDelegate* const delegate = new ComboDelegate( m_cameraPositionsCollection );
+            ComboDelegate* const delegate = new ComboDelegate(m_cameraPositionsCollection);
 
-            QObject::connect( delegate,
-                              SIGNAL( CurrentIdChanged( const QModelIndex&,
-                                                        const QString& ) ),
+            QObject::connect(delegate,
+                              SIGNAL(CurrentIdChanged(const QModelIndex&,
+                                                        const QString&)),
                               this,
-                              SLOT( CameraPositionChanged( const QModelIndex&,
-                                                           const QString& ) ) );
+                              SLOT(CameraPositionChanged(const QModelIndex&,
+                                                           const QString&)));
 
-            m_table.setItemDelegateForColumn( nameColumn, delegate );
+            m_table.setItemDelegateForColumn(nameColumn, delegate);
 
-            for ( int i = 0; i < cameraPositionIds.size(); ++i )
+            for (int i = 0; i < cameraPositionIds.size(); ++i)
             {
-                SetCameraPositionRow( i, cameraPositionIds.at( i ) );
+                SetCameraPositionRow(i, cameraPositionIds.at(i));
             }
         }
     }
 
 private slots:
-    void CameraPositionChanged( const QModelIndex& index, const QString& newId )
+    void CameraPositionChanged(const QModelIndex& index, const QString& newId)
     {
-        SetCameraPositionRow( index.row(), newId );
+        SetCameraPositionRow(index.row(), newId);
         DataChanged();
     }
 
 private:
 
-    const WbConfig GetCamPosConfig( const QString& camPosId )
+    const WbConfig GetCamPosConfig(const QString& camPosId)
     {
-        return m_cameraPositionsCollection.ElementById( KeyId( camPosId ) );
+        return m_cameraPositionsCollection.ElementById(KeyId(camPosId));
     }
 
-    void SetCameraPositionRow( const int row, const QString&  camPosId )
+    void SetCameraPositionRow(const int row, const QString&  camPosId)
     {
-        const WbConfig camPosConfig( GetCamPosConfig( camPosId ) );
-        m_table.setItem( row, descriptionColumn, CreateDescriptionItem( camPosConfig ) );
-        m_table.setItem( row, nameColumn, CreateNameItem( camPosConfig, camPosId ) );
+        const WbConfig camPosConfig(GetCamPosConfig(camPosId));
+        m_table.setItem(row, descriptionColumn, CreateDescriptionItem(camPosConfig));
+        m_table.setItem(row, nameColumn, CreateNameItem(camPosConfig, camPosId));
     }
 
-    QTableWidgetItem* const CreateDescriptionItem( const WbConfig& camPosConfig )
+    QTableWidgetItem* const CreateDescriptionItem(const WbConfig& camPosConfig)
     {
         QTableWidgetItem* const descriptionItem =
             new QTableWidgetItem(
-                camPosConfig.GetKeyValue( WbDefaultKeys::descriptionKey ).ToQString() );
-        descriptionItem->setFlags( Qt::ItemIsSelectable | Qt::ItemIsEnabled );
+                camPosConfig.GetKeyValue(WbDefaultKeys::descriptionKey).ToQString());
+        descriptionItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         return descriptionItem;
     }
 
-    QTableWidgetItem* const CreateNameItem( const WbConfig& camPosConfig,
-                                            const QString&  camPosId )
+    QTableWidgetItem* const CreateNameItem(const WbConfig& camPosConfig,
+                                            const QString&  camPosId)
     {
         QTableWidgetItem* const nameItem =
             new QTableWidgetItem(
-                camPosConfig.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString() );
-        nameItem->setData( Qt::UserRole, camPosId );
+                camPosConfig.GetKeyValue(WbDefaultKeys::displayNameKey).ToQString());
+        nameItem->setData(Qt::UserRole, camPosId);
         return nameItem;
     }
 

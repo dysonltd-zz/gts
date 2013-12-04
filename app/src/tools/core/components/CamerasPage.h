@@ -31,20 +31,24 @@ class CameraSelectionFormContents;
 class CamerasPage : public NewElementWizardPage
 {
     Q_OBJECT
-    Q_PROPERTY( CameraDescription chosenCamera READ GetChosenCamera USER true )
+    Q_PROPERTY(CameraDescription chosenCamera READ GetChosenCamera USER true)
 
 public:
     static const QString chosenCameraField;
 
-    CamerasPage( CameraHardware& cameraHardware, const Collection& camerasCollection );
+    /**
+     @bug sometimes doesn't allow finish to be pressed when camera is default-selected
+     until you double-click the camera
+     */
+    CamerasPage(CameraHardware& cameraHardware, const Collection& camerasCollection);
 
     virtual void initializePage();
     virtual void cleanupPage();
     virtual bool isComplete() const;
 
 private:
-    void RemovePreviouslyChosenCameras( CameraApi::CameraList& connectedCameras );
-    void AddCameraSelectionPage( QLayout* layout );
+    void RemovePreviouslyChosenCameras(CameraApi::CameraList& connectedCameras);
+    void AddCameraSelectionPage(QLayout* layout);
 
     const CameraDescription GetChosenCamera() const;
 

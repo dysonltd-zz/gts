@@ -20,8 +20,8 @@
 
 namespace RoomLayoutSchema
 {
-    const KeyName schemaName( "roomLayout" );
+    const KeyName schemaName("roomLayout");
 
-    const KeyName cameraPositionIdsKey( "cameraPositionIds" );
+    const KeyName cameraPositionIdsKey("cameraPositionIds");
 }
 

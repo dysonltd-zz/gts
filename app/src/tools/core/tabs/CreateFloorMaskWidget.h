@@ -41,10 +41,10 @@ class CreateFloorMaskWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit CreateFloorMaskWidget( QWidget* parent = 0 );
+    explicit CreateFloorMaskWidget(QWidget* parent = 0);
     virtual ~CreateFloorMaskWidget();
 
-    virtual const QString Name() const { return tr( "Create Floor Mask" ); }
+    virtual const QString Name() const { return tr("Create Floor Mask"); }
     virtual QWidget* Widget();
 
 private slots:
@@ -68,8 +68,8 @@ private:
     Ui::CreateFloorMaskWidget* m_ui;
 
 private:
-    bool ImportFloorMask( const WbConfig& config );
-    bool ImportFloorMaskParts( const WbConfig& config );
+    bool ImportFloorMask(const WbConfig& config);
+    bool ImportFloorMaskParts(const WbConfig& config);
 };
 
 #endif // CREATEFLOORMASKWIDGET_H

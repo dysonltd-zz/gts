@@ -26,8 +26,8 @@ class WbConfig;
 namespace CameraTools
 {
     const CameraDescription
-    GetCameraForStreamingIfOk( const CameraHardware& cameraHardware,
-                               const WbConfig& cameraConfig );
+    GetCameraForStreamingIfOk(const CameraHardware& cameraHardware,
+                               const WbConfig& cameraConfig);
 }
 
 

@@ -25,60 +25,60 @@
 
 #include <iostream>
 
-WbSubSchema::WbSubSchema( const WbSchema& subSchema,
+WbSubSchema::WbSubSchema(const WbSchema& subSchema,
                           const Multiplicity::Type& multiplicity,
-                          const QString& defaultFileName ) :
-    WbSchemaElement( subSchema.Name(), multiplicity ),
-    m_schema( subSchema ),
-    m_defaultFileName( defaultFileName )
+                          const QString& defaultFileName) :
+    WbSchemaElement(subSchema.Name(), multiplicity),
+    m_schema(subSchema),
+    m_defaultFileName(defaultFileName)
 {
 }
 
 WbSubSchema* const WbSubSchema::Clone() const
 {
-    return new WbSubSchema( *this );
+    return new WbSubSchema(*this);
 }
 
-void WbSubSchema::ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const
+void WbSubSchema::ReadFrom(WbConfigFileReader& reader, WbConfig& config) const
 {
     SchemaLocationsList locations;
-    reader.ReadSubSchemaLocations( GetKeyName(), locations );
+    reader.ReadSubSchemaLocations(GetKeyName(), locations);
 
-    for ( size_t i = 0; i < locations.size(); ++i )
+    for (size_t i = 0; i < locations.size(); ++i)
     {
-        WbSchemaLocationIdPair& locationIdPair( locations.at( i ) );
+        WbSchemaLocationIdPair& locationIdPair(locations.at(i));
 
-        WbConfig subConfig( config.CreateSubConfig( GetKeyName(),
+        WbConfig subConfig(config.CreateSubConfig(GetKeyName(),
                                                     locationIdPair.location,
-                                                    locationIdPair.id ) );
+                                                    locationIdPair.id));
 
-        std::auto_ptr<WbConfigFileReader> readerClone( reader.Clone() );
-        subConfig.ReadUsing( *readerClone );
+        std::auto_ptr<WbConfigFileReader> readerClone(reader.Clone());
+        subConfig.ReadUsing(*readerClone);
     }
 }
 
-void WbSubSchema::SetDefaultTo( WbConfig& config ) const
+void WbSubSchema::SetDefaultTo(WbConfig& config) const
 {
-    if ( !m_defaultFileName.isEmpty() )
+    if (!m_defaultFileName.isEmpty())
     {
-        config.CreateSubConfig( GetKeyName(), m_defaultFileName ); //defaults always have no id currently
+        config.CreateSubConfig(GetKeyName(), m_defaultFileName); //defaults always have no id currently
     }
 }
 
-bool WbSubSchema::WriteTo( WbConfigFileWriter& writer, const WbConfig& config ) const
+bool WbSubSchema::WriteTo(WbConfigFileWriter& writer, const WbConfig& config) const
 {
-    WbConfig::SubConfigs::ValueIdPairList values( config.GetSubConfigs( GetKeyName() ) );
+    WbConfig::SubConfigs::ValueIdPairList values(config.GetSubConfigs(GetKeyName()));
 
-    for ( size_t i = 0; i < values.size(); ++i )
+    for (size_t i = 0; i < values.size(); ++i)
     {
-        WbConfig::SubConfigs::ValueIdPair thisPair( values.at( i ) );
-        writer.WriteSubConfig( GetKeyName(),
+        WbConfig::SubConfigs::ValueIdPair thisPair(values.at(i));
+        writer.WriteSubConfig(GetKeyName(),
                                thisPair.value.GetPossiblyRelativeFileInfo(),
-                               thisPair.id );
+                               thisPair.id);
 
-        std::auto_ptr<WbConfigFileWriter> writerClone( writer.Clone() );
-        const bool successful = thisPair.value.WriteUsing( *writerClone );
-        if ( !successful )
+        std::auto_ptr<WbConfigFileWriter> writerClone(writer.Clone());
+        const bool successful = thisPair.value.WriteUsing(*writerClone);
+        if (!successful)
         {
             return false;
         }
@@ -87,10 +87,10 @@ bool WbSubSchema::WriteTo( WbConfigFileWriter& writer, const WbConfig& config ) 
     return true;
 }
 
-void WbSubSchema::PrintOn( std::ostream& os, const std::string& indent ) const
+void WbSubSchema::PrintOn(std::ostream& os, const std::string& indent) const
 {
     os << indent << "Start SubSchema: " << GetKeyName() << std::endl;
-    m_schema.PrintOn( os, indent + " " );
+    m_schema.PrintOn(os, indent + " ");
     os << indent << "End SubSchema: " << GetKeyName() << std::endl;
 }
 

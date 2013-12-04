@@ -31,9 +31,9 @@ class RunCollectionTool : public CollectionToolWidget
     Q_OBJECT
 
 public:
-    explicit RunCollectionTool( CameraHardware& cameraHardware,
+    explicit RunCollectionTool(CameraHardware& cameraHardware,
                                 QWidget* parent,
-                                MainWindow& mainWindow );
+                                MainWindow& mainWindow);
     ~RunCollectionTool();
 
     virtual const QString Name() const;

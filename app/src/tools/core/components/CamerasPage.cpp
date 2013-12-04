@@ -35,15 +35,15 @@ namespace
     class MatchesAny
     {
     public:
-        MatchesAny( const Collection& camerasCollection ) :
-            m_camerasCollection( camerasCollection )
+        MatchesAny(const Collection& camerasCollection) :
+            m_camerasCollection(camerasCollection)
         {
         }
 
-        bool operator() ( const CameraDescription& description ) const
+        bool operator() (const CameraDescription& description) const
         {
-            return m_camerasCollection.AnyElementHas( CameraSchema::uniqueIdKey,
-                                                      KeyValue::from( description.UniqueId() ));
+            return m_camerasCollection.AnyElementHas(CameraSchema::uniqueIdKey,
+                                                      KeyValue::from(description.UniqueId()));
         }
 
     private:
@@ -51,20 +51,17 @@ namespace
     };
 }
 
-const QString CamerasPage::chosenCameraField( "chosenCamera" );
+const QString CamerasPage::chosenCameraField("chosenCamera");
 
-/** @bug sometimes doesn't allow finish to be pressed when camera is default-selected
- * until you double-click the camera
- */
-CamerasPage::CamerasPage( CameraHardware&   cameraHardware,
-                          const Collection& camerasCollection ) :
-    m_camerasCollection      ( camerasCollection ),
-    m_cameraHardware         ( cameraHardware ),
-    m_cameraPageWidget       ( new QWidget( this ) ),
-    m_cameraSelectionContent ( 0 )
+CamerasPage::CamerasPage(CameraHardware&   cameraHardware,
+                          const Collection& camerasCollection) :
+    m_camerasCollection      (camerasCollection),
+    m_cameraHardware         (cameraHardware),
+    m_cameraPageWidget       (new QWidget(this)),
+    m_cameraSelectionContent (0)
 {
     QVBoxLayout* mainLayout = new QVBoxLayout;
-    mainLayout->addWidget( m_cameraPageWidget );
+    mainLayout->addWidget(m_cameraPageWidget);
 
     QVBoxLayout* cameraPageLayout = new QVBoxLayout;
     m_cameraPageWidget->setLayout(cameraPageLayout);
@@ -73,12 +70,12 @@ CamerasPage::CamerasPage( CameraHardware&   cameraHardware,
     QVBoxLayout* cameraSelectLayout = new QVBoxLayout;
     cameraSelectGroup->setLayout(cameraSelectLayout);
 
-    AddCameraSelectionPage( cameraSelectLayout );
+    AddCameraSelectionPage(cameraSelectLayout);
     cameraPageLayout->addWidget(cameraSelectGroup);
-    setLayout( mainLayout );
+    setLayout(mainLayout);
 }
 
-void CamerasPage::AddCameraSelectionPage( QLayout* layout )
+void CamerasPage::AddCameraSelectionPage(QLayout* layout)
 {
     m_cameraSelectionContent = new CameraSelectionFormContents();
 
@@ -87,30 +84,30 @@ void CamerasPage::AddCameraSelectionPage( QLayout* layout )
                   "chosenCamera",
                   SIGNAL(completeChanged()));
 
-    QObject::connect( m_cameraSelectionContent,
-                      SIGNAL( CameraChosen() ),
+    QObject::connect(m_cameraSelectionContent,
+                      SIGNAL(CameraChosen()),
                       this,
-                      SIGNAL( completeChanged() ) );
+                      SIGNAL(completeChanged()));
 
-    layout->addWidget( m_cameraSelectionContent );
+    layout->addWidget(m_cameraSelectionContent);
 }
 
 void CamerasPage::initializePage()
 {
     // Try to display connected (but unused) cameras
     CameraApi::CameraList connectedCameras(m_cameraHardware.EnumerateConnectedCameras());
-    RemovePreviouslyChosenCameras( connectedCameras );
-    m_cameraSelectionContent->StartUp( connectedCameras );
+    RemovePreviouslyChosenCameras(connectedCameras);
+    m_cameraSelectionContent->StartUp(connectedCameras);
 }
 
-void CamerasPage::RemovePreviouslyChosenCameras( CameraApi::CameraList& connectedCameras )
+void CamerasPage::RemovePreviouslyChosenCameras(CameraApi::CameraList& connectedCameras)
 {
     const CameraApi::CameraList::iterator newEnd =
-        std::remove_if( connectedCameras.begin(),
+        std::remove_if(connectedCameras.begin(),
                         connectedCameras.end(),
-                        MatchesAny( m_camerasCollection ) );
+                        MatchesAny(m_camerasCollection));
 
-    connectedCameras.erase( newEnd, connectedCameras.end() );
+    connectedCameras.erase(newEnd, connectedCameras.end());
 }
 
 void CamerasPage::cleanupPage()
@@ -120,7 +117,7 @@ void CamerasPage::cleanupPage()
 
 bool CamerasPage::isComplete() const
 {
-    return field( chosenCameraField ).value<CameraDescription>().IsValid();
+    return field(chosenCameraField).value<CameraDescription>().IsValid();
 }
 
 const CameraDescription CamerasPage::GetChosenCamera() const

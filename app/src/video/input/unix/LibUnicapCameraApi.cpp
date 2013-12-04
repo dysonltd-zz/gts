@@ -42,13 +42,13 @@ const CameraApi::CameraList LibUnicapCameraApi::EnumerateCameras() const
     CameraApi::CameraList cameraList;
     unicap_device_t device;
     int i = 0;
-    while( SUCCESS( unicap_enumerate_devices( NULL, &device, i++ ) ) )
+    while(SUCCESS(unicap_enumerate_devices(NULL, &device, i++)))
     {
-        cameraList.push_back( CameraDescription( *this )
-                    .WithName       ( Convert::ToStdWString( device.model_name ) )
-                    .WithDescription( Convert::ToStdWString( device.vendor_id ) )
-                    .WithUniqueId   ( Convert::ToStdWString( device.identifier ) )
-        );
+        cameraList.push_back(CameraDescription(*this)
+                    .WithName       (Convert::ToStdWString(device.model_name))
+                    .WithDescription(Convert::ToStdWString(device.vendor_id))
+                    .WithUniqueId   (Convert::ToStdWString(device.identifier))
+       );
     }
     return cameraList;
 }
@@ -56,23 +56,23 @@ const CameraApi::CameraList LibUnicapCameraApi::EnumerateCameras() const
 /** @copydoc CameraApi::CreateVideoSequenceForCamera()
  *
  */
-VideoSequence* const LibUnicapCameraApi::CreateVideoSequenceForCamera( const CameraDescription& camera ) const
+VideoSequence* const LibUnicapCameraApi::CreateVideoSequenceForCamera(const CameraDescription& camera) const
 {
-    const CameraApi::CameraList cameras( EnumerateCameras() );
-    for ( size_t i = 0; i < cameras.size(); ++i )
+    const CameraApi::CameraList cameras(EnumerateCameras());
+    for (size_t i = 0; i < cameras.size(); ++i)
     {
-        if ( cameras.at( i ).UniqueId() == camera.UniqueId() )
+        if (cameras.at(i).UniqueId() == camera.UniqueId())
         {
-            VideoSequence* sequence = new VideoCaptureCv( CV_CAP_DC1394 + static_cast<int>( i ) );
+            VideoSequence* sequence = new VideoCaptureCv(CV_CAP_DC1394 + static_cast<int>(i));
 
-            if ( sequence->IsSetup() )
+            if (sequence->IsSetup())
             {
                 return sequence;
             }
             else
             {
                 // if libdc1394 is unavailable in opencv highgui library, we fall back to any interface that supports this camera index
-                return new VideoCaptureCv( CV_CAP_V4L + static_cast<int>( i ));
+                return new VideoCaptureCv(CV_CAP_V4L + static_cast<int>(i));
             }
         }
     }

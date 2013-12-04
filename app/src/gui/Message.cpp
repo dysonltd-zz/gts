@@ -17,25 +17,26 @@
  */
 
 #include "Message.h"
+
 #include "MessageHandler.h"
 
 #include <cassert>
 
-std::unique_ptr< MessageHandler > Message::messageHandler;
+std::unique_ptr<MessageHandler> Message::messageHandler;
 
-void Message::SetHandler( std::unique_ptr< MessageHandler > handler )
+void Message::SetHandler(std::unique_ptr<MessageHandler> handler)
 {
-    assert( !messageHandler.get() );
+    assert(!messageHandler.get());
     messageHandler = std::move(handler);
 }
 
-void Message::Show( QWidget* const parent,
+void Message::Show(QWidget* const parent,
                     const QString& title,
                     const QString& message,
                     const Message::Severity& severity,
-                    const QString& details )
+                    const QString& details)
 {
-    assert( messageHandler.get() );
-    messageHandler->Show( parent, title, message, severity, details );
+    assert(messageHandler.get());
+    messageHandler->Show(parent, title, message, severity, details);
 }
 

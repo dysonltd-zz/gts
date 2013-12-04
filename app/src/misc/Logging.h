@@ -33,6 +33,9 @@
 
 namespace Logging
 {
+    /**
+     * @brief Initialise the Log4Qt logging system
+     */
     void SetupLogging();
 }
 

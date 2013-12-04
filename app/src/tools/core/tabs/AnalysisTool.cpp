@@ -26,19 +26,19 @@
 
 #include <QtGui/QComboBox>
 
-AnalysisTool::AnalysisTool( QWidget* parent,
-                                        MainWindow& mainWindow ) :
-    CollectionToolWidget( tr( "Analysis" ),
+AnalysisTool::AnalysisTool(QWidget* parent,
+                                        MainWindow& mainWindow) :
+    CollectionToolWidget(tr("Analysis"),
                           CreateCollectionSchema(),
                           CreateElementSchema(),
                           parent,
-                          &mainWindow ),
-    m_roomCombo( new QComboBox )
+                          &mainWindow),
+    m_roomCombo(new QComboBox)
 {
-    AddToolDetail( new QLabel( tr( "Room" ) ), m_roomCombo );
-    AddMapper( ResultsSchema::roomIdKey, m_roomCombo );
-    AddSubTool( new CollateResultsWidget( this ) );
-    RegisterCollectionCombo( m_roomCombo, RoomsCollection() );
+    AddToolDetail(new QLabel(tr("Room")), m_roomCombo);
+    AddMapper(ResultsSchema::roomIdKey, m_roomCombo);
+    AddSubTool(new CollateResultsWidget(this));
+    RegisterCollectionCombo(m_roomCombo, RoomsCollection());
 }
 
 AnalysisTool::~AnalysisTool()
@@ -47,7 +47,7 @@ AnalysisTool::~AnalysisTool()
 
 const QString AnalysisTool::Name() const
 {
-    return tr( "Analysis" );
+    return tr("Analysis");
 }
 
 const QString AnalysisTool::GetSubSchemaDefaultFileName() const
@@ -57,14 +57,14 @@ const QString AnalysisTool::GetSubSchemaDefaultFileName() const
 
 const WbSchema AnalysisTool::CreateCollectionSchema()
 {
-    WbSchema schema( CreateWorkbenchSubSchema( KeyName( "analysis" ), tr( "Analysis" ) ) );
+    WbSchema schema(CreateWorkbenchSubSchema(KeyName("analysis"), tr("Analysis")));
     return schema;
 }
 
 const WbSchema AnalysisTool::CreateElementSchema()
 {
     using namespace ResultsSchema;
-    WbSchema elementSchema(CreateElementWorkbenchSubSchema( schemaName, Unnamed( tr( "Results" ) ) ) );
-    elementSchema.AddSingleValueKey( roomIdKey, WbSchemaElement::Multiplicity::One );
+    WbSchema elementSchema(CreateElementWorkbenchSubSchema(schemaName, Unnamed(tr("Results"))));
+    elementSchema.AddSingleValueKey(roomIdKey, WbSchemaElement::Multiplicity::One);
     return elementSchema;
 }

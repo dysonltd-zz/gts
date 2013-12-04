@@ -21,7 +21,7 @@
 
 namespace CameraPositionSchema
 {
-    const KeyName schemaName ( "cameraPosition" );
+    const KeyName schemaName ("cameraPosition");
 
-    const KeyName cameraIdKey( "cameraId" );
+    const KeyName cameraIdKey("cameraId");
 }

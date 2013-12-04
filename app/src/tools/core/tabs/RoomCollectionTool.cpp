@@ -28,20 +28,20 @@
 #include <QtGui/QLabel>
 #include <QtGui/QComboBox>
 
-RoomCollectionTool::RoomCollectionTool( CameraHardware& cameraHardware,
+RoomCollectionTool::RoomCollectionTool(CameraHardware& cameraHardware,
                                         QWidget* parent,
-                                        MainWindow& mainWindow  ) :
-    CollectionToolWidget( tr( "Room" ),
+                                        MainWindow& mainWindow ) :
+    CollectionToolWidget(tr("Room"),
                           CreateCollectionSchema(),
                           CreateElementSchema(),
                           parent,
-                          &mainWindow ),
-    m_cameraHardware( cameraHardware )
+                          &mainWindow),
+    m_cameraHardware(cameraHardware)
 {
-    AddSubTool( new SetUpRoomWidget( this ) );
-    AddSubTool( new CreateFloorPlanWidget ( cameraHardware, this ) );
-    AddSubTool( new CreateFloorMaskWidget ( this ) );
-    AddSubTool( new MeasureFloorWidget ( this ) );
+    AddSubTool(new SetUpRoomWidget(this));
+    AddSubTool(new CreateFloorPlanWidget (cameraHardware, this));
+    AddSubTool(new CreateFloorMaskWidget (this));
+    AddSubTool(new MeasureFloorWidget (this));
 }
 
 RoomCollectionTool::~RoomCollectionTool()
@@ -50,7 +50,7 @@ RoomCollectionTool::~RoomCollectionTool()
 
 const QString RoomCollectionTool::Name() const
 {
-    return tr( "Rooms" );
+    return tr("Rooms");
 }
 
 const QString RoomCollectionTool::GetSubSchemaDefaultFileName() const
@@ -60,16 +60,16 @@ const QString RoomCollectionTool::GetSubSchemaDefaultFileName() const
 
 const WbSchema RoomCollectionTool::CreateCollectionSchema()
 {
-    WbSchema roomsSchema( CreateWorkbenchSubSchema( KeyName( "rooms" ), tr( "Rooms" ) ) );
+    WbSchema roomsSchema(CreateWorkbenchSubSchema(KeyName("rooms"), tr("Rooms")));
     return roomsSchema;
 }
 
 const WbSchema RoomCollectionTool::CreateElementSchema()
 {
-    WbSchema schema = CreateElementWorkbenchSubSchema( KeyName( "room" ), Unnamed( tr( "Room" ) ) );
+    WbSchema schema = CreateElementWorkbenchSubSchema(KeyName("room"), Unnamed(tr("Room")));
 
-    schema.AddDependant( RunSchema::schemaName,
-                         RunSchema::roomIdKey );
+    schema.AddDependant(RunSchema::schemaName,
+                         RunSchema::roomIdKey);
 
     return schema;
 }

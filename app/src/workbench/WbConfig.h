@@ -51,97 +51,97 @@ public:
 
     //Creation/destruction
     WbConfig();
-    WbConfig( const WbSchema& schema, const QFileInfo& fileInfo );
+    WbConfig(const WbSchema& schema, const QFileInfo& fileInfo);
     ~WbConfig();
 
     //???
     const KeyName GetSchemaName() const;
 
     // persistence
-    bool WriteUsing( WbConfigFileWriter& writer ) const;
-    bool ReadUsing( WbConfigFileReader& reader );
+    bool WriteUsing(WbConfigFileWriter& writer) const;
+    bool ReadUsing(WbConfigFileReader& reader);
 
     // Relative file info
     const QFileInfo GetAbsoluteFileInfo() const;
     const QFileInfo GetPossiblyRelativeFileInfo() const;
-    const QString   GetAbsoluteFileNameFor( const QString& possiblyRelativeFileName ) const;
+    const QString   GetAbsoluteFileNameFor(const QString& possiblyRelativeFileName) const;
 
 
     //SubConfigs
-    WbConfig CreateSubConfig( const KeyName& schemaName,
+    WbConfig CreateSubConfig(const KeyName& schemaName,
                               const QString& fileName,
-                              const KeyId&   id = KeyId() );
-    WbConfig AddSubConfig( const KeyName& schemaName,
-                           const QString& keyIdFormat = "%1" );
+                              const KeyId&   id = KeyId());
+    WbConfig AddSubConfig(const KeyName& schemaName,
+                           const QString& keyIdFormat = "%1");
 
-    WbConfig GetSubConfig( const KeyName& name,
-                           const KeyId&   id = KeyId() ) const;
-    const SubConfigs::ValueIdPairList GetSubConfigs( const KeyName& keyName ) const;
+    WbConfig GetSubConfig(const KeyName& name,
+                           const KeyId&   id = KeyId()) const;
+    const SubConfigs::ValueIdPairList GetSubConfigs(const KeyName& keyName) const;
 
-    void RemoveSubConfigs( const KeyName& keyName,
+    void RemoveSubConfigs(const KeyName& keyName,
                            const std::vector<KeyId>& idsToRemove = std::vector<KeyId>());
 
     // Key values
-    void KeepKeys( const KeyName& keyName,
+    void KeepKeys(const KeyName& keyName,
                    const std::vector<KeyId>& idsToKeep = std::vector<KeyId>());
-    void RemoveKeys( const KeyName& keyName,
+    void RemoveKeys(const KeyName& keyName,
                      const std::vector<KeyId>& idsToRemove = std::vector<KeyId>());
 
-    void SetKeyValues( const WbKeyValues& keyValues );
-    void SetKeyValue( const KeyName&  keyName,
+    void SetKeyValues(const WbKeyValues& keyValues);
+    void SetKeyValue(const KeyName&  keyName,
                       const KeyValue& value,
-                      const KeyId&    keyId = KeyId() );
+                      const KeyId&    keyId = KeyId());
 
-    const KeyId AddKeyValue( const KeyName& keyName,
+    const KeyId AddKeyValue(const KeyName& keyName,
                              const KeyValue& value,
-                             const QString& keyIdFormat = "%1" );
+                             const QString& keyIdFormat = "%1");
 
-    const KeyValue GetKeyValue( const KeyName& keyName,
-                                const KeyId& keyId = KeyId() ) const;
-    const WbKeyValues::ValueIdPairList GetKeyValues( const KeyName& keyName ) const;
+    const KeyValue GetKeyValue(const KeyName& keyName,
+                                const KeyId& keyId = KeyId()) const;
+    const WbKeyValues::ValueIdPairList GetKeyValues(const KeyName& keyName) const;
 
     //Workbench tree interaction
-    void AddTo( QTreeWidget& tree ) const;
+    void AddTo(QTreeWidget& tree) const;
     QTreeWidgetItem* const GetLinkedTreeItem() const;
-    static const WbConfig FromTreeItem( const QTreeWidgetItem& item );
+    static const WbConfig FromTreeItem(const QTreeWidgetItem& item);
 
     // Test Functions
-    bool IsTheSameAs( const WbConfig& other ) const;
+    bool IsTheSameAs(const WbConfig& other) const;
     bool IsNull() const;
-    bool SchemaIsDescendantOf( const KeyName& schemaName ) const;
-    bool Contains( const KeyName& keyName, const KeyId& id = KeyId() ) const;
+    bool SchemaIsDescendantOf(const KeyName& schemaName) const;
+    bool Contains(const KeyName& keyName, const KeyId& id = KeyId()) const;
     bool IsModified() const;
-    bool DependentExists( const KeyValue& id ) const;
+    bool DependentExists(const KeyValue& id) const;
 
     // Hierarchical access
     const WbConfig GetParent() const;
-    const WbConfig FindAncestor    ( const KeyName& ancestorSchemaName ) const;
+    const WbConfig FindAncestor    (const KeyName& ancestorSchemaName) const;
     const WbConfig FindRootAncestor() const;
-    const KeyId FindSubConfigId( const WbConfig& subconfig ) const;
-    const WbConfig GetFromPath( const WbPath& path ) const;
+    const KeyId FindSubConfigId(const WbConfig& subconfig) const;
+    const WbConfig GetFromPath(const WbPath& path) const;
 
-    void SetListener( ConfigListener* listener );
+    void SetListener(ConfigListener* listener);
     // The pending change has been completed
     void ChangeCompleted() const;
 
 private:
-    void SetParent( WbConfig& parent );
+    void SetParent(WbConfig& parent);
     void Clear();
 
-    void AddToItem( QTreeWidgetItem* const treeItem ) const;
-    void AddSubConfigsTo( QTreeWidgetItem& treeItem ) const;
+    void AddToItem(QTreeWidgetItem* const treeItem) const;
+    void AddSubConfigsTo(QTreeWidgetItem& treeItem) const;
     QTreeWidgetItem* const CreateTreeItem() const;
-    const QFileInfo GetAbsoluteFileInfoFor( const QFileInfo& possiblyRelativeFileInfo ) const;
+    const QFileInfo GetAbsoluteFileInfoFor(const QFileInfo& possiblyRelativeFileInfo) const;
 
     void SetDefaults();
 
-    const QString GetSubConfigFileName( const KeyId& elementKey,
-                                        const KeyName& schemaName ) const;
+    const QString GetSubConfigFileName(const KeyId& elementKey,
+                                        const KeyName& schemaName) const;
 
-    const KeyId GenerateNewId( const KeyName& keyName,
-                               const QString& keyIdFormat ) const;
+    const KeyId GenerateNewId(const KeyName& keyName,
+                               const QString& keyIdFormat) const;
 
-    bool DependentExists( WbSchema::SchemaKeyPairList dependants, const KeyValue& id ) const;
+    bool DependentExists(WbSchema::SchemaKeyPairList dependants, const KeyValue& id) const;
 
     /** @brief Stores the member data for WbConfig.
      *
@@ -162,8 +162,8 @@ private:
         std::auto_ptr< ConfigListener >  m_listener;
 
     private:
-        WbConfigData( const WbConfigData& );
-        WbConfigData& operator =( const WbConfigData& );
+        WbConfigData(const WbConfigData&);
+        WbConfigData& operator =(const WbConfigData&);
 
         static GloballyUniqueId globallyUniqueId;
     };

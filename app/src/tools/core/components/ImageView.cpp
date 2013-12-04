@@ -30,27 +30,27 @@ namespace
     const QPalette BlackOnWhitePalette()
     {
         QPalette captionPalette;
-        captionPalette.setColor( QPalette::Window,     Qt::white );
-        captionPalette.setColor( QPalette::WindowText, Qt::black );
+        captionPalette.setColor(QPalette::Window,     Qt::white);
+        captionPalette.setColor(QPalette::WindowText, Qt::black);
         return captionPalette;
     }
 }
 
-ImageView::ImageView( QWidget* parent, int id ) :
-    QFrame( parent ),
+ImageView::ImageView(QWidget* parent, int id) :
+    QFrame(parent),
     m_image(),
-    m_aspectRatioMode( Qt::KeepAspectRatio ),
-    m_captionLabel( new QLabel( this ) ),
-    m_framesPerSec( 0.0 ),
-    m_conversionMethod( FastConversion ),
-    m_zoom( 1.0 ),
-    m_id( id )
+    m_aspectRatioMode(Qt::KeepAspectRatio),
+    m_captionLabel(new QLabel(this)),
+    m_framesPerSec(0.0),
+    m_conversionMethod(FastConversion),
+    m_zoom(1.0),
+    m_id(id)
 {
-    const QPoint captionOffset( 20, 20 );
-    m_captionLabel->move( captionOffset );
-    m_captionLabel->setPalette( BlackOnWhitePalette() );
-    m_captionLabel->setAutoFillBackground( true );
-    SetCaption( "" );
+    const QPoint captionOffset(20, 20);
+    m_captionLabel->move(captionOffset);
+    m_captionLabel->setPalette(BlackOnWhitePalette());
+    m_captionLabel->setAutoFillBackground(true);
+    SetCaption("");
 }
 
 /** @brief Remove currently-set image
@@ -61,7 +61,7 @@ ImageView::ImageView( QWidget* parent, int id ) :
  */
 void ImageView::Clear()
 {
-    SetImage( QImage() );
+    SetImage(QImage());
 }
 
 /** @brief Set the image from file
@@ -71,9 +71,9 @@ void ImageView::Clear()
  *
  *  @param imageName The name of the image file to display.
  */
-void ImageView::SetImage( const QString& imageName )
+void ImageView::SetImage(const QString& imageName)
 {
-    SetImage( QImage( imageName ) );
+    SetImage(QImage(imageName));
 }
 
 /** @brief Set the image to @a image.
@@ -83,7 +83,7 @@ void ImageView::SetImage( const QString& imageName )
  *
  *  @param image The image to display.
  */
-void ImageView::SetImage( const QImage& image )
+void ImageView::SetImage(const QImage& image)
 {
     m_image = image;
 
@@ -94,15 +94,15 @@ void ImageView::SetImage( const QImage& image )
  *
  *  @param caption The string to use for the caption.
  */
-void ImageView::SetCaption( const QString& caption )
+void ImageView::SetCaption(const QString& caption)
 {
-    if ( caption.isEmpty() )
+    if (caption.isEmpty())
     {
         m_captionLabel->hide();
     }
     else
     {
-        m_captionLabel->setText( caption );
+        m_captionLabel->setText(caption);
         m_captionLabel->adjustSize();
         m_captionLabel->show();
     }
@@ -113,12 +113,12 @@ const QImage ImageView::GetCurrentImage() const
     return m_image;
 }
 
-void ImageView::SetConversionMethod( const ConversionMethod& method )
+void ImageView::SetConversionMethod(const ConversionMethod& method)
 {
     m_conversionMethod = method;
 }
 
-void ImageView::setZoom( double zoom )
+void ImageView::setZoom(double zoom)
 {
     m_zoom = zoom;
 }
@@ -130,28 +130,28 @@ void ImageView::setZoom( double zoom )
  */
 void ImageView::UpdateScaledPixmap()
 {
-    if ( m_image.isNull() )
+    if (m_image.isNull())
     {
         m_scaledPixmap = QPixmap();
     }
     else
     {
-        QImage scaledImage( m_image.scaled( rect().size(),
+        QImage scaledImage(m_image.scaled(rect().size(),
                                             m_aspectRatioMode,
-                                            GetImageTransformationMode() ) );
+                                            GetImageTransformationMode()));
 
         const Qt::ImageConversionFlags FAST_CONVERSION =
                     Qt::AutoColor |
                     Qt::ThresholdDither |
                     Qt::ThresholdAlphaDither;
 
-        m_scaledPixmap.convertFromImage( scaledImage, FAST_CONVERSION );
+        m_scaledPixmap.convertFromImage(scaledImage, FAST_CONVERSION);
     }
 }
 
 const Qt::TransformationMode ImageView::GetImageTransformationMode() const
 {
-    switch ( m_conversionMethod )
+    switch (m_conversionMethod)
     {
         case FastConversion:
             return Qt::FastTransformation;
@@ -160,7 +160,7 @@ const Qt::TransformationMode ImageView::GetImageTransformationMode() const
             return Qt::SmoothTransformation;
 
         default:
-            ASSERT( !"Unknown conversion method" );
+            ASSERT(!"Unknown conversion method");
             return Qt::FastTransformation;
     }
 }
@@ -170,9 +170,9 @@ const Qt::TransformationMode ImageView::GetImageTransformationMode() const
  *  @param preserveAspectRatio If @a true, the image is as large as possible @em inside the available
  *  space, but retaining aspect ratio. If @a false, the image is stretched to fill all the available space.
  */
-void ImageView::SetPreserveAspectRatio( const bool preserveAspectRatio )
+void ImageView::SetPreserveAspectRatio(const bool preserveAspectRatio)
 {
-    if ( preserveAspectRatio )
+    if (preserveAspectRatio)
     {
         m_aspectRatioMode = Qt::KeepAspectRatio;
     }
@@ -186,7 +186,7 @@ void ImageView::SetPreserveAspectRatio( const bool preserveAspectRatio )
  *
  * QResizeEvent parameter unused.
  */
-void ImageView::resizeEvent( QResizeEvent* )
+void ImageView::resizeEvent(QResizeEvent*)
 {
     UpdateScaledPixmap();
 }
@@ -196,20 +196,20 @@ void ImageView::resizeEvent( QResizeEvent* )
  *  This occurs when update() is called or an area of the widget needs to be repainted.
  *  QPaintEvent parameter unused.
  */
-void ImageView::paintEvent( QPaintEvent* )
+void ImageView::paintEvent(QPaintEvent*)
 {
-    QPainter painter( this );
+    QPainter painter(this);
 
-    if ( !m_scaledPixmap.isNull() )
+    if (!m_scaledPixmap.isNull())
     {
         /// @todo offset image so its centred in its space
-        painter.drawPixmap( m_scaledPixmap.rect(), m_scaledPixmap );
+        painter.drawPixmap(m_scaledPixmap.rect(), m_scaledPixmap);
     }
 }
 
-void ImageView::mousePressEvent( QMouseEvent* event )
+void ImageView::mousePressEvent(QMouseEvent* event)
 {
-  	if ( event->button() == Qt::LeftButton )
+  	if (event->button() == Qt::LeftButton)
     {
         double scale_x = (double)m_image.size().width() /
                          (double)m_scaledPixmap.rect().size().width();
@@ -219,17 +219,17 @@ void ImageView::mousePressEvent( QMouseEvent* event )
         double x = ((double)event->x() * scale_x); // * m_zoom;
         double y = ((double)event->y() * scale_y); // * m_zoom;
 
-        if (( x <= m_image.size().width() ) &&
-            ( y <= m_image.size().height() ))
+        if ((x <= m_image.size().width()) &&
+            (y <= m_image.size().height()))
         {
-            emit onLeftClick( m_id, x, y );
+            emit onLeftClick(m_id, x, y);
         }
     }
 
-    if ( event->button() == Qt::RightButton )
+    if (event->button() == Qt::RightButton)
     {
-        emit onRightClick( m_id );
+        emit onRightClick(m_id);
     }
 
-    QFrame::mousePressEvent( event );
+    QFrame::mousePressEvent(event);
 }

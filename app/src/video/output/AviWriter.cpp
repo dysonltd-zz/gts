@@ -22,8 +22,8 @@
 #include <cassert>
 
 
-const int AviWriter::XVID_COMPRESSION_CODEC = CV_FOURCC( 'X', 'V', 'I', 'D' );  // use Xvid codec
-const int AviWriter::FMP4_COMPRESSION_CODEC = CV_FOURCC( 'F', 'M', 'P', '4' );  // use MPEG-4 codec
+const int AviWriter::XVID_COMPRESSION_CODEC = CV_FOURCC('X', 'V', 'I', 'D');  // use Xvid codec
+const int AviWriter::FMP4_COMPRESSION_CODEC = CV_FOURCC('F', 'M', 'P', '4');  // use MPEG-4 codec
 
 //-----------------------------------------------------------------------------------------------------------------
 
@@ -34,35 +34,35 @@ const int AviWriter::FMP4_COMPRESSION_CODEC = CV_FOURCC( 'F', 'M', 'P', '4' );  
  *  @param aviWidth     The width of the generated AVI.
  *  @param aviHeight    The height of the generated AVI.
  */
-AviWriter::AviWriter( const codecType   codec,
+AviWriter::AviWriter(const codecType   codec,
                       const int         aviWidth,
                       const int         aviHeight,
                       const char* const videoFileName,
                       const char* const timestampFileName,
-                      const double      frameRate ) :
-    m_aviWidth      ( aviWidth ),
-    m_aviHeight     ( aviHeight ),
-    m_numChannels   ( DEFAULT_NUM_CHANNELS ),
-    m_timestampFile ( timestampFileName )
+                      const double      frameRate) :
+    m_aviWidth      (aviWidth),
+    m_aviHeight     (aviHeight),
+    m_numChannels   (DEFAULT_NUM_CHANNELS),
+    m_timestampFile (timestampFileName)
 {
     switch (codec)
     {
         case CODEC_XVID:
-            m_avi = cvCreateVideoWriter( videoFileName,
+            m_avi = cvCreateVideoWriter(videoFileName,
                                          AviWriter::XVID_COMPRESSION_CODEC,
                                          frameRate,
-                                         cvSize( aviWidth, aviHeight ) );
+                                         cvSize(aviWidth, aviHeight));
             break;
 
         case CODEC_FMP4:
-            m_avi = cvCreateVideoWriter( videoFileName,
+            m_avi = cvCreateVideoWriter(videoFileName,
                                          AviWriter::FMP4_COMPRESSION_CODEC,
                                          frameRate,
-                                         cvSize( aviWidth, aviHeight ) );
+                                         cvSize(aviWidth, aviHeight));
             break;
     }
 
-    m_img = CreateImage( aviWidth, aviHeight );
+    m_img = CreateImage(aviWidth, aviHeight);
 
     if (m_timestampFile.open(QFile::WriteOnly))
     {
@@ -76,10 +76,10 @@ AviWriter::AviWriter( const codecType   codec,
 AviWriter::~AviWriter()
 {
     // delete the image
-    cvReleaseImage( &m_img );
+    cvReleaseImage(&m_img);
 
     // shut down the video writer
-    cvReleaseVideoWriter( &m_avi );
+    cvReleaseVideoWriter(&m_avi);
 
     m_timestampFile.close();
 }
@@ -91,9 +91,9 @@ AviWriter::~AviWriter()
  *  @return A pointer to a newly-allocated IplImage with the default number of
  *  channels / image depth and the size specified.  The caller takes ownership.
  */
-IplImage* const AviWriter::CreateImage( const int width, const int height ) const
+IplImage* const AviWriter::CreateImage(const int width, const int height) const
 {
-    return cvCreateImage( cvSize( width, height ), DEFAULT_IMAGE_DEPTH, m_numChannels );
+    return cvCreateImage(cvSize(width, height), DEFAULT_IMAGE_DEPTH, m_numChannels);
 }
 
 /** @brief Append a new frame to the AVI file.
@@ -102,39 +102,39 @@ IplImage* const AviWriter::CreateImage( const int width, const int height ) cons
  *  @param frameWidth  The width of the image contained in data.
  *  @param frameHeight The height of the image contained in data.
  */
-void AviWriter::addFrame( const char* const data,
+void AviWriter::addFrame(const char* const data,
                           const int frameWidth,
                           const int frameHeight,
-                          const timespec& stamp )
+                          const timespec& stamp)
 {
     /// @bug [potential] Assumes num channels & channel width in frame
     /// are the same as we expect!
     const int expectedDataSize = m_aviHeight*m_aviWidth*m_numChannels;
     const int frameDataSize    = frameHeight*frameWidth*m_numChannels;
 
-    if ( frameDataSize == expectedDataSize )
+    if (frameDataSize == expectedDataSize)
     {
         // directly copy the image
-        std::memcpy( m_img->imageData, data, frameDataSize );
+        std::memcpy(m_img->imageData, data, frameDataSize);
     }
     else
     {
         // resize and copy the image data
         // Create a temporary image of the size provided
-        IplImage* frameImg = CreateImage( frameWidth, frameHeight );
+        IplImage* frameImg = CreateImage(frameWidth, frameHeight);
 
         // copy the data into the frame image
-        std::memcpy( frameImg->imageData, data, frameDataSize );
+        std::memcpy(frameImg->imageData, data, frameDataSize);
 
         // scale the temporary image to the output image
-        cvResize( frameImg, m_img );
+        cvResize(frameImg, m_img);
 
         // Release the frame image
-        cvReleaseImage( &frameImg );
+        cvReleaseImage(&frameImg);
     }
 
     // write a frame to the avi writer
-    cvWriteFrame( m_avi, m_img );
+    cvWriteFrame(m_avi, m_img);
 
     // Write the corresponding timestamp to the timestamp file:
     m_timestampStream << stamp.tv_sec << ' ' << stamp.tv_nsec << '\n';

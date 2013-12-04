@@ -30,7 +30,7 @@ class RoomCollectionTool : public CollectionToolWidget
     Q_OBJECT
 
 public:
-    RoomCollectionTool( CameraHardware& cameraHardware, QWidget* parent, MainWindow& mainWindow );
+    RoomCollectionTool(CameraHardware& cameraHardware, QWidget* parent, MainWindow& mainWindow);
     ~RoomCollectionTool();
 
     virtual const QString Name() const;

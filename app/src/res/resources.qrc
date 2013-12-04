@@ -50,5 +50,7 @@
         <file>scan10x.png</file>
         <file>scan20x.png</file>
         <file>add.png</file>
+        <file>delete.png</file>
+        <file>edit.png</file>
     </qresource>
 </RCC>

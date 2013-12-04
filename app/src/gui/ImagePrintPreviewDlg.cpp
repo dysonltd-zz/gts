@@ -17,3 +17,33 @@
  */
 
 #include "ImagePrintPreviewDlg.h"
+
+ImagePrintPreviewDlg::ImagePrintPreviewDlg(const QImage &image) :
+    m_image(image)
+{
+}
+
+int ImagePrintPreviewDlg::exec()
+{
+    QPrinter printer;
+
+    const qreal defaultPageMarginMm = 10.0;
+    printer.setPageMargins(defaultPageMarginMm, defaultPageMarginMm,
+                            defaultPageMarginMm, defaultPageMarginMm,
+                            QPrinter::Millimeter);
+
+    if (m_image.width() > m_image.height())
+    {
+        printer.setOrientation(QPrinter::Landscape);
+    }
+
+    ImagePrinter p(m_image);
+    QPrintPreviewDialog ppDlg(&printer);
+
+    QObject::connect(&ppDlg,
+                      SIGNAL(paintRequested(QPrinter*)),
+                      &p,
+                      SLOT (doPrinting(QPrinter*)));
+
+    return ppDlg.exec();
+}

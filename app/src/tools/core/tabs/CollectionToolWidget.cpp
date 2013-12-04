@@ -34,36 +34,43 @@
 #include "Debugging.h"
 #include "FileUtilities.h"
 
-CollectionToolWidget::CollectionToolWidget( const QString&  userFriendlyElementName,
+CollectionToolWidget::CollectionToolWidget(const QString&  userFriendlyElementName,
                                             const WbSchema& collectionSchema,
                                             const WbSchema& elementSchema,
                                             QWidget*        parent,
-                                            MainWindow*     mainWindow ) :
-    Tool                      ( parent, CreateCombinedSchema( collectionSchema, elementSchema ) ),
-    m_userFriendlyElementName ( userFriendlyElementName ),
-    m_collectionSchema        ( collectionSchema ),
-    m_elementSchema           ( elementSchema ),
-    m_ui                      ( new Ui::CollectionToolWidget ),
+                                            MainWindow*     mainWindow) :
+    Tool                      (parent, CreateCombinedSchema(collectionSchema, elementSchema)),
+    m_userFriendlyElementName (userFriendlyElementName),
+    m_collectionSchema        (collectionSchema),
+    m_elementSchema           (elementSchema),
+    m_ui                      (new Ui::CollectionToolWidget),
     m_ownedWidgets            (),
-    m_subToolsTabs            ( 0 ),
-    m_mainWindow              ( mainWindow )
+    m_subToolsTabs            (0),
+    m_mainWindow              (mainWindow)
 {
-    m_ui->setupUi( this );
+    m_ui->setupUi(this);
 
-    CreateSubToolTabs( mainWindow );
+    CreateSubToolTabs(mainWindow);
 
-    QObject::connect( m_ui->m_nameComboBox,
-                      SIGNAL( activated(int) ),
+    QObject::connect(m_ui->m_nameComboBox,
+                      SIGNAL(activated(int)),
                       this,
-                      SLOT( NameComboActivated(const int) ) );
-
-    QObject::connect( m_ui->m_addButton,
-                      SIGNAL( clicked() ),
+                      SLOT(NameComboActivated(const int)));
+    QObject::connect(m_ui->m_addButton,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( NewElement()) );
+                      SLOT(NewElement()));
+    QObject::connect(m_ui->m_deleteButton,
+                      SIGNAL(clicked()),
+                      this,
+                      SLOT(DeleteElement()));
+    QObject::connect(m_ui->m_renameButton,
+                      SIGNAL(clicked()),
+                      this,
+                      SLOT(RenameElement()));
 
-    AddMapper( WbDefaultKeys::descriptionKey, m_ui->m_descriptionPlainTextBox );
-    RegisterCollectionCombo( m_ui->m_nameComboBox, GetCollection(), true );
+    AddMapper(WbDefaultKeys::descriptionKey, m_ui->m_descriptionPlainTextBox);
+    RegisterCollectionCombo(m_ui->m_nameComboBox, GetCollection(), true);
 }
 
 CollectionToolWidget::~CollectionToolWidget()
@@ -73,12 +80,12 @@ CollectionToolWidget::~CollectionToolWidget()
 
 void CollectionToolWidget::showEvent(QShowEvent*)
 {
-    PRINT_VAR_MESSAGE( Name(), "Showing" );
+    PRINT_VAR_MESSAGE(Name(), "Showing");
 }
 
 void CollectionToolWidget::hideEvent(QHideEvent*)
 {
-    PRINT_VAR_MESSAGE( Name(), "Hiding" );
+    PRINT_VAR_MESSAGE(Name(), "Hiding");
 }
 
 /** @brief Occurs only when changed by user (not programmatically),
@@ -86,12 +93,12 @@ void CollectionToolWidget::hideEvent(QHideEvent*)
  *
  * @param comboIndex
  */
-void CollectionToolWidget::NameComboActivated( const int comboIndex )
+void CollectionToolWidget::NameComboActivated(const int comboIndex)
 {
-    QVariant userData = m_ui->m_nameComboBox->itemData( comboIndex );
-    if ( userData.isValid() )
+    QVariant userData = m_ui->m_nameComboBox->itemData(comboIndex);
+    if (userData.isValid())
     {
-        ReloadToElement( userData.toString() );
+        ReloadToElement(userData.toString());
     }
     else
     {
@@ -99,55 +106,55 @@ void CollectionToolWidget::NameComboActivated( const int comboIndex )
     }
 }
 
-void CollectionToolWidget::ReloadToConfig( const WbConfig newConfig )
+void CollectionToolWidget::ReloadToConfig(const WbConfig newConfig)
 {
-    if ( !newConfig.IsTheSameAs( GetCurrentConfig() ) )
+    if (!newConfig.IsTheSameAs(GetCurrentConfig()))
     {
-        if ( m_mainWindow )
+        if (m_mainWindow)
         {
-            m_mainWindow->MergeWithActivePath( WbPath::FromWbConfig( newConfig ) );
+            m_mainWindow->MergeWithActivePath(WbPath::FromWbConfig(newConfig));
             m_mainWindow->Reload();
         }
     }
 }
 
-void CollectionToolWidget::ReloadToElement( const KeyId& elementId )
+void CollectionToolWidget::ReloadToElement(const KeyId& elementId)
 {
-    ReloadToConfig( GetCollection().ElementById( elementId ) );
+    ReloadToConfig(GetCollection().ElementById(elementId));
 }
 
 void CollectionToolWidget::ReloadToCollection()
 {
-    ReloadToConfig( GetCollection().CollectionConfig() );
+    ReloadToConfig(GetCollection().CollectionConfig());
 }
 
-void CollectionToolWidget::CreateSubToolTabs( MainWindow* const mainWindow )
+void CollectionToolWidget::CreateSubToolTabs(MainWindow* const mainWindow)
 {
-    m_subToolsTabs = new ToolTabsContainerWidget( mainWindow, this );
-    m_subToolsTabs->setObjectName( QString::fromUtf8("m_subToolTabs") );
+    m_subToolsTabs = new ToolTabsContainerWidget(mainWindow, this);
+    m_subToolsTabs->setObjectName(QString::fromUtf8("m_subToolTabs"));
 
-    QSizePolicy tabsSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding);
-    tabsSizePolicy.setHorizontalStretch( 0 );
-    tabsSizePolicy.setVerticalStretch  ( 100 );
-    m_subToolsTabs->setSizePolicy( tabsSizePolicy );
+    QSizePolicy tabsSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    tabsSizePolicy.setHorizontalStretch(0);
+    tabsSizePolicy.setVerticalStretch  (100);
+    m_subToolsTabs->setSizePolicy(tabsSizePolicy);
 
-    assert( this->layout() );
-    this->layout()->addWidget( m_subToolsTabs );
+    assert(this->layout());
+    this->layout()->addWidget(m_subToolsTabs);
 }
 
-void CollectionToolWidget::AddSubTool( ToolInterface* const subTool )
+void CollectionToolWidget::AddSubTool(ToolInterface* const subTool)
 {
-    m_subToolsTabs->AddTool( subTool );
+    m_subToolsTabs->AddTool(subTool);
 }
 
-void CollectionToolWidget::AddToolDetail( QLabel*  const detailLabel,
-                                          QWidget* const detailEntryBox )
+void CollectionToolWidget::AddToolDetail(QLabel*  const detailLabel,
+                                          QWidget* const detailEntryBox)
 {
 
     m_ui->m_descriptionGridLayout->addWidget(detailLabel,1,0,1,1);
     m_ui->m_descriptionGridLayout->addWidget(detailEntryBox,1,1,1,1);
-    m_ownedWidgets.push_back( detailLabel );
-    m_ownedWidgets.push_back( detailEntryBox );
+    m_ownedWidgets.push_back(detailLabel);
+    m_ownedWidgets.push_back(detailEntryBox);
 }
 
 /** @brief Returns null if we're displaying at collection level
@@ -156,86 +163,86 @@ void CollectionToolWidget::AddToolDetail( QLabel*  const detailLabel,
  */
 const WbConfig CollectionToolWidget::GetElementConfig() const
 {
-    return GetCurrentConfig().FindAncestor( m_elementSchema.Name() );
+    return GetCurrentConfig().FindAncestor(m_elementSchema.Name());
 }
 
-void CollectionToolWidget::SetName( const QString& name )
+void CollectionToolWidget::SetName(const QString& name)
 {
-    m_ui->m_nameComboBox->setCurrentIndex( m_ui->m_nameComboBox->findText( name ) );
+    m_ui->m_nameComboBox->setCurrentIndex(m_ui->m_nameComboBox->findText(name));
 }
 
-bool CollectionToolWidget::TryToOpenTool( const WbConfig& config )
+bool CollectionToolWidget::TryToOpenTool(const WbConfig& config)
 {
-    const bool openedThisTool = Tool::TryToOpenTool( config );
+    const bool openedThisTool = Tool::TryToOpenTool(config);
     bool openedSubTool = false;
-    if ( openedThisTool )
+    if (openedThisTool)
     {
-        openedSubTool = m_subToolsTabs->TryToOpenTool( config );
+        openedSubTool = m_subToolsTabs->TryToOpenTool(config);
     }
     return openedThisTool || openedSubTool;
 }
 
-void CollectionToolWidget::CallOnSelfAndActiveSubTools( ToolFunction& func )
+void CollectionToolWidget::CallOnSelfAndActiveSubTools(ToolFunction& func)
 {
-    Tool::CallOnSelfAndActiveSubTools( func );
-    m_subToolsTabs->CallOnActiveTools( func );
+    Tool::CallOnSelfAndActiveSubTools(func);
+    m_subToolsTabs->CallOnActiveTools(func);
 }
 
 bool CollectionToolWidget::CurrentConfigIsElement() const
 {
-    return GetCurrentConfig().SchemaIsDescendantOf( m_elementSchema.Name() );
+    return GetCurrentConfig().SchemaIsDescendantOf(m_elementSchema.Name());
 }
 
 void CollectionToolWidget::ReloadCurrentConfigToolSpecific()
 {
-    if ( CurrentConfigIsElement() )
+    if (CurrentConfigIsElement())
     {
-        const KeyValue name = GetCurrentConfig().GetKeyValue( WbDefaultKeys::displayNameKey );
-        SetName( name.ToQString() );
+        const KeyValue name = GetCurrentConfig().GetKeyValue(WbDefaultKeys::displayNameKey);
+        SetName(name.ToQString());
     }
     else
     {
-        SetName( selectItemString );
+        SetName(selectItemString);
     }
 }
 
-void CollectionToolWidget::SetEnabled( const bool shouldEnable )
+void CollectionToolWidget::SetEnabled(const bool shouldEnable)
 {
-    Tool::SetEnabled( shouldEnable );
-    Widget()->setEnabled( true );
-    for ( size_t i = 0; i < m_ownedWidgets.size(); ++i )
+    Tool::SetEnabled(shouldEnable);
+    Widget()->setEnabled(true);
+    for (size_t i = 0; i < m_ownedWidgets.size(); ++i)
     {
-        QWidget* widget = m_ownedWidgets.at( i );
-        widget->setEnabled( shouldEnable );
+        QWidget* widget = m_ownedWidgets.at(i);
+        widget->setEnabled(shouldEnable);
     }
-    m_ui->m_descriptionPlainTextBox->setEnabled( shouldEnable );
-    m_subToolsTabs->setEnabled( shouldEnable );
+    m_ui->m_descriptionPlainTextBox->setEnabled(shouldEnable);
+    m_subToolsTabs->setEnabled(shouldEnable);
 
-    m_ui->m_nameComboBox->setEnabled( true );
+    m_ui->m_nameComboBox->setEnabled(true);
 }
 
 const WbSchema CollectionToolWidget::GetFullWorkbenchSchemaSubTree() const
 {
-    WbSchema schema( GetHandledSchema() );
+    WbSchema schema(GetHandledSchema());
 
-    m_subToolsTabs->AddToolsFullWorkbenchSchemaSubTreeTo( schema,
-                                                          m_elementSchema.Name() );
+    m_subToolsTabs->AddToolsFullWorkbenchSchemaSubTreeTo(schema,
+                                                          m_elementSchema.Name());
 
     return schema;
 }
 
 Collection CollectionToolWidget::GetCollection() const
 {
-    Collection collection( m_collectionSchema.Name(), m_elementSchema.Name() );
-    collection.SetConfig( GetCurrentConfig() );
+    Collection collection(m_collectionSchema.Name(), m_elementSchema.Name());
+    collection.SetConfig(GetCurrentConfig());
     return collection;
 }
 
-void CollectionToolWidget::ReloadAll( const WbConfig& configToUse )
+void CollectionToolWidget::ReloadAll(const WbConfig& configToUse)
 {
-    if ( m_mainWindow )
+    if (m_mainWindow)
     {
-        m_mainWindow->MergeWithActivePath( WbPath::FromWbConfig( configToUse ) );
+        m_mainWindow->MergeWithActivePath(WbPath::FromWbConfig(configToUse));
         m_mainWindow->Reload();
     }
 }
@@ -249,7 +256,7 @@ NewElementWizard* const CollectionToolWidget::CreateNewElementWizard()
     return newElementWizard;
 }
 
-void CollectionToolWidget::AddExtraNewElementWizardPages( NewElementWizard* const wizard )
+void CollectionToolWidget::AddExtraNewElementWizardPages(NewElementWizard* const wizard)
 {
     Q_UNUSED(wizard);
 }
@@ -263,16 +270,16 @@ RenameElementWizard* const CollectionToolWidget::CreateRenameElementWizard()
     return renameElementWizard;
 }
 
-void CollectionToolWidget::AddExtraRenameElementWizardPages( RenameElementWizard* const wizard )
+void CollectionToolWidget::AddExtraRenameElementWizardPages(RenameElementWizard* const wizard)
 {
     Q_UNUSED(wizard);
 }
 
-const WbSchema CollectionToolWidget::CreateCombinedSchema( const WbSchema& collectionSchema,
-                                                           const WbSchema& elementSchema )
+const WbSchema CollectionToolWidget::CreateCombinedSchema(const WbSchema& collectionSchema,
+                                                           const WbSchema& elementSchema)
 {
-    WbSchema combinedSchema( collectionSchema );
-    combinedSchema.AddSubSchema( elementSchema, WbSchemaElement::Multiplicity::Many );
+    WbSchema combinedSchema(collectionSchema);
+    combinedSchema.AddSubSchema(elementSchema, WbSchemaElement::Multiplicity::Many);
     return combinedSchema;
 }
 
@@ -282,75 +289,82 @@ const WbConfig CollectionToolWidget::GetMappedConfig() const
 }
 
 const WbSchema CollectionToolWidget::CreateElementWorkbenchSubSchema(
-                                const KeyName& schemaName, const QString& defaultName )
+                                const KeyName& schemaName, const QString& defaultName)
 {
-    WbSchema schema( CreateWorkbenchSubSchema( schemaName, defaultName ) );
-    schema.AddSingleValueKey( WbDefaultKeys::descriptionKey,
-                              WbSchemaElement::Multiplicity::One );
+    WbSchema schema(CreateWorkbenchSubSchema(schemaName, defaultName));
+    schema.AddSingleValueKey(WbDefaultKeys::descriptionKey,
+                              WbSchemaElement::Multiplicity::One);
     return schema;
 }
 
-void CollectionToolWidget::UpdateToolMenu( QMenu& toolMenu )
+void CollectionToolWidget::UpdateToolMenu(QMenu& toolMenu)
 {
-    Tool::UpdateToolMenu( toolMenu );
-    toolMenu.setTitle( m_userFriendlyElementName );
-    toolMenu.addAction( tr( "&New" ),
+    Tool::UpdateToolMenu(toolMenu);
+    toolMenu.setTitle(m_userFriendlyElementName);
+    toolMenu.addAction(tr("&New"),
                         this,
-                        SLOT( NewElement() ),
-                        QKeySequence( tr( "Ctrl+Shift+N" ) ) );
+                        SLOT(NewElement()),
+                        QKeySequence(tr("Ctrl+Shift+N")));
 
-    if ( CurrentConfigIsElement() )
+    if (CurrentConfigIsElement())
     {
-        toolMenu.addAction( tr( "&Rename" ),
+        toolMenu.addAction(tr("&Rename"),
                             this,
-                            SLOT( RenameElement() ),
-                            QKeySequence( tr( "Ctrl+Shift+R" ) ) );
+                            SLOT(RenameElement()),
+                            QKeySequence(tr("Ctrl+Shift+R")));
+        m_ui->m_renameButton->setEnabled(true);
 
-        toolMenu.addAction( tr( "&Delete" ),
+        toolMenu.addAction(tr("&Delete"),
                             this,
-                            SLOT( DeleteElement() ),
-                            QKeySequence( tr( "Ctrl+Shift+D" ) ) );
+                            SLOT(DeleteElement()),
+                            QKeySequence(tr("Ctrl+Shift+D")));
+        m_ui->m_deleteButton->setEnabled(true);
+    }
+    else
+    {
+        m_ui->m_renameButton->setEnabled(false);
+        m_ui->m_deleteButton->setEnabled(false);
     }
 }
 
 void CollectionToolWidget::NewElement()
 {
-    std::auto_ptr< NewElementWizard > newElementWizard( CreateNewElementWizard() );
-    if ( newElementWizard->exec() )
+    std::auto_ptr< NewElementWizard > newElementWizard(CreateNewElementWizard());
+    if (newElementWizard->exec())
     {
-        const KeyValue newElementName( KeyValue::from( newElementWizard
-                                       ->field( WizardStartPage::nameField )
-                                       .toString() ) );
+        const KeyValue newElementName(KeyValue::from(newElementWizard
+                                       ->field(WizardStartPage::nameField)
+                                       .toString()));
 
-        WbConfig newElement( GetCollection().AddNewElement( newElementName ) );
-        SetToolSpecificConfigItems( newElement, *newElementWizard );
-        ReloadAll( newElement );
+        WbConfig newElement(GetCollection().AddNewElement(newElementName));
+        SetToolSpecificConfigItems(newElement, *newElementWizard);
+        ReloadAll(newElement);
     }
     else
     {
-        PRINT( "User cancelled" );
+        PRINT("User cancelled");
     }
 }
 
 void CollectionToolWidget::RenameElement()
 {
-    std::auto_ptr< RenameElementWizard > renameElementWizard( CreateRenameElementWizard() );
-    if ( renameElementWizard->exec() )
+    std::auto_ptr< RenameElementWizard > renameElementWizard(CreateRenameElementWizard());
+    if (renameElementWizard->exec())
     {
         const KeyValue newElementName(
-            KeyValue::from( renameElementWizard
-                                       ->field( WizardStartPage::nameField )
-                                       .toString() ) );
+            KeyValue::from(renameElementWizard
+                                       ->field(WizardStartPage::nameField)
+                                       .toString()));
 
         WbConfig selectedElement = GetElementConfig();
-        selectedElement.SetKeyValue( WbDefaultKeys::displayNameKey,
+        selectedElement.SetKeyValue(WbDefaultKeys::displayNameKey,
                                     newElementName);
-        SetToolSpecificConfigItems( selectedElement, *renameElementWizard );
-        ReloadAll( selectedElement );
+        SetToolSpecificConfigItems(selectedElement, *renameElementWizard);
+        ReloadAll(selectedElement);
     }
     else
     {
-        PRINT( "User cancelled" );
+        PRINT("User cancelled");
     }
 }
 
@@ -359,43 +373,43 @@ void CollectionToolWidget::DeleteElement()
     WbConfig selectedElement = GetElementConfig();
 
     const WbConfig parent = selectedElement.GetParent();
-    const KeyId id = parent.FindSubConfigId( selectedElement );
+    const KeyId id = parent.FindSubConfigId(selectedElement);
 
     // Look to see if there are dependencies on this item.
-    if ( !selectedElement.DependentExists( KeyValue::from(id) ) )
+    if (!selectedElement.DependentExists(KeyValue::from(id)))
     {
-        const int result = QMessageBox::question( this,
+        const int result = QMessageBox::question(this,
                                                   "Confirm delete",
                                                   QObject::tr("Deleting this item will remove all files associated with it.\n"
                                                               "Are you sure you want to delete %1?")
-                                                  .arg( selectedElement.GetKeyValue( WbDefaultKeys::displayNameKey).ToQString() ),
-                                                  QMessageBox::Yes|QMessageBox::No );
+                                                  .arg(selectedElement.GetKeyValue(WbDefaultKeys::displayNameKey).ToQString()),
+                                                  QMessageBox::Yes|QMessageBox::No);
 
-        if( result == QMessageBox::Yes )
+        if(result == QMessageBox::Yes)
         {
-            GetCollection().DeleteElement( id );
-            FileUtilities::DeleteDirectory( parent.GetAbsoluteFileNameFor(id) );
-            ReloadAll( parent );
+            GetCollection().DeleteElement(id);
+            FileUtilities::DeleteDirectory(parent.GetAbsoluteFileNameFor(id));
+            ReloadAll(parent);
         }
     }
     else
     {
-        QMessageBox::information( this,
-                                  QObject::tr( "Error" ),
-                                  QObject::tr( "This item is being used in the workbench and cannot be deleted. "
-                                                "Please remove any reference(s) to it and try again." ) );
+        QMessageBox::information(this,
+                                  QObject::tr("Error"),
+                                  QObject::tr("This item is being used in the workbench and cannot be deleted. "
+                                                "Please remove any reference(s) to it and try again."));
     }
 }
 
-void CollectionToolWidget::SetToolSpecificConfigItems( WbConfig newElement,
-                                                       NewElementWizard& wizard )
+void CollectionToolWidget::SetToolSpecificConfigItems(WbConfig newElement,
+                                                       NewElementWizard& wizard)
 {
     Q_UNUSED(newElement);
     Q_UNUSED(wizard);
 }
 
-void CollectionToolWidget::SetToolSpecificConfigItems( WbConfig newElement,
-                                                       RenameElementWizard& wizard )
+void CollectionToolWidget::SetToolSpecificConfigItems(WbConfig newElement,
+                                                       RenameElementWizard& wizard)
 {
     Q_UNUSED(newElement);
     Q_UNUSED(wizard);
@@ -403,7 +417,7 @@ void CollectionToolWidget::SetToolSpecificConfigItems( WbConfig newElement,
 
 bool CollectionToolWidget::CanClose() const
 {
-    if ( !m_subToolsTabs->ActiveToolCanClose() )
+    if (!m_subToolsTabs->ActiveToolCanClose())
     {
         return false;
     }

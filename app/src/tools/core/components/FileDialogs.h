@@ -27,33 +27,51 @@
 
 #include "WbConfigTools.h"
 
-/// @brief Functions to create standard dialog types
+/**
+  @brief Functions to create standard dialog types
+**/
 namespace FileDialogs
 {
-    const QString GetEmptyDirectoryName( QWidget* const parent,
-                                         const QString& title,
-                                         const QDir&    startDirectory  );
+    /**
+      @brief Get the name of an empty directory to put new files into.
+      Gets a directory name using a standard file dialog.  If the directory selected is empty,
+      just returns the absolute path of the directory. If the directory is not empty, warn that
+      folder contents will be removed, And allow user to decline.  Keep asking for a directory
+      until an empty directory is chosen, the user accepts removal of a directory's contents
+      (which is performed here too, or the user cancels.
+
+      @param parent The parent of the file dialog
+      @param title  The string to use in the title bar
+      @param startDirectory The directory to open when the dialog starts
+      @return The name of an empty directory, or the empty string if the user cancels.
+    **/
+    const QString GetEmptyDirectoryName(QWidget* const parent,
+                                        const QString& title,
+                                        const QDir& startDirectory );
+
+
+
 
     class ExtendedFileDialog : public QFileDialog
     {
         Q_OBJECT
 
     public:
-        ExtendedFileDialog( QWidget* const parent,
-                            const QString& title,
-                            const QString& startingDirectory,
-                            const QString& fileFilters,
-                            const bool singleFile );
+        ExtendedFileDialog(QWidget* const parent,
+                           const QString& title,
+                           const QString& startingDirectory,
+                           const QString& fileFilters,
+                           const bool singleFile);
 
         bool RelativeSelected() const;
         bool CopyFileSelected() const;
 
     private:
         void CreateCheckBoxes();
-        void CreateCheckBox( QCheckBox*& checkBox,
-                             const QString& title,
-                             const Qt::CheckState& initialState,
-                             const QString& toolTip );
+        void CreateCheckBox(QCheckBox*& checkBox,
+                            const QString& title,
+                            const Qt::CheckState& initialState,
+                            const QString& toolTip);
 
         QCheckBox* m_copyFilesCheckBox;
         QCheckBox* m_relativeCheckBox;

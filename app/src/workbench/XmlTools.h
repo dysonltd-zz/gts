@@ -23,8 +23,8 @@
 
 namespace XmlTools
 {
-    const QString xmlIdAttribute( "id" );
-    const QString xmlConfigFileNameTag( "workbenchConfigFile" );
+    const QString xmlIdAttribute("id");
+    const QString xmlConfigFileNameTag("workbenchConfigFile");
 
 }
 #endif

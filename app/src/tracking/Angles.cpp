@@ -32,7 +32,7 @@ namespace Angles
     /** Normalize angles - to the range of <pi,-pi)
     * Watch out when calculating Jacobians!
     */
-    double NormAngle( double fi )
+    double NormAngle(double fi)
     {
         double b = floor(fi/(2.0*MathsConstants::D_PI));
         double c = fi - b*2.0*MathsConstants::D_PI;
@@ -49,7 +49,7 @@ namespace Angles
     * Watch out when calculating Jacobians!
     * make it more efficient later!
     */
-    double DiffAngle( double a, double b )
+    double DiffAngle(double a, double b)
     {
         //should use norm_angle(a-b);
         a = NormAngle(a);
@@ -63,7 +63,7 @@ namespace Angles
 
         if(fabs(delta) > MathsConstants::D_PI)//did we get the longer difference?
         {
-            if( delta >0)
+            if(delta >0)
                 delta -= 2.0*MathsConstants::D_PI;
             else
                 delta +=  2.0*MathsConstants::D_PI;
@@ -76,7 +76,7 @@ namespace Angles
     * v1,v2 are treated as angles (normalization - special way to calculate the diff.)
     * \return interpolated value
     */
-    double Interpolate( double t1, double v1, double t2, double v2, double t, bool angle )
+    double Interpolate(double t1, double v1, double t2, double v2, double t, bool angle)
     {
         double v;
 
@@ -86,7 +86,7 @@ namespace Angles
             v2 = NormAngle(v2);
 
             ///the interpolation has to work on the shorter angle
-            if( fabs(v1-v2)>MathsConstants::D_PI) ///longer angle?
+            if(fabs(v1-v2)>MathsConstants::D_PI) ///longer angle?
             {
                 if(v1<0)
                     v1 += 2.0*MathsConstants::D_PI;
@@ -116,10 +116,10 @@ namespace Angles
 
     /** Calculates poses of th2 at the times of th1 - dt, returns poses at res
     */
-    void InterpolatePose( double dt,
+    void InterpolatePose(double dt,
                           TrackHistory::TrackLog *th1,
                           TrackHistory::TrackLog *th2,
-                          TrackHistory::TrackLog *res )
+                          TrackHistory::TrackLog *res)
     {
         res->clear();
 
@@ -134,18 +134,18 @@ namespace Angles
             {
                 double t2 = t - (th2->at(j).t() + dt);
 
-                if( t2 >= 0 && t2 < min_t )
+                if(t2 >= 0 && t2 < min_t)
                 {
                     min_t = t2;
                     min_j = j;
                 }
             }
 
-            if( min_t > 2.0 ) // time difference should be smaller than 2s
+            if(min_t > 2.0) // time difference should be smaller than 2s
             {
                 LOG_WARN(QObject::tr("Interpolate - no assoc at %1.").arg(t));
 
-                res->push_back( TrackEntry( cvPoint2D32f(0,0), 0, 0, t, 0 ) );
+                res->push_back(TrackEntry(cvPoint2D32f(0,0), 0, 0, t, 0));
             }
             else //we can interpolate between min_j and min_j+1
             {
@@ -167,21 +167,21 @@ namespace Angles
                 if(dt>0 && fabs(th)<0.1)
 			    {
 				    LOG_FATAL("The bug!");
-	                th = interpolate( th2->at(min_j).t()+dt,  th2->at(min_j).th(),
+	                th = interpolate(th2->at(min_j).t()+dt,  th2->at(min_j).th(),
                                       th2->at(min_j+1).t()+dt,th2->at(min_j+1).th(),
-                                      t, true );
+                                      t, true);
 			    }
 			    */
 
-                wgm = Interpolate( th2->at(min_j).t()+dt, th2->at(min_j).wgm(),
+                wgm = Interpolate(th2->at(min_j).t()+dt, th2->at(min_j).wgm(),
                                    th2->at(min_j+1).t()+dt, th2->at(min_j+1).wgm(),
-                                    t, true );
+                                    t, true);
 
-                res->push_back( TrackEntry( cvPoint2D32f((float)x, (float)y),
+                res->push_back(TrackEntry(cvPoint2D32f((float)x, (float)y),
                                             (float)th,
                                             (float)th2->at(min_j).e(),
                                             t,
-                                            (float)wgm ) );
+                                            (float)wgm));
             }
         }
     }

@@ -20,6 +20,6 @@
 
 Collection RunsCollection()
 {
-    return Collection( KeyName( "runs" ), KeyName( "run" ) );
+    return Collection(KeyName("runs"), KeyName("run"));
 }
 

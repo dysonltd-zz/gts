@@ -22,21 +22,24 @@
 #include "MessageHandler.h"
 #include <QtGui/QMainWindow>
 
+/**
+ * @brief Qt Specific Message Handler implementation
+ */
 class QtMessageHandler: public MessageHandler
 {
 public:
-    QtMessageHandler( QMainWindow& mainWindow );
+    QtMessageHandler(QMainWindow& mainWindow);
     virtual ~QtMessageHandler();
 
-    virtual void Show( QWidget* const  parent,
+    virtual void Show(QWidget* const  parent,
                        const QString&  title,
                        const QString&  message,
                        const Message::Severity& severity,
-                       const QString& details  );
+                       const QString& details );
 
 private:
-    QtMessageHandler( const QtMessageHandler& );
-    QtMessageHandler& operator =( const QtMessageHandler& );
+    QtMessageHandler(const QtMessageHandler&);
+    QtMessageHandler& operator =(const QtMessageHandler&);
 
     QMainWindow& m_mainWindow;
 };

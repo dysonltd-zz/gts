@@ -29,8 +29,8 @@ namespace TargetRegistry
         QString printImageFileName;
     };
 
-    const TargetDetails TrackingTarget( const size_t index );
-    const TargetDetails GetTargetById( const QString& targetId );
-    void FillOutTargetTypeCombo( QComboBox& comboBox );
+    const TargetDetails TrackingTarget(const size_t index);
+    const TargetDetails GetTargetById(const QString& targetId);
+    void FillOutTargetTypeCombo(QComboBox& comboBox);
 }
 

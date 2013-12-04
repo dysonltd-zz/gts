@@ -64,7 +64,7 @@ public:
 
     CameraDescription();
 
-    explicit CameraDescription( const CameraApi& api );
+    explicit CameraDescription(const CameraApi& api);
     static const CameraDescription CreateOffline();
 
     bool IsValid() const;
@@ -73,11 +73,11 @@ public:
     const std::wstring& Description () const;
     const std::wstring& UniqueId    () const;
 
-    VideoSequence* const CreateVideoSequence( double fps ) const;
+    VideoSequence* const CreateVideoSequence(double fps) const;
 
-    const CameraDescription WithName        ( const std::wstring& name ) const;
-    const CameraDescription WithDescription ( const std::wstring& description ) const;
-    const CameraDescription WithUniqueId    ( const std::wstring& uniqueId ) const;
+    const CameraDescription WithName        (const std::wstring& name) const;
+    const CameraDescription WithDescription (const std::wstring& description) const;
+    const CameraDescription WithUniqueId    (const std::wstring& uniqueId) const;
 
     const QString ToPlainText() const;
     const QString ToRichText() const;
@@ -109,6 +109,6 @@ private:
     Resolutions      m_resolutions; ///< @brief the set of available resolutions
 };
 
-Q_DECLARE_METATYPE( CameraDescription )
+Q_DECLARE_METATYPE(CameraDescription)
 
 #endif /* CAMERADESCRIPTIONH_ */

@@ -20,6 +20,6 @@
 
 Collection RoomsCollection()
 {
-    return Collection( KeyName( "rooms" ), KeyName( "room" ) );
+    return Collection(KeyName("rooms"), KeyName("room"));
 }
 

@@ -88,24 +88,24 @@ namespace
 /**
     Load measurements from config.
 **/
-bool RobotMetrics::LoadMetrics( const WbConfig& metricsCfg,
+bool RobotMetrics::LoadMetrics(const WbConfig& metricsCfg,
                                 const WbConfig& camPosCalCfg,
-                                float trackingResolution )
+                                float trackingResolution)
 {
     m_valid = false;
 
-    m_heightCm = metricsCfg.GetKeyValue( RobotMetricsSchema::dimensionsHeightKey ).ToDouble();
-    m_radiusCm = metricsCfg.GetKeyValue( RobotMetricsSchema::targetDiagonalCmKey ).ToDouble()/2.0;
+    m_heightCm = metricsCfg.GetKeyValue(RobotMetricsSchema::dimensionsHeightKey).ToDouble();
+    m_radiusCm = metricsCfg.GetKeyValue(RobotMetricsSchema::targetDiagonalCmKey).ToDouble()/2.0;
 
-    m_baseCm = metricsCfg.GetKeyValue( RobotMetricsSchema::dimensionsBaseRadiusKey ).ToDouble();
-    m_brushBarCm = metricsCfg.GetKeyValue( RobotMetricsSchema::brushBarLengthKey ).ToDouble();
-    m_brushBarOffsetCm = metricsCfg.GetKeyValue( RobotMetricsSchema::brushBarOffsetKey ).ToDouble();
-    m_XTargetOffsetCm = metricsCfg.GetKeyValue( RobotMetricsSchema::targetOffsetXKey ).ToDouble();
-    m_YTargetOffsetCm = metricsCfg.GetKeyValue( RobotMetricsSchema::targetOffsetYKey ).ToDouble();
-    m_targetRotationRad = metricsCfg.GetKeyValue( RobotMetricsSchema::targetRotationKey ).ToDouble();
+    m_baseCm = metricsCfg.GetKeyValue(RobotMetricsSchema::dimensionsBaseRadiusKey).ToDouble();
+    m_brushBarCm = metricsCfg.GetKeyValue(RobotMetricsSchema::brushBarLengthKey).ToDouble();
+    m_brushBarOffsetCm = metricsCfg.GetKeyValue(RobotMetricsSchema::brushBarOffsetKey).ToDouble();
+    m_XTargetOffsetCm = metricsCfg.GetKeyValue(RobotMetricsSchema::targetOffsetXKey).ToDouble();
+    m_YTargetOffsetCm = metricsCfg.GetKeyValue(RobotMetricsSchema::targetOffsetYKey).ToDouble();
+    m_targetRotationRad = metricsCfg.GetKeyValue(RobotMetricsSchema::targetRotationKey).ToDouble();
 
-    m_squareCm = camPosCalCfg.GetKeyValue( ExtrinsicCalibrationSchema::gridSquareSizeInCmKey ).ToDouble();
-    m_squarePx = camPosCalCfg.GetKeyValue( ExtrinsicCalibrationSchema::gridSquareSizeInPxKey ).ToDouble();
+    m_squareCm = camPosCalCfg.GetKeyValue(ExtrinsicCalibrationSchema::gridSquareSizeInCmKey).ToDouble();
+    m_squarePx = camPosCalCfg.GetKeyValue(ExtrinsicCalibrationSchema::gridSquareSizeInPxKey).ToDouble();
 
     m_resolution = trackingResolution;
 
@@ -113,7 +113,7 @@ bool RobotMetrics::LoadMetrics( const WbConfig& metricsCfg,
     m_targetRotationRad *= MathsConstants::F_PI;
 
 #ifdef SCALED_PIXELS
-    ComputePixelMetrics( m_squarePx );
+    ComputePixelMetrics(m_squarePx);
 #else
     ComputePixelMetrics();
 #endif
@@ -127,7 +127,7 @@ bool RobotMetrics::LoadMetrics( const WbConfig& metricsCfg,
     and convert metrics (those given in cm only) to pixels.
 **/
 #ifdef SCALED_PIXELS
-void RobotMetrics::ComputePixelMetrics( float squarePx )
+void RobotMetrics::ComputePixelMetrics(float squarePx)
 {
     m_squarePx          = squarePx;
 

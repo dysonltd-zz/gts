@@ -26,19 +26,17 @@
 
 #include <iostream>
 
-/** @brief Create a dialog listing connected cameras to select from with a preview.
-**/
-CameraSelectionForm::CameraSelectionForm( QWidget* const parent ) :
-    QDialog       ( parent ),
-    m_ui          ( new Ui::CameraSelectionForm ),
-    m_contents    ( new CameraSelectionFormContents( this ) )
+CameraSelectionForm::CameraSelectionForm(QWidget* const parent) :
+    QDialog       (parent),
+    m_ui          (new Ui::CameraSelectionForm),
+    m_contents    (new CameraSelectionFormContents(this))
 {
-    m_ui->setupUi( this );
+    m_ui->setupUi(this);
 
-    QObject::connect( m_contents,
-                      SIGNAL( CameraChosen() ),
+    QObject::connect(m_contents,
+                      SIGNAL(CameraChosen()),
                       this,
-                      SLOT( accept() ) );
+                      SLOT(accept()));
 }
 
 CameraSelectionForm::~CameraSelectionForm()
@@ -46,37 +44,25 @@ CameraSelectionForm::~CameraSelectionForm()
     delete m_ui;
 }
 
-/** @brief Display the dialog to select a camera.
- *
- *  If the camera list is empty, then display a warning message and close.
- *
- *  @param cameras List of a description of each camera to display.
- *  @param fps     The frame rate to use for the preview image (or as close as possible).
- *
- *  @return A CameraDescription describing the camera selected by the user,
- *  or a an invalid description if the user does not select a camera, there
- *  are no cameras to select from, or the user cancels.
-**/
-const CameraDescription
-CameraSelectionForm::ChooseConnectedCamera( const CameraApi::CameraList& cameras )
+const CameraDescription CameraSelectionForm::ChooseConnectedCamera(const CameraApi::CameraList& cameras)
 {
     CameraDescription camera;
 
-    if ( m_contents->StartUp( cameras ) )
+    if (m_contents->StartUp(cameras))
     {
         int success = exec();
 
-        if ( success )
+        if (success)
         {
             camera = m_contents->GetChosenCamera();
         }
     }
     else
     {
-        Message::Show( parentWidget(),
-                       tr( "Camera Selection" ),
-                       tr( "No cameras found!" ),
-                       Message::Severity_Critical );
+        Message::Show(parentWidget(),
+                       tr("Camera Selection"),
+                       tr("No cameras found!"),
+                       Message::Severity_Critical);
     }
 
     m_contents->Shutdown(); // Shutdown so that it closes the camera

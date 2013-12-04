@@ -24,16 +24,27 @@
 
 #include "Message.h"
 
+/**
+  @brief MessageHandler Interface - no implementation
+ */
 class MessageHandler
 {
 public:
     virtual ~MessageHandler() {}
 
-    virtual void Show( QWidget* const parent,
-                       const QString& title,
-                       const QString& message,
-                       const Message::Severity& severity,
-                       const QString& details ) = 0;
+    /**
+     * @brief Display message and severity indicator
+     * @param parent Widget calling this Message Handler
+     * @param title Text to be placed in title bar
+     * @param message Message placed in dialog
+     * @param severity Indicates which icon to use on left of message
+     * @param details Sub-text to display
+     */
+    virtual void Show(QWidget* const parent,
+                      const QString& title,
+                      const QString& message,
+                      const Message::Severity& severity,
+                      const QString& details) = 0;
 };
 
 #endif // MESSAGEHANDLER_H

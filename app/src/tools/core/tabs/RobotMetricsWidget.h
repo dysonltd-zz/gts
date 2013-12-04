@@ -34,10 +34,10 @@ class RobotMetricsWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit RobotMetricsWidget( QWidget* parent = 0 );
+    explicit RobotMetricsWidget(QWidget* parent = 0);
     virtual ~RobotMetricsWidget();
 
-    virtual const QString Name() const { return tr( "Robot Metrics" ); }
+    virtual const QString Name() const { return tr("Robot Metrics"); }
     virtual bool CanClose() const;
     const QString CannotCloseReason() const;
 

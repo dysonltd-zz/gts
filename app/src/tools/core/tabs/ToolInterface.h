@@ -37,7 +37,7 @@ class ToolInterface;
 struct ToolFunction
 {
     virtual ~ToolFunction() {}
-    virtual void operator() ( ToolInterface& tool ) = 0;
+    virtual void operator() (ToolInterface& tool) = 0;
 };
 
 class ToolInterface
@@ -48,16 +48,16 @@ public:
 
     virtual QWidget* Widget() = 0;
 
-    virtual bool TryToOpenTool( const WbConfig& config ) = 0;
+    virtual bool TryToOpenTool(const WbConfig& config) = 0;
 
-    virtual void Reload( const WbConfig& parentConfig ) = 0;
-    virtual void UpdateToolMenu( QMenu& toolMenu ) = 0;
+    virtual void Reload(const WbConfig& parentConfig) = 0;
+    virtual void UpdateToolMenu(QMenu& toolMenu) = 0;
     virtual void Activated() = 0;
 
-    virtual void CallOnSelfAndActiveSubTools( ToolFunction& func ) = 0;
+    virtual void CallOnSelfAndActiveSubTools(ToolFunction& func) = 0;
 
-    virtual void AddFullWorkbenchSchemaSubTreeTo( WbSchema&      parentSchema,
-                                                  const KeyName& schemaToAttachTo ) const = 0;
+    virtual void AddFullWorkbenchSchemaSubTreeTo(WbSchema&      parentSchema,
+                                                  const KeyName& schemaToAttachTo) const = 0;
 
     virtual const WbConfig GetCurrentConfig() const = 0;
 

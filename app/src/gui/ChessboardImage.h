@@ -23,16 +23,16 @@
 
 namespace ChessboardImage
 {
-    /** @brief Create a chessboard image
-
-        @param rows The number of rows in the board (height)
-        @param cols The number of columns in the board (width)
-        @param squareSizePxls The number of pixels along each edge of each square
-        @return A rows*cols pixel image alternating black & white pixels in both directions.
+    /**
+      @brief Create a chessboard image
+      @param rows The number of rows in the board (height)
+      @param cols The number of columns in the board (width)
+      @param squareSizePxls The number of pixels along each edge of each square
+      @return A rows*cols pixel image alternating black & white pixels in both directions.
      **/
-    const QImage CreateImage( const int rows,
+    const QImage CreateImage(const int rows,
                               const int cols,
-                              const int squareSizePxls  = 100 );
+                              const int squareSizePxls  = 100);
 }
 
 #endif // CHESSBOARDIMAGE_H

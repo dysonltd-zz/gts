@@ -45,28 +45,28 @@ public:
         SmoothConversion
     };
 
-    explicit ImageView( QWidget* parent = 0, int id = -1 );
+    explicit ImageView(QWidget* parent = 0, int id = -1);
 
     void Clear();
-    void SetImage( const QString& imageName );
-    void SetImage( const QImage&  image );
-    void SetPreserveAspectRatio( const bool preserveAspectRatio );
-    void SetCaption( const QString& caption );
+    void SetImage(const QString& imageName);
+    void SetImage(const QImage&  image);
+    void SetPreserveAspectRatio(const bool preserveAspectRatio);
+    void SetCaption(const QString& caption);
     const QSize GetImageSize  () const { return m_image.size(); }
-    double GetImageAspectRatio() const { return ( double )m_image.width () /
-                                                ( double )m_image.height(); }
+    double GetImageAspectRatio() const { return (double)m_image.width () /
+                                                (double)m_image.height(); }
     const QImage GetCurrentImage() const;
-    void SetConversionMethod( const ConversionMethod& method );
-    void setZoom( double zoom );
+    void SetConversionMethod(const ConversionMethod& method);
+    void setZoom(double zoom);
 
  signals:
-    void onLeftClick( int id, int x, int y );
-    void onRightClick( int id );
+    void onLeftClick(int id, int x, int y);
+    void onRightClick(int id);
 
 protected:
-    virtual void resizeEvent( QResizeEvent* );
-    virtual void paintEvent ( QPaintEvent* );
-    virtual void mousePressEvent( QMouseEvent* event );
+    virtual void resizeEvent(QResizeEvent*);
+    virtual void paintEvent (QPaintEvent*);
+    virtual void mousePressEvent(QMouseEvent* event);
 
 private:
     void UpdateScaledPixmap();

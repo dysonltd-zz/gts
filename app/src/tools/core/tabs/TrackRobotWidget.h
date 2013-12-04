@@ -49,29 +49,29 @@ class TrackRobotWidget : public Tool
     Q_OBJECT
 
 public slots:
-     void SetPosition( double position );
-     void SelectTrack( int id, int x, int y );
-     void ClearTrack( int id );
-     void ThreadPaused( bool trackingLost );
+     void SetPosition(double position);
+     void SelectTrack(int id, int x, int y);
+     void ClearTrack(int id);
+     void ThreadPaused(bool trackingLost);
      void ThreadFinished();
 
 public:
-    explicit TrackRobotWidget( QWidget* parent = 0 );
+    explicit TrackRobotWidget(QWidget* parent = 0);
     ~TrackRobotWidget();
 
-    virtual const QString Name() const { return tr( "Track Robot" ); }
+    virtual const QString Name() const { return tr("Track Robot"); }
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
     void ReloadCurrentConfigToolSpecific();
     void Playing();
     void Paused();
     void Stopped();
-    void ImageUpdate( int id, const QImage& image, double fps );
-    void ImageSet( int id, const QImage& image, double fps );
+    void ImageUpdate(int id, const QImage& image, double fps);
+    void ImageSet(int id, const QImage& image, double fps);
 
 signals:
-     void UpdateImage( int id, const QImage& image, double fps );
-     void SetImage( int id, const QImage& image, double fps );
+     void UpdateImage(int id, const QImage& image, double fps);
+     void SetImage(int id, const QImage& image, double fps);
 
 private slots:
     void CameraComboChanged();
@@ -90,7 +90,7 @@ private:
     void SetupUi();
     void ResetUi();
     void ConnectSignals();
-    void FillOutCameraCombo( QComboBox& comboBox );
+    void FillOutCameraCombo(QComboBox& comboBox);
     void SetButtonIcon(QToolButton* button, QString iconImage);
     const KeyId GetRoomIdToCapture() const;
     const WbConfig GetRoomLayoutConfig(const KeyId &roomIdToCapture);
@@ -98,7 +98,7 @@ private:
     const QStringList GetCameraPositionIds(const KeyId& roomIdToCapture);
     typedef QPair< QStringList, QStringList > VideoCaptureEntry;
     void AddVideoFileConfigKey(const QString& videoFileName, const KeyId& camPosId);
-    void AddTableRow( const QString& roomPosition, const QStringList& videoFileNames );
+    void AddTableRow(const QString& roomPosition, const QStringList& videoFileNames);
     void ShowNoRoomError();
     void ShowEmptyRoomError();
     virtual const QString GetSubSchemaDefaultFileName() const;
@@ -108,24 +108,24 @@ private:
     const WbSchema CreateSchema();
     bool IsDataValid() const;
     bool CreateRunResultDirectory(const WbConfig& config);
-    const bool CreateVideoDirectory( const QString& videoDirectoryName );
-    const ExitStatus::Flags TrackLoad( const WbConfig&           trackConfig,
+    const bool CreateVideoDirectory(const QString& videoDirectoryName);
+    const ExitStatus::Flags TrackLoad(const WbConfig&           trackConfig,
                                        ImageGrid*                imageGrid,
-                                       RobotTracker::trackerType tracker );
-    const ExitStatus::Flags TrackRun( double rate,
+                                       RobotTracker::trackerType tracker);
+    const ExitStatus::Flags TrackRun(double rate,
                                       bool trackingActive,
                                       bool singleStep,
-                                      bool runForward );
+                                      bool runForward);
     const ExitStatus::Flags TrackPause();
     const ExitStatus::Flags TrackStop();
-    const ExitStatus::Flags TrackSaveData( char* floorPlanFile,
+    const ExitStatus::Flags TrackSaveData(char* floorPlanFile,
                                            char* trackerResultsTxtFile,
                                            char* trackerResultsCsvFile,
                                            char* trackerResultsImgFile,
                                            char* pixelOffsetsFile,
                                            QString trackResultsTemplate,
-                                           QString pixelOffsetsTemplate );
-    const ExitStatus::Flags TrackReset( ImageGrid* imageGrid );
+                                           QString pixelOffsetsTemplate);
+    const ExitStatus::Flags TrackReset(ImageGrid* imageGrid);
 
     Ui::TrackRobotWidget* m_ui;
     GtsScene m_scene;

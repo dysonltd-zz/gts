@@ -38,10 +38,10 @@ class KltTracker: public RobotTracker
 {
 public:
 
-    KltTracker( const CameraCalibration* cal,
+    KltTracker(const CameraCalibration* cal,
                 const RobotMetrics* metrics,
                 const IplImage* currentImage,
-                int thresh );
+                int thresh);
     ~KltTracker();
 
     CvPoint2D32f GetPosition() const
@@ -51,7 +51,7 @@ public:
 
     CvPoint2D32f GetGroundPlanePos() const
     {
-        return ConvertTrackToCm( AdjustTrackForRobotHeight( GetPosition(), GetHeading() ) );
+        return ConvertTrackToCm(AdjustTrackForRobotHeight(GetPosition(), GetHeading()));
     }
 
     float GetHeading() const
@@ -59,8 +59,8 @@ public:
         return m_angle;
     }
 
-    CvPoint2D32f GetBrushBarLeft( CvPoint2D32f position, float heading ) const;
-    CvPoint2D32f GetBrushBarRight( CvPoint2D32f position, float heading ) const;
+    CvPoint2D32f GetBrushBarLeft(CvPoint2D32f position, float heading) const;
+    CvPoint2D32f GetBrushBarRight(CvPoint2D32f position, float heading) const;
 
     float GetError() const
     {
@@ -72,44 +72,44 @@ public:
         return m_currImg;
     }
 
-    void SetParam( paramType param, float value );
+    void SetParam(paramType param, float value);
 
     const TrackHistory::TrackLog& GetHistory() const
     {
         return m_history;
     }
 
-    void SetPosition( CvPoint2D32f robotPosition )
+    void SetPosition(CvPoint2D32f robotPosition)
     {
         m_pos = robotPosition;
     }
 
-    void SetCurrentImage( const IplImage* const pImg )
+    void SetCurrentImage(const IplImage* const pImg)
     {
         m_prevImg = m_currImg;
         m_currImg = pImg;
     }
 
-    void SetThresh( float thresh )
+    void SetThresh(float thresh)
     {
         m_nccThresh = thresh;
     }
 
     void Activate();
 
-    bool Track( double timeStamp )
+    bool Track(double timeStamp)
     {
-        return Track( timeStamp, true, false );
+        return Track(timeStamp, true, false);
     }
 
-    bool Track( double timestampInMillisecs, bool flipCorrect, bool init );
-    void DoInactiveProcessing( double timeStamp );
+    bool Track(double timestampInMillisecs, bool flipCorrect, bool init);
+    void DoInactiveProcessing(double timeStamp);
     void MotionDetect();
     void LossRecovery();
 
-    void Rewind( double timeStamp );
+    void Rewind(double timeStamp);
 
-    bool LoadTargetImage( const char* fileName );
+    bool LoadTargetImage(const char* fileName);
 
     const CameraCalibration* GetCalibration() const
     {
@@ -123,8 +123,8 @@ public:
 
 
 private:
-    bool HasFlipped( float angle, float oldAngle, float threshold );
-    void SaveResult( const CvPoint2D32f& pos, const float angle, const float error );
+    bool HasFlipped(float angle, float oldAngle, float threshold);
+    void SaveResult(const CvPoint2D32f& pos, const float angle, const float error);
 
     void SetLost()
     {
@@ -136,7 +136,7 @@ private:
         m_status = TRACKER_JUST_LOST;
     }
 
-    void TargetSearch( const IplImage* mask = 0 );
+    void TargetSearch(const IplImage* mask = 0);
 
     CvPoint2D32f m_pos;
     float m_angle;
@@ -167,7 +167,7 @@ private:
     const CameraCalibration* m_cal;
     const RobotMetrics* m_metrics;
 
-    float ComputeHeading( CvPoint2D32f pos ) const;
+    float ComputeHeading(CvPoint2D32f pos) const;
 
     void CreateWeightImage();
     void ReleaseWeightImage();
@@ -176,8 +176,8 @@ private:
     void ReleasePyramids();
     void SwapPyramids();
 
-    void PredictTargetAppearance( float angleInRadians, float offsetAngleDegrees );
-    bool TrackStage2( CvPoint2D32f initialPosition, bool flipCorrect, bool init );
+    void PredictTargetAppearance(float angleInRadians, float offsetAngleDegrees);
+    bool TrackStage2(CvPoint2D32f initialPosition, bool flipCorrect, bool init);
 
     void InitialiseRecoverySystem();
 };

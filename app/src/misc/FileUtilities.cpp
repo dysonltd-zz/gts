@@ -25,22 +25,22 @@
 
 namespace FileUtilities
 {
-    const QString GetUniqueFileName( const QString& fileNameFormat )
+    const QString GetUniqueFileName(const QString& fileNameFormat)
     {
         QString newFileName;
         size_t counter = 0;
 
         do
         {
-            newFileName = fileNameFormat.arg( counter );
+            newFileName = fileNameFormat.arg(counter);
             counter++;
         }
-        while ( QFileInfo( newFileName ).exists() );
+        while (QFileInfo(newFileName).exists());
 
         return newFileName;
     }
 
-    bool DeleteDirectory( const QString& dirName )
+    bool DeleteDirectory(const QString& dirName)
     {
         bool ok = true;
         QDir dir(dirName);
@@ -56,11 +56,11 @@ namespace FileUtilities
             {
                 if (info.isDir())
                 {
-                    ok = DeleteDirectory( info.absoluteFilePath() );
+                    ok = DeleteDirectory(info.absoluteFilePath());
                 }
                 else
                 {
-                    ok = QFile::remove( info.absoluteFilePath() );
+                    ok = QFile::remove(info.absoluteFilePath());
                 }
 
                 if (!ok)
@@ -75,24 +75,23 @@ namespace FileUtilities
         return ok;
     }
 
-    bool FileIsExternal( const QString& fileName, const WbConfig& config )
+    bool FileIsExternal(const QString& fileName, const WbConfig& config)
     {
-        const QString absoluteFileName(
-                config.GetAbsoluteFileNameFor( fileName ) );
+        const QString absoluteFileName(config.GetAbsoluteFileNameFor(fileName));
 
-        const WbConfig topLevelCfg( config.FindRootAncestor() );
-        const QDir topLevelDir( topLevelCfg.GetAbsoluteFileInfo().absoluteDir() );
+        const WbConfig topLevelCfg(config.FindRootAncestor());
+        const QDir topLevelDir(topLevelCfg.GetAbsoluteFileInfo().absoluteDir());
 
-        return topLevelDir.relativeFilePath( absoluteFileName ).startsWith( ".." );
+        return topLevelDir.relativeFilePath(absoluteFileName).startsWith("..");
     }
 
-    void LineSkip(FILE* f)
+    void LineSkip(FILE* fp)
     {
         char c;
 
         do
         {
-            c = (char)( fgetc(f) );
+            c = (char)(fgetc(fp));
         }
         while (c!='\n' && c!=EOF);
     }
@@ -104,31 +103,31 @@ namespace FileUtilities
 
         do
         {
-            c = (char)( fgetc(fp) );
+            c = (char)(fgetc(fp));
             if (c=='\n') n++;
         }
         while (c!=EOF);
 
-        //fseek( fp, 0, SEEK_SET ); // rewind file
+        //fseek(fp, 0, SEEK_SET); // rewind file
         rewind(fp);
 
         return n;
     }
 
-    bool FileExists( const char* file )
+    bool FileExists(const char* filePath)
     {
-        FILE* fp = fopen( file, "r" );
+        FILE* fp = fopen(filePath, "r");
 
         if (fp)
         {
-            fclose( fp );
+            fclose(fp);
             return true;
         }
 
         return false;
     }
 
-    void ShowInGraphicalShell( const QString &dirName )
+    void ShowInGraphicalShell(const QString &dirName)
     {
     #ifdef Q_WS_MAC
         QStringList args;

@@ -44,11 +44,11 @@ class CameraCalibrationWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit CameraCalibrationWidget( CameraHardware& cameraHardware,
-                                        QWidget* const parent = 0 );
+    explicit CameraCalibrationWidget(CameraHardware& cameraHardware,
+                                        QWidget* const parent = 0);
     ~CameraCalibrationWidget();
 
-    virtual const QString Name() const { return tr( "Calibrate Camera" ); }
+    virtual const QString Name() const { return tr("Calibrate Camera"); }
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
 
@@ -63,10 +63,10 @@ private slots:
 private:
     const QString GetSubSchemaDefaultFileName() const;
 
-    void AddImageIfValid( const QString& imageFileName,
-                          const WbConfigTools::FileNameMode& mode );
+    void AddImageIfValid(const QString& imageFileName,
+                          const WbConfigTools::FileNameMode& mode);
 
-    ImageView* const CreateStreamingView( const QSize& imageSize );
+    ImageView* const CreateStreamingView(const QSize& imageSize);
 
     virtual void ReloadCurrentConfigToolSpecific();
 

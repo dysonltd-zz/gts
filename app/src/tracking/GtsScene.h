@@ -50,9 +50,9 @@ public:
 
     void Reset();
 
-    bool LoadTarget( const WbConfig& targetCfg );
+    bool LoadTarget(const WbConfig& targetCfg);
 
-    bool LoadCameraConfig( const KeyId               camPosId,
+    bool LoadCameraConfig(const KeyId               camPosId,
                            const char* const         selectedVideoFileName,
                            const char* const         timestampFileName,
                            const WbConfig&           cameraConfig,
@@ -60,12 +60,12 @@ public:
                            const WbConfig&           roomConfig,
                            const WbConfig&           robotConfig,
                            const WbConfig&           trackConfig,
-                           RobotTracker::trackerType tracker );
+                           RobotTracker::trackerType tracker);
 
     unsigned int GetNumMaxCameras() const { return GtsScene::kMaxCameras; }
 
-    void SetupViewWindows( TrackRobotWidget* tool, ImageGrid* imageGrid );
-    void DestroyViewWindows( ImageGrid* imageGrid );
+    void SetupViewWindows(TrackRobotWidget* tool, ImageGrid* imageGrid);
+    void DestroyViewWindows(ImageGrid* imageGrid);
 
     struct TrackStatus
     {
@@ -77,40 +77,40 @@ public:
         bool eof;
     };
 
-    TrackStatus StepTrackers( const bool forward, const bool seek );
+    TrackStatus StepTrackers(const bool forward, const bool seek);
 
-    void SetupThread( TrackRobotWidget* tool );
-    void StartThread( double rate, bool trackingActive = true,
+    void SetupThread(TrackRobotWidget* tool);
+    void StartThread(double rate, bool trackingActive = true,
                                    bool singleStep = false,
-                                   bool runForward = true );
+                                   bool runForward = true);
     void PauseThread();
     void StopThread();
 
-    void SetRate( double rate );
+    void SetRate(double rate);
 
-    void SaveData( char* floorPlanFile,
+    void SaveData(char* floorPlanFile,
                    char* trackerResultsTxtFile,
                    char* trackerResultsCsvFile,
                    char* trackerResultsImgFile,
                    char* pixelOffsetsFile,
                    QString trackResultsTemplate,
-                   QString pixelOffsetsTemplate );
+                   QString pixelOffsetsTemplate);
 
-    void SetTrackPosition( int id, int x, int y );
-    void ClrTrackPosition( int id );
+    void SetTrackPosition(int id, int x, int y);
+    void ClrTrackPosition(int id);
 
 private:
-    int OrganiseLogs( TrackHistory::TrackLog* log,
-                      QString pixelOffsetsTemplate );
+    int OrganiseLogs(TrackHistory::TrackLog* log,
+                      QString pixelOffsetsTemplate);
 
-    void PostProcessMultiCamera( TrackHistory::TrackLog& avg,
+    void PostProcessMultiCamera(TrackHistory::TrackLog& avg,
                                  CvPoint2D32f&           offset,
                                  IplImage**              compImgCol,
                                  float                   timeThresh,
                                  char*                   floorPlanName,
                                  unsigned int            baseIndex,
                                  QString trackResultsTemplate
-                                 );
+                                );
 
     static const unsigned int kMaxCameras = GTS_MAX_CAMERAS;
 

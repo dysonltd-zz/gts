@@ -27,9 +27,9 @@
 class KeyName
 {
 public:
-    explicit KeyName( const QString& name = QString() )
+    explicit KeyName(const QString& name = QString())
     :
-        m_name( name )
+        m_name(name)
     {
     }
 
@@ -47,24 +47,24 @@ private:
     QString m_name;
 };
 
-inline std::ostream& operator << ( std::ostream& os, const KeyName& keyName )
+inline std::ostream& operator << (std::ostream& os, const KeyName& keyName)
 {
-    return ( os << keyName.ToQString().toStdString() );
+    return (os << keyName.ToQString().toStdString());
 }
 
-inline const bool operator < ( const KeyName& lhs, const KeyName& rhs )
+inline const bool operator < (const KeyName& lhs, const KeyName& rhs)
 {
-    return ( lhs.ToQString() < rhs.ToQString() );
+    return (lhs.ToQString() < rhs.ToQString());
 }
 
-inline const bool operator == ( const KeyName& lhs, const KeyName& rhs )
+inline const bool operator == (const KeyName& lhs, const KeyName& rhs)
 {
-    return ( lhs.ToQString() == rhs.ToQString() );
+    return (lhs.ToQString() == rhs.ToQString());
 }
 
-inline const bool operator != ( const KeyName& lhs, const KeyName& rhs )
+inline const bool operator != (const KeyName& lhs, const KeyName& rhs)
 {
-    return !( lhs == rhs );
+    return !(lhs == rhs);
 }
 
 /** @brief Type to represent lists of unique key names

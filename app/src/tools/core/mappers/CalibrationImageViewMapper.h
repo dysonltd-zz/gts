@@ -39,19 +39,19 @@ class CalibrationImageViewMapper: public ConfigKeyMapper
     Q_OBJECT
 
 public:
-    CalibrationImageViewMapper( ImageView& imageView ) :
-        ConfigKeyMapper( ExtrinsicCalibrationSchema::calibrationImageKey ),
-        m_view     ( imageView ),
-        m_unwarped ( false )
+    CalibrationImageViewMapper(ImageView& imageView) :
+        ConfigKeyMapper(ExtrinsicCalibrationSchema::calibrationImageKey),
+        m_view     (imageView),
+        m_unwarped (false)
     {
     }
 
-    virtual void CommitData( WbConfig& config )
+    virtual void CommitData(WbConfig& config)
     {
         Q_UNUSED(config);
     }
 
-    virtual void SetConfig( const WbConfig& config )
+    virtual void SetConfig(const WbConfig& config)
     {
         m_config = config;
 
@@ -70,7 +70,7 @@ public:
         }
     }
 
-    void ToggleWarping( bool unwarped )
+    void ToggleWarping(bool unwarped)
     {
         m_unwarped = unwarped;
 
@@ -81,103 +81,103 @@ private:
     void ShowWarped()
     {
         const QString calibrationImageRelativeFileName(
-            m_config.GetKeyValue( ExtrinsicCalibrationSchema::calibrationImageKey )
-            .ToQString() );
+            m_config.GetKeyValue(ExtrinsicCalibrationSchema::calibrationImageKey)
+            .ToQString());
         const QString calibrationImageAbsoluteFileName(
-            m_config.GetAbsoluteFileNameFor( calibrationImageRelativeFileName ) );
+            m_config.GetAbsoluteFileNameFor(calibrationImageRelativeFileName));
 
-        m_view.SetImage( calibrationImageAbsoluteFileName );
+        m_view.SetImage(calibrationImageAbsoluteFileName);
         m_view.update();
     }
 
     void ShowUnwarped()
     {
-        const WbConfig camPosCfg( m_config.GetParent() );
-        const KeyId cameraId( camPosCfg
-                        .GetKeyValue( CameraPositionSchema::cameraIdKey ).ToQString() );
+        const WbConfig camPosCfg(m_config.GetParent());
+        const KeyId cameraId(camPosCfg
+                        .GetKeyValue(CameraPositionSchema::cameraIdKey).ToQString());
 
-        Collection cameras( CamerasCollection() );
-        cameras.SetConfig( m_config );
+        Collection cameras(CamerasCollection());
+        cameras.SetConfig(m_config);
 
-        const WbConfig cameraCfg = cameras.ElementById( cameraId );
+        const WbConfig cameraCfg = cameras.ElementById(cameraId);
 
-        if ( !cameraCfg.IsNull() )
+        if (!cameraCfg.IsNull())
         {
-            CvMat* intrinsicMatrix = cvCreateMat( 3, 3, CV_32F );
-            CvMat* distortionCoeffs = cvCreateMat( 5, 1, CV_32F );
-            CvMat* inverseCoeffs = cvCreateMat( 5, 1, CV_32F );
+            CvMat* intrinsicMatrix = cvCreateMat(3, 3, CV_32F);
+            CvMat* distortionCoeffs = cvCreateMat(5, 1, CV_32F);
+            CvMat* inverseCoeffs = cvCreateMat(5, 1, CV_32F);
 
-            CvMat* rotMat = cvCreateMat( 3, 3, CV_32F );
-            CvMat* trans = cvCreateMat( 1, 3, CV_32F );
+            CvMat* rotMat = cvCreateMat(3, 3, CV_32F);
+            CvMat* trans = cvCreateMat(1, 3, CV_32F);
 
-            const WbConfig cameraIntrisicConfig( cameraCfg.GetSubConfig( CalibrationSchema::schemaName ) );
+            const WbConfig cameraIntrisicConfig(cameraCfg.GetSubConfig(CalibrationSchema::schemaName));
 
             const bool cameraMtxValid = cameraIntrisicConfig
-                            .GetKeyValue( CalibrationSchema::cameraMatrixKey )
-                            .ToCvMat( *intrinsicMatrix );
+                            .GetKeyValue(CalibrationSchema::cameraMatrixKey)
+                            .ToCvMat(*intrinsicMatrix);
             const bool distortionCoeffsValid = cameraIntrisicConfig
-                            .GetKeyValue( CalibrationSchema::distortionCoefficientsKey )
-                            .ToCvMat( *distortionCoeffs );
+                            .GetKeyValue(CalibrationSchema::distortionCoefficientsKey)
+                            .ToCvMat(*distortionCoeffs);
             const bool inverseCoeffsValid = cameraIntrisicConfig
-                            .GetKeyValue( CalibrationSchema::invDistortionCoefficientsKey )
-                            .ToCvMat( *inverseCoeffs );
+                            .GetKeyValue(CalibrationSchema::invDistortionCoefficientsKey)
+                            .ToCvMat(*inverseCoeffs);
 
             const bool rotMatValid = m_config
-                            .GetKeyValue( ExtrinsicCalibrationSchema::rotationMatrixKey )
-                            .ToCvMat( *rotMat );
+                            .GetKeyValue(ExtrinsicCalibrationSchema::rotationMatrixKey)
+                            .ToCvMat(*rotMat);
             const bool transValid = m_config
-                            .GetKeyValue( ExtrinsicCalibrationSchema::translationKey )
-                            .ToCvMat( *trans );
+                            .GetKeyValue(ExtrinsicCalibrationSchema::translationKey)
+                            .ToCvMat(*trans);
 
-            if ( cameraMtxValid &&
+            if (cameraMtxValid &&
                  distortionCoeffsValid &&
                  inverseCoeffsValid &&
                  rotMatValid &&
-                 transValid )
+                 transValid)
             {
                 const QString calibrationImageRelativeFileName(
-                    m_config.GetKeyValue( ExtrinsicCalibrationSchema::calibrationImageKey )
-                    .ToQString() );
+                    m_config.GetKeyValue(ExtrinsicCalibrationSchema::calibrationImageKey)
+                    .ToQString());
                 const QString calibrationImageAbsoluteFileName(
-                    m_config.GetAbsoluteFileNameFor( calibrationImageRelativeFileName ) );
+                    m_config.GetAbsoluteFileNameFor(calibrationImageRelativeFileName));
 
-                IplImage* imgGrey = cvLoadImage( calibrationImageAbsoluteFileName.toAscii(),
-                                                 CV_LOAD_IMAGE_GRAYSCALE );
-                if ( imgGrey )
+                IplImage* imgGrey = cvLoadImage(calibrationImageAbsoluteFileName.toAscii(),
+                                                 CV_LOAD_IMAGE_GRAYSCALE);
+                if (imgGrey)
                 {
-                    IplImage* imgWarp = GroundPlaneUtility::unwarpGroundPlane( imgGrey,
+                    IplImage* imgWarp = GroundPlaneUtility::UnwarpGroundPlane(imgGrey,
                                                                                intrinsicMatrix,
                                                                                distortionCoeffs,
                                                                                inverseCoeffs,
                                                                                rotMat,
                                                                                trans,
-                                                                               &m_offset );
+                                                                               &m_offset);
 
                     QImage qimage;
 
                     const int DONT_FLIP = 0;
                     int flipFlag = DONT_FLIP;
 
-                    IplImage* img = cvCreateImage( cvSize( imgWarp->width,
-                                                           imgWarp->height ), IPL_DEPTH_8U, 3 );
-                    cvConvertImage( imgWarp, img );
+                    IplImage* img = cvCreateImage(cvSize(imgWarp->width,
+                                                           imgWarp->height), IPL_DEPTH_8U, 3);
+                    cvConvertImage(imgWarp, img);
 
                     // Convert from IplImage to QImage
-                    const QSize imgSize( img->width, img->height );
-                    qimage = QImage( imgSize, QImage::Format_RGB888 );
+                    const QSize imgSize(img->width, img->height);
+                    qimage = QImage(imgSize, QImage::Format_RGB888);
 
 
                     CvMat mtxWrapper;
-                    cvInitMatHeader( &mtxWrapper,
+                    cvInitMatHeader(&mtxWrapper,
                                      img->height,
                                      img->width,
                                      CV_8UC3,
-                                     qimage.bits() );
+                                     qimage.bits());
 
-                    cvConvertImage( img, &mtxWrapper, flipFlag );
-                    cvReleaseImage( &img );
+                    cvConvertImage(img, &mtxWrapper, flipFlag);
+                    cvReleaseImage(&img);
 
-                    m_view.SetImage( qimage );
+                    m_view.SetImage(qimage);
                     m_view.update();
                 }
             }

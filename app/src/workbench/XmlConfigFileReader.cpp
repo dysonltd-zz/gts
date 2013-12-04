@@ -30,13 +30,13 @@ XmlConfigFileReader* const XmlConfigFileReader::Clone() const
     return new XmlConfigFileReader;
 }
 
-bool XmlConfigFileReader::ReadFrom( QIODevice& ioDevice )
+bool XmlConfigFileReader::ReadFrom(QIODevice& ioDevice)
 {
-    bool successful = ioDevice.open( QIODevice::ReadOnly );
+    bool successful = ioDevice.open(QIODevice::ReadOnly);
 
-    if ( successful )
+    if (successful)
     {
-        successful = m_domDocument.setContent( &ioDevice );
+        successful = m_domDocument.setContent(&ioDevice);
     }
 
     return successful;
@@ -44,93 +44,93 @@ bool XmlConfigFileReader::ReadFrom( QIODevice& ioDevice )
 
 const KeyName XmlConfigFileReader::GetSchemaName() const
 {
-    return KeyName( m_domDocument.documentElement().tagName() );
+    return KeyName(m_domDocument.documentElement().tagName());
 }
 
-void XmlConfigFileReader::ReadKeyValues( const KeyName& keyName, WbKeyValues& keyValues )
+void XmlConfigFileReader::ReadKeyValues(const KeyName& keyName, WbKeyValues& keyValues)
 {
-    QDomNodeList keyNodes = m_domDocument.elementsByTagName( keyName.ToQString() );
+    QDomNodeList keyNodes = m_domDocument.elementsByTagName(keyName.ToQString());
 
-    for ( int i = 0; i < keyNodes.size(); ++i )
+    for (int i = 0; i < keyNodes.size(); ++i)
     {
-        QDomElement keyElement = keyNodes.at( i ).toElement();
+        QDomElement keyElement = keyNodes.at(i).toElement();
 
-        if ( !keyElement.isNull() )
+        if (!keyElement.isNull())
         {
-            QString id = keyElement.attribute( XmlTools::xmlIdAttribute, QString() );
-            KeyValue keyValue = GetValueFromElement( keyElement );
-            keyValues.SetKeyValue( keyName, keyValue, id );
+            QString id = keyElement.attribute(XmlTools::xmlIdAttribute, QString());
+            KeyValue keyValue = GetValueFromElement(keyElement);
+            keyValues.SetKeyValue(keyName, keyValue, id);
         }
     }
 }
 
-void XmlConfigFileReader::ReadKeyValuesFromGroup( const KeyName& keyName, const KeyName& groupName, WbKeyValues& keyValues )
+void XmlConfigFileReader::ReadKeyValuesFromGroup(const KeyName& keyName, const KeyName& groupName, WbKeyValues& keyValues)
 {
-    QDomNodeList groupNodes = m_domDocument.elementsByTagName( groupName.ToQString() );
+    QDomNodeList groupNodes = m_domDocument.elementsByTagName(groupName.ToQString());
 
-    for ( int i = 0; i < groupNodes.size(); ++i )
+    for (int i = 0; i < groupNodes.size(); ++i)
     {
-        QDomElement groupElement = groupNodes.at( i ).toElement();
+        QDomElement groupElement = groupNodes.at(i).toElement();
 
-        if ( !groupElement.isNull() )
+        if (!groupElement.isNull())
         {
-            QString id = groupElement.attribute( XmlTools::xmlIdAttribute, QString() );
-            QDomNodeList keyNodes = groupElement.elementsByTagName( keyName.ToQString() );
+            QString id = groupElement.attribute(XmlTools::xmlIdAttribute, QString());
+            QDomNodeList keyNodes = groupElement.elementsByTagName(keyName.ToQString());
 
-            for ( int i = 0; i < keyNodes.size(); ++i )
+            for (int i = 0; i < keyNodes.size(); ++i)
             {
-                QDomElement keyElement = keyNodes.at( i ).toElement();
+                QDomElement keyElement = keyNodes.at(i).toElement();
 
-                if ( !keyElement.isNull() )
+                if (!keyElement.isNull())
                 {
 
-                    keyValues.SetKeyValue( keyName, GetValueFromElement( keyElement ), id );
+                    keyValues.SetKeyValue(keyName, GetValueFromElement(keyElement), id);
                 }
             }
         }
     }
 }
 
-void XmlConfigFileReader::ReadSubSchemaLocations( const KeyName& keyName,
-                                                  SchemaLocationsList& locationsList )
+void XmlConfigFileReader::ReadSubSchemaLocations(const KeyName& keyName,
+                                                  SchemaLocationsList& locationsList)
 {
     locationsList.clear();
 
-    const KeyName configFileNameKey( XmlTools::xmlConfigFileNameTag );
+    const KeyName configFileNameKey(XmlTools::xmlConfigFileNameTag);
     // treat SubSchema key name as a group
     WbKeyValues configFileLocations;
-    ReadKeyValuesFromGroup( configFileNameKey, keyName, configFileLocations );
+    ReadKeyValuesFromGroup(configFileNameKey, keyName, configFileLocations);
 
     WbKeyValues::ValueIdPairList configLocationsList =
-        configFileLocations.GetKeyValues( configFileNameKey );
+        configFileLocations.GetKeyValues(configFileNameKey);
 
-    for ( size_t i = 0; i < configLocationsList.size(); ++i )
+    for (size_t i = 0; i < configLocationsList.size(); ++i)
     {
-        WbKeyValues::ValueIdPair thisPair( configLocationsList.at( i ) );
+        WbKeyValues::ValueIdPair thisPair(configLocationsList.at(i));
 
-        if ( !thisPair.value.IsNull() )
+        if (!thisPair.value.IsNull())
         {
             WbSchemaLocationIdPair locationIdPair;
             locationIdPair.location = thisPair.value.ToQString();
             locationIdPair.id       = thisPair.id;
-            locationsList.push_back( locationIdPair );
+            locationsList.push_back(locationIdPair);
         }
     }
 }
 
-const KeyValue XmlConfigFileReader::GetValueFromElement( QDomElement& keyElement )
+const KeyValue XmlConfigFileReader::GetValueFromElement(QDomElement& keyElement)
 {
     QDomElement childElement = keyElement.firstChildElement();
 
     KeyValue keyValue;
 
-    if ( childElement.isNull() )
+    if (childElement.isNull())
     {
         keyValue << keyElement.text();
     }
     else
     {
-        for ( ; !childElement.isNull(); childElement = childElement.nextSiblingElement() )
+        for (; !childElement.isNull(); childElement = childElement.nextSiblingElement())
         {
             keyValue << childElement.text();
         }

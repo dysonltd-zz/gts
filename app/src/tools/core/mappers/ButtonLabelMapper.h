@@ -26,46 +26,46 @@
 class ButtonLabelMapper : public ConfigKeyMapper
 {
 public:
-    ButtonLabelMapper( QPushButton& button,
+    ButtonLabelMapper(QPushButton& button,
                        const QString& keyIndependentLabel,
                        const QString& nonNullKeyLabelSuffixFormat,
                        const KeyName& firstKeyName,
-                       const KeyName& secondKeyName ) :
-        ConfigKeyMapper( firstKeyName ),
-        m_button( button ),
-        m_keyIndependentLabel( keyIndependentLabel ),
-        m_nonNullKeyLabelSuffixFormat( nonNullKeyLabelSuffixFormat ),
-        m_firstKeyName ( firstKeyName ),
-        m_secondKeyName( secondKeyName )
+                       const KeyName& secondKeyName) :
+        ConfigKeyMapper(firstKeyName),
+        m_button(button),
+        m_keyIndependentLabel(keyIndependentLabel),
+        m_nonNullKeyLabelSuffixFormat(nonNullKeyLabelSuffixFormat),
+        m_firstKeyName (firstKeyName),
+        m_secondKeyName(secondKeyName)
     {
     }
 
-    virtual void SetConfig( const WbConfig& config )
+    virtual void SetConfig(const WbConfig& config)
     {
-        QString label( m_keyIndependentLabel );
-        const QString firstKey( KeyString( config, m_firstKeyName) );
-        const QString secondKey( KeyString( config, m_secondKeyName) );
-        if ( !firstKey.isEmpty() && !secondKey.isEmpty() )
+        QString label(m_keyIndependentLabel);
+        const QString firstKey(KeyString(config, m_firstKeyName));
+        const QString secondKey(KeyString(config, m_secondKeyName));
+        if (!firstKey.isEmpty() && !secondKey.isEmpty())
         {
-            label.append( m_nonNullKeyLabelSuffixFormat.arg( firstKey, secondKey ) );
+            label.append(m_nonNullKeyLabelSuffixFormat.arg(firstKey, secondKey));
         }
-        m_button.setText( label );
+        m_button.setText(label);
     }
 
-    virtual void CommitData( WbConfig& config )
+    virtual void CommitData(WbConfig& config)
     {
         Q_UNUSED(config);
     }
 
-    virtual bool Maps( QWidget* const widget ) const
+    virtual bool Maps(QWidget* const widget) const
     {
         return widget == &m_button;
     }
 
 private:
-    const QString KeyString( const WbConfig& config, const KeyName& keyName ) const
+    const QString KeyString(const WbConfig& config, const KeyName& keyName) const
     {
-        return config.GetKeyValue( keyName ).ToQString();
+        return config.GetKeyValue(keyName).ToQString();
     }
 
     QPushButton& m_button;

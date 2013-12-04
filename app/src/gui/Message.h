@@ -19,8 +19,9 @@
 #ifndef MESSAGE_H_
 #define MESSAGE_H_
 
-#include <memory>
 #include <QWidget>
+
+#include <memory>
 
 class MessageHandler;
 
@@ -36,15 +37,15 @@ public:
         Severity_Critical
     };
 
-    static void SetHandler( std::unique_ptr< MessageHandler > handler );
-    static void Show( QWidget* const parent,
+    static void SetHandler(std::unique_ptr<MessageHandler> handler);
+    static void Show(QWidget* const parent,
                       const QString& title,
                       const QString& message,
                       const Message::Severity& severity,
-                      const QString& details = QString() );
+                      const QString& details = QString());
 
 private:
-    static std::unique_ptr< MessageHandler > messageHandler;
+    static std::unique_ptr<MessageHandler> messageHandler;
 };
 
 #endif // MESSAGE_H_

@@ -41,20 +41,20 @@ public:
 
     static const int idRole = Qt::UserRole;
 
-    CameraRelationsTableMapper( QTableWidget& mappingsTable ) :
-        ConfigKeyMapper( FloorPlanSchema::camera1IdKey ),
-        m_table( mappingsTable ),
-        m_cameraPositionsCollection( CameraPositionsCollection() )
+    CameraRelationsTableMapper(QTableWidget& mappingsTable) :
+        ConfigKeyMapper(FloorPlanSchema::camera1IdKey),
+        m_table(mappingsTable),
+        m_cameraPositionsCollection(CameraPositionsCollection())
     {
-        QAction* const removeItemAction = new QAction( tr( "Remove" ), &m_table );
-        removeItemAction->setShortcut( QKeySequence( QKeySequence::Delete ) );
-        removeItemAction->setShortcutContext( Qt::WidgetShortcut );
-        connect( removeItemAction, SIGNAL( triggered() ), this, SLOT( RemoveItemTriggered() ) );
+        QAction* const removeItemAction = new QAction(tr("Remove"), &m_table);
+        removeItemAction->setShortcut(QKeySequence(QKeySequence::Delete));
+        removeItemAction->setShortcutContext(Qt::WidgetShortcut);
+        connect(removeItemAction, SIGNAL(triggered()), this, SLOT(RemoveItemTriggered()));
         m_table.addAction(removeItemAction);
-        m_table.setContextMenuPolicy( Qt::ActionsContextMenu );
+        m_table.setContextMenuPolicy(Qt::ActionsContextMenu);
     }
 
-    virtual void CommitData( WbConfig& config )
+    virtual void CommitData(WbConfig& config)
     {
         std::vector< KeyId > idsToKeep;
 
@@ -63,17 +63,17 @@ public:
             idsToKeep.push_back(m_table.item(i, camera1Column)->data(idRole).toString());
         }
 
-        config.KeepKeys( FloorPlanSchema::camera1IdKey, idsToKeep );
-        config.KeepKeys( FloorPlanSchema::camera2IdKey, idsToKeep );
-        config.KeepKeys( FloorPlanSchema::camera1ImgKey, idsToKeep );
-        config.KeepKeys( FloorPlanSchema::camera2ImgKey, idsToKeep );
-        config.KeepKeys( FloorPlanSchema::homographyKey, idsToKeep );
+        config.KeepKeys(FloorPlanSchema::camera1IdKey, idsToKeep);
+        config.KeepKeys(FloorPlanSchema::camera2IdKey, idsToKeep);
+        config.KeepKeys(FloorPlanSchema::camera1ImgKey, idsToKeep);
+        config.KeepKeys(FloorPlanSchema::camera2ImgKey, idsToKeep);
+        config.KeepKeys(FloorPlanSchema::homographyKey, idsToKeep);
 
-        SetConfig( config ); // Since we need to re-number the entries and we won't
+        SetConfig(config); // Since we need to re-number the entries and we won't
                              // get our SetConfig called as we're requesting the update
     }
 
-    virtual void SetConfig( const WbConfig& config )
+    virtual void SetConfig(const WbConfig& config)
     {
         typedef WbKeyValues::ValueIdPairList ValueIdList;
 
@@ -81,16 +81,16 @@ public:
 
         const ValueIdList mappings(config.GetKeyValues(FloorPlanSchema::camera1IdKey));
         m_table.setRowCount(mappings.size());
-        m_table.setColumnCount( 2 );
+        m_table.setColumnCount(2);
 
         const Collection::StatusType status =
-                                        m_cameraPositionsCollection.SetConfig( config );
+                                        m_cameraPositionsCollection.SetConfig(config);
 
-        if ( status == Collection::Status_Ok )
+        if (status == Collection::Status_Ok)
         {
             for (int i = 0; i < (int)mappings.size(); ++i)
             {
-                SetTableRow(i, config, mappings.at( i ));
+                SetTableRow(i, config, mappings.at(i));
             }
         }
     }
@@ -125,28 +125,28 @@ private:
         return userPrompt.exec();
     }
 
-    const WbConfig GetCamPosConfig( const QString& camPosId )
+    const WbConfig GetCamPosConfig(const QString& camPosId)
     {
-        return m_cameraPositionsCollection.ElementById( KeyId( camPosId ) );
+        return m_cameraPositionsCollection.ElementById(KeyId(camPosId));
     }
 
-    void SetTableRow( const int row,
+    void SetTableRow(const int row,
                       const WbConfig& config,
-                      const WbKeyValues::ValueIdPair& mapping  )
+                      const WbKeyValues::ValueIdPair& mapping )
     {
-        const KeyValue camera1Value( config.GetKeyValue( FloorPlanSchema::camera1IdKey, mapping.id ) );
-        const KeyValue camera2Value( config.GetKeyValue( FloorPlanSchema::camera2IdKey, mapping.id ) );
+        const KeyValue camera1Value(config.GetKeyValue(FloorPlanSchema::camera1IdKey, mapping.id));
+        const KeyValue camera2Value(config.GetKeyValue(FloorPlanSchema::camera2IdKey, mapping.id));
 
-        const WbConfig camPosConfig1( GetCamPosConfig( camera1Value.ToQString() ) );
-        const WbConfig camPosConfig2( GetCamPosConfig( camera2Value.ToQString() ) );
+        const WbConfig camPosConfig1(GetCamPosConfig(camera1Value.ToQString()));
+        const WbConfig camPosConfig2(GetCamPosConfig(camera2Value.ToQString()));
 
-        QTableWidgetItem* const camera1Item = new QTableWidgetItem(tr("%1").arg(camPosConfig1.GetKeyValue( KeyName("name") ).ToQString()));
-        QTableWidgetItem* const camera2Item = new QTableWidgetItem(tr("%1").arg(camPosConfig2.GetKeyValue( KeyName("name") ).ToQString()));
+        QTableWidgetItem* const camera1Item = new QTableWidgetItem(tr("%1").arg(camPosConfig1.GetKeyValue(KeyName("name")).ToQString()));
+        QTableWidgetItem* const camera2Item = new QTableWidgetItem(tr("%1").arg(camPosConfig2.GetKeyValue(KeyName("name")).ToQString()));
 
 		camera1Item->setData(idRole, mapping.id);
 
-		m_table.setItem( row, camera1Column, camera1Item);
-		m_table.setItem( row, camera2Column, camera2Item);
+		m_table.setItem(row, camera1Column, camera1Item);
+		m_table.setItem(row, camera2Column, camera2Item);
     }
 
     QTableWidget& m_table;

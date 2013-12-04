@@ -28,7 +28,7 @@ class TargetCollectionTool : public CollectionToolWidget
     Q_OBJECT
 
 public:
-    TargetCollectionTool( QWidget* parent, MainWindow& mainWindow );
+    TargetCollectionTool(QWidget* parent, MainWindow& mainWindow);
     ~TargetCollectionTool();
 
     virtual const QString Name() const;

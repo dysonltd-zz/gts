@@ -45,29 +45,29 @@ class ImageGrid : public QScrollArea
     Q_OBJECT
 
 public:
-    explicit ImageGrid( QWidget* parent = 0 );
+    explicit ImageGrid(QWidget* parent = 0);
     ~ImageGrid();
 
     typedef std::unique_ptr<ImageView> ImageViewPtr;
-    ImageView* const AddImage( const QString& imageFileName, const QString& caption = QString(), int id = 0 );
-    ImageView* const AddImage( const QImage& image,          const QString& caption = QString(), int id = 0 );
-    ImageView *const AddBlankImage( const QSize& imageSize, int id = 0 );
+    ImageView* const AddImage(const QString& imageFileName, const QString& caption = QString(), int id = 0);
+    ImageView* const AddImage(const QImage& image,          const QString& caption = QString(), int id = 0);
+    ImageView *const AddBlankImage(const QSize& imageSize, int id = 0);
 
     void Clear();
 
 public slots:
-     void updateImage( int id, const QImage& image, double fps );
+     void updateImage(int id, const QImage& image, double fps);
 
 protected:
-    virtual void resizeEvent( QResizeEvent* );
-    virtual void wheelEvent( QWheelEvent* event );
+    virtual void resizeEvent(QResizeEvent*);
+    virtual void wheelEvent(QWheelEvent* event);
 
 private:
-    void InsertImageInGrid( const int imageIndex );
+    void InsertImageInGrid(const int imageIndex);
     void ReflowImages();
     void CalculateNumRowsColumns();
 
-    double GetImageAreaWith( const size_t rows, const size_t columns ) const;
+    double GetImageAreaWith(const size_t rows, const size_t columns) const;
 
     Ui::ImageGrid*             m_ui;         ///< The UI class created by Qt designer.
     std::vector<ImageViewPtr>  m_imageViews; ///< The image views to display.

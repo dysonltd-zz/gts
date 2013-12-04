@@ -30,9 +30,9 @@ struct WbSchemaLocationIdPair
     KeyId   id;
 };
 
-inline const bool operator == ( const WbSchemaLocationIdPair& lhs, const WbSchemaLocationIdPair& rhs )
+inline const bool operator == (const WbSchemaLocationIdPair& lhs, const WbSchemaLocationIdPair& rhs)
 {
-    return ( lhs.location == rhs.location ) && ( lhs.id == rhs.id );
+    return (lhs.location == rhs.location) && (lhs.id == rhs.id);
 }
 
 typedef std::vector< WbSchemaLocationIdPair > SchemaLocationsList;
@@ -42,14 +42,14 @@ class WbConfigFileReader
 public:
     virtual ~WbConfigFileReader() {}
 
-    virtual bool ReadFrom( QIODevice& ioDevice ) = 0;
+    virtual bool ReadFrom(QIODevice& ioDevice) = 0;
 
     virtual WbConfigFileReader* const Clone() const = 0;
 
     virtual const KeyName GetSchemaName() const = 0;
-    virtual void ReadKeyValues( const KeyName& keyName, WbKeyValues& keyValues ) = 0;
-    virtual void ReadKeyValuesFromGroup( const KeyName& keyName, const KeyName& groupName, WbKeyValues& keyValues ) = 0;
-    virtual void ReadSubSchemaLocations( const KeyName& keyName, SchemaLocationsList& locationsList ) = 0;
+    virtual void ReadKeyValues(const KeyName& keyName, WbKeyValues& keyValues) = 0;
+    virtual void ReadKeyValuesFromGroup(const KeyName& keyName, const KeyName& groupName, WbKeyValues& keyValues) = 0;
+    virtual void ReadSubSchemaLocations(const KeyName& keyName, SchemaLocationsList& locationsList) = 0;
 };
 
 #endif // WBCONFIGFILEREADER_H

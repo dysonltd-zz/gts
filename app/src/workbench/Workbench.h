@@ -36,17 +36,17 @@ class WbConfig;
 class Workbench
 {
 public:
-    Workbench( QTreeWidget& treeWidget, ToolContainer& toolContainer );
+    Workbench(QTreeWidget& treeWidget, ToolContainer& toolContainer);
     virtual ~Workbench();
 
-    bool Open( const QFileInfo& configFileInfo );
-    bool New ( const QFileInfo& configFileInfo );
+    bool Open(const QFileInfo& configFileInfo);
+    bool New (const QFileInfo& configFileInfo);
     bool Save();
 
-    bool ActivateToolFor( const QTreeWidgetItem& newItem );
+    bool ActivateToolFor(const QTreeWidgetItem& newItem);
     void ReloadConfig();
 
-    void SetSchema( const WbSchema& newSchema );
+    void SetSchema(const WbSchema& newSchema);
     const WbConfig GetCurrentConfig() const;
 
     const WbSchema Schema() const;
@@ -54,8 +54,8 @@ public:
     const ConfigListener* GetConfigListener() const;
 
 private:
-    bool TryWriteConfig( const WbConfig& config );
-    void SwitchConfig( const WbConfig& newConfig );
+    bool TryWriteConfig(const WbConfig& config);
+    void SwitchConfig(const WbConfig& newConfig);
 
     QTreeWidget& m_treeWidget;
     ToolContainer& m_toolContainer;

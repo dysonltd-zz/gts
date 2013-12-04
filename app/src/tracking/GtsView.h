@@ -63,41 +63,41 @@ public:
 
     void Reset();
 
-    void SetId( int id );
+    void SetId(int id);
     bool IsSetup() const { return m_id>=0; }
 
-    bool LoadMetrics( const WbConfig& metricsConfig,
+    bool LoadMetrics(const WbConfig& metricsConfig,
                       const WbConfig& camPosCalConfig,
-                      float trackingResolution );
+                      float trackingResolution);
 
-    bool SetupCalibration( const KeyId     camPosId,
+    bool SetupCalibration(const KeyId     camPosId,
                            const WbConfig& cameraConfig,
                            const WbConfig& camPosConfig,
                            const WbConfig& floorPlanConfig,
                            const WbConfig& camPosCalConfig,
-                           RobotMetrics&   metrics );
+                           RobotMetrics&   metrics);
 
-    bool SetupTracker( RobotTracker::trackerType type,
+    bool SetupTracker(RobotTracker::trackerType type,
                        const RobotMetrics& met,
                        const char* targetFile,
-                       int biLevelThreshold );
+                       int biLevelThreshold);
 
-    bool SetupVideo( const char* const videoFile,
+    bool SetupVideo(const char* const videoFile,
                      const char* const timestampFile,
                      float shutter,
-                     float gain );
+                     float gain);
 
-    void SetupView( TrackRobotWidget* tool, ImageGrid* imageGrid );
+    void SetupView(TrackRobotWidget* tool, ImageGrid* imageGrid);
 
-    void SetTrackerParam( RobotTracker::paramType param, float value );
+    void SetTrackerParam(RobotTracker::paramType param, float value);
 
     CvSize GetWarpImageSize() const { assert(m_imgWarp[0]); return cvSize(m_imgWarp[0]->width,
                                                                           m_imgWarp[0]->height); }
 
-    void LoadTimestampFile( const char* const fileName );
+    void LoadTimestampFile(const char* const fileName);
 
     double GetSeekPositionInMilliseconds() const;
-    bool ReadySeekFrame( double msec );
+    bool ReadySeekFrame(double msec);
     bool ReadyNextFrame();
     const IplImage* GetNextFrame();
 
@@ -107,7 +107,7 @@ public:
     RobotTracker& GetTracker() const { return *m_tracker; }
     RobotMetrics& GetMetrics() const { return *m_metrics; }
 
-    void StepTracker( bool forward, CoverageSystem* coverage=0 );
+    void StepTracker(bool forward, CoverageSystem* coverage=0);
 
     const std::string& GetName() const { return m_name; }
     const std::string& GetTrackViewName() const { return m_trackView; }

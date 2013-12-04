@@ -20,13 +20,16 @@
 #include "CameraHardware.h"
 #include "LibUnicapCameraApi.h"
 
+/**
+  @brief Hardware Abstraction for Unix platform.
+ */
 namespace HardwareAbstraction
 {
     CameraHardware* const CreateCameraHardware()
     {
         CameraHardware* const newCameraHardware = new CameraHardware;
-        std::unique_ptr< CameraApi > newUnicapApi( new LibUnicapCameraApi );
-        newCameraHardware->AddApi( newUnicapApi );
+        std::unique_ptr< CameraApi > newUnicapApi(new LibUnicapCameraApi);
+        newCameraHardware->AddApi(newUnicapApi);
         return newCameraHardware;
     }
 }

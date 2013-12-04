@@ -36,25 +36,25 @@
 
 namespace
 {
-    const QMessageBox::StandardButton AskUserToSave( QWidget* const dialogParent )
+    const QMessageBox::StandardButton AskUserToSave(QWidget* const dialogParent)
     {
-        return QMessageBox::question( dialogParent,
-                                      QObject::tr( "Save work?", "MainWindow" ),
-                                      QObject::tr( "You are about to quit. "
+        return QMessageBox::question(dialogParent,
+                                      QObject::tr("Save work?", "Ground Truth System"),
+                                      QObject::tr("You are about to quit. "
                                                    "Would you like to save the "
-                                                   "changes to your workbench?" ),
+                                                   "changes to your workbench?"),
                                       QMessageBox::Yes|QMessageBox::No|QMessageBox::Cancel,
-                                      QMessageBox::Cancel );
+                                      QMessageBox::Cancel);
     }
 }
 
-MainWindow::MainWindow( QWidget* parent ) :
-    QMainWindow   ( parent ),
-    m_ui          ( new Ui::MainWindow ),
+MainWindow::MainWindow(QWidget* parent) :
+    QMainWindow   (parent),
+    m_ui          (new Ui::MainWindow),
     m_workbenchUi (),
-    m_helpViewer  ( new HelpViewer )
+    m_helpViewer  (new HelpViewer)
 {
-    m_ui->setupUi( this );
+    m_ui->setupUi(this);
 }
 
 void MainWindow::Start()
@@ -63,53 +63,26 @@ void MainWindow::Start()
     VLDEnable();
 #endif
 
-    m_workbenchUi = new WorkbenchUi( *this );
-    m_workbenchUi->SetToolMenu( *m_ui->m_toolMenu );
-
-    m_cornerButton = new QToolButton();
-    m_cornerButton->setIcon( QIcon( ":/save.png" ) );
-    m_cornerButton->setPopupMode(QToolButton::InstantPopup);
-
-    m_workbenchUi->SetCornerWidget( m_cornerButton );
+    m_workbenchUi = new WorkbenchUi(*this);
+    m_workbenchUi->SetToolMenu(*m_ui->m_toolMenu);
 
     QLayout* centralLayout = m_ui->m_centralwidget->layout();
-    assert( centralLayout );
-    if ( centralLayout )
+    assert(centralLayout);
+    if (centralLayout)
     {
-        centralLayout->addWidget( m_workbenchUi );
+        centralLayout->addWidget(m_workbenchUi);
     }
 
-    QObject::connect( m_ui->actionE_xit,
-                      SIGNAL( triggered() ),
-                      qApp,
-                      SLOT( closeAllWindows() ) );
-    QObject::connect( m_ui->m_newWorkbenchAction,
-                      SIGNAL( triggered() ),
-                      m_workbenchUi,
-                      SLOT( NewWorkbench() ) );
-    QObject::connect( m_ui->m_openWorkbenchAction,
-                      SIGNAL( triggered() ),
-                      m_workbenchUi,
-                      SLOT( OpenWorkbench() ) );
-    QObject::connect( m_ui->m_saveWorkbenchAction,
-                      SIGNAL( triggered() ),
-                      m_workbenchUi,
-                      SLOT( SaveWorkbench() ) );
-    QObject::connect( m_ui->m_helpAction,
-                      SIGNAL( triggered() ),
-                      this,
-                      SLOT( ShowHelp() ) );
-    QObject::connect( m_ui->m_aboutAction,
-                      SIGNAL( triggered() ),
-                      this,
-                      SLOT( ShowAboutGTS() ) );
-    QObject::connect( m_ui->m_aboutQtAction,
-                      SIGNAL( triggered() ),
-                      this,
-                      SLOT( ShowAboutQt() ) );
+    QObject::connect(m_ui->actionE_xit,           SIGNAL(triggered()), qApp,          SLOT(closeAllWindows()));
+    QObject::connect(m_ui->m_newWorkbenchAction,  SIGNAL(triggered()), m_workbenchUi, SLOT(NewWorkbench()));
+    QObject::connect(m_ui->m_openWorkbenchAction, SIGNAL(triggered()), m_workbenchUi, SLOT(OpenWorkbench()));
+    QObject::connect(m_ui->m_saveWorkbenchAction, SIGNAL(triggered()), m_workbenchUi, SLOT(SaveWorkbench()));
+    QObject::connect(m_ui->m_helpAction,          SIGNAL(triggered()), this,          SLOT(ShowHelp()));
+    QObject::connect(m_ui->m_aboutAction,         SIGNAL(triggered()), this,          SLOT(ShowAboutGTS()));
+    QObject::connect(m_ui->m_aboutQtAction,       SIGNAL(triggered()), this,          SLOT(ShowAboutQt()));
+
     m_workbenchUi->Reload();
     show();
-
 }
 
 MainWindow::~MainWindow()
@@ -134,20 +107,20 @@ void MainWindow::ShowAboutQt()
 
 void MainWindow::Reload()
 {
-    if ( this ) m_workbenchUi->Reload();
+    if (this) m_workbenchUi->Reload();
 }
 
-void MainWindow::MergeWithActivePath( const WbPath& desiredPath )
+void MainWindow::MergeWithActivePath(const WbPath& desiredPath)
 {
-    if ( this ) m_workbenchUi->MergeWithActivePath( desiredPath );
+    if (this) m_workbenchUi->MergeWithActivePath(desiredPath);
 }
 
-void MainWindow::closeEvent( QCloseEvent* event )
+void MainWindow::closeEvent(QCloseEvent* event)
 {
-    if ( m_workbenchUi && m_workbenchUi->HasOpenModifiedWorkbench() )
+    if (m_workbenchUi && m_workbenchUi->HasOpenModifiedWorkbench())
     {
-        const QMessageBox::StandardButton choice = AskUserToSave( this );
-        switch ( choice )
+        const QMessageBox::StandardButton choice = AskUserToSave(this);
+        switch (choice)
         {
             case QMessageBox::Yes:
                 m_workbenchUi->SaveWorkbench();

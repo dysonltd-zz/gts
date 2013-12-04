@@ -60,32 +60,32 @@
 #define MAX_PATH 255
 #endif
 
-PostProcessWidget::PostProcessWidget( QWidget* const parent ) :
-    Tool( parent, CreateSchema() ),
-    m_ui( new Ui::PostProcessWidget )
+PostProcessWidget::PostProcessWidget(QWidget* const parent) :
+    Tool(parent, CreateSchema()),
+    m_ui(new Ui::PostProcessWidget)
 {
-    m_ui->setupUi( this );
+    m_ui->setupUi(this);
 
-    QObject::connect( m_ui->m_loadDataBtn,
-                      SIGNAL( clicked() ),
+    QObject::connect(m_ui->m_loadDataBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( LoadDataButtonClicked() ) );
-    QObject::connect( m_ui->m_postProcessBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(LoadDataButtonClicked()));
+    QObject::connect(m_ui->m_postProcessBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( PostProcessButtonClicked() ) );
+                      SLOT(PostProcessButtonClicked()));
 
     // set up delete button
-    QAction* const toggleAction = new QAction( tr( "Toggle Data Point ON/OFF" ), m_ui->m_trackResults );
-    toggleAction->setShortcut( QKeySequence( QKeySequence::Delete ) );
-    toggleAction->setShortcutContext( Qt::WidgetShortcut );
-    QObject::connect( toggleAction,
-             SIGNAL( triggered() ),
+    QAction* const toggleAction = new QAction(tr("Toggle Data Point ON/OFF"), m_ui->m_trackResults);
+    toggleAction->setShortcut(QKeySequence(QKeySequence::Delete));
+    toggleAction->setShortcutContext(Qt::WidgetShortcut);
+    QObject::connect(toggleAction,
+             SIGNAL(triggered()),
              this,
-             SLOT( ToggleItemTriggered() ) );
+             SLOT(ToggleItemTriggered()));
 
-    m_ui->m_trackResults->addAction( toggleAction );
-    m_ui->m_trackResults->setContextMenuPolicy( Qt::ActionsContextMenu );
+    m_ui->m_trackResults->addAction(toggleAction);
+    m_ui->m_trackResults->setContextMenuPolicy(Qt::ActionsContextMenu);
 }
 
 PostProcessWidget::~PostProcessWidget()
@@ -110,26 +110,26 @@ const QString PostProcessWidget::CannotCloseReason() const
 
 const WbSchema PostProcessWidget::CreateSchema()
 {
-    WbSchema schema( CreateWorkbenchSubSchema( KeyName( "postProcess" ),
-                                               tr( "Post Process" ) ) );
+    WbSchema schema(CreateWorkbenchSubSchema(KeyName("postProcess"),
+                                               tr("Post Process")));
 
     return schema;
 }
 
 void PostProcessWidget::ShowNoRoomError()
 {
-    Message::Show( this,
-                   tr( "Post Process" ),
-                   tr( "There is no room selected!" ),
-                   Message::Severity_Critical );
+    Message::Show(this,
+                   tr("Post Process"),
+                   tr("There is no room selected!"),
+                   Message::Severity_Critical);
 }
 
 
 const KeyId PostProcessWidget::GetRoomIdToCapture() const
 {
-    const WbConfig postProcessConfig( GetCurrentConfig() );
-    const WbConfig runConfig( postProcessConfig.GetParent() );
-    const KeyId roomIdToCapture( runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId() );
+    const WbConfig postProcessConfig(GetCurrentConfig());
+    const WbConfig runConfig(postProcessConfig.GetParent());
+    const KeyId roomIdToCapture(runConfig.GetKeyValue(RunSchema::roomIdKey).ToKeyId());
 
     return roomIdToCapture;
 }
@@ -143,19 +143,19 @@ void PostProcessWidget::LoadDataButtonClicked()
 
     if (roomIdToCapture.isEmpty()) { ShowNoRoomError(); return; }
 
-    const WbConfig runConfig( config.GetParent() );
+    const WbConfig runConfig(config.GetParent());
 
-    const QString fileName(runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.csv" ) );
+    const QString fileName(runConfig.GetAbsoluteFileNameFor("results/track_result_raw.csv"));
 
-    m_ui->m_trackView->loadFloorPlan( runConfig );
-    m_ui->m_trackView->loadMetrics( runConfig );
+    m_ui->m_trackView->loadFloorPlan(runConfig);
+    m_ui->m_trackView->loadMetrics(runConfig);
 
     QFile csv(fileName);
     csv.open(QIODevice::ReadOnly);
 
     if (m_resultsModel) delete m_resultsModel;
 
-    m_resultsModel = new TrackModel( &csv, m_ui->m_trackResults, true, ',' );
+    m_resultsModel = new TrackModel(&csv, m_ui->m_trackResults, true, ',');
 
     csv.close();
 
@@ -164,12 +164,12 @@ void PostProcessWidget::LoadDataButtonClicked()
 
     m_selectionModel = m_ui->m_trackResults->selectionModel();
 
-    QObject::connect( m_selectionModel,
-                      SIGNAL( selectionChanged ( const QItemSelection&,
-                                                 const QItemSelection& ) ),
+    QObject::connect(m_selectionModel,
+                      SIGNAL(selectionChanged (const QItemSelection&,
+                                                 const QItemSelection&)),
                       m_ui->m_trackView,
-                      SLOT( selectionChanged( const QItemSelection&,
-                                              const QItemSelection& ) ) );
+                      SLOT(selectionChanged(const QItemSelection&,
+                                              const QItemSelection&)));
 
     m_ui->m_trackResults->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     m_ui->m_trackResults->show();
@@ -196,59 +196,59 @@ void PostProcessWidget::PostProcessButtonClicked()
 
     Collection m_rooms = RoomsCollection();
 
-    const WbConfig runConfig( config.GetParent() );
-    const WbConfig trackConfig( runConfig.GetSubConfig( TrackRobotSchema::schemaName ) );
+    const WbConfig runConfig(config.GetParent());
+    const WbConfig trackConfig(runConfig.GetSubConfig(TrackRobotSchema::schemaName));
 
-    m_rooms.SetConfig( runConfig );
+    m_rooms.SetConfig(runConfig);
 
-    if ( successful )
+    if (successful)
     {
-        const KeyValue roomId = runConfig.GetKeyValue( RunSchema::roomIdKey );
-        const WbConfig roomConfig = m_rooms.ElementById( roomId.ToKeyId() );
+        const KeyValue roomId = runConfig.GetKeyValue(RunSchema::roomIdKey);
+        const WbConfig roomConfig = m_rooms.ElementById(roomId.ToKeyId());
 
         const WbConfig roomLayoutConfig(
-                    roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
+                    roomConfig.GetSubConfig(RoomLayoutSchema::schemaName));
 
         const QString floorPlanName(
-                    roomLayoutConfig.GetAbsoluteFileNameFor( "floor_plan.png" ) );
+                    roomLayoutConfig.GetAbsoluteFileNameFor("floor_plan.png"));
         const QString floorMaskName(
-                    roomLayoutConfig.GetAbsoluteFileNameFor( "floor_mask.png" ) );
+                    roomLayoutConfig.GetAbsoluteFileNameFor("floor_mask.png"));
 
         const QString trackerResultsCsvName(
-                    runConfig.GetAbsoluteFileNameFor( "results/track_result_out.csv" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/track_result_out.csv"));
         const QString trackerResultsTxtName(
-                    runConfig.GetAbsoluteFileNameFor( "results/track_result_out.txt" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/track_result_out.txt"));
         const QString pixelOffsetsName(
-                    runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets.txt" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/pixel_offsets.txt"));
 
         const QString coverageMissedName(
-                    runConfig.GetAbsoluteFileNameFor( "results/coverage_missed.png" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/coverage_missed.png"));
         const QString coverageColourName(
-                    runConfig.GetAbsoluteFileNameFor( "results/coverage_colour.png" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/coverage_colour.png"));
         const QString coverageHistogramName(
-                    runConfig.GetAbsoluteFileNameFor( "results/coverage_histogram.txt" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/coverage_histogram.txt"));
         const QString coverageOverlayName(
-                    runConfig.GetAbsoluteFileNameFor( "results/coverage_overlay.png" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/coverage_overlay.png"));
 
         const QString coverageIncrementName(
-                    runConfig.GetAbsoluteFileNameFor( "results/coverage_increment.txt" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/coverage_increment.txt"));
         const QString coverageRelativeName(
-                    runConfig.GetAbsoluteFileNameFor( "results/coverage_relative.txt" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/coverage_relative.txt"));
 
         const QString trackHeadingName(
-                    runConfig.GetAbsoluteFileNameFor( "results/track_heading.png" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/track_heading.png"));
 
         const QString trackerResultsImgFile(
-                    runConfig.GetAbsoluteFileNameFor( "results/track_result_img_out.png" ) );
+                    runConfig.GetAbsoluteFileNameFor("results/track_result_img_out.png"));
 
         m_resultsModel->toCSV(trackerResultsCsvName, true, ',');
 
-        if ( successful )
+        if (successful)
         {
-            UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-            progressDialog->Start( tr( "Processing" ), tr( "" ) );
+            UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg(this);
+            progressDialog->Start(tr("Processing"), tr(""));
 
-            ExitStatus::Flags exitCode = PostProcess( config,
+            ExitStatus::Flags exitCode = PostProcess(config,
                                                       trackerResultsCsvName.toAscii().data(),    // trackerResultsName
                                                       trackerResultsTxtName.toAscii().data(),
                                                       trackerResultsImgFile.toAscii().data(),
@@ -262,27 +262,27 @@ void PostProcessWidget::PostProcessButtonClicked()
                                                       coverageHistogramName.toAscii().data(),
                                                       coverageOverlayName.toAscii().data(),
                                                       trackHeadingName.toAscii().data(),
-                                                      1.0 );                                     // incTimeStep
+                                                      1.0);                                     // incTimeStep
 
-            successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
+            successful = (exitCode == ExitStatus::OK_TO_CONTINUE);
 
-            if ( successful )
+            if (successful)
             {
                 const QString trackerResultsDirectory(
-                            runConfig.GetAbsoluteFileNameFor( "results" ) );
-                progressDialog->Complete( tr( "Post Processing Successful" ),
-                                          tr( "Results located at %1" )
-                                          .arg( trackerResultsDirectory ),
-                                          trackerResultsDirectory );
+                            runConfig.GetAbsoluteFileNameFor("results"));
+                progressDialog->Complete(tr("Post Processing Successful"),
+                                          tr("Results located at %1")
+                                          .arg(trackerResultsDirectory),
+                                          trackerResultsDirectory);
             }
             else
             {
                 progressDialog->ForceClose();
 
-                Message::Show( 0,
-                               tr( "Post Processing Failed" ),
-                               tr( "See the log for details!" ),
-                               Message::Severity_Critical );
+                Message::Show(0,
+                               tr("Post Processing Failed"),
+                               tr("See the log for details!"),
+                               Message::Severity_Critical);
             }
         }
     }
@@ -291,7 +291,7 @@ void PostProcessWidget::PostProcessButtonClicked()
 // ----------------------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------------------
 
-const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProcConfig,
+const ExitStatus::Flags PostProcessWidget::PostProcess(const WbConfig& postProcConfig,
                                                             char*           trackerResultsCsvFile, // -log
                                                             char*           trackerResultsTxtFile,
                                                             char*           trackerResultsImgFile,
@@ -305,46 +305,46 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
                                                             char*           coverageHistogramFile,
                                                             char*           coverageRawFile,
                                                             char*           headingFile,
-                                                            double          incTimeStep )          // -incstep
+                                                            double          incTimeStep)          // -incstep
 {
     ExitStatus::Flags exitStatus = ExitStatus::OK_TO_CONTINUE;
 
-    Collection m_rooms( RoomsCollection() );
-    Collection m_robots( RobotsCollection() );
+    Collection m_rooms(RoomsCollection());
+    Collection m_robots(RobotsCollection());
 
-    m_rooms.SetConfig( postProcConfig );
-    m_robots.SetConfig( postProcConfig );
+    m_rooms.SetConfig(postProcConfig);
+    m_robots.SetConfig(postProcConfig);
 
     // Get the run configuration
     const WbConfig& runConfig = postProcConfig.GetParent();
 
     // Get the room configuration (for this run)
-    const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
-    const WbConfig roomConfig = m_rooms.ElementById( roomId );
+    const KeyId roomId = runConfig.GetKeyValue(RunSchema::roomIdKey).ToKeyId();
+    const WbConfig roomConfig = m_rooms.ElementById(roomId);
 
     // Get the track configuration
-    const WbConfig& trackConfig = runConfig.GetSubConfig( TrackRobotSchema::schemaName );
+    const WbConfig& trackConfig = runConfig.GetSubConfig(TrackRobotSchema::schemaName);
 
     // Get the robot configuration (for this run)
-    const KeyId robotId = trackConfig.GetKeyValue( TrackRobotSchema::robotIdKey ).ToKeyId();
-    const WbConfig& robotConfig = m_robots.ElementById( robotId );
+    const KeyId robotId = trackConfig.GetKeyValue(TrackRobotSchema::robotIdKey).ToKeyId();
+    const WbConfig& robotConfig = m_robots.ElementById(robotId);
 
     // Get the robot metrics configuration
-    const WbConfig& metricsConfig = robotConfig.GetSubConfig( RobotMetricsSchema::schemaName );
+    const WbConfig& metricsConfig = robotConfig.GetSubConfig(RobotMetricsSchema::schemaName);
 
     // Get the first camera (position) configuration
     std::vector<WbConfig> camPosConfigs = GetCameraPositionsConfigs(roomConfig);
 
     const WbConfig firstCamPosConfig(camPosConfigs.at(0));
-    const WbConfig& firstCamPosCalConfig = firstCamPosConfig.GetSubConfig( ExtrinsicCalibrationSchema::schemaName );
+    const WbConfig& firstCamPosCalConfig = firstCamPosConfig.GetSubConfig(ExtrinsicCalibrationSchema::schemaName);
 
-    if ( exitStatus == ExitStatus::OK_TO_CONTINUE )
+    if (exitStatus == ExitStatus::OK_TO_CONTINUE)
     {
         FILE* incCoverageFile = 0;
 
-        if ( coverageFile )
+        if (coverageFile)
         {
-            incCoverageFile = fopen( coverageFile, "w" );
+            incCoverageFile = fopen(coverageFile, "w");
         }
 
         // Read the tracking results,
@@ -357,19 +357,19 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
         float tx;
         float ty;
 
-        FILE* fp = fopen( pixelOffsetsFile, "r" );
+        FILE* fp = fopen(pixelOffsetsFile, "r");
 
-        if ( fp )
+        if (fp)
         {
-            if( fscanf( fp, "%f %f\n", &tx, &ty ) != 2 )
+            if(fscanf(fp, "%f %f\n", &tx, &ty) != 2)
             {
                 return ExitStatus::ERRORS_OCCURRED;
             }
-            if( fscanf( fp, "%f %f\n", &offset.x, &offset.y ) != 2 )
+            if(fscanf(fp, "%f %f\n", &offset.x, &offset.y) != 2)
             {
                 return ExitStatus::ERRORS_OCCURRED;
             }
-            fclose( fp );
+            fclose(fp);
         }
         else
         {
@@ -382,54 +382,54 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
 
         float resolution = m_ui->m_postProcessResolutionSpinBox->value();
 
-        if ( !metrics.LoadMetrics( metricsConfig, firstCamPosCalConfig, resolution ) )
+        if (!metrics.LoadMetrics(metricsConfig, firstCamPosCalConfig, resolution))
         {
             LOG_ERROR("Post Process - Could not load robot metrics!");
 
             return ExitStatus::ERRORS_OCCURRED;
         }
 
-        if ( !TrackHistory::ReadHistoryCsv( trackerResultsCsvFile, avg ) )
+        if (!TrackHistory::ReadHistoryCsv(trackerResultsCsvFile, avg))
         {
             LOG_ERROR(QObject::tr("Post Process - Could not load track log from %1!").arg(trackerResultsCsvFile));
 
             return ExitStatus::ERRORS_OCCURRED;
         }
 
-        TrackHistory::WriteHistoryLog( trackerResultsTxtFile, avg );
+        TrackHistory::WriteHistoryLog(trackerResultsTxtFile, avg);
 
-        ScanUtility::LogSwapHandedness( avg );
+        ScanUtility::LogSwapHandedness(avg);
 
-        if ( relativeLogFile )
+        if (relativeLogFile)
         {
             TrackHistory::TrackLog rel;
-            ScanUtility::ConvertToRelativeLog( avg, rel );
-            TrackHistory::WriteHistoryLog( relativeLogFile, rel);
+            ScanUtility::ConvertToRelativeLog(avg, rel);
+            TrackHistory::WriteHistoryLog(relativeLogFile, rel);
         }
 
         IplImage* compImgCol = NULL;
 
-        if ( floorPlanFile )
+        if (floorPlanFile)
         {
-            compImgCol = cvLoadImage( floorPlanFile );
+            compImgCol = cvLoadImage(floorPlanFile);
         }
 
-        if ( !compImgCol )
+        if (!compImgCol)
         {
             LOG_ERROR("Post Process - Could not load floor plan image!");
 
             return ExitStatus::ERRORS_OCCURRED;
         }
 
-        IplImage* compImg = cvCreateImage( cvSize( compImgCol->width,
-                                                   compImgCol->height), IPL_DEPTH_8U, 1 );
+        IplImage* compImg = cvCreateImage(cvSize(compImgCol->width,
+                                                   compImgCol->height), IPL_DEPTH_8U, 1);
         // Colour copy of composite image.
-        cvConvertImage( compImgCol, compImg );
+        cvConvertImage(compImgCol, compImg);
 
-        IplImage* headingImg = cvCreateImage( cvSize( compImgCol->width,
-                                                      compImgCol->height), IPL_DEPTH_8U, 1 );
+        IplImage* headingImg = cvCreateImage(cvSize(compImgCol->width,
+                                                      compImgCol->height), IPL_DEPTH_8U, 1);
         // Colour copy of composite image.
-        cvConvertImage( compImgCol, headingImg );
+        cvConvertImage(compImgCol, headingImg);
 
         LOG_TRACE("Successfully read all inputs, processing");
 
@@ -437,26 +437,26 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
         TrackHistory::TrackLog avgPx = avg;
 
         // Setup floor-coverage system
-        CoverageSystem coverage( cvSize( compImg->width, compImg->height ) );
+        CoverageSystem coverage(cvSize(compImg->width, compImg->height));
 
-        if ( floorMaskFile )
+        if (floorMaskFile)
         {
-            coverage.LoadFloorMask( floorMaskFile );
+            coverage.LoadFloorMask(floorMaskFile);
         }
 
-        if ( coverage.GetFloorMask() )
+        if (coverage.GetFloorMask())
         {
             // Create a fake tracker - only to compute brush bar dimensions
             LOG_INFO("TRACKER WARNINGS WHICH FOLLOW CAN BE SAFELY IGNORED.");
 
-            const RobotTracker* tracker = new KltTracker( 0, &metrics, 0, 0 );
+            const RobotTracker* tracker = new KltTracker(0, &metrics, 0, 0);
 
             float travelledDistance = 0.f;
             double lastIncTime = 0.0;
 
             LOG_TRACE("Post Process - Computing coverage");
 
-            for ( unsigned int p=1; p<avgPx.size(); ++p )
+            for (unsigned int p=1; p<avgPx.size(); ++p)
             {
                 CvPoint2D32f prev = avgPx[p-1].GetPosition();
                 prev.x += .5f-tx;
@@ -468,44 +468,44 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
 
                 float dx = curr.x - prev.x;
                 float dy = curr.y - prev.y;
-                travelledDistance += sqrtf( dx*dx + dy*dy );
+                travelledDistance += sqrtf(dx*dx + dy*dy);
 
                 // Time in seconds at this point...
                 double dt = avgPx[p].GetTimeStamp() - avgPx[p-1].GetTimeStamp();
 
                 // Pairs must be close enough that there
                 // was no loss of tracking between them.
-                if ( std::abs(dt) < 0.75 )
+                if (std::abs(dt) < 0.75)
                 {
                     // Compute brush bar position in the previous and current frames
                     float heading = avgPx[p-1].GetOrientation();
-                    CvPoint2D32f pl = tracker->GetBrushBarLeft( prev, heading );
-                    CvPoint2D32f pr = tracker->GetBrushBarRight( prev, heading );
+                    CvPoint2D32f pl = tracker->GetBrushBarLeft(prev, heading);
+                    CvPoint2D32f pr = tracker->GetBrushBarRight(prev, heading);
 
                     heading = avgPx[p].GetOrientation();
-                    CvPoint2D32f cl = tracker->GetBrushBarLeft( curr, heading );
-                    CvPoint2D32f cr = tracker->GetBrushBarRight( curr, heading );
+                    CvPoint2D32f cl = tracker->GetBrushBarLeft(curr, heading);
+                    CvPoint2D32f cr = tracker->GetBrushBarRight(curr, heading);
 
-                    coverage.BrushBarUpdate( pl, pr, cl, cr );
+                    coverage.BrushBarUpdate(pl, pr, cl, cr);
 
-                    cvLine( headingImg,
-                            cvPoint( ( int )cl.x, ( int )cl.y ),
-                            cvPoint( ( int )cr.x, ( int )cr.y ),
-                            cvScalar( 0, 0, 255 ),
+                    cvLine(headingImg,
+                            cvPoint((int)cl.x, (int)cl.y),
+                            cvPoint((int)cr.x, (int)cr.y),
+                            cvScalar(0, 0, 255),
                             3,
-                            CV_AA );
+                            CV_AA);
                 }
 
-                if ( incCoverageFile )
+                if (incCoverageFile)
                 {
                     // Only write incremental time if enough
                     // time has elasped since the last update
                     double tDelta = avgPx[p].GetTimeStamp() - lastIncTime;
 
-                    if ( tDelta >= incTimeStep )
+                    if (tDelta >= incTimeStep)
                     {
-                        fprintf( incCoverageFile, "%f ", avgPx[p].GetTimeStamp() );
-                        coverage.WriteIncrementalCoverage( incCoverageFile, 20 );
+                        fprintf(incCoverageFile, "%f ", avgPx[p].GetTimeStamp());
+                        coverage.WriteIncrementalCoverage(incCoverageFile, 20);
 
                         lastIncTime = avgPx[p].GetTimeStamp();
                     }
@@ -517,34 +517,34 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
             LOG_INFO(QObject::tr("Post Process - Total distance travelled := %1(cm)\n")
                          .arg(travelledDistance / metrics.GetScaleFactor()));
 
-            int missCount = coverage.MissedMask( coverageMissedFile );
+            int missCount = coverage.MissedMask(coverageMissedFile);
 
             LOG_INFO(QObject::tr("Missed pixels: %1.").arg(missCount));
 
             // Create a coloured map to
             // indicate repeated coverage.
-            cvConvertImage( compImg, compImgCol );
+            cvConvertImage(compImg, compImgCol);
             coverage.CreateColouredMap();
-            coverage.DrawMap( compImgCol );
+            coverage.DrawMap(compImgCol);
 
-            cvSaveImage( coverageColourFile, compImgCol );
-            cvSaveImage( headingFile, headingImg );
+            cvSaveImage(coverageColourFile, compImgCol);
+            cvSaveImage(headingFile, headingImg);
 
-            coverage.CoverageHistogram( coverageHistogramFile );
+            coverage.CoverageHistogram(coverageHistogramFile);
 
             // Save the raw coverage-mask as a file, where
             // each pixel value represents the number of
             // passes made over that location in this run
 #if 0
             char maskName[MAX_PATH] = "";
-            sprintf( maskName, coverageRawFile, time(0) );
+            sprintf(maskName, coverageRawFile, time(0));
 #endif
-            coverage.SaveMask( coverageRawFile );
+            coverage.SaveMask(coverageRawFile);
 
             // clean up
-            if ( incCoverageFile )
+            if (incCoverageFile)
             {
-                fclose( incCoverageFile );
+                fclose(incCoverageFile);
             }
 
             LOG_TRACE("Post Process - Coverage data written. Cleaning up");
@@ -556,11 +556,11 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
             LOG_WARN("Post Process - No coverage results computed!");
         }
 
-        cvReleaseImage( &compImg );
-        cvReleaseImage( &headingImg );
-        cvReleaseImage( &compImgCol );
+        cvReleaseImage(&compImg);
+        cvReleaseImage(&headingImg);
+        cvReleaseImage(&compImgCol);
 
-        PlotTrackLog( avg, floorPlanFile, trackerResultsImgFile );
+        PlotTrackLog(avg, floorPlanFile, trackerResultsImgFile);
 
         LOG_TRACE("Post Process - Post processing finished.");
     }
@@ -571,9 +571,9 @@ const ExitStatus::Flags PostProcessWidget::PostProcess( const WbConfig& postProc
 // ----------------------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------------------
 
-void PostProcessWidget::PlotTrackLog( TrackHistory::TrackLog& log,
+void PostProcessWidget::PlotTrackLog(TrackHistory::TrackLog& log,
                                       char* floorPlanFile,
-                                      char* trackerResultsImgFile )
+                                      char* trackerResultsImgFile)
 {
     // Seconds - prob not discts within half sec. using
     const float timeThresh = 0.5f; // 2.0f / (float)m_fps;
@@ -581,16 +581,16 @@ void PostProcessWidget::PlotTrackLog( TrackHistory::TrackLog& log,
     IplImage* compImg = 0;
     IplImage* compImgCol = 0;
 
-    CvScalar colours[4] = { CV_RGB( 0,   0,   255 ),
-                            CV_RGB( 0,   255, 0   ),
-                            CV_RGB( 255, 255, 0   ),
-                            CV_RGB( 0,   255, 255 ) };
+    CvScalar colours[4] = { CV_RGB(0,   0,   255),
+                            CV_RGB(0,   255, 0  ),
+                            CV_RGB(255, 255, 0  ),
+                            CV_RGB(0,   255, 255) };
 
     IplImage* baseImg = cvLoadImage(floorPlanFile, CV_LOAD_IMAGE_GRAYSCALE);
 
     if (baseImg != NULL)
     {
-        compImg = cvCloneImage( baseImg );
+        compImg = cvCloneImage(baseImg);
     }
     else
     {
@@ -601,22 +601,22 @@ void PostProcessWidget::PlotTrackLog( TrackHistory::TrackLog& log,
 
 
     // Plot logs - colour copy of composite image
-    compImgCol = cvCreateImage( cvSize( compImg->width,
-                                        compImg->height ), compImg->depth, 3 );
-    cvConvertImage( compImg, compImgCol );
+    compImgCol = cvCreateImage(cvSize(compImg->width,
+                                        compImg->height), compImg->depth, 3);
+    cvConvertImage(compImg, compImgCol);
 
-    ScanUtility::PlotLog( log,
+    ScanUtility::PlotLog(log,
                           compImgCol,
                           colours[0],
-                          cvRect( 0, 0, 0, 0 ),
+                          cvRect(0, 0, 0, 0),
                           0,
                           1,
-                          timeThresh );
+                          timeThresh);
 
     // Write composite image to file
-    cvSaveImage( trackerResultsImgFile, compImgCol );
+    cvSaveImage(trackerResultsImgFile, compImgCol);
 
     // Clean up
-    cvReleaseImage( &compImg );
-    cvReleaseImage( &compImgCol );
+    cvReleaseImage(&compImg);
+    cvReleaseImage(&compImgCol);
 }

@@ -20,6 +20,6 @@
 
 namespace FloorMaskSchema
 {
-    const KeyName schemaName ( "floorMask" );
+    const KeyName schemaName ("floorMask");
 }
 

@@ -51,10 +51,10 @@ class CollateResultsWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit CollateResultsWidget( QWidget* parent );
+    explicit CollateResultsWidget(QWidget* parent);
     ~CollateResultsWidget();
 
-    virtual const QString Name() const { return tr( "Collate Results" ); }
+    virtual const QString Name() const { return tr("Collate Results"); }
     virtual bool CanClose() const;
     const QString CannotCloseReason() const;
 
@@ -71,16 +71,16 @@ private:
     bool CreateAnalysisResultDirectory(const WbConfig& config);
     void ShowImage(ImageView* view, const IplImage* image);
     const KeyId GetRoomIdToCollate() const;
-    const ExitStatus::Flags CollateCoverageResults( char* floorPlanName,
-                                            char* floorMaskName,
-                                            char* overlayListFileName,
-                                            char* totalCoverageCsvName,
-                                            char* totalCoverageImgName );
+    const ExitStatus::Flags CollateCoverageResults(char* floorPlanName,
+                                                   char* floorMaskName,
+                                                   char* overlayListFileName,
+                                                   char* totalCoverageCsvName,
+                                                   char* totalCoverageImgName);
     void PrintCsvHeaders(FILE* fp , const int maxLevel);
-    void PrintCsvLineForPass( FILE* fp,
-                              const int run,
-                              IplImage* totalCoverageImg,
-                              const int nFloorPixels , const int maxLevel);
+    void PrintCsvLineForPass(FILE* fp,
+                             const int run,
+                             IplImage* totalCoverageImg,
+                             const int nFloorPixels , const int maxLevel);
     Ui::CollateResultsWidget* m_ui;
     QStandardItemModel* tableModel;
 };

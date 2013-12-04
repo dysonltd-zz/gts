@@ -29,16 +29,16 @@
     A coverage system is initialised with
     the dimensions of the tracking image.
  **/
-CoverageSystem::CoverageSystem( CvSize warpedImageSize ) :
-    m_cvgMask    ( 0 ),
-    m_floorMask  ( 0 ),
-    m_floorPixels( 0 )
+CoverageSystem::CoverageSystem(CvSize warpedImageSize) :
+    m_cvgMask    (0),
+    m_floorMask  (0),
+    m_floorPixels(0)
 {
-    m_cvgMask = cvCreateImage( warpedImageSize, IPL_DEPTH_8U, 1 );
-    cvZero( m_cvgMask );
+    m_cvgMask = cvCreateImage(warpedImageSize, IPL_DEPTH_8U, 1);
+    cvZero(m_cvgMask);
 
-    m_inOutMask = cvCreateImage( warpedImageSize, IPL_DEPTH_8U, 1 );
-    m_colMap = cvCreateImage( warpedImageSize, IPL_DEPTH_8U, 3 );
+    m_inOutMask = cvCreateImage(warpedImageSize, IPL_DEPTH_8U, 1);
+    m_colMap = cvCreateImage(warpedImageSize, IPL_DEPTH_8U, 3);
 }
 
 /**
@@ -46,11 +46,11 @@ CoverageSystem::CoverageSystem( CvSize warpedImageSize ) :
  **/
 CoverageSystem::~CoverageSystem()
 {
-    cvReleaseImage( &m_cvgMask );
-    cvReleaseImage( &m_floorMask );
+    cvReleaseImage(&m_cvgMask);
+    cvReleaseImage(&m_floorMask);
 
-    cvReleaseImage( &m_inOutMask );
-    cvReleaseImage( &m_colMap );
+    cvReleaseImage(&m_inOutMask);
+    cvReleaseImage(&m_colMap);
 }
 
 /**
@@ -63,16 +63,16 @@ CoverageSystem::~CoverageSystem()
     @param curr Robot's current position.
     @param radiusPx Radius of robot's base.
  **/
-void CoverageSystem::Update( CvPoint2D32f prev, CvPoint2D32f curr, float radiusPx )
+void CoverageSystem::Update(CvPoint2D32f prev, CvPoint2D32f curr, float radiusPx)
 {
-    cvZero( m_inOutMask );
+    cvZero(m_inOutMask);
 
     int radius = (int)(radiusPx + .5f);
-    CvPoint pp = cvPoint( (int)(prev.x + .5f), (int)(prev.y + .5f) );
-    CvPoint pc = cvPoint( (int)(curr.x + .5f), (int)(curr.y + .5f) );
+    CvPoint pp = cvPoint((int)(prev.x + .5f), (int)(prev.y + .5f));
+    CvPoint pc = cvPoint((int)(curr.x + .5f), (int)(curr.y + .5f));
 
-    cvCircle( m_inOutMask, pp, radius, CV_RGB( 255, 255, 255 ), CV_FILLED ); // previous occupancy
-    cvCircle( m_inOutMask, pc, radius, CV_RGB( 0, 0, 0 ), CV_FILLED ); // effectively 'subtracts' current occupancy from previous
+    cvCircle(m_inOutMask, pp, radius, CV_RGB(255, 255, 255), CV_FILLED); // previous occupancy
+    cvCircle(m_inOutMask, pc, radius, CV_RGB(0, 0, 0), CV_FILLED); // effectively 'subtracts' current occupancy from previous
 
     IncrementUncoveredPixels();
 }
@@ -85,12 +85,12 @@ void CoverageSystem::Update( CvPoint2D32f prev, CvPoint2D32f curr, float radiusP
     @param cl Current position of left edge of brush bar.
     @param cr Current position of right edge of brush bar.
  **/
-void CoverageSystem::BrushBarUpdate( CvPoint2D32f pl,
+void CoverageSystem::BrushBarUpdate(CvPoint2D32f pl,
                                      CvPoint2D32f pr,
                                      CvPoint2D32f cl,
-                                     CvPoint2D32f cr )
+                                     CvPoint2D32f cr)
 {
-    cvZero( m_inOutMask );
+    cvZero(m_inOutMask);
 
     CvPoint poly[4] =
     {
@@ -100,13 +100,13 @@ void CoverageSystem::BrushBarUpdate( CvPoint2D32f pl,
         cvPoint(static_cast<int>(cl.x), static_cast<int>(cl.y))
     };
 
-    cvFillConvexPoly( m_inOutMask, poly, 4, cvScalar( 255, 255, 255 ) );
+    cvFillConvexPoly(m_inOutMask, poly, 4, cvScalar(255, 255, 255));
 
     // Erase last row of pixels
-    cvFillConvexPoly( m_inOutMask, &(poly[2]), 2, cvScalar( 0, 0, 0 ) );
+    cvFillConvexPoly(m_inOutMask, &(poly[2]), 2, cvScalar(0, 0, 0));
 
     // intersect with floor mask
-    cvAnd( m_inOutMask, m_floorMask, m_inOutMask );
+    cvAnd(m_inOutMask, m_floorMask, m_inOutMask);
 
     IncrementUncoveredPixels();
 }
@@ -117,7 +117,7 @@ void CoverageSystem::BrushBarUpdate( CvPoint2D32f pl,
  **/
 void CoverageSystem::CreateColouredMap()
 {
-    cvZero( m_colMap );
+    cvZero(m_colMap);
 
     unsigned char colour[11][3] = { { 0, 0, 0 },
                                     { 0, 40, 0 },
@@ -132,26 +132,26 @@ void CoverageSystem::CreateColouredMap()
                                     { 0, 0, 255 } };
 
     int step = m_cvgMask->widthStep;
-    for ( int r = 0; r < m_cvgMask->height; ++r )
+    for (int r = 0; r < m_cvgMask->height; ++r)
     {
         char* pMask = m_cvgMask->imageData + (r * step);
         const char* const pEnd = pMask + (m_cvgMask->width * m_cvgMask->nChannels);
 
         char* pCol = m_colMap->imageData + (r * m_colMap->widthStep);
 
-        while ( pMask != pEnd )
+        while (pMask != pEnd)
         {
             int index = *pMask++;
 
-            if ( index > 8 && index <= 13 )
+            if (index > 8 && index <= 13)
             {
                 index = 8;
             }
-            else if ( index > 13 && index <= 18 )
+            else if (index > 13 && index <= 18)
             {
                 index = 9;
             }
-            else if ( index > 18 )
+            else if (index > 18)
             {
                 index = 10;
             }
@@ -174,19 +174,19 @@ void CoverageSystem::CreateColouredMap()
  **/
 void CoverageSystem::IncrementUncoveredPixels()
 {
-    assert( m_cvgMask->widthStep == m_inOutMask->widthStep );
+    assert(m_cvgMask->widthStep == m_inOutMask->widthStep);
 
     int step = m_cvgMask->widthStep;
-    for ( int r = 0; r < m_cvgMask->height; ++r )
+    for (int r = 0; r < m_cvgMask->height; ++r)
     {
         char* pMask = m_cvgMask->imageData + (r * step);
         const char* const pEnd = pMask + (m_cvgMask->width * m_cvgMask->nChannels);
 
         char* pTest = m_inOutMask->imageData + (r * step);
 
-        while ( pMask != pEnd )
+        while (pMask != pEnd)
         {
-            if ( (*pTest) != 0 )
+            if ((*pTest) != 0)
             {
                 (*pMask) += 1;
             }
@@ -208,24 +208,24 @@ void CoverageSystem::IncrementUncoveredPixels()
     @param tracker A tracker whose current position
                    will be used to update the mask.
  **/
-//void CoverageSystem::Update( const RoboTrackKlt& tracker )
+//void CoverageSystem::Update(const RoboTrackKlt& tracker)
 //{
-//    CvPoint2D32f basePos = tracker.AdjustTrackForRobotHeight( tracker.GetPosition() );
+//    CvPoint2D32f basePos = tracker.AdjustTrackForRobotHeight(tracker.GetPosition());
 //    CvPoint pb = cvPoint((int)(basePos.x+.5f),(int)(basePos.y+.5f));
 //
 //    int radius = (int)tracker.GetMetrics()->GetBasePx();
-//    cvCircle( m_cvgMask, pb, radius, cvScalar(255,255,255), CV_FILLED, CV_AA);
+//    cvCircle(m_cvgMask, pb, radius, cvScalar(255,255,255), CV_FILLED, CV_AA);
 //}
 
 /**
     Update coverage mask by directly
     passing in position and radius.
  **/
-void CoverageSystem::DirectUpdate( CvPoint pb, float radiusPx )
+void CoverageSystem::DirectUpdate(CvPoint pb, float radiusPx)
 {
     int radius = (int)(radiusPx + .5f);
 
-    cvCircle( m_cvgMask, pb, radius, cvScalar( 255, 255, 255 ), CV_FILLED, CV_AA );
+    cvCircle(m_cvgMask, pb, radius, cvScalar(255, 255, 255), CV_FILLED, CV_AA);
 }
 
 /**
@@ -234,9 +234,9 @@ void CoverageSystem::DirectUpdate( CvPoint pb, float radiusPx )
 
     @param img The image to render to
  **/
-void CoverageSystem::DrawMap( IplImage* img ) const
+void CoverageSystem::DrawMap(IplImage* img) const
 {
-    cvAddWeighted( img, 0.4, m_colMap, 0.6, 0, img );
+    cvAddWeighted(img, 0.4, m_colMap, 0.6, 0, img);
 }
 
 /**
@@ -245,25 +245,25 @@ void CoverageSystem::DrawMap( IplImage* img ) const
 
     @param img The image to render to
  **/
-void CoverageSystem::DrawMask( IplImage* img, CvScalar colour ) const
+void CoverageSystem::DrawMask(IplImage* img, CvScalar colour) const
 {
-    assert( img->width == m_cvgMask->width );
-    assert( img->height == m_cvgMask->height );
+    assert(img->width == m_cvgMask->width);
+    assert(img->height == m_cvgMask->height);
 
     int h = m_cvgMask->height;
     int w = m_cvgMask->width;
-    for ( int j = 0; j < h; ++j )
+    for (int j = 0; j < h; ++j)
     {
         char* pImg = img->imageData + j * img->widthStep;
         const char* pMask = m_cvgMask->imageData + j * m_cvgMask->widthStep;
 
-        for ( int i = 0; i < w; ++i )
+        for (int i = 0; i < w; ++i)
         {
             unsigned char mval = (unsigned char)*pMask++;
             float a = (mval) / 255.f;
             float b = 1.f - a;
 
-            for ( int c = 0; c < img->nChannels; ++c )
+            for (int c = 0; c < img->nChannels; ++c)
             {
                 unsigned char pxl = (unsigned char)*pImg;
                 float fill = (float)(colour.val[c]) * (pxl / 255.f);
@@ -277,9 +277,9 @@ void CoverageSystem::DrawMask( IplImage* img, CvScalar colour ) const
 /**
 
  **/
-void CoverageSystem::SaveMask( const char* file_name )
+void CoverageSystem::SaveMask(const char* file_name)
 {
-    cvSaveImage( file_name, m_cvgMask );
+    cvSaveImage(file_name, m_cvgMask);
 }
 
 /**
@@ -293,9 +293,9 @@ void CoverageSystem::SaveMask( const char* file_name )
 
     @return Percentage of floor covered by robot track.
  **/
-float CoverageSystem::EstimateCoverage( const IplImage* floormask ) const
+float CoverageSystem::EstimateCoverage(const IplImage* floormask) const
 {
-    return GetCoveredPixelCount() * (100.f / cvCountNonZero( floormask ));
+    return GetCoveredPixelCount() * (100.f / cvCountNonZero(floormask));
 }
 
 /**
@@ -306,7 +306,7 @@ float CoverageSystem::EstimateCoverage( const IplImage* floormask ) const
  **/
 unsigned int CoverageSystem::GetCoveredPixelCount() const
 {
-    return cvCountNonZero( m_cvgMask );
+    return cvCountNonZero(m_cvgMask);
 }
 
 /**
@@ -316,21 +316,21 @@ unsigned int CoverageSystem::GetCoveredPixelCount() const
 
     @return Number of white pixels in mask.
  **/
-unsigned int CoverageSystem::CountWhitePixels( const IplImage* mask )
+unsigned int CoverageSystem::CountWhitePixels(const IplImage* mask)
 {
-    if ( !mask )
+    if (!mask)
     {
         return 0;
     }
 
-    assert( mask->nChannels == 1 );
+    assert(mask->nChannels == 1);
 
     unsigned int count = 0;
-    for ( int j = 0; j < mask->height; ++j )
+    for (int j = 0; j < mask->height; ++j)
     {
-        for ( int i = 0; i < mask->width; ++i )
+        for (int i = 0; i < mask->width; ++i)
         {
-            if ( cvGet2D( mask, j, i ).val[0] == 255.0 )
+            if (cvGet2D(mask, j, i).val[0] == 255.0)
             {
                 count++;
             }
@@ -347,22 +347,22 @@ unsigned int CoverageSystem::CountWhitePixels( const IplImage* mask )
 
     @return Number of pixels covered more than once.
  **/
-unsigned int CoverageSystem::CountRepeatCoverage( const IplImage* mask )
+unsigned int CoverageSystem::CountRepeatCoverage(const IplImage* mask)
 {
-    if ( !mask )
+    if (!mask)
     {
         return 0;
     }
 
-    assert( mask->nChannels == 1 );
+    assert(mask->nChannels == 1);
 
     unsigned int count = 0;
-    for ( int j = 0; j < mask->height; ++j )
+    for (int j = 0; j < mask->height; ++j)
     {
-        for ( int i = 0; i < mask->width; ++i )
+        for (int i = 0; i < mask->width; ++i)
         {
-            float val = cvGet2D( mask, j, i ).val[0];
-            if ( val > 1 )
+            float val = cvGet2D(mask, j, i).val[0];
+            if (val > 1)
             {
                 count++;
             }
@@ -380,24 +380,24 @@ unsigned int CoverageSystem::CountRepeatCoverage( const IplImage* mask )
 
     @return True if mask was read sucessfully, false if not.
  **/
-bool CoverageSystem::LoadFloorMask( const char* filename )
+bool CoverageSystem::LoadFloorMask(const char* filename)
 {
-    IplImage* mask = cvLoadImage( filename, 0 );
+    IplImage* mask = cvLoadImage(filename, 0);
 
-    if ( !mask )
+    if (!mask)
     {
         LOG_INFO(QObject::tr("Could not open floor mask %1!").arg(filename));
 
         return false;
     }
 
-    SetFloorMask( mask );
-    cvReleaseImage( &mask ); // SetFloorMask makes its own copy so release
+    SetFloorMask(mask);
+    cvReleaseImage(&mask); // SetFloorMask makes its own copy so release
 
     // Check size of loaded mask matches floor-coverage mask
-    if ( m_floorMask->width == m_cvgMask->width &&
+    if (m_floorMask->width == m_cvgMask->width &&
          m_floorMask->height == m_cvgMask->height &&
-         m_floorMask->nChannels == 1 )
+         m_floorMask->nChannels == 1)
     {
         return true;
     }
@@ -407,7 +407,7 @@ bool CoverageSystem::LoadFloorMask( const char* filename )
 
         LOG_ERROR(QObject::tr("Expected a %1x%2 grey-scale image!").arg(m_cvgMask->width)
                                                                    .arg(m_cvgMask->height));
-        assert( 0 );
+        assert(0);
         return false;
     }
 }
@@ -417,18 +417,18 @@ bool CoverageSystem::LoadFloorMask( const char* filename )
 
     CoverageSystme makes its own internal copy of mask.
  **/
-void CoverageSystem::SetFloorMask( const IplImage* mask )
+void CoverageSystem::SetFloorMask(const IplImage* mask)
 {
-    if ( m_floorMask )
+    if (m_floorMask)
     {
-        cvReleaseImage( &m_floorMask );
+        cvReleaseImage(&m_floorMask);
         m_floorPixels = 0;
     }
 
-    if ( mask )
+    if (mask)
     {
-        m_floorMask = cvCloneImage( mask );
-        m_floorPixels = cvCountNonZero( m_floorMask );
+        m_floorMask = cvCloneImage(mask);
+        m_floorPixels = cvCountNonZero(m_floorMask);
     }
 }
 
@@ -442,7 +442,7 @@ void CoverageSystem::SetFloorMask( const IplImage* mask )
  **/
 float CoverageSystem::EstimateCoverage() const
 {
-    if ( !m_floorMask || m_floorPixels == 0 )
+    if (!m_floorMask || m_floorPixels == 0)
     {
         return -1.f;
     }
@@ -456,49 +456,49 @@ float CoverageSystem::EstimateCoverage() const
  **/
 float CoverageSystem::EstimateRepeatCoverage() const
 {
-    if ( !m_cvgMask || m_floorPixels == 0 )
+    if (!m_cvgMask || m_floorPixels == 0)
     {
         return -1.f;
     }
 
-    return CountRepeatCoverage( m_cvgMask ) * (100.f / m_floorPixels);
+    return CountRepeatCoverage(m_cvgMask) * (100.f / m_floorPixels);
 }
 
 /**
     Computes the area that was covered a particular number of
     times and writes the result to a specified log file.
  **/
-void CoverageSystem::CoverageHistogram( const char* file ) const
+void CoverageSystem::CoverageHistogram(const char* file) const
 {
-    FILE* fp = fopen( file, "w" );
+    FILE* fp = fopen(file, "w");
 
-    if ( !fp || !m_floorMask || m_floorPixels == 0 )
+    if (!fp || !m_floorMask || m_floorPixels == 0)
     {
         return;
     }
 
     // First make a copy of the coverage mask.
-    IplImage* mask = cvCloneImage( m_cvgMask );
-    IplImage* count = cvCloneImage( mask );
+    IplImage* mask = cvCloneImage(m_cvgMask);
+    IplImage* count = cvCloneImage(mask);
 
     double t = 1.0;
-    for ( int i = 1; i < 256; ++i )
+    for (int i = 1; i < 256; ++i)
     {
-        cvCmpS( m_cvgMask, t, mask, CV_CMP_EQ ); // Find all pixels that were covered 't' times
-        cvAnd( mask, m_floorMask, count ); // then intersect those pixels with floor mask
-        int nPixels = cvCountNonZero( count ); // then count the result
+        cvCmpS(m_cvgMask, t, mask, CV_CMP_EQ); // Find all pixels that were covered 't' times
+        cvAnd(mask, m_floorMask, count); // then intersect those pixels with floor mask
+        int nPixels = cvCountNonZero(count); // then count the result
 
         t += 1.0;
 
         // Work out percentage of floor area covered.
         float pc = nPixels * (100.f / m_floorPixels);
-        fprintf( fp, "%d %f\n", i, pc );
+        fprintf(fp, "%d %f\n", i, pc);
     }
 
-    fclose( fp );
+    fclose(fp);
 
-    cvReleaseImage( &mask );
-    cvReleaseImage( &count );
+    cvReleaseImage(&mask);
+    cvReleaseImage(&count);
 }
 
 /**
@@ -509,28 +509,28 @@ void CoverageSystem::CoverageHistogram( const char* file ) const
     @param fp A valid open file pointer to which the data will be written.
     @param count The maximum coverage count in which we are interested.
  **/
-void CoverageSystem::WriteIncrementalCoverage( FILE* fp, unsigned int count )
+void CoverageSystem::WriteIncrementalCoverage(FILE* fp, unsigned int count)
 {
-    if ( fp )
+    if (fp)
     {
-        IplImage* dst = cvCreateImage( cvSize( m_cvgMask->width,
-                                               m_cvgMask->height ), IPL_DEPTH_8U, 1 );
+        IplImage* dst = cvCreateImage(cvSize(m_cvgMask->width,
+                                               m_cvgMask->height), IPL_DEPTH_8U, 1);
 
-        IplImage* countImage = cvCloneImage( dst );
+        IplImage* countImage = cvCloneImage(dst);
 
-        for ( unsigned int i = 1; i <= count; ++i )
+        for (unsigned int i = 1; i <= count; ++i)
         {
-            cvCmpS( m_cvgMask, i, dst, CV_CMP_GE );
+            cvCmpS(m_cvgMask, i, dst, CV_CMP_GE);
 
             // Intersect pixels with floor mask.
-            cvAnd( dst, m_floorMask, countImage );
-            float cov = cvCountNonZero( countImage ) * (100.f / m_floorPixels);
-            fprintf( fp, " %f", cov );
+            cvAnd(dst, m_floorMask, countImage);
+            float cov = cvCountNonZero(countImage) * (100.f / m_floorPixels);
+            fprintf(fp, " %f", cov);
         }
 
-        fprintf( fp, "\n" );
+        fprintf(fp, "\n");
 
-        cvReleaseImage( &dst );
+        cvReleaseImage(&dst);
     }
 }
 
@@ -538,24 +538,24 @@ void CoverageSystem::WriteIncrementalCoverage( FILE* fp, unsigned int count )
     Create a mask which shows the areas of
     the floor that were missed completely.
  **/
-int CoverageSystem::MissedMask( const char* fileName )
+int CoverageSystem::MissedMask(const char* fileName)
 {
     int count = -1;
 
-    if ( m_floorMask )
+    if (m_floorMask)
     {
-        IplImage* dst = cvCreateImage( cvSize( m_cvgMask->width,
-                                               m_cvgMask->height ), IPL_DEPTH_8U, 1 );
+        IplImage* dst = cvCreateImage(cvSize(m_cvgMask->width,
+                                               m_cvgMask->height), IPL_DEPTH_8U, 1);
 
-        cvCmpS( m_cvgMask, 1, dst, CV_CMP_GE );
+        cvCmpS(m_cvgMask, 1, dst, CV_CMP_GE);
 
-        cvSub( m_floorMask, dst, dst );
+        cvSub(m_floorMask, dst, dst);
 
-        cvSaveImage( fileName, dst );
+        cvSaveImage(fileName, dst);
 
-        count = cvCountNonZero( dst );
+        count = cvCountNonZero(dst);
 
-        cvReleaseImage( &dst );
+        cvReleaseImage(&dst);
     }
 
     return count;

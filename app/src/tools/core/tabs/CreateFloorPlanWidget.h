@@ -47,10 +47,10 @@ class CreateFloorPlanWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit CreateFloorPlanWidget( CameraHardware& cameraHardware,
-                                    QWidget* parent = 0 );
+    explicit CreateFloorPlanWidget(CameraHardware& cameraHardware,
+                                    QWidget* parent = 0);
     virtual ~CreateFloorPlanWidget();
-    virtual const QString Name() const { return tr( "Create Floor Plan" ); }
+    virtual const QString Name() const { return tr("Create Floor Plan"); }
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
     virtual QWidget* Widget();
@@ -76,16 +76,16 @@ private:
     const WbSchema CreateSchema();
     const QString GetCamera1Id() const;
     const QString GetCamera2Id() const;
-    void FillOutCameraCombo( QComboBox& comboBox );
-    void ShowImage( IplImage* img, ImageView* view );
+    void FillOutCameraCombo(QComboBox& comboBox);
+    void ShowImage(IplImage* img, ImageView* view);
     void CreateFloorPlanSingle();
     void CreateFloorPlanMulti();
     void Stitch(KeyId rootId);
     virtual void ReloadCurrentConfigToolSpecific();
-    ImageView* const GetStreamingView1( const QSize& imageSize );
-    ImageView* const GetStreamingView2( const QSize& imageSize );
-    void DisplayMatched( std::vector< cv::Point2f > ip1,
-                         std::vector< cv::Point2f > ip2 );
+    ImageView* const GetStreamingView1(const QSize& imageSize);
+    ImageView* const GetStreamingView2(const QSize& imageSize);
+    void DisplayMatched(std::vector< cv::Point2f > ip1,
+                         std::vector< cv::Point2f > ip2);
     void DisplayStitched();
     bool IsDataValid() const;
 

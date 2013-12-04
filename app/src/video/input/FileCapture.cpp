@@ -34,7 +34,7 @@
 
 #include <stdio.h>
 
-FileCapture::FileCapture( const char* filename ) :
+FileCapture::FileCapture(const char* filename) :
 	m_path		(""),
 	m_sequence	(0),
 	m_img		(0),
@@ -43,23 +43,23 @@ FileCapture::FileCapture( const char* filename ) :
 	m_IsSetup (false)
 {
 	// load in a file name sequence
-	std::ifstream file( filename );
+	std::ifstream file(filename);
 
-	if ( file.is_open() )
+	if (file.is_open())
 	{
 		std::string line;
 
 		// First line of file is path
-		getline( file, line );
+		getline(file, line);
 
-		if ( line.length()>0 )
+		if (line.length()>0)
 		{
-			m_path = std::string( line.begin(), line.end() );
+			m_path = std::string(line.begin(), line.end());
 
 			// Strip off tag
-			if ( m_path.find( "PATH=" ) != std::string::npos )
+			if (m_path.find("PATH=") != std::string::npos)
 			{
-				m_path = std::string( m_path.begin()+5 , m_path.end() );
+				m_path = std::string(m_path.begin()+5 , m_path.end());
 			}
 			else
 			{
@@ -69,34 +69,34 @@ FileCapture::FileCapture( const char* filename ) :
 			}
 
 			// Strip off any end-space from path
-			size_t pos = m_path.find( " " );
-			if ( pos != std::string::npos )
+			size_t pos = m_path.find(" ");
+			if (pos != std::string::npos)
 			{
-				m_path = std::string( m_path.begin(), m_path.begin() + pos );
+				m_path = std::string(m_path.begin(), m_path.begin() + pos);
 			}
 		}
 
 		// Remaining lines contain file names then timestamps
 		std::string name;
 		std::string time;
-		while ( !file.eof() )
+		while (!file.eof())
 		{
-			getline( file, line );
-			if ( line.length()>0 )
+			getline(file, line);
+			if (line.length()>0)
 			{
-				name = std::string( line.begin(), line.begin() + line.find(" ") );
-				time = std::string( line.begin() + line.find(" ") + 1, line.end() );
+				name = std::string(line.begin(), line.begin() + line.find(" "));
+				time = std::string(line.begin() + line.find(" ") + 1, line.end());
 
-				std::istringstream num( time );
+				std::istringstream num(time);
 
 				double t;
 				num >> t;
-				m_sequence.push_back( FileCapture::Frame( name, t ) );
+				m_sequence.push_back(FileCapture::Frame(name, t));
 				m_numFrames++;
 			}
 		}
 
-		if ( m_sequence.size() > 0 )
+		if (m_sequence.size() > 0)
 		{
 			m_IsSetup = true;
 		}
@@ -115,7 +115,7 @@ FileCapture::~FileCapture()
 
 bool FileCapture::ReadyNextFrame()
 {
-	if ( m_index >= m_sequence.size() )
+	if (m_index >= m_sequence.size())
 	{
 		return false;
 	}
@@ -124,9 +124,9 @@ bool FileCapture::ReadyNextFrame()
 
 	std::string file = m_path + m_sequence[m_index++].file;
 
-	m_img = cvLoadImage( file.c_str() );
+	m_img = cvLoadImage(file.c_str());
 
-	if ( m_img )
+	if (m_img)
 	{
 
 	}
@@ -135,10 +135,10 @@ bool FileCapture::ReadyNextFrame()
 	    LOG_ERROR(QObject::tr("Could not open image %1!").arg(file.c_str()));
 	}
 
-	return ( m_img != 0 );
+	return (m_img != 0);
 }
 
-bool FileCapture::ReadyNextFrame( double msec )
+bool FileCapture::ReadyNextFrame(double msec)
 {
     Q_UNUSED(msec);
 
@@ -164,7 +164,7 @@ void FileCapture::PrintInfo() const
 {
     LOG_INFO(QObject::tr("Sequence contains %1 frames.").arg(m_sequence.size()));
 
-	for ( unsigned int i=0; i<m_sequence.size(); ++i )
+	for (unsigned int i=0; i<m_sequence.size(); ++i)
 	{
 	    std::string file = m_path + m_sequence[i].file;
 

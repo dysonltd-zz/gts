@@ -22,16 +22,16 @@
 #include <string.h>
 #include <stdio.h>
 
-FileSeq::FileSeq( const char* pre, const char* post ) :
+FileSeq::FileSeq(const char* pre, const char* post) :
 	m_pre	(0),
 	m_post	(0),
 	m_name	(0)
 {
 	m_pre = new char[ strlen(pre)+1 ];
-	strncpy( m_pre, pre, strlen(pre)+1 );
+	strncpy(m_pre, pre, strlen(pre)+1);
 
 	m_post = new char[ strlen(post)+1 ];
-	strncpy( m_post, post, strlen(post)+1 );
+	strncpy(m_post, post, strlen(post)+1);
 
 	m_name = new char[ strlen(pre) + strlen(post) + 17 ];
 	Make(0);
@@ -50,8 +50,8 @@ FileSeq::~FileSeq()
 	and a pointer to it returned. It can be accessed further
 	with FileSeq::Get().
 **/
-const char* FileSeq::Make(unsigned int index )
+const char* FileSeq::Make(unsigned int index)
 {
-	sprintf( m_name, "%s%.4d%s", m_pre, index, m_post );
+	sprintf(m_name, "%s%.4d%s", m_pre, index, m_post);
 	return m_name;
 }

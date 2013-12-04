@@ -20,25 +20,25 @@
 
 #include <opencv/cv.h>
 
-CalibrationImageGridMapper::CalibrationImageGridMapper( ImageGrid& imageGrid ) :
-    ConfigKeyMapper( CalibrationSchema::imageFileKey ),
-    m_grid( imageGrid ),
+CalibrationImageGridMapper::CalibrationImageGridMapper(ImageGrid& imageGrid) :
+    ConfigKeyMapper(CalibrationSchema::imageFileKey),
+    m_grid(imageGrid),
     m_image(),
     m_notFoundImage(":/image_not_found.png")
 {
 }
 
-void CalibrationImageGridMapper::CommitData( WbConfig& config )
+void CalibrationImageGridMapper::CommitData(WbConfig& config)
 {
     Q_UNUSED(config);
 }
 
-void CalibrationImageGridMapper::SetConfig( const WbConfig& config )
+void CalibrationImageGridMapper::SetConfig(const WbConfig& config)
 {
-    if ( !m_currentImageId.isEmpty() )
+    if (!m_currentImageId.isEmpty())
     {
-        UpdateImage( config );
-        OverlayCornersIfPossible( config );
+        UpdateImage(config);
+        OverlayCornersIfPossible(config);
         UpdateGrid();
     }
 }
@@ -48,7 +48,7 @@ bool CalibrationImageGridMapper::ImageIsFound() const
     return !m_image.isNull();
 }
 
-void CalibrationImageGridMapper::OverlayCornersIfPossible( const WbConfig& config )
+void CalibrationImageGridMapper::OverlayCornersIfPossible(const WbConfig& config)
 {
     if (ImageIsFound())
     {
@@ -58,8 +58,8 @@ void CalibrationImageGridMapper::OverlayCornersIfPossible( const WbConfig& confi
         bool successful = !config.GetKeyValue(rowsUsedForCalibrationKey).IsNull() &&
                           !config.GetKeyValue(columnsUsedForCalibrationKey).IsNull();
 
-        const cv::Size gridSize( config.GetKeyValue( columnsUsedForCalibrationKey ).ToInt(),
-                                 config.GetKeyValue( rowsUsedForCalibrationKey ).ToInt() );
+        const cv::Size gridSize(config.GetKeyValue(columnsUsedForCalibrationKey).ToInt(),
+                                 config.GetKeyValue(rowsUsedForCalibrationKey).ToInt());
 
         if (successful)
         {
@@ -86,7 +86,7 @@ void CalibrationImageGridMapper::OverlayCornersIfPossible( const WbConfig& confi
     }
 }
 
-void CalibrationImageGridMapper::UpdateImage( const WbConfig& config )
+void CalibrationImageGridMapper::UpdateImage(const WbConfig& config)
 {
     const KeyValue cameraImageFile(config.GetKeyValue(CalibrationSchema::imageFileKey, m_currentImageId));
     const QString fileName(config.GetAbsoluteFileNameFor(cameraImageFile.ToQString()));

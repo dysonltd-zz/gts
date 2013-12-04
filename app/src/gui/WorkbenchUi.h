@@ -38,61 +38,103 @@ class MainWindow;
 class HelpViewer;
 class ToolTabsContainerWidget;
 
+/**
+ * @brief Manages the Workbench logic
+ */
 class WorkbenchUi : public QWidget
 {
     Q_OBJECT
 
-public:
-    WorkbenchUi( MainWindow& mainWindow );
-    virtual ~WorkbenchUi();
-
-    void SetToolMenu( QMenu& toolMenu );
-    void Reload( const bool updateWorkbench = true );
-    void MergeWithActivePath( const WbPath& desiredPath );
-    void SetCornerWidget( QWidget* const widget );
-
-    QWidget* GetCornerWidget();
-
-    bool HasOpenModifiedWorkbench() const;
-
 public slots:
+    /**
+      @brief Try to open last used workbench.
+      If this fails, call NewOrOpenWorkbenchQuestion() to ask user
+     */
     void OpenWorkbench();
+
+    /**
+      @brief Launch dialog to select where to place new workbench and call save with new config
+     */
     void NewWorkbench();
+
+    /**
+      @brief Save workbench to disk and refresh UI
+     */
     void SaveWorkbench();
+
+    /**
+      @brief Signal that saved config and in-memory config are different
+      and call save
+     */
     void ConfigChanged();
 
+public:
+    /**
+      @brief Set up the workbench UI
+      @param mainWindow Reference to the Main Window of the app that holds this workbench sub-ui.
+     */
+    WorkbenchUi(MainWindow& mainWindow);
+
+    void SetToolMenu(QMenu& toolMenu);
+    void Reload(const bool updateWorkbench = true);
+    void MergeWithActivePath(const WbPath& desiredPath);
+    bool HasOpenModifiedWorkbench() const;
+
 private slots:
-    void TreeCurrentItemChanged( QTreeWidgetItem *current,
-                                 QTreeWidgetItem *previous );
+    void TreeCurrentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
     void TreeSelectionChanged();
 
 private:
     const WbPath GetActivePathFromTools();
-
-    void SwitchBackToItemAfterSelectionChanges( QTreeWidgetItem* const item );
-
-    void CreateToolTabs(MainWindow & mainWindow);
-    void CreateTools(MainWindow & mainWindow);
-    void SetupSplitter();
-    void SetupWorkbench();
-    void NewOrOpenWorkbenchQuestion();
-    void OpenWorkbench( const QString & workbenchConfigFileName );
-    void SetUpWorkbenchSchema();
-    void ConnectSignals();
-
     const QString GetWorkbenchToOpenAtStartup() const;
     const QString TryToGetWorkbenchFromCmdLineArgs() const;
     const QString TryToGetWorkbenchFromInPlaceConfigFile() const;
 
-    std::auto_ptr< Ui::WorkbenchUiClass > m_ui;
-    std::auto_ptr< Workbench > m_workbench;
-    std::auto_ptr< CameraHardware > m_cameraHardware;
+    void SwitchBackToItemAfterSelectionChanges(QTreeWidgetItem* const item);
+    void CreateToolTabs(MainWindow& mainWindow);
+    void CreateTools(MainWindow& mainWindow);
 
-    QMenu* m_toolMenu;
-    ToolTabsContainerWidget* m_toolTabs;
-    QTreeWidgetItem* m_itemToSwitchBackTo;
-    WbPath m_activePath;
-    MainWindow& m_mainWindow;
+    /**
+      @brief set splitter to collapse workbench tree completely at start
+     **/
+    void SetupSplitter();
+
+    /**
+      @brief Reset the UI for the tool tabs, set up a new schema
+     */
+    void SetupWorkbench();
+
+    /**
+      @brief Connect Signals and Slots for Workbench UI
+    **/
+    void ConnectSignals();
+
+    /**
+      @brief If no workbench found, present user with a dialog to create
+      new or open existing workbench
+     */
+    void NewOrOpenWorkbenchQuestion();
+
+    /**
+      @brief Open a workbench with exact path
+      @param workbenchConfigFileName File path to workbench.xml file
+     */
+    void OpenWorkbench(const QString& workbenchConfigFileName);
+
+    /**
+      @brief Set up workbench schema (in-memory Key-Value config)
+     */
+    void SetUpWorkbenchSchema();
+
+    std::auto_ptr< Ui::WorkbenchUiClass >   m_ui;
+    std::auto_ptr< Workbench >              m_workbench;
+    std::auto_ptr< CameraHardware >         m_cameraHardware;
+
+    QMenu*                                  m_toolMenu;
+    ToolTabsContainerWidget*                m_toolTabs;
+    QTreeWidgetItem*                        m_itemToSwitchBackTo;
+    WbPath                                  m_activePath;
+    MainWindow&                             m_mainWindow;
 
     bool m_currentlyLoadedWorkbench;
 };

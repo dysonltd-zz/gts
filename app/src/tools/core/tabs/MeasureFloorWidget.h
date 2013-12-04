@@ -40,7 +40,7 @@ class MeasureFloorWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit MeasureFloorWidget( QWidget* parent = 0 );
+    explicit MeasureFloorWidget(QWidget* parent = 0);
     virtual ~MeasureFloorWidget();
 
     virtual const QString Name() const;

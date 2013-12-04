@@ -32,11 +32,11 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-MeasureFloorWidget::MeasureFloorWidget( QWidget* parent ) :
-    Tool         ( parent, CreateSchema() ),
-    m_ui         ( new Ui::MeasureFloorWidget ),
-    m_startPoint ( false ),
-    m_endPoint   ( false )
+MeasureFloorWidget::MeasureFloorWidget(QWidget* parent) :
+    Tool         (parent, CreateSchema()),
+    m_ui         (new Ui::MeasureFloorWidget),
+    m_startPoint (false),
+    m_endPoint   (false)
 {
     SetupUi();
 
@@ -47,22 +47,22 @@ MeasureFloorWidget::MeasureFloorWidget( QWidget* parent ) :
 
 void MeasureFloorWidget::SetupUi()
 {
-    m_ui->setupUi( this );
+    m_ui->setupUi(this);
 
-    m_imageView = m_ui->m_imageGrid->AddBlankImage( m_ui->m_imageGrid->size() );
+    m_imageView = m_ui->m_imageGrid->AddBlankImage(m_ui->m_imageGrid->size());
 }
 
 void MeasureFloorWidget::ConnectSignals()
 {
-    QObject::connect( m_imageView,
-                      SIGNAL( onLeftClick(int, int, int) ),
+    QObject::connect(m_imageView,
+                      SIGNAL(onLeftClick(int, int, int)),
                       this,
-                      SLOT( ViewClicked(int, int, int) ) );
+                      SLOT(ViewClicked(int, int, int)));
 
-    QObject::connect( m_ui->m_overlayMask,
-                      SIGNAL( clicked() ),
+    QObject::connect(m_ui->m_overlayMask,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( OverlayMaskClicked() ) );
+                      SLOT(OverlayMaskClicked()));
 }
 
 void MeasureFloorWidget::CreateMappers()
@@ -76,7 +76,7 @@ MeasureFloorWidget::~MeasureFloorWidget()
 
 const QString MeasureFloorWidget::Name() const
 {
-    return tr( "Measure Floor" );
+    return tr("Measure Floor");
 }
 
 QWidget* MeasureFloorWidget::Widget()
@@ -92,9 +92,9 @@ const QString MeasureFloorWidget::GetSubSchemaDefaultFileName() const
 void MeasureFloorWidget::ReloadCurrentConfigToolSpecific()
 {
     const QString planName(
-        GetCurrentConfig().GetAbsoluteFileNameFor( "floor_plan.png" ) );
+        GetCurrentConfig().GetAbsoluteFileNameFor("floor_plan.png"));
     const QString maskName(
-        GetCurrentConfig().GetAbsoluteFileNameFor( "floor_mask.png" ) );
+        GetCurrentConfig().GetAbsoluteFileNameFor("floor_mask.png"));
 
     m_ui->m_overlayMask->setEnabled(false);
 
@@ -108,32 +108,32 @@ void MeasureFloorWidget::ReloadCurrentConfigToolSpecific()
     m_startPoint = false;
     m_endPoint = false;
 
-    if ( QFile::exists( planName ) )
+    if (QFile::exists(planName))
     {
-        IplImage* floorPlanImg = cvLoadImage( planName.toAscii() );
+        IplImage* floorPlanImg = cvLoadImage(planName.toAscii());
 
         if (floorPlanImg)
         {
             const int nTotalPixels = floorPlanImg->width * floorPlanImg->height;
             m_ui->m_planSizeEdit->setText(QObject::tr("%1 pixels").arg(nTotalPixels));
 
-            cvReleaseImage( &floorPlanImg );
+            cvReleaseImage(&floorPlanImg);
         }
     }
 
-    if ( QFile::exists( maskName ) )
+    if (QFile::exists(maskName))
     {
-        IplImage* floorMaskImg = OpenCvTools::LoadSingleChannelImage( maskName.toAscii().data() );
+        IplImage* floorMaskImg = OpenCvTools::LoadSingleChannelImage(maskName.toAscii().data());
 
         if (floorMaskImg)
         {
             // Number of non-zero pixels in floor mask is total number of
             // pixels of interest - the size of the area we are looking at.
 
-            const int nMaskPixels = cvCountNonZero( floorMaskImg );
+            const int nMaskPixels = cvCountNonZero(floorMaskImg);
             m_ui->m_maskSizeEdit->setText(QObject::tr("%1 pixels").arg(nMaskPixels));
 
-            cvReleaseImage( &floorMaskImg );
+            cvReleaseImage(&floorMaskImg);
 
             m_ui->m_overlayMask->setEnabled(true);
         }
@@ -149,87 +149,87 @@ void MeasureFloorWidget::OverlayMaskClicked()
 
 const WbSchema MeasureFloorWidget::CreateSchema()
 {
-    WbSchema schema( CreateWorkbenchSubSchema( KeyName( "measureFloor" ),
-                                               tr( "Measure Floor" ) ) );
+    WbSchema schema(CreateWorkbenchSubSchema(KeyName("measureFloor"),
+                                               tr("Measure Floor")));
 
     return schema;
 }
 
 void MeasureFloorWidget::ShowImage()
 {
-    CvScalar colours[4] = { CV_RGB( 0,   0,   255 ),
-                            CV_RGB( 0,   255, 0   ),
-                            CV_RGB( 255, 255, 0   ),
-                            CV_RGB( 0,   255, 255 ) };
+    CvScalar colours[4] = { CV_RGB(0,   0,   255),
+                            CV_RGB(0,   255, 0  ),
+                            CV_RGB(255, 255, 0  ),
+                            CV_RGB(0,   255, 255) };
 
     const QString planName(
-        GetCurrentConfig().GetAbsoluteFileNameFor( "floor_plan.png" ) );
+        GetCurrentConfig().GetAbsoluteFileNameFor("floor_plan.png"));
     const QString maskName(
-        GetCurrentConfig().GetAbsoluteFileNameFor( "floor_mask.png" ) );
+        GetCurrentConfig().GetAbsoluteFileNameFor("floor_mask.png"));
 
-    IplImage* floorPlanImg = cvLoadImage( planName.toAscii() );
+    IplImage* floorPlanImg = cvLoadImage(planName.toAscii());
 
     if (floorPlanImg)
     {
         if (m_ui->m_overlayMask->isChecked())
         {
-            IplImage* floorMaskImg = OpenCvTools::LoadSingleChannelImage( maskName.toAscii().data() );
+            IplImage* floorMaskImg = OpenCvTools::LoadSingleChannelImage(maskName.toAscii().data());
 
            // Overlay floor mask onto floor image
-            OpenCvTools::DrawColouredOverlay( floorPlanImg,
+            OpenCvTools::DrawColouredOverlay(floorPlanImg,
                                               floorMaskImg,
                                               CV_RGB(100,0,0),
-                                              std::bind2nd(std::equal_to<int>(), 255) );
+                                              std::bind2nd(std::equal_to<int>(), 255));
 
-            cvReleaseImage( &floorMaskImg );
+            cvReleaseImage(&floorMaskImg);
         }
 
         if (m_startPoint)
         {
-            CvPoint posStart = cvPoint( m_startPointX,
-                                        m_startPointY );
+            CvPoint posStart = cvPoint(m_startPointX,
+                                        m_startPointY);
 
-	        cvCircle( floorPlanImg, posStart, 3, colours[2], 1, CV_AA );
+	        cvCircle(floorPlanImg, posStart, 3, colours[2], 1, CV_AA);
 
             if (m_endPoint)
             {
-                CvPoint posEnd = cvPoint( m_endPointX,
-                                          m_endPointY );
+                CvPoint posEnd = cvPoint(m_endPointX,
+                                          m_endPointY);
 
-	            cvCircle( floorPlanImg, posEnd, 3, colours[2], 1, CV_AA );
+	            cvCircle(floorPlanImg, posEnd, 3, colours[2], 1, CV_AA);
 
-	            cvLine( floorPlanImg, posStart, posEnd, colours[0], 1, CV_AA );
+	            cvLine(floorPlanImg, posStart, posEnd, colours[0], 1, CV_AA);
             }
         }
 
         // Convert image
-        IplImage* imgTmp = cvCreateImage( cvSize( floorPlanImg->width,
-                                                  floorPlanImg->height ), IPL_DEPTH_8U, 3 );
-        cvConvertImage( floorPlanImg, imgTmp );
+        IplImage* imgTmp = cvCreateImage(cvSize(floorPlanImg->width,
+                                                  floorPlanImg->height), IPL_DEPTH_8U, 3);
+        cvConvertImage(floorPlanImg, imgTmp);
 
-        const QSize imgSize( imgTmp->width, imgTmp->height );
-        QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
+        const QSize imgSize(imgTmp->width, imgTmp->height);
+        QImage qImg = QImage(imgSize, QImage::Format_RGB888);
 
         CvMat mtxWrapper;
-        cvInitMatHeader( &mtxWrapper,
+        cvInitMatHeader(&mtxWrapper,
                          imgTmp->height,
                          imgTmp->width,
                          CV_8UC3,
-                         qImg.bits() );
+                         qImg.bits());
 
-        cvConvertImage( imgTmp, &mtxWrapper, 0 );
+        cvConvertImage(imgTmp, &mtxWrapper, 0);
 
         // Display image
         m_imageView->Clear();
-        m_imageView->SetImage( qImg );
+        m_imageView->SetImage(qImg);
         m_imageView->update();
 
-	    cvReleaseImage( &floorPlanImg );
-	    cvReleaseImage( &imgTmp );
+	    cvReleaseImage(&floorPlanImg);
+	    cvReleaseImage(&imgTmp);
     }
 }
 
-void MeasureFloorWidget::ViewClicked( int id, int x, int y )
+void MeasureFloorWidget::ViewClicked(int id, int x, int y)
 {
     Q_UNUSED(id);
 

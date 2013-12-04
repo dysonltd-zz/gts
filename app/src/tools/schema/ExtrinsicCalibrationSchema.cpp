@@ -20,24 +20,24 @@
 
 namespace ExtrinsicCalibrationSchema
 {
-    const KeyName schemaName               ( "cameraPositionCalibration" );
+    const KeyName schemaName               ("cameraPositionCalibration");
 
-    const KeyName gridGroup                ( "calibrationGrid" );
-    const KeyName gridSquareSizeInCmKey    ( "squareSizeCm" );
-    const KeyName gridRowsKey              ( "rows" );
-    const KeyName gridColumnsKey           ( "columns" );
+    const KeyName gridGroup                ("calibrationGrid");
+    const KeyName gridSquareSizeInCmKey    ("squareSizeCm");
+    const KeyName gridRowsKey              ("rows");
+    const KeyName gridColumnsKey           ("columns");
 
-    const KeyName calibrationImageKey      ( "calibrationImage" );
+    const KeyName calibrationImageKey      ("calibrationImage");
 
-    const KeyName resultsGroup             ( "results");
-    const KeyName calibrationDateKey       ( "calibrationDate" );
-    const KeyName calibrationTimeKey       ( "calibrationTime" );
-    const KeyName calibrationSuccessfulKey ( "calibrationSuccessful" );
-    const KeyName rotationMatrixKey        ( "rotationMatrix" );
-    const KeyName translationKey           ( "translation" );
+    const KeyName resultsGroup             ("results");
+    const KeyName calibrationDateKey       ("calibrationDate");
+    const KeyName calibrationTimeKey       ("calibrationTime");
+    const KeyName calibrationSuccessfulKey ("calibrationSuccessful");
+    const KeyName rotationMatrixKey        ("rotationMatrix");
+    const KeyName translationKey           ("translation");
 
-    const KeyName reprojectionErrorKey     ( "reprojectionError" );
-    const KeyName gridSquareSizeInPxKey    ( "squareSizePx" );
+    const KeyName reprojectionErrorKey     ("reprojectionError");
+    const KeyName gridSquareSizeInPxKey    ("squareSizePx");
 }
 
 

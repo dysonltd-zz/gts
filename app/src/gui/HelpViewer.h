@@ -22,27 +22,34 @@
 #include <QObject>
 #include <QProcess>
 
+/**
+  @brief Manages the Help Viewer - loads relevant file and handles open/exit
+  of the new process that is launched
+ */
 class HelpViewer : public QObject
 {
     Q_OBJECT
 
-public:
-    explicit HelpViewer();
-    ~HelpViewer();
+public slots:
+    /**
+      @brief Handles graceful exit of Help Window
+      params match signal signature
+     */
+    void OnEndHelp(int, QProcess::ExitStatus);
 
 public:
+    HelpViewer();
+    ~HelpViewer();
+
     void Show();
     void Close();
 
-public slots:
-    void OnEndHelp(int , QProcess::ExitStatus );
-
 private slots:
-    void ShowHelpClicked();
+    void ShowHelp();
 
 private:
-    QProcess*        m_process_help;
-	bool             m_help_exec;
+    QProcess*   m_helpProcess;
+    bool        m_helpLaunched;
 };
 
 #endif // HELPVIEWER_H

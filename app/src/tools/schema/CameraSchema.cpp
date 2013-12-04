@@ -20,8 +20,8 @@
 
 namespace CameraSchema
 {
-    const KeyName schemaName( "camera" );
+    const KeyName schemaName("camera");
 
-    const KeyName uniqueIdKey( "uniqueId" );
+    const KeyName uniqueIdKey("uniqueId");
 }
 

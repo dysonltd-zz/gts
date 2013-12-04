@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>900</width>
+    <width>274</width>
     <height>698</height>
    </rect>
   </property>
@@ -16,6 +16,12 @@
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QSplitter" name="m_splitter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>

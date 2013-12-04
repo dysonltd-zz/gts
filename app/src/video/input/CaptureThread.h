@@ -44,7 +44,7 @@ class CaptureThread : public QObject
 {
     Q_OBJECT
 public:
-    CaptureThread( VideoSequence* const videoSeq );
+    CaptureThread(VideoSequence* const videoSeq);
     ~CaptureThread();
 
     void StopCapturing();
@@ -61,8 +61,8 @@ signals:
      * @param newImage The newly received image.
      * @param system timestamp of image
      */
-    //void GotImage(const QImage& newImage, const QTime& stamp );
-    void GotImage(const QImage& newImage, const timespec stamp, const double fps );
+    //void GotImage(const QImage& newImage, const QTime& stamp);
+    void GotImage(const QImage& newImage, const timespec stamp, const double fps);
 private:
     bool ShouldStopCapturing() const;
     void UpdateQImage();

@@ -40,25 +40,25 @@ public:
     static const int idRoleOnName = Qt::UserRole;
     static const int absoluteFileNameRoleOnName = Qt::UserRole+1;
 
-    CalibrationImageTableMapper( QTableWidget& imagesTable )
+    CalibrationImageTableMapper(QTableWidget& imagesTable)
     :
-        ConfigKeyMapper( CalibrationSchema::imageFileKey ),
-        m_table( imagesTable )
+        ConfigKeyMapper(CalibrationSchema::imageFileKey),
+        m_table(imagesTable)
     {
-        QAction* const removeItemAction = new QAction( tr( "Remove" ), &m_table );
-        removeItemAction->setShortcut( QKeySequence( QKeySequence::Delete ) );
-        removeItemAction->setShortcutContext( Qt::WidgetShortcut );
+        QAction* const removeItemAction = new QAction(tr("Remove"), &m_table);
+        removeItemAction->setShortcut(QKeySequence(QKeySequence::Delete));
+        removeItemAction->setShortcutContext(Qt::WidgetShortcut);
 
-        QObject::connect( removeItemAction,
-                          SIGNAL( triggered() ),
+        QObject::connect(removeItemAction,
+                          SIGNAL(triggered()),
                           this,
-                          SLOT( RemoveItemTriggered() ) );
+                          SLOT(RemoveItemTriggered()));
 
         m_table.addAction(removeItemAction);
-        m_table.setContextMenuPolicy( Qt::ActionsContextMenu );
+        m_table.setContextMenuPolicy(Qt::ActionsContextMenu);
     }
 
-    virtual void CommitData( WbConfig& config )
+    virtual void CommitData(WbConfig& config)
     {
         std::vector< KeyId > idsToKeep;
         for (int i = 0; i < m_table.rowCount(); ++i)
@@ -66,13 +66,13 @@ public:
             idsToKeep.push_back(m_table.item(i, nameColumn)->data(idRoleOnName).toString());
         }
 
-        config.KeepKeys( CalibrationSchema::imageFileKey,  idsToKeep );
-        config.KeepKeys( CalibrationSchema::imageErrorKey, idsToKeep );
-        SetConfig( config ); // Since we need to re-number the images and we won't
+        config.KeepKeys(CalibrationSchema::imageFileKey,  idsToKeep);
+        config.KeepKeys(CalibrationSchema::imageErrorKey, idsToKeep);
+        SetConfig(config); // Since we need to re-number the images and we won't
                              // get our SetConfig called as we're requesting the update
     }
 
-    virtual void SetConfig( const WbConfig& config )
+    virtual void SetConfig(const WbConfig& config)
     {
         typedef WbKeyValues::ValueIdPairList ValueIdPairList;
         m_table.clearContents();
@@ -81,7 +81,7 @@ public:
 
         for (int i = 0; i < (int)cameraImageFiles.size(); ++i)
         {
-            SetTableRow(i, config, cameraImageFiles.at( i ));
+            SetTableRow(i, config, cameraImageFiles.at(i));
         }
     }
 
@@ -120,32 +120,32 @@ private:
         return userPrompt.exec();
     }
 
-    void SetTableRow( const int row,
+    void SetTableRow(const int row,
                       const WbConfig& config,
-                      const WbKeyValues::ValueIdPair& calibImageFileIdPair  )
+                      const WbKeyValues::ValueIdPair& calibImageFileIdPair )
     {
-        const QString fileName( calibImageFileIdPair.value.ToQString() );
-        const QString absoluteFileName( config.GetAbsoluteFileNameFor( fileName ) );
-        const KeyValue errorKeyValue( config.GetKeyValue( CalibrationSchema::imageErrorKey,
-                                                          calibImageFileIdPair.id ) );
+        const QString fileName(calibImageFileIdPair.value.ToQString());
+        const QString absoluteFileName(config.GetAbsoluteFileNameFor(fileName));
+        const KeyValue errorKeyValue(config.GetKeyValue(CalibrationSchema::imageErrorKey,
+                                                          calibImageFileIdPair.id));
         double error = -1;
-        if ( !errorKeyValue.IsNull() )
+        if (!errorKeyValue.IsNull())
         {
             error = errorKeyValue.ToDouble();
         }
-        m_table.setItem( row, errorColumn, CreateErrorItem( error ) );
-        m_table.setItem( row, nameColumn,  CreateNameItem( row,
+        m_table.setItem(row, errorColumn, CreateErrorItem(error));
+        m_table.setItem(row, nameColumn,  CreateNameItem(row,
                                                            calibImageFileIdPair.id,
                                                            fileName,
-                                                           absoluteFileName ) );
+                                                           absoluteFileName));
     }
 
-    QTableWidgetItem* const CreateErrorItem( const double error )
+    QTableWidgetItem* const CreateErrorItem(const double error)
     {
         QString errorString;
-        if ( error >= 0 )
+        if (error >= 0)
         {
-            errorString = QString::number( error );
+            errorString = QString::number(error);
         }
         QTableWidgetItem* const descriptionItem = new QTableWidgetItem(errorString);
         descriptionItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

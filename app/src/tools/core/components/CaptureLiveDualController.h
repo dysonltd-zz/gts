@@ -46,24 +46,24 @@ class CaptureLiveDualController : public QObject
 #endif
     Q_OBJECT
 public:
-    CaptureLiveDualController( QPushButton&    captureLiveBtn,
+    CaptureLiveDualController(QPushButton&    captureLiveBtn,
                                QPushButton&    captureCancelBtn,
                                Tool&           toolWidget,
-                               CameraHardware& cameraHardware );
+                               CameraHardware& cameraHardware);
 
 #if defined(__MINGW32__) || defined(__GNUC__)
     ~CaptureLiveDualController();
 #endif
 
-    bool CaptureLiveBtnClicked( const WbConfig& cameraConfig1,
+    bool CaptureLiveBtnClicked(const WbConfig& cameraConfig1,
 	                                  const WbConfig& cameraConfig2,
                                       const QString& newImageFileNameFormat,
 #if defined(__MINGW32__) || defined(__GNUC__)
 									  CreateStreamViewCallback* createStreamView1,
-									  CreateStreamViewCallback* createStreamView2 );
+									  CreateStreamViewCallback* createStreamView2);
 #else
                                       CreateStreamViewCallback createStreamView1,
-                                      CreateStreamViewCallback createStreamView2 );
+                                      CreateStreamViewCallback createStreamView2);
 #endif
     const void CaptureCancelBtnClicked();
 
@@ -78,17 +78,17 @@ private:
         const WbConfig& cameraConfig2,
 #if defined(__MINGW32__) || defined(__GNUC__)
 		std::unique_ptr< CreateStreamViewCallback > createStreamView1,
-		std::unique_ptr< CreateStreamViewCallback > createStreamView2 );
+		std::unique_ptr< CreateStreamViewCallback > createStreamView2);
 #else
         CreateStreamViewCallback createStreamView1,
-        CreateStreamViewCallback createStreamView2 );
+        CreateStreamViewCallback createStreamView2);
 #endif
 
     bool CaptureImageAndStopStreamingLiveSource(
-                                const QString& newImageFileNameFormat );
+                                const QString& newImageFileNameFormat);
 
-    const QString CaptureImage( const QImage capturedImage,
-                                const QString& newImageFileNameFormat );
+    const QString CaptureImage(const QImage capturedImage,
+                                const QString& newImageFileNameFormat);
 
     QPushButton& m_captureLiveBtn;
     QPushButton& m_captureCancelBtn;

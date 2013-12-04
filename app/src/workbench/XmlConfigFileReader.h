@@ -37,16 +37,16 @@ public:
 
     virtual XmlConfigFileReader* const Clone() const;
 
-    virtual bool ReadFrom( QIODevice& ioDevice );
+    virtual bool ReadFrom(QIODevice& ioDevice);
 
     virtual const KeyName GetSchemaName() const;
 
-    virtual void ReadKeyValues( const KeyName& keyName, WbKeyValues& keyValues );
-    virtual void ReadKeyValuesFromGroup( const KeyName& keyName, const KeyName& groupName, WbKeyValues& keyValues );
-    virtual void ReadSubSchemaLocations( const KeyName& keyName, SchemaLocationsList& locationsList );
+    virtual void ReadKeyValues(const KeyName& keyName, WbKeyValues& keyValues);
+    virtual void ReadKeyValuesFromGroup(const KeyName& keyName, const KeyName& groupName, WbKeyValues& keyValues);
+    virtual void ReadSubSchemaLocations(const KeyName& keyName, SchemaLocationsList& locationsList);
 
 private:
-    const KeyValue GetValueFromElement( QDomElement& keyElement );
+    const KeyValue GetValueFromElement(QDomElement& keyElement);
     QDomDocument m_domDocument;
 };
 

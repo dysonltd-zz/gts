@@ -33,10 +33,10 @@ AboutDialog::AboutDialog(QWidget *parent) :
     m_ui->setupUi(this);
     UpdateAboutText(m_ui->m_aboutTextBox);
 
-    QObject::connect( m_ui->m_okBtn,
+    QObject::connect(m_ui->m_okBtn,
                       SIGNAL(clicked()),
                       this,
-                      SLOT(accept() ) );
+                      SLOT(accept()));
 }
 
 AboutDialog::~AboutDialog()

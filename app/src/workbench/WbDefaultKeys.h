@@ -23,8 +23,8 @@
 
 namespace WbDefaultKeys
 {
-    const KeyName displayNameKey( "name" );
-    const KeyName descriptionKey( "description" );
+    const KeyName displayNameKey("name");
+    const KeyName descriptionKey("description");
 }
 
 #endif // WBDEFAULTKEYS_H_

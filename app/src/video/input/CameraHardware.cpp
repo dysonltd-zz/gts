@@ -40,14 +40,14 @@ const CameraApi::CameraList CameraHardware::EnumerateConnectedCameras() const
     CameraApi::CameraList cameras;
     for (auto api = m_apis.begin(); api != m_apis.end(); ++api)
     {
-        CameraApi::CameraList camerasForThisApi( (*api)->EnumerateCameras() );
+        CameraApi::CameraList camerasForThisApi((*api)->EnumerateCameras());
         cameras.insert(cameras.end(), camerasForThisApi.begin(), camerasForThisApi.end());
     }
     return cameras;
 }
 
 const CameraDescription
-CameraHardware::GetCameraDescriptionFromUniqueId( const std::wstring& uniqueId ) const
+CameraHardware::GetCameraDescriptionFromUniqueId(const std::wstring& uniqueId) const
 {
     const CameraApi::CameraList list(EnumerateConnectedCameras());
     for (auto camera = list.begin(); camera != list.end(); ++camera)

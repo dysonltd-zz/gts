@@ -33,12 +33,12 @@ class RobotMetrics
 public:
     RobotMetrics();
 
-    bool LoadMetrics( const WbConfig& metricsCfg,
+    bool LoadMetrics(const WbConfig& metricsCfg,
                       const WbConfig& camPosCalConfig,
-                      float trackingResolution );
+                      float trackingResolution);
 
 #ifdef SCALED_PIXELS
-    void ComputePixelMetrics( float m_squarePx );
+    void ComputePixelMetrics(float m_squarePx);
 #endif
 
     float GetScaleFactor()         const { return m_scaleFactor; }

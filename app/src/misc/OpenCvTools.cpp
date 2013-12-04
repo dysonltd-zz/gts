@@ -23,11 +23,20 @@
 
 namespace OpenCvTools
 {
-    bool IsValid( const IplImage* const iplImage )
+    bool IsValid(const IplImage* const iplImage)
     {
-        if ( !iplImage ) return false;
-        if ( iplImage->width  <= 0 ) return false;
-        if ( iplImage->height <= 0 ) return false;
+        if (!iplImage) return false;
+        if (iplImage->width  <= 0) return false;
+        if (iplImage->height <= 0) return false;
+
+        return true;
+    }
+
+    bool IsValid(const cv::Mat* const mat)
+    {
+        if (!mat->data) return false;
+        if (mat->size().width  <= 0) return false;
+        if (mat->size().height <= 0) return false;
 
         return true;
     }
@@ -41,7 +50,7 @@ namespace OpenCvTools
      **/
     IplImage* LoadSingleChannelImage(const std::string& fileName)
     {
-        IplImage* img = cvLoadImage( fileName.c_str(), CV_LOAD_IMAGE_GRAYSCALE );
+        IplImage* img = cvLoadImage(fileName.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
 
         if (!img)
         {
@@ -54,10 +63,10 @@ namespace OpenCvTools
         {
             LOG_INFO(QObject::tr("Converting %1 to single-channel.").arg(fileName.c_str()));
 
-            IplImage* tmp = cvCreateImage( cvSize( img->width, img->height), IPL_DEPTH_8U, 1 );
+            IplImage* tmp = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 1);
 
-            cvConvertImage( img, tmp );
-            cvReleaseImage( &img );
+            cvConvertImage(img, tmp);
+            cvReleaseImage(&img);
 
             img = tmp;
         }
@@ -65,29 +74,30 @@ namespace OpenCvTools
         return img;
     }
 
-    /**
-        Counts the number of pixels in @a rawCoverageImg, where the pixel
-        value compares to @a nTimes using the @a cmp operation.
+    /*
+    cv::Mat* LoadSingleChannelImage(const std::string& fileName)
+    {
+        cv::Mat* greyMat;
+        cv::Mat colorMat = cv::imread(fileName);
+        cv::cvtColor(colorMat, *greyMat, CV_BGR2GRAY);
 
-        @param rawCoverageImg An image containing raw-coverage data, with
-        the coverage count as the absolute pixel-value.
-        @param nTimes The number of coverage times (i.e. the pixel-value)
-        to count within the @a rawCoverageImg
-        @param cmp the comparison operator for locating pixels of interest
-     **/
-    int GetPixelCoverageCount( const IplImage* rawCoverageImg,
+        return greyMat;
+    }
+    */
+
+    int GetPixelCoverageCount(const IplImage* rawCoverageImg,
                                const int nTimes,
-                               const int cmp )
+                               const int cmp)
     {
         // first make a copy of the raw-coverage mask, and another one to
         // count with
-        IplImage* mask = cvCloneImage( rawCoverageImg );
+        IplImage* mask = cvCloneImage(rawCoverageImg);
 
         // Find all pixels that were covered exactly 'nTimes' times
-        cvCmpS( rawCoverageImg, nTimes, mask, cmp );
-        const int nPixels = cvCountNonZero( mask );
+        cvCmpS(rawCoverageImg, nTimes, mask, cmp);
+        const int nPixels = cvCountNonZero(mask);
 
-        cvReleaseImage( &mask );
+        cvReleaseImage(&mask);
 
         return nPixels;
     }

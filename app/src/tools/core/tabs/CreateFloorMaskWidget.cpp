@@ -38,33 +38,33 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
-CreateFloorMaskWidget::CreateFloorMaskWidget( QWidget* parent ) :
-    Tool ( parent, CreateSchema() ),
-    m_ui ( new Ui::CreateFloorMaskWidget )
+CreateFloorMaskWidget::CreateFloorMaskWidget(QWidget* parent) :
+    Tool (parent, CreateSchema()),
+    m_ui (new Ui::CreateFloorMaskWidget)
 {
-    m_ui->setupUi( this );
+    m_ui->setupUi(this);
     ConnectSignals();
     CreateMappers();
 }
 
 void CreateFloorMaskWidget::ConnectSignals()
 {
-    QObject::connect( m_ui->m_combineParts,
-                      SIGNAL( clicked() ),
+    QObject::connect(m_ui->m_combineParts,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( CombinePartsBtnClicked() ) );
-    QObject::connect( m_ui->m_openFloorPlanBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(CombinePartsBtnClicked()));
+    QObject::connect(m_ui->m_openFloorPlanBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( OpenFloorPlanBtnClicked() ) );
-    QObject::connect( m_ui->m_importMaskBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(OpenFloorPlanBtnClicked()));
+    QObject::connect(m_ui->m_importMaskBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( ImportMaskBtnClicked() ) );
-    QObject::connect( m_ui->m_createMaskBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(ImportMaskBtnClicked()));
+    QObject::connect(m_ui->m_createMaskBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( CreateMaskBtnClicked() ) );
+                      SLOT(CreateMaskBtnClicked()));
 }
 
 void CreateFloorMaskWidget::CreateMappers()
@@ -88,9 +88,9 @@ const QString CreateFloorMaskWidget::GetSubSchemaDefaultFileName() const
 
 void CreateFloorMaskWidget::ReloadCurrentConfigToolSpecific()
 {
-    const QString planName( GetCurrentConfig().GetAbsoluteFileNameFor( "floor_plan.png" ) );
+    const QString planName(GetCurrentConfig().GetAbsoluteFileNameFor("floor_plan.png"));
 
-    if ( QFile::exists( planName ) )
+    if (QFile::exists(planName))
     {
         m_ui->m_importMaskBtn->setEnabled(true);
         m_ui->m_openFloorPlanBtn->setEnabled(true);
@@ -100,21 +100,21 @@ void CreateFloorMaskWidget::ReloadCurrentConfigToolSpecific()
         if (img)
         {
             ShowImage(m_ui->m_planView, img);
-            cvReleaseImage( &img );
+            cvReleaseImage(&img);
         }
     }
 
     const QString maskName(
-        GetCurrentConfig().GetAbsoluteFileNameFor( "floor_mask.png" ) );
+        GetCurrentConfig().GetAbsoluteFileNameFor("floor_mask.png"));
 
-    if ( QFile::exists( maskName ) )
+    if (QFile::exists(maskName))
     {
         IplImage* img = cvLoadImage(maskName.toAscii(), CV_LOAD_IMAGE_GRAYSCALE);
 
         if (img)
         {
             ShowImage(m_ui->m_maskView, img);
-            cvReleaseImage( &img );
+            cvReleaseImage(&img);
         }
     }
 }
@@ -122,8 +122,8 @@ void CreateFloorMaskWidget::ReloadCurrentConfigToolSpecific()
 const WbSchema CreateFloorMaskWidget::CreateSchema()
 {
     using namespace FloorMaskSchema;
-    WbSchema floorMaskSchema( CreateWorkbenchSubSchema( schemaName,
-                                                        tr( "Floor Mask" ) ) );
+    WbSchema floorMaskSchema(CreateWorkbenchSubSchema(schemaName,
+                                                        tr("Floor Mask")));
 
     return floorMaskSchema;
 }
@@ -131,27 +131,27 @@ const WbSchema CreateFloorMaskWidget::CreateSchema()
 void CreateFloorMaskWidget::ShowImage(ImageView* view, const IplImage* image)
 {
     // Convert image
-    IplImage* imgTmp = cvCreateImage( cvSize( image->width, image->height ), IPL_DEPTH_8U, 3 );
-    cvConvertImage( image, imgTmp );
+    IplImage* imgTmp = cvCreateImage(cvSize(image->width, image->height), IPL_DEPTH_8U, 3);
+    cvConvertImage(image, imgTmp);
 
-    const QSize imgSize( imgTmp->width, imgTmp->height );
-    QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
+    const QSize imgSize(imgTmp->width, imgTmp->height);
+    QImage qImg = QImage(imgSize, QImage::Format_RGB888);
 
     CvMat mtxWrapper;
-    cvInitMatHeader( &mtxWrapper,
+    cvInitMatHeader(&mtxWrapper,
                      imgTmp->height,
                      imgTmp->width,
                      CV_8UC3,
-                     qImg.bits() );
+                     qImg.bits());
 
-    cvConvertImage( imgTmp, &mtxWrapper, 0 );
+    cvConvertImage(imgTmp, &mtxWrapper, 0);
 
     // Display image
     view->Clear();
-    view->SetImage( qImg );
+    view->SetImage(qImg);
     view->update();
 
-	cvReleaseImage( &imgTmp );
+	cvReleaseImage(&imgTmp);
 }
 
 void CreateFloorMaskWidget::CombinePartsBtnClicked()
@@ -170,7 +170,7 @@ void CreateFloorMaskWidget::CombinePartsBtnClicked()
 
 void CreateFloorMaskWidget::OpenFloorPlanBtnClicked()
 {
-    FileUtilities::ShowInGraphicalShell( GetCurrentConfig().GetAbsoluteFileInfo().absolutePath() );
+    FileUtilities::ShowInGraphicalShell(GetCurrentConfig().GetAbsoluteFileInfo().absolutePath());
 }
 
 
@@ -178,11 +178,11 @@ void CreateFloorMaskWidget::ImportMaskBtnClicked()
 {
     if (m_ui->m_combineParts->isChecked())
     {
-        ImportFloorMaskParts( GetCurrentConfig() );
+        ImportFloorMaskParts(GetCurrentConfig());
     }
     else
     {
-        ImportFloorMask( GetCurrentConfig() );
+        ImportFloorMask(GetCurrentConfig());
     }
 }
 
@@ -192,10 +192,10 @@ void CreateFloorMaskWidget::CreateMaskBtnClicked()
 
     WbConfig config = GetCurrentConfig();
 
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList() );
+                                        .ToQStringList());
 
     if (cameraPositionIds.size() > 0)
     {
@@ -210,96 +210,96 @@ void CreateFloorMaskWidget::CreateMaskBtnClicked()
     }
 }
 
-bool CreateFloorMaskWidget::ImportFloorMask( const WbConfig& config )
+bool CreateFloorMaskWidget::ImportFloorMask(const WbConfig& config)
 {
-    const QString floorMaskSrcFileName( QFileDialog::getOpenFileName( this,
-                                                                      QObject::tr( "Choose where to find the floor mask" ),
-                                                                      config.GetAbsoluteFileInfo().absolutePath() ) );
+    const QString floorMaskSrcFileName(QFileDialog::getOpenFileName(this,
+                                                                      QObject::tr("Choose where to find the floor mask"),
+                                                                      config.GetAbsoluteFileInfo().absolutePath()));
 
-    const QString floorMaskDstFileName( config.GetAbsoluteFileNameFor( "floor_mask.png" ) );
+    const QString floorMaskDstFileName(config.GetAbsoluteFileNameFor("floor_mask.png"));
 
-    if ( floorMaskSrcFileName != floorMaskDstFileName ) // if not the same files
+    if (floorMaskSrcFileName != floorMaskDstFileName) // if not the same files
     {
-        if ( QFile::exists(floorMaskDstFileName) ) // if a floor mask exists
+        if (QFile::exists(floorMaskDstFileName)) // if a floor mask exists
         {
-            const int result = QMessageBox::question( this,
+            const int result = QMessageBox::question(this,
                                                       "Confirm overwrite",
                                                       QObject::tr("A floor mask file already exists in this directory and will be overwritten. Are you sure?"),
-                                                      QMessageBox::Yes|QMessageBox::No );
-            if( result == QMessageBox::Yes )
+                                                      QMessageBox::Yes|QMessageBox::No);
+            if(result == QMessageBox::Yes)
             {
-                if ( !QFile::remove(floorMaskDstFileName) ) // delete it, throw error if it fails
+                if (!QFile::remove(floorMaskDstFileName)) // delete it, throw error if it fails
                 {
-                    QMessageBox::critical( this,
-                                           QObject::tr( "Error" ),
-                                           QObject::tr( "Failed to remove %1")
-                                                    .arg( floorMaskDstFileName ));
+                    QMessageBox::critical(this,
+                                           QObject::tr("Error"),
+                                           QObject::tr("Failed to remove %1")
+                                                    .arg(floorMaskDstFileName));
                     return false;
                 }
-                if ( !QFile::copy( floorMaskSrcFileName, floorMaskDstFileName ) ) // copy new one across, throw error if it fails
+                if (!QFile::copy(floorMaskSrcFileName, floorMaskDstFileName)) // copy new one across, throw error if it fails
                 {
-                    QMessageBox::critical( this,
-                                           QObject::tr( "Error" ),
-                                           QObject::tr( "Failed to copy file %1 to %2" )
-                                                    .arg( floorMaskSrcFileName )
-                                                    .arg( floorMaskDstFileName ));
+                    QMessageBox::critical(this,
+                                           QObject::tr("Error"),
+                                           QObject::tr("Failed to copy file %1 to %2")
+                                                    .arg(floorMaskSrcFileName)
+                                                    .arg(floorMaskDstFileName));
                     return false;
                 }
             }
         }
         else
         {
-            if ( !QFile::copy( floorMaskSrcFileName, floorMaskDstFileName ) ) // copy new one across, throw error if it fails
+            if (!QFile::copy(floorMaskSrcFileName, floorMaskDstFileName)) // copy new one across, throw error if it fails
             {
-                QMessageBox::critical( this,
-                                       QObject::tr( "Error" ),
-                                       QObject::tr( "Failed to copy file %1 to %2" )
-                                                .arg( floorMaskSrcFileName )
-                                                .arg( floorMaskDstFileName ));
+                QMessageBox::critical(this,
+                                       QObject::tr("Error"),
+                                       QObject::tr("Failed to copy file %1 to %2")
+                                                .arg(floorMaskSrcFileName)
+                                                .arg(floorMaskDstFileName));
                 return false;
             }
         }
     }
     else
     {
-        QMessageBox::critical( this,
-                               QObject::tr( "Error" ),
-                               QObject::tr( "Cannot replace floor mask with same file" ));
+        QMessageBox::critical(this,
+                               QObject::tr("Error"),
+                               QObject::tr("Cannot replace floor mask with same file"));
         return false;
     }
     ReloadCurrentConfig(); // all good - reload config
     return true;
 }
 
-bool CreateFloorMaskWidget::ImportFloorMaskParts( const WbConfig& config )
+bool CreateFloorMaskWidget::ImportFloorMaskParts(const WbConfig& config)
 {    
     bool successful = true;
 
     // Process configured cameras
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList() );
-    for ( int i = 0; i < cameraPositionIds.size(); ++i )
+                                        .ToQStringList());
+    for (int i = 0; i < cameraPositionIds.size(); ++i)
     {
-        const KeyId camPosId = cameraPositionIds.at( i );
+        const KeyId camPosId = cameraPositionIds.at(i);
         const QString floorMaskSrcFileName(
-                    QFileDialog::getOpenFileName( 0,
-                                                  QObject::tr( "Select floor mask for %1" ).arg( camPosId ),
-                                                  config.GetAbsoluteFileInfo().absolutePath() ) );
-        const QString floorMaskDstFileName( config.GetAbsoluteFileNameFor( "mask_" + camPosId + ".png" ) );
+                    QFileDialog::getOpenFileName(0,
+                                                  QObject::tr("Select floor mask for %1").arg(camPosId),
+                                                  config.GetAbsoluteFileInfo().absolutePath()));
+        const QString floorMaskDstFileName(config.GetAbsoluteFileNameFor("mask_" + camPosId + ".png"));
 
-        if ( floorMaskSrcFileName != floorMaskDstFileName)
+        if (floorMaskSrcFileName != floorMaskDstFileName)
         {
-            successful = QFile::copy( floorMaskSrcFileName, floorMaskDstFileName );
+            successful = QFile::copy(floorMaskSrcFileName, floorMaskDstFileName);
 
-            if ( !successful )
+            if (!successful)
             {
-                QMessageBox::critical( 0,
-                                        QObject::tr( "Error" ),
-                                        QObject::tr( "Failed to copy file '%1' to '%2'." )
-                                                .arg( floorMaskSrcFileName )
-                                                .arg( floorMaskDstFileName ) );
+                QMessageBox::critical(0,
+                                        QObject::tr("Error"),
+                                        QObject::tr("Failed to copy file '%1' to '%2'.")
+                                                .arg(floorMaskSrcFileName)
+                                                .arg(floorMaskDstFileName));
                 break;
             }
         }
@@ -310,15 +310,15 @@ bool CreateFloorMaskWidget::ImportFloorMaskParts( const WbConfig& config )
 
 WbConfig CreateFloorMaskWidget::GetFloorPlanConfig()
 {
-    return GetCurrentConfig().GetParent().GetSubConfig( FloorPlanSchema::schemaName );
+    return GetCurrentConfig().GetParent().GetSubConfig(FloorPlanSchema::schemaName);
 }
 
 void CreateFloorMaskWidget::CreateFloorMaskSingle()
 {
     WbConfig config = GetCurrentConfig();
 
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
-    const KeyId camPosId = roomLayoutConfig.GetKeyValue( RoomLayoutSchema::cameraPositionIdsKey ).ToKeyId();
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
+    const KeyId camPosId = roomLayoutConfig.GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey).ToKeyId();
 
     const QString imgFile(config.GetAbsoluteFileNameFor("mask_" + camPosId + ".png"));
 
@@ -328,65 +328,65 @@ void CreateFloorMaskWidget::CreateFloorMaskSingle()
 
     LOG_TRACE(QObject::tr("Creating (single) floor mask for %1").arg(camPosId));
 
-    if (FloorPlanning::LoadFile( GetFloorPlanConfig(), camPosId, &imgComposite, imgFile, &offset, false ))
+    if (FloorPlanning::LoadFile(GetFloorPlanConfig(), camPosId, &imgComposite, imgFile, &offset, false))
     {
         LOG_INFO(QObject::tr("Loading image %1.").arg(imgFile));
 
         // Convert image
-        IplImage* imgTmp = cvCreateImage( cvSize( imgComposite->width,
-                                                  imgComposite->height ), IPL_DEPTH_8U, 3 );
-        cvConvertImage( imgComposite, imgTmp );
+        IplImage* imgTmp = cvCreateImage(cvSize(imgComposite->width,
+                                                  imgComposite->height), IPL_DEPTH_8U, 3);
+        cvConvertImage(imgComposite, imgTmp);
 
-        const QSize imgSize( imgTmp->width, imgTmp->height );
-        QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
+        const QSize imgSize(imgTmp->width, imgTmp->height);
+        QImage qImg = QImage(imgSize, QImage::Format_RGB888);
 
         CvMat mtxWrapper;
-        cvInitMatHeader( &mtxWrapper,
+        cvInitMatHeader(&mtxWrapper,
                          imgTmp->height,
                          imgTmp->width,
                          CV_8UC3,
-                         qImg.bits() );
+                         qImg.bits());
 
-        cvConvertImage( imgTmp, &mtxWrapper, 0 );
+        cvConvertImage(imgTmp, &mtxWrapper, 0);
 
         const QString fileName(
-            config.GetAbsoluteFileNameFor( "floor_mask.png" ) );
+            config.GetAbsoluteFileNameFor("floor_mask.png"));
 
-        if (!qImg.save( fileName ))
+        if (!qImg.save(fileName))
         {
-            Message::Show( this,
-                           tr( "Create Floor Mask" ),
-                           tr( "Cannot write to: %1" )
-                               .arg( fileName ),
-                           Message::Severity_Critical );
+            Message::Show(this,
+                           tr("Create Floor Mask"),
+                           tr("Cannot write to: %1")
+                               .arg(fileName),
+                           Message::Severity_Critical);
         }
 
-        cvReleaseImage( &imgComposite );
+        cvReleaseImage(&imgComposite);
 
         // show floor plan
         ImageViewer(imgTmp, this).exec();
-        cvReleaseImage( &imgTmp );
-        Message::Show( this,
-                       tr( "Floor Mask Information" ),
-                       tr( "Single-position floor mask successfully created." ),
-                       Message::Severity_Information );
+        cvReleaseImage(&imgTmp);
+        Message::Show(this,
+                       tr("Floor Mask Information"),
+                       tr("Single-position floor mask successfully created."),
+                       Message::Severity_Information);
     }
     else
     {
-        Message::Show( this,
-                       tr( "Create Floor Mask" ),
-                       tr( "Cannot load from: %1!" )
-                           .arg( imgFile ),
-                       Message::Severity_Critical );
+        Message::Show(this,
+                       tr("Create Floor Mask"),
+                       tr("Cannot load from: %1!")
+                           .arg(imgFile),
+                       Message::Severity_Critical);
     }
 
-    CvMat* identity = cvCreateMat( 3, 3, CV_32F );
+    CvMat* identity = cvCreateMat(3, 3, CV_32F);
 
-    cvSetIdentity( identity );
+    cvSetIdentity(identity);
 
     LOG_TRACE("Done.");
 
-    cvReleaseMat( &identity );
+    cvReleaseMat(&identity);
 }
 
 void CreateFloorMaskWidget::CreateFloorMaskMulti()
@@ -416,26 +416,26 @@ void CreateFloorMaskWidget::CreateFloorMaskMulti()
             }
             else
             {
-                Message::Show( this,
-                               tr( "Create Floor Mask" ),
-                               tr( "Mapping is incomplete!" ),
-                               Message::Severity_Critical );
+                Message::Show(this,
+                               tr("Create Floor Mask"),
+                               tr("Mapping is incomplete!"),
+                               Message::Severity_Critical);
             }
         }
         else
         {
-            Message::Show( this,
-                           tr( "Create Floor Mask" ),
-                           tr( "Need one root camera!" ),
-                           Message::Severity_Critical );
+            Message::Show(this,
+                           tr("Create Floor Mask"),
+                           tr("Need one root camera!"),
+                           Message::Severity_Critical);
         }
     }
     else
     {
-        Message::Show( this,
-                       tr( "Create Floor Mask" ),
-                       tr( "Must map every camera!" ),
-                       Message::Severity_Critical );
+        Message::Show(this,
+                       tr("Create Floor Mask"),
+                       tr("Must map every camera!"),
+                       Message::Severity_Critical);
     }
 
     LOG_TRACE("Done.");
@@ -448,21 +448,21 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
     // Create composite
     IplImage *imgComposite;
 
-    CvMat* transform = cvCreateMat( 3, 3, CV_32F );
-    CvMat* identity = cvCreateMat( 3, 3, CV_32F );
+    CvMat* transform = cvCreateMat(3, 3, CV_32F);
+    CvMat* identity = cvCreateMat(3, 3, CV_32F);
 
     // Load root image
     KeyValue rootImage;
 
-    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
+    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::homographyKey);
 
     for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
     {
-        const KeyId cameraId( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
+        const KeyId cameraId(config.GetKeyValue(FloorPlanSchema::camera1IdKey, it->id).ToKeyId());
 
         if (cameraId == camRoot)
         {
-            rootImage = config.GetKeyValue( FloorPlanSchema::camera1ImgKey, it->id );
+            rootImage = config.GetKeyValue(FloorPlanSchema::camera1ImgKey, it->id);
             break;
         }
     }
@@ -473,7 +473,7 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
 
     IplImage* rootImg;
     CvPoint2D32f offset;
-    FloorPlanning::LoadFile( GetFloorPlanConfig(), camRoot, &rootImg, rootFileName, &offset, false );
+    FloorPlanning::LoadFile(GetFloorPlanConfig(), camRoot, &rootImg, rootFileName, &offset, false);
 
     cvSetIdentity(identity);
 
@@ -489,14 +489,14 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
                                                                   .arg(cmpBox.pos.y));
 
     // Process remaining (non-root) cameras
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList() );
+                                        .ToQStringList());
 
-    for ( int i = 0; i < cameraPositionIds.size(); ++i )
+    for (int i = 0; i < cameraPositionIds.size(); ++i)
     {
-        const KeyId camPosId = cameraPositionIds.at( i );
+        const KeyId camPosId = cameraPositionIds.at(i);
 
         if (camPosId != camRoot)
         {
@@ -506,18 +506,18 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
             std::vector<KeyId> chain = FloorPlanning::FindChain(GetFloorPlanConfig(), camPosId, camRoot, std::vector<KeyId>());
 
             cvSetIdentity(transform);
-            FloorPlanning::ComputeTransform( GetFloorPlanConfig(), camPosId, chain, transform );
+            FloorPlanning::ComputeTransform(GetFloorPlanConfig(), camPosId, chain, transform);
 
             // Load camera image
             KeyValue camImageFile;
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
             {
-                const KeyId cameraId( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
+                const KeyId cameraId(config.GetKeyValue(FloorPlanSchema::camera2IdKey, it->id).ToKeyId());
 
                 if (cameraId == camPosId)
                 {
-                    camImageFile = config.GetKeyValue( FloorPlanSchema::camera2ImgKey, it->id );
+                    camImageFile = config.GetKeyValue(FloorPlanSchema::camera2ImgKey, it->id);
                     break;
                 }
             }
@@ -528,10 +528,10 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
 
             IplImage* camImg;
             CvPoint2D32f offset;
-            FloorPlanning::LoadFile( GetFloorPlanConfig(), camPosId, &camImg, camFileName, &offset, false );
+            FloorPlanning::LoadFile(GetFloorPlanConfig(), camPosId, &camImg, camFileName, &offset, false);
 
             // Stitch the images together
-            GroundPlaneUtility::compositeImageBoundingBox( transform, camImg, &cmpBox );
+            GroundPlaneUtility::CompositeImageBoundingBox(transform, camImg, &cmpBox);
 
             LOG_INFO(QObject::tr("Composite bounding box is %1 %2 %3 %4.").arg(cmpBox.dim.x)
                                                                           .arg(cmpBox.dim.y)
@@ -545,33 +545,33 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
     int sizex = (int)(cmpBox.dim.x+.5f);
     int sizey = (int)(cmpBox.dim.y+.5f);
 
-    sizex += 4 -( sizex % 4 );
+    sizex += 4 -(sizex % 4);
 
-    CvSize cmpSize = cvSize( sizex,sizey );
-    imgComposite = cvCreateImage( cmpSize, rootImg->depth, rootImg->nChannels );
+    CvSize cmpSize = cvSize(sizex,sizey);
+    imgComposite = cvCreateImage(cmpSize, rootImg->depth, rootImg->nChannels);
 
     // Process remaining (non-root) cameras
-    for ( int i = 0; i < cameraPositionIds.size(); ++i )
+    for (int i = 0; i < cameraPositionIds.size(); ++i)
     {
-        const KeyId camPosId = cameraPositionIds.at( i );
+        const KeyId camPosId = cameraPositionIds.at(i);
 
         if (camPosId != camRoot)
         {
             std::vector<KeyId> chain = FloorPlanning::FindChain(GetFloorPlanConfig(), camPosId, camRoot, std::vector<KeyId>());
 
             cvSetIdentity(transform);
-            FloorPlanning::ComputeTransform( GetFloorPlanConfig(), camPosId, chain, transform );
+            FloorPlanning::ComputeTransform(GetFloorPlanConfig(), camPosId, chain, transform);
 
             // Load camera image
             KeyValue camImageFile;
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
             {
-                const KeyId cameraId( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
+                const KeyId cameraId(config.GetKeyValue(FloorPlanSchema::camera2IdKey, it->id).ToKeyId());
 
                 if (camPosId == cameraId)
                 {
-                    camImageFile = config.GetKeyValue( FloorPlanSchema::camera2ImgKey, it->id );
+                    camImageFile = config.GetKeyValue(FloorPlanSchema::camera2ImgKey, it->id);
                     break;
                 }
             }
@@ -582,63 +582,63 @@ void CreateFloorMaskWidget::Stitch(KeyId camRoot)
 
             IplImage* camImg;
             CvPoint2D32f offset;
-            FloorPlanning::LoadFile( GetFloorPlanConfig(), camPosId, &camImg, camFileName, &offset, false );
+            FloorPlanning::LoadFile(GetFloorPlanConfig(), camPosId, &camImg, camFileName, &offset, false);
 
             // Align the image.
-            cvZero( imgComposite );
-            GroundPlaneUtility::alignGroundPlane( transform, camImg, imgComposite );
-            IplImage *img1 = cvCloneImage( imgComposite );
+            cvZero(imgComposite);
+            GroundPlaneUtility::AlignGroundPlane(transform, camImg, imgComposite);
+            IplImage *img1 = cvCloneImage(imgComposite);
 
             // Align root image.
-            cvZero( imgComposite );
-            GroundPlaneUtility::alignGroundPlane( identity, rootImg, imgComposite );
-            IplImage *img2 = cvCloneImage( imgComposite );
+            cvZero(imgComposite);
+            GroundPlaneUtility::AlignGroundPlane(identity, rootImg, imgComposite);
+            IplImage *img2 = cvCloneImage(imgComposite);
 
-            GroundPlaneUtility::createCompositeImage( img1, imgComposite, imgComposite );
-            GroundPlaneUtility::createCompositeImage( img2, imgComposite, imgComposite );
+            GroundPlaneUtility::CreateCompositeImage(img1, imgComposite, imgComposite);
+            GroundPlaneUtility::CreateCompositeImage(img2, imgComposite, imgComposite);
 
-            cvReleaseImage( &img1 );
-            cvReleaseImage( &img2 );
+            cvReleaseImage(&img1);
+            cvReleaseImage(&img2);
         }
     }
 
     // Convert image
-    IplImage* imgTmp = cvCreateImage( cvSize( imgComposite->width,
-                                              imgComposite->height ), IPL_DEPTH_8U, 3 );
-    cvConvertImage( imgComposite, imgTmp );
+    IplImage* imgTmp = cvCreateImage(cvSize(imgComposite->width,
+                                              imgComposite->height), IPL_DEPTH_8U, 3);
+    cvConvertImage(imgComposite, imgTmp);
 
-    const QSize imgSize( imgTmp->width, imgTmp->height );
-    QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
+    const QSize imgSize(imgTmp->width, imgTmp->height);
+    QImage qImg = QImage(imgSize, QImage::Format_RGB888);
 
     CvMat mtxWrapper;
-    cvInitMatHeader( &mtxWrapper,
+    cvInitMatHeader(&mtxWrapper,
                      imgTmp->height,
                      imgTmp->width,
                      CV_8UC3,
-                     qImg.bits() );
+                     qImg.bits());
 
-    cvConvertImage( imgTmp, &mtxWrapper, 0 );
+    cvConvertImage(imgTmp, &mtxWrapper, 0);
 
      const QString fileName(
-         config.GetAbsoluteFileNameFor( "floor_mask.png" ) );
+         config.GetAbsoluteFileNameFor("floor_mask.png"));
 
-    if (!qImg.save( fileName ))
+    if (!qImg.save(fileName))
     {
-        Message::Show( this,
-                       tr( "Create Floor Mask" ),
-                       tr( "Cannot write to: %1!" )
-                           .arg( fileName ),
-                       Message::Severity_Critical );
+        Message::Show(this,
+                       tr("Create Floor Mask"),
+                       tr("Cannot write to: %1!")
+                           .arg(fileName),
+                       Message::Severity_Critical);
     }
 
-    cvReleaseMat( &transform );
-    cvReleaseMat( &identity );
+    cvReleaseMat(&transform);
+    cvReleaseMat(&identity);
 
-    cvReleaseImage( &imgComposite );
+    cvReleaseImage(&imgComposite);
     ImageViewer(imgTmp, this).exec();
-    cvReleaseImage( &imgTmp );
-    Message::Show( this,
-                   tr( "Floor Mask" ),
-                   tr( "Multi-position floor mask successfully created." ),
-                   Message::Severity_Information );
+    cvReleaseImage(&imgTmp);
+    Message::Show(this,
+                   tr("Floor Mask"),
+                   tr("Multi-position floor mask successfully created."),
+                   Message::Severity_Information);
 }

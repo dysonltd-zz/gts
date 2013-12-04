@@ -34,41 +34,41 @@ namespace TrackHistory
     /**
         Write a robot-track history log to file.
     **/
-    bool WriteHistoryLog( const char* filename, const TrackLog& history )
+    bool WriteHistoryLog(const char* filename, const TrackLog& history)
     {
-        FILE* to = fopen( filename, "w" );
+        FILE* to = fopen(filename, "w");
 
         if (to)
         {
             time_t t;
-            time( &t );
-            struct tm *t2 = localtime( &t );
+            time(&t);
+            struct tm *t2 = localtime(&t);
             char buf[1024];
-            strftime( buf, sizeof(buf)-1, "%c", t2 );
+            strftime(buf, sizeof(buf)-1, "%c", t2);
 
-            fprintf( to, "#Track log: %s\n# time(s)\tx(cm)\ty(cm)\theading(deg)\terror\t[wgm]\n", buf );
+            fprintf(to, "#Track log: %s\n# time(s)\tx(cm)\ty(cm)\theading(deg)\terror\t[wgm]\n", buf);
 
-            for ( unsigned int i=0; i<history.size(); ++i )
+            for (unsigned int i=0; i<history.size(); ++i)
             {
                 const std::string* str = history[i].GetString();
-                if ( str )
+                if (str)
                 {
-                    fprintf( to, "  %4.4f  %.3f %.3f %.3f %s\n",
+                    fprintf(to, "  %4.4f  %.3f %.3f %.3f %s\n",
                         history[i].GetTimeStamp(),
                         history[i].GetPosition().x,
                         -history[i].GetPosition().y,    // convert to right handed coords
                         history[i].GetOrientation() * MathsConstants::R2D, // convert heading to degrees,
-                        str->c_str() );
+                        str->c_str());
                 }
                 else
                 {
-                    fprintf( to, "  %4.4f  %.3f %.3f %.3f %f %f\n",
+                    fprintf(to, "  %4.4f  %.3f %.3f %.3f %f %f\n",
                         history[i].GetTimeStamp(),
                         history[i].GetPosition().x,
                         -history[i].GetPosition().y,  // convert to right handed coords
                         history[i].GetOrientation() * MathsConstants::R2D,
                         history[i].GetError(),
-                        history[i].wgm() );
+                        history[i].wgm());
                 }
             }
 
@@ -88,29 +88,29 @@ namespace TrackHistory
     /**
         Write a robot-track history log to CSV file.
     **/
-    bool WriteHistoryCsv( const char* filename, const TrackLog& history )
+    bool WriteHistoryCsv(const char* filename, const TrackLog& history)
     {
-        FILE* to = fopen( filename, "w" );
+        FILE* to = fopen(filename, "w");
 
         if (to)
         {
             time_t t;
-            time( &t );
-            struct tm *t2 = localtime( &t );
+            time(&t);
+            struct tm *t2 = localtime(&t);
             char buf[1024];
-            strftime( buf, sizeof(buf)-1, "%c", t2 );
+            strftime(buf, sizeof(buf)-1, "%c", t2);
 
-            fprintf( to, "Time(s),X(cm),Y(cm),H(deg),Err,WGM\n");
+            fprintf(to, "Time(s),X(cm),Y(cm),H(deg),Err,WGM\n");
 
-            for ( unsigned int i=0; i<history.size(); ++i )
+            for (unsigned int i=0; i<history.size(); ++i)
             {
-                fprintf( to, "%4.4f,%.3f,%.3f,%.3f,%f,%f\n",
+                fprintf(to, "%4.4f,%.3f,%.3f,%.3f,%f,%f\n",
                     history[i].GetTimeStamp(),
                     history[i].GetPosition().x,
                     -history[i].GetPosition().y,  // convert to right handed coords
                     history[i].GetOrientation() * MathsConstants::R2D,
                     history[i].GetError(),
-                    history[i].wgm() );
+                    history[i].wgm());
             }
 
             fclose(to);
@@ -132,9 +132,9 @@ namespace TrackHistory
         Note: when written log is converted to right handed coords,
         but when read it is not converted back!
     **/
-    bool ReadHistoryLog( const char* filename, TrackLog& log )
+    bool ReadHistoryLog(const char* filename, TrackLog& log)
     {
-        FILE* fp = fopen( filename, "r" );
+        FILE* fp = fopen(filename, "r");
         char s[10000];
         int cnt;
 
@@ -155,22 +155,22 @@ namespace TrackHistory
                        float t,x,y,th,e;
 
                         cnt += sscanf(s,"%f",&t);
-                        cnt += fscanf( fp, "%f %f %f", &x, &y, &th);
+                        cnt += fscanf(fp, "%f %f %f", &x, &y, &th);
                         th  *= MathsConstants::F_D2R;
                         cnt += fscanf(fp,"%s",s);
-                        if ( cnt != 6 )
+                        if (cnt != 6)
                         {
                             LOG_ERROR(QObject::tr("Unexpected data in log %1!").arg(filename));
                         }
                         int number = sscanf(s,"%f",&e);
-                        if ( number ) //the last one is the tracker error
+                        if (number) //the last one is the tracker error
                         {
-                            log.push_back( TrackEntry( cvPoint2D32f(x,y), th, e, t, 0.f ) );
+                            log.push_back(TrackEntry(cvPoint2D32f(x,y), th, e, t, 0.f));
                         }
                         else //the last one was a image
                         {
                             std::string str(s);
-                            log.push_back( TrackEntry( cvPoint2D32f(x,y), th, 0, t, str ) );
+                            log.push_back(TrackEntry(cvPoint2D32f(x,y), th, 0, t, str));
                         }
 
                         FileUtilities::LineSkip(fp);
@@ -189,9 +189,9 @@ namespace TrackHistory
         return true;
     }
 
-    bool ReadHistoryCsv( const char* filename, TrackLog& log )
+    bool ReadHistoryCsv(const char* filename, TrackLog& log)
     {
-        FILE* fp = fopen( filename, "r" );
+        FILE* fp = fopen(filename, "r");
         int cnt;
 
         if (fp)
@@ -205,13 +205,13 @@ namespace TrackHistory
             {
                 float t,x,y,th,e,w;
 
-                cnt = fscanf( fp, "%f,%f,%f,%f,%f,%f\n", &t, &x, &y, &th, &e, &w );
-                if ( cnt != 6 )
+                cnt = fscanf(fp, "%f,%f,%f,%f,%f,%f\n", &t, &x, &y, &th, &e, &w);
+                if (cnt != 6)
                 {
                     LOG_ERROR(QObject::tr("Unexpected data (%1) in log %2!").arg(cnt).arg(filename));
                 }
 
-                log.push_back( TrackEntry( cvPoint2D32f(x,y), th*MathsConstants::F_D2R, e, t, w ) );
+                log.push_back(TrackEntry(cvPoint2D32f(x,y), th*MathsConstants::F_D2R, e, t, w));
             }
 
             fclose(fp);
@@ -247,7 +247,7 @@ namespace TrackHistory
         it can't distiguish one blob from another and therefore
         (potentially) has a 180 degree ambiguity between any two tracks).
     **/
-    TrackEntry InterpolateEntries( TrackEntry a, TrackEntry b, float w )
+    TrackEntry InterpolateEntries(TrackEntry a, TrackEntry b, float w)
     {
         CvPoint2D32f pa = a.GetPosition(); // earlier position
         CvPoint2D32f pb = b.GetPosition(); // later position
@@ -259,7 +259,7 @@ namespace TrackHistory
         // Check that we dont interpolate over too large an angle
         float angle = a.GetOrientation();
 
-        float diff = Angles::DiffAngle( angle, b.GetOrientation() );
+        float diff = Angles::DiffAngle(angle, b.GetOrientation());
 
         if (diff > 3.f)
         {
@@ -271,15 +271,15 @@ namespace TrackHistory
             angle += MathsConstants::F_PI;
         }
 
-        angle = Angles::NormAngle( angle );
+        angle = Angles::NormAngle(angle);
 
         // interpolate angle, error, and warp-gradient-magnitude (wgm)
-        float ai = (float)Angles::Interpolate( 0.0, angle, 1.0, b.GetOrientation(), w, true);
+        float ai = (float)Angles::Interpolate(0.0, angle, 1.0, b.GetOrientation(), w, true);
         float ei = a.GetError() + (b.GetError()-a.GetError())*w;
         float wgmi = a.wgm()   + (b.wgm()-a.wgm())*w;
 
-        double ti = a.GetTimeStamp() + ( b.GetTimeStamp() - a.GetTimeStamp() )*w;
+        double ti = a.GetTimeStamp() + (b.GetTimeStamp() - a.GetTimeStamp())*w;
 
-        return TrackEntry( pi, ai, ei, ti, wgmi );
+        return TrackEntry(pi, ai, ei, ti, wgmi);
     }
 }

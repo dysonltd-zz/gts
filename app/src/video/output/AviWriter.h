@@ -43,12 +43,12 @@ public:
     };
 
 public:
-    AviWriter( const codecType   codec,
+    AviWriter(const codecType   codec,
                const int         aviWidth,
                const int         aviHeight,
                const char* const videoFileName,
                const char* const timestampFileName,
-               const double      frameRate );
+               const double      frameRate);
 
     ~AviWriter();
 
@@ -58,7 +58,7 @@ public:
                   const timespec& stamp);
 
 private:
-    IplImage* const CreateImage( const int width, const int height ) const;
+    IplImage* const CreateImage(const int width, const int height) const;
 
     static const int XVID_COMPRESSION_CODEC;
     static const int FMP4_COMPRESSION_CODEC;

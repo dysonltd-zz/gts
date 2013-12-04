@@ -37,7 +37,7 @@ class SetUpRoomWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit SetUpRoomWidget( QWidget* parent );
+    explicit SetUpRoomWidget(QWidget* parent);
     ~SetUpRoomWidget();
 
     virtual const QString Name() const;

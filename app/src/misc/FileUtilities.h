@@ -25,16 +25,59 @@
 
 #include <stdio.h>
 
+/**
+  Utilities to support different file/directory related tasks
+ */
 namespace FileUtilities
 {
-    const QString GetUniqueFileName( const QString& fileNameFormat );
+    /**
+      @brief GetUniqueFileName
+      @param fileNameFormat
+      @return
+     */
+    const QString GetUniqueFileName(const QString& fileNameFormat);
 
-    bool DeleteDirectory( const QString& dirName );
-    bool FileIsExternal( const QString& fileName, const WbConfig& config );
-    bool FileExists( const char* file );
-    void ShowInGraphicalShell( const QString &dirName );
-    void LineSkip( FILE* f );
-	int LineCount( FILE* fp );
+    /**
+      @brief Delete a directory
+      @param dirName Path to directory
+      @return True if successfully deleted
+     */
+    bool DeleteDirectory(const QString& dirName);
+
+    /**
+      @brief Check if a file is external to the workbench (i.e. the workbench config)
+      @param fileName Path to file
+      @param config The workbench config
+      @return True if it is external
+     */
+    bool FileIsExternal(const QString& fileName, const WbConfig& config);
+
+    /**
+      @brief Check if a file exists by opening it. Then close it.
+      @param file File path
+      @return True If file exists
+     */
+    bool FileExists(const char* filePath);
+
+    /**
+      @brief Open a directory in the OS's specific window explorer
+      @param dirName Director to be opened
+     */
+    void ShowInGraphicalShell(const QString &dirName);
+
+    /**
+      @brief Skip to the next line (look for '\n') of file as
+      long as its not the end of file
+      @param f Pointer to file
+     */
+    void LineSkip(FILE* fp);
+
+    /**
+      @brief Go through the entire file counting the number of
+      newline ('n') characters
+      @param f Pointer to file
+     */
+	int LineCount(FILE* fp);
 }
 
 #endif // FILEUTILITIES_H

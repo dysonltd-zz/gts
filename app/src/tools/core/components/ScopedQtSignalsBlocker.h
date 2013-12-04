@@ -24,12 +24,12 @@
 class ScopedQtSignalsBlocker
 {
 public:
-    ScopedQtSignalsBlocker( QObject& objectToBlock );
+    ScopedQtSignalsBlocker(QObject& objectToBlock);
     ~ScopedQtSignalsBlocker();
 
 private:
-    ScopedQtSignalsBlocker( const ScopedQtSignalsBlocker& );
-    ScopedQtSignalsBlocker& operator =( const ScopedQtSignalsBlocker& );
+    ScopedQtSignalsBlocker(const ScopedQtSignalsBlocker&);
+    ScopedQtSignalsBlocker& operator =(const ScopedQtSignalsBlocker&);
 
     QObject& m_objectToBlock;
     bool     m_previousBlockState;

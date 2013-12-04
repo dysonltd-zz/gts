@@ -60,17 +60,17 @@ static const int FILE_COLUMN = 1;
 
 static const int NUM_COLS = 2;
 
-TrackRobotWidget::TrackRobotWidget( QWidget* parent ) :
-    Tool       ( parent, CreateSchema() ),
-    m_ui       ( new Ui::TrackRobotWidget ),
-    m_playing  ( false ),
-    m_tracking ( false ),
-    m_loaded   ( false ),
-    m_fpsSet   ( false ),
-    m_fps      ( 1 ),
-    m_optimumRate ( 100 ),
-    m_scanFwdIndex ( 0 ),
-    m_scanBackIndex ( 0 )
+TrackRobotWidget::TrackRobotWidget(QWidget* parent) :
+    Tool       (parent, CreateSchema()),
+    m_ui       (new Ui::TrackRobotWidget),
+    m_playing  (false),
+    m_tracking (false),
+    m_loaded   (false),
+    m_fpsSet   (false),
+    m_fps      (1),
+    m_optimumRate (100),
+    m_scanFwdIndex (0),
+    m_scanBackIndex (0)
 {
     SetupUi();
     ConnectSignals();
@@ -94,20 +94,20 @@ TrackRobotWidget::TrackRobotWidget( QWidget* parent ) :
 
 void TrackRobotWidget::SetupUi()
 {
-    m_ui->setupUi( this );
-    m_ui->m_videoTable->setColumnCount( NUM_COLS );
-    m_ui->m_videoTable->setSortingEnabled( false );
+    m_ui->setupUi(this);
+    m_ui->m_videoTable->setColumnCount(NUM_COLS);
+    m_ui->m_videoTable->setSortingEnabled(false);
 }
 
-void TrackRobotWidget::FillOutCameraCombo( QComboBox& comboBox )
+void TrackRobotWidget::FillOutCameraCombo(QComboBox& comboBox)
 {
     WbConfig config = GetCurrentConfig();
 
-    Collection camPosCollection( CameraPositionsCollection() );
-    Collection rooms ( RoomsCollection() );
+    Collection camPosCollection(CameraPositionsCollection());
+    Collection rooms (RoomsCollection());
 
-    camPosCollection.SetConfig( config );
-    rooms.SetConfig( config );
+    camPosCollection.SetConfig(config);
+    rooms.SetConfig(config);
 
     comboBox.clear();
 
@@ -115,18 +115,18 @@ void TrackRobotWidget::FillOutCameraCombo( QComboBox& comboBox )
     const WbConfig& runConfig = config.GetParent();
 
     // Get the room configuration (for this run)
-    const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
-    const WbConfig roomConfig = rooms.ElementById( roomId );
+    const KeyId roomId = runConfig.GetKeyValue(RunSchema::roomIdKey).ToKeyId();
+    const WbConfig roomConfig = rooms.ElementById(roomId);
 
     // Get the room configuration
-    const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
-    const QStringList camPosIds( roomLayoutConfig
+    const WbConfig roomLayoutConfig(roomConfig.GetSubConfig(RoomLayoutSchema::schemaName));
+    const QStringList camPosIds(roomLayoutConfig
             .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-             .ToQStringList() );
+             .ToQStringList());
 
     for (auto camPosId = camPosIds.begin(); camPosId != camPosIds.end(); ++camPosId)
     {
-        comboBox.addItem( WbConfigTools::DisplayNameOf(camPosCollection.ElementById(*camPosId)), QVariant( *camPosId ) );
+        comboBox.addItem(WbConfigTools::DisplayNameOf(camPosCollection.ElementById(*camPosId)), QVariant(*camPosId));
     }
 }
 
@@ -160,50 +160,50 @@ void TrackRobotWidget::ResetUi()
 
 void TrackRobotWidget::ConnectSignals()
 {
-    QObject::connect( m_ui->m_playBtn,
-                      SIGNAL( clicked() ),
+    QObject::connect(m_ui->m_playBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( PlayPauseButtonClicked() ) );
-    QObject::connect( m_ui->m_stepBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(PlayPauseButtonClicked()));
+    QObject::connect(m_ui->m_stepBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( StepButtonClicked() ) );
-    QObject::connect( m_ui->m_stepBackBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(StepButtonClicked()));
+    QObject::connect(m_ui->m_stepBackBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( StepBackButtonClicked() ) );
-    QObject::connect( m_ui->m_scanBackBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(StepBackButtonClicked()));
+    QObject::connect(m_ui->m_scanBackBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( ScanBackButtonClicked() ) );
-    QObject::connect( m_ui->m_scanFwdBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(ScanBackButtonClicked()));
+    QObject::connect(m_ui->m_scanFwdBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( ScanForwardButtonClicked() ) );
-    QObject::connect( m_ui->m_stopBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(ScanForwardButtonClicked()));
+    QObject::connect(m_ui->m_stopBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( StopButtonClicked() ) );
-    QObject::connect( m_ui->m_loadBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(StopButtonClicked()));
+    QObject::connect(m_ui->m_loadBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( TrackLoadButtonClicked() ) );
-    QObject::connect( m_ui->m_saveBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(TrackLoadButtonClicked()));
+    QObject::connect(m_ui->m_saveBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( TrackSaveButtonClicked() ) );
-    QObject::connect( m_ui->m_positionCombo,
-                      SIGNAL( currentIndexChanged (int) ),
+                      SLOT(TrackSaveButtonClicked()));
+    QObject::connect(m_ui->m_positionCombo,
+                      SIGNAL(currentIndexChanged (int)),
                       this,
-                      SLOT( CameraComboChanged() ) );
-    QObject::connect( m_ui->m_useGlobalCheckBox,
-                      SIGNAL( clicked() ),
+                      SLOT(CameraComboChanged()));
+    QObject::connect(m_ui->m_useGlobalCheckBox,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( UseGlobalBtnClicked() ) );
-    QObject::connect( m_ui->m_cameraTrackParamsSaveBtn,
-                      SIGNAL( clicked() ),
+                      SLOT(UseGlobalBtnClicked()));
+    QObject::connect(m_ui->m_cameraTrackParamsSaveBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( SaveBtnClicked() ) );
+                      SLOT(SaveBtnClicked()));
 }
 
 void TrackRobotWidget::SetupKeyboardShortcuts()
@@ -215,31 +215,31 @@ void TrackRobotWidget::SetupKeyboardShortcuts()
     QShortcut *scanBackKey = new QShortcut(QKeySequence(Qt::CTRL+Qt::Key_Left), this);
     QShortcut *stopKey = new QShortcut(Qt::Key_Return, this);
 
-    QObject::connect( playPauseTrackKey,
-             SIGNAL( activated() ),
+    QObject::connect(playPauseTrackKey,
+             SIGNAL(activated()),
              this,
-             SLOT( PlayPauseButtonClicked() ) );
-    QObject::connect( stepBackKey,
-             SIGNAL( activated() ),
+             SLOT(PlayPauseButtonClicked()));
+    QObject::connect(stepBackKey,
+             SIGNAL(activated()),
              this,
-             SLOT( StepBackButtonClicked() ) );
-    QObject::connect( stepForwardKey,
-             SIGNAL( activated() ),
+             SLOT(StepBackButtonClicked()));
+    QObject::connect(stepForwardKey,
+             SIGNAL(activated()),
              this,
-             SLOT( StepButtonClicked() ) );
-    QObject::connect( scanBackKey,
-             SIGNAL( activated() ),
+             SLOT(StepButtonClicked()));
+    QObject::connect(scanBackKey,
+             SIGNAL(activated()),
              this,
-             SLOT( ScanBackButtonClicked() ) );
-    QObject::connect( stopKey,
-             SIGNAL( activated() ),
+             SLOT(ScanBackButtonClicked()));
+    QObject::connect(stopKey,
+             SIGNAL(activated()),
              this,
-             SLOT( StopButtonClicked() ) );
+             SLOT(StopButtonClicked()));
 }
 
 void TrackRobotWidget::CreateMappers()
 {
-    AddMapper( TrackRobotSchema::robotIdKey, m_ui->m_robotCombo );
+    AddMapper(TrackRobotSchema::robotIdKey, m_ui->m_robotCombo);
     AddMapper(TrackRobotSchema::GlobalTrackingParams::biLevelThreshold, m_ui->m_trackerThresholdSpinBox);
     AddMapper(TrackRobotSchema::GlobalTrackingParams::nccThreshold,     m_ui->m_nccThresholdSpinBox);
     AddMapper(TrackRobotSchema::GlobalTrackingParams::resolution,       m_ui->m_resolutionSpinBox);
@@ -249,7 +249,7 @@ const QString TrackRobotWidget::GetCameraId() const
 {
     QComboBox* const cameraCombo = m_ui->m_positionCombo;
     const int newTargetIndex = cameraCombo->currentIndex();
-    const QString cameraId( cameraCombo->itemData( newTargetIndex ).toString() );
+    const QString cameraId(cameraCombo->itemData(newTargetIndex).toString());
     return cameraId;
 }
 
@@ -271,17 +271,17 @@ void TrackRobotWidget::ReloadCurrentConfigToolSpecific()
 {
     const WbConfig& config = GetCurrentConfig();
 
-    FillOutCameraCombo( *m_ui->m_positionCombo );
+    FillOutCameraCombo(*m_ui->m_positionCombo);
 
     // Get the selected room name
     const WbConfig& runConfig = config.GetParent();
-    const WbConfig& videoConfig = runConfig.GetSubConfig( VideoCaptureSchema::schemaName );
+    const WbConfig& videoConfig = runConfig.GetSubConfig(VideoCaptureSchema::schemaName);
 
     // Get id keys for all the camera positions in the selected room:
     KeyId roomId = GetRoomIdToCapture();
-    const WbKeyValues::ValueIdPairList positions = GetCameraPositionPairList( roomId );
-    const WbKeyValues::ValueIdPairList capturedVideos = videoConfig.GetKeyValues( VideoCaptureSchema::cameraPositionIdKey );
-    if ( !capturedVideos.empty() )
+    const WbKeyValues::ValueIdPairList positions = GetCameraPositionPairList(roomId);
+    const WbKeyValues::ValueIdPairList capturedVideos = videoConfig.GetKeyValues(VideoCaptureSchema::cameraPositionIdKey);
+    if (!capturedVideos.empty())
     {
         m_ui->m_loadBtn->setEnabled(true);
     }
@@ -292,7 +292,7 @@ void TrackRobotWidget::ReloadCurrentConfigToolSpecific()
 
     QStringList headerlabels;
     headerlabels << "Position" << "Source";
-    m_ui->m_videoTable->setHorizontalHeaderLabels( headerlabels );
+    m_ui->m_videoTable->setHorizontalHeaderLabels(headerlabels);
 
     m_mapPositionsToFiles.clear();
 
@@ -312,11 +312,11 @@ void TrackRobotWidget::ReloadCurrentConfigToolSpecific()
                 WbKeyValues::ValueIdPair const &v = *cv;
 
                 // check if it was captured at the current camera position:
-                if ( v.value.ToQString() == positionString )
+                if (v.value.ToQString() == positionString)
                 {
                     // If it was add it to the map of position -> videoFiles
-                    QString videoFilename = videoConfig.GetKeyValue( VideoCaptureSchema::videoFileNameKey, v.id ).ToQString();
-                    QString timestampFilename = videoConfig.GetKeyValue( VideoCaptureSchema::timestampFileNameKey, v.id ).ToQString();
+                    QString videoFilename = videoConfig.GetKeyValue(VideoCaptureSchema::videoFileNameKey, v.id).ToQString();
+                    QString timestampFilename = videoConfig.GetKeyValue(VideoCaptureSchema::timestampFileNameKey, v.id).ToQString();
 
                     m_mapPositionsToFiles[ positionString ].first << videoFilename;
                     m_mapPositionsToFiles[ positionString ].second << timestampFilename;
@@ -330,15 +330,15 @@ void TrackRobotWidget::ReloadCurrentConfigToolSpecific()
 
     // Add to mappings to the table view so that user can
     // select video file for each position from combo box.
-    foreach( QString pos, m_mapPositionsToFiles.keys() )
+    foreach(QString pos, m_mapPositionsToFiles.keys())
     {
-        const QStringList& videos = m_mapPositionsToFiles.value( pos ).first;
+        const QStringList& videos = m_mapPositionsToFiles.value(pos).first;
         const QString position = WbConfigTools::DisplayNameOf(camPosCollection.ElementById(pos));
 
-        AddTableRow( position, videos );
+        AddTableRow(position, videos);
     }
 
-    if ( !m_loaded )
+    if (!m_loaded)
     {
         ResetUi();
     }
@@ -351,7 +351,7 @@ void TrackRobotWidget::CameraComboChanged()
     const KeyId cameraId = KeyId(GetCameraId());
 
     const WbKeyValues::ValueIdPairList cameraMappingIds =
-        config.GetKeyValues( TrackRobotSchema::PerCameraTrackingParams::positionIdKey );
+        config.GetKeyValues(TrackRobotSchema::PerCameraTrackingParams::positionIdKey);
 
     bool useGlobalParams = true;
     int biLevelThreshold = config.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::biLevelThreshold).ToInt();
@@ -360,7 +360,7 @@ void TrackRobotWidget::CameraComboChanged()
 
     for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
     {
-        const KeyId keyId( config.GetKeyValue( TrackRobotSchema::PerCameraTrackingParams::positionIdKey, it->id ).ToKeyId() );
+        const KeyId keyId(config.GetKeyValue(TrackRobotSchema::PerCameraTrackingParams::positionIdKey, it->id).ToKeyId());
 
         if (keyId == cameraId)
         {
@@ -390,7 +390,7 @@ void TrackRobotWidget::CameraComboChanged()
 
 void TrackRobotWidget::UseGlobalBtnClicked()
 {
-    if ( m_ui->m_useGlobalCheckBox->isChecked() )
+    if (m_ui->m_useGlobalCheckBox->isChecked())
 	{
 	    WbConfig config = GetCurrentConfig();
 
@@ -428,11 +428,11 @@ void TrackRobotWidget::SaveBtnClicked()
 
     using namespace TrackRobotSchema::PerCameraTrackingParams;
 
-    Collection camPosCollection( CameraPositionsCollection() );
-    Collection rooms ( RoomsCollection() );
+    Collection camPosCollection(CameraPositionsCollection());
+    Collection rooms (RoomsCollection());
 
-    camPosCollection.SetConfig( config );
-    rooms.SetConfig( config );
+    camPosCollection.SetConfig(config);
+    rooms.SetConfig(config);
 
     std::vector< KeyId > idsToKeep;
 
@@ -440,28 +440,28 @@ void TrackRobotWidget::SaveBtnClicked()
     const WbConfig& runConfig = config.GetParent();
 
     // Get the room configuration (for this run)
-    const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
-    const WbConfig roomConfig = rooms.ElementById( roomId );
+    const KeyId roomId = runConfig.GetKeyValue(RunSchema::roomIdKey).ToKeyId();
+    const WbConfig roomConfig = rooms.ElementById(roomId);
 
     // Get the room configuration
-    const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
-    const QStringList camPosIds( roomLayoutConfig
+    const WbConfig roomLayoutConfig(roomConfig.GetSubConfig(RoomLayoutSchema::schemaName));
+    const QStringList camPosIds(roomLayoutConfig
                                  .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                 .ToQStringList() );
+                                 .ToQStringList());
 
     for (auto camPosId = camPosIds.begin(); camPosId != camPosIds.end(); ++camPosId)
     {
-        if ( KeyId(*camPosId) != cameraId )
+        if (KeyId(*camPosId) != cameraId)
         {
-            const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( positionIdKey );
+            const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(positionIdKey);
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
             {
-                const KeyId positionId( config.GetKeyValue( positionIdKey, it->id ).ToKeyId() );
+                const KeyId positionId(config.GetKeyValue(positionIdKey, it->id).ToKeyId());
 
                 if (positionId == KeyId(*camPosId))
                 {
-                    idsToKeep.push_back( it->id );
+                    idsToKeep.push_back(it->id);
                     break;
                 }
             }
@@ -476,31 +476,31 @@ void TrackRobotWidget::SaveBtnClicked()
 
     if (valid)
     {
-        config.KeepKeys( positionIdKey, idsToKeep );
-        config.KeepKeys( useGlobalParams, idsToKeep );
-        config.KeepKeys( biLevelThreshold, idsToKeep );
-        config.KeepKeys( nccThreshold, idsToKeep );
-        config.KeepKeys( resolution, idsToKeep );
+        config.KeepKeys(positionIdKey, idsToKeep);
+        config.KeepKeys(useGlobalParams, idsToKeep);
+        config.KeepKeys(biLevelThreshold, idsToKeep);
+        config.KeepKeys(nccThreshold, idsToKeep);
+        config.KeepKeys(resolution, idsToKeep);
 
-        const KeyId cameraKeyId = config.AddKeyValue( positionIdKey,
-                                                      KeyValue::from( cameraId ) );
+        const KeyId cameraKeyId = config.AddKeyValue(positionIdKey,
+                                                      KeyValue::from(cameraId));
 
-        config.SetKeyValue( useGlobalParams,
-                            KeyValue::from( m_ui->m_useGlobalCheckBox->isChecked() ),
-                            cameraKeyId );
-        config.SetKeyValue( biLevelThreshold,
-                            KeyValue::from( QString().setNum( m_ui->m_camTrackerThresholdSpinBox->value() ) ),
-                            cameraKeyId );
-        config.SetKeyValue( nccThreshold,
-                            KeyValue::from( QString().setNum( m_ui->m_camNccThresholdSpinBox->value() ) ),
-                            cameraKeyId );
-        config.SetKeyValue( resolution,
-                            KeyValue::from( QString().setNum( m_ui->m_camResolutionSpinBox->value() ) ),
-                            cameraKeyId );
+        config.SetKeyValue(useGlobalParams,
+                            KeyValue::from(m_ui->m_useGlobalCheckBox->isChecked()),
+                            cameraKeyId);
+        config.SetKeyValue(biLevelThreshold,
+                            KeyValue::from(QString().setNum(m_ui->m_camTrackerThresholdSpinBox->value())),
+                            cameraKeyId);
+        config.SetKeyValue(nccThreshold,
+                            KeyValue::from(QString().setNum(m_ui->m_camNccThresholdSpinBox->value())),
+                            cameraKeyId);
+        config.SetKeyValue(resolution,
+                            KeyValue::from(QString().setNum(m_ui->m_camResolutionSpinBox->value())),
+                            cameraKeyId);
     }
 }
 
-void TrackRobotWidget::AddVideoFileConfigKey( const QString& videoFileName,
+void TrackRobotWidget::AddVideoFileConfigKey(const QString& videoFileName,
                                                   const KeyId& camPosId)
 {
     WbConfig config(GetCurrentConfig());
@@ -508,23 +508,23 @@ void TrackRobotWidget::AddVideoFileConfigKey( const QString& videoFileName,
     config.SetKeyValue(TrackRobotSchema::cameraPositionIdKey, KeyValue::from(camPosId), keyId);
 }
 
-const bool TrackRobotWidget::CreateVideoDirectory( const QString& videoDirectoryName )
+const bool TrackRobotWidget::CreateVideoDirectory(const QString& videoDirectoryName)
 {
-    QDir outputDirectory( videoDirectoryName );
+    QDir outputDirectory(videoDirectoryName);
     bool directoryExists = outputDirectory.exists();
 
-    if ( !directoryExists )
+    if (!directoryExists)
     {
-        directoryExists = QDir().mkpath( outputDirectory.absolutePath() );
+        directoryExists = QDir().mkpath(outputDirectory.absolutePath());
     }
 
-    if ( !directoryExists )
+    if (!directoryExists)
     {
-        Message::Show( this,
-                       tr( "Track Robot" ),
-                       tr( "Failed to create directory: %1!" )
-                         .arg( outputDirectory.absolutePath() ),
-                       Message::Severity_Critical );
+        Message::Show(this,
+                       tr("Track Robot"),
+                       tr("Failed to create directory: %1!")
+                         .arg(outputDirectory.absolutePath()),
+                       Message::Severity_Critical);
         return false;
     }
 
@@ -533,41 +533,41 @@ const bool TrackRobotWidget::CreateVideoDirectory( const QString& videoDirectory
 
 void TrackRobotWidget::ShowNoRoomError()
 {
-    Message::Show( this,
-                   tr( "Track Robot" ),
-                   tr( "There is no room selected!" ),
-                   Message::Severity_Critical );
+    Message::Show(this,
+                   tr("Track Robot"),
+                   tr("There is no room selected!"),
+                   Message::Severity_Critical);
 }
 
 void TrackRobotWidget::ShowEmptyRoomError()
 {
-    Message::Show( this,
-                   tr( "Track Robot" ),
-                   tr( "The selected room is empty!" ),
-                   Message::Severity_Critical );
+    Message::Show(this,
+                   tr("Track Robot"),
+                   tr("The selected room is empty!"),
+                   Message::Severity_Critical);
 }
 
 const KeyId TrackRobotWidget::GetRoomIdToCapture() const
 {
-    const WbConfig trackRobotConfig( GetCurrentConfig() );
-    const WbConfig runConfig( trackRobotConfig.GetParent() );
-    const KeyId roomIdToCapture( runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId() );
+    const WbConfig trackRobotConfig(GetCurrentConfig());
+    const WbConfig runConfig(trackRobotConfig.GetParent());
+    const KeyId roomIdToCapture(runConfig.GetKeyValue(RunSchema::roomIdKey).ToKeyId());
 
     return roomIdToCapture;
 }
 
-const WbConfig TrackRobotWidget::GetRoomLayoutConfig( const KeyId& roomIdToCapture )
+const WbConfig TrackRobotWidget::GetRoomLayoutConfig(const KeyId& roomIdToCapture)
 {
-    Collection roomsCollection( RoomsCollection() );
+    Collection roomsCollection(RoomsCollection());
     roomsCollection.SetConfig(GetCurrentConfig());
-    const WbConfig roomConfig( roomsCollection.ElementById( roomIdToCapture ) );
-    return roomConfig.GetSubConfig( RoomLayoutSchema::schemaName );
+    const WbConfig roomConfig(roomsCollection.ElementById(roomIdToCapture));
+    return roomConfig.GetSubConfig(RoomLayoutSchema::schemaName);
 }
 
 const WbKeyValues::ValueIdPairList TrackRobotWidget::GetCameraPositionPairList(const KeyId& roomIdToCapture)
 {
     const WbConfig roomLayoutConfig = GetRoomLayoutConfig(roomIdToCapture);
-    return roomLayoutConfig.GetKeyValues( RoomLayoutSchema::cameraPositionIdsKey );
+    return roomLayoutConfig.GetKeyValues(RoomLayoutSchema::cameraPositionIdsKey);
 }
 
 const QStringList TrackRobotWidget::GetCameraPositionIds(const KeyId& roomIdToCapture)
@@ -575,25 +575,25 @@ const QStringList TrackRobotWidget::GetCameraPositionIds(const KeyId& roomIdToCa
     const WbConfig roomLayoutConfig = GetRoomLayoutConfig(roomIdToCapture);
     const QStringList cameraPositionIds(
         roomLayoutConfig.GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-        .ToQStringList() );
+        .ToQStringList());
     return cameraPositionIds;
 }
 
-void TrackRobotWidget::AddTableRow( const QString& roomPosition, const QStringList& videoFileNames )
+void TrackRobotWidget::AddTableRow(const QString& roomPosition, const QStringList& videoFileNames)
 {
     const int newAppendedRow = m_ui->m_videoTable->rowCount();
 
-    m_ui->m_videoTable->insertRow( newAppendedRow );
+    m_ui->m_videoTable->insertRow(newAppendedRow);
 
-    QTableWidgetItem* positionTableItem = new QTableWidgetItem( roomPosition );
+    QTableWidgetItem* positionTableItem = new QTableWidgetItem(roomPosition);
     positionTableItem->setToolTip(tr("Position: ") + roomPosition);
 
-    m_ui->m_videoTable->setItem(newAppendedRow, ROOM_POSITION_COLUMN, positionTableItem );
+    m_ui->m_videoTable->setItem(newAppendedRow, ROOM_POSITION_COLUMN, positionTableItem);
 
     QComboBox* videoSpinBox = new QComboBox();
-    videoSpinBox->addItems( videoFileNames );
+    videoSpinBox->addItems(videoFileNames);
 
-    m_ui->m_videoTable->setCellWidget( newAppendedRow, FILE_COLUMN, videoSpinBox );
+    m_ui->m_videoTable->setCellWidget(newAppendedRow, FILE_COLUMN, videoSpinBox);
 }
 
 bool TrackRobotWidget::IsDataValid() const
@@ -602,7 +602,7 @@ bool TrackRobotWidget::IsDataValid() const
 
     bool valid = true;
 
-    if ( m_ui->m_robotCombo->currentText().isEmpty() )
+    if (m_ui->m_robotCombo->currentText().isEmpty())
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_robotLabel, true);
@@ -629,9 +629,9 @@ const WbSchema TrackRobotWidget::CreateSchema()
 {
     using namespace TrackRobotSchema;
 
-    WbSchema schema( CreateWorkbenchSubSchema( schemaName, tr( "Track Robot" ) ) );
+    WbSchema schema(CreateWorkbenchSubSchema(schemaName, tr("Track Robot")));
 
-    schema.AddSingleValueKey( robotIdKey, WbSchemaElement::Multiplicity::One );
+    schema.AddSingleValueKey(robotIdKey, WbSchemaElement::Multiplicity::One);
 
     {
         using namespace GlobalTrackingParams;
@@ -666,7 +666,7 @@ const WbSchema TrackRobotWidget::CreateSchema()
 
 void TrackRobotWidget::StepBackButtonClicked()
 {
-    TrackRun( m_optimumRate, false, true, false );
+    TrackRun(m_optimumRate, false, true, false);
 
     // set play button icon
     SetButtonIcon(m_ui->m_playBtn,QString::fromUtf8(":/play.png"));
@@ -700,7 +700,7 @@ void TrackRobotWidget::ScanBackButtonClicked()
 
     // reverse * scan multiplier rate and DO NOT track
     int rate = m_optimumRate * m_scanBackIconRatePair[m_scanBackIndex].second;
-    TrackRun( rate, false, false, false );
+    TrackRun(rate, false, false, false);
 
     // set pause button icon
     SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/pause.png"));
@@ -731,7 +731,7 @@ void TrackRobotWidget::ScanForwardButtonClicked()
 
     // forward * scan multiplier rate and DO NOT track
     int rate = m_optimumRate * m_scanFwdIconRatePair[m_scanFwdIndex].second;
-    TrackRun(rate, false, false, true );
+    TrackRun(rate, false, false, true);
 
     // set pause button icon
     SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/pause.png"));
@@ -744,10 +744,10 @@ void TrackRobotWidget::PlayPauseButtonClicked()
 {
     if (!m_playing) // play pressed
     {
-        if ( m_tracking )
+        if (m_tracking)
         {
             // play video AND track
-            TrackRun( m_optimumRate, true, false, true );
+            TrackRun(m_optimumRate, true, false, true);
 
             // switch to tracking/record icon
             SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/pauseTrack.png"));
@@ -755,7 +755,7 @@ void TrackRobotWidget::PlayPauseButtonClicked()
         else
         {
             // just play video
-            TrackRun( m_optimumRate, false, false, true );
+            TrackRun(m_optimumRate, false, false, true);
 
             // switch to pause icon
             SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/pause.png"));
@@ -775,7 +775,7 @@ void TrackRobotWidget::PlayPauseButtonClicked()
         SetButtonIcon(m_ui->m_scanFwdBtn, QString::fromUtf8(m_scanFwdIconRatePair[0].first.c_str()));
         SetButtonIcon(m_ui->m_scanBackBtn, QString::fromUtf8(m_scanBackIconRatePair[0].first.c_str()));
 
-        if ( m_tracking )
+        if (m_tracking)
         {
             SetButtonIcon(m_ui->m_playBtn, QString::fromUtf8(":/playTrack.png"));
             SetButtonIcon(m_ui->m_stepBtn, QString::fromUtf8(":/stepTrack.png"));
@@ -804,7 +804,7 @@ void TrackRobotWidget::PlayPauseButtonClicked()
 
 void TrackRobotWidget::StepButtonClicked()
 {
-    TrackRun( m_optimumRate, true, true, true );
+    TrackRun(m_optimumRate, true, true, true);
 }
 
 void TrackRobotWidget::StopButtonClicked()
@@ -817,7 +817,7 @@ void TrackRobotWidget::StopButtonClicked()
 void TrackRobotWidget::TrackLoadButtonClicked()
 {
 
-    if( !m_loaded )
+    if(!m_loaded)
     {
         const WbConfig& config = GetCurrentConfig();
 
@@ -829,22 +829,22 @@ void TrackRobotWidget::TrackLoadButtonClicked()
         const QStringList cameraPositionIds(GetCameraPositionIds(roomIdToCapture));
         if (cameraPositionIds.size() == 0) { ShowEmptyRoomError(); return; }
 
-        const WbConfig runConfig( config.GetParent() );
+        const WbConfig runConfig(config.GetParent());
 
-        bool successful = CreateRunResultDirectory( runConfig );
+        bool successful = CreateRunResultDirectory(runConfig);
 
         if (successful)
         {
-            UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-            progressDialog->Start( tr( "Loading" ), tr( "" ) );
+            UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg(this);
+            progressDialog->Start(tr("Loading"), tr(""));
 
-            ExitStatus::Flags exitCode = TrackLoad( config,
+            ExitStatus::Flags exitCode = TrackLoad(config,
                                                     m_ui->m_imageGrid,
-                                                    RobotTracker::KLT_TRACKER );
+                                                    RobotTracker::KLT_TRACKER);
 
-            successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
+            successful = (exitCode == ExitStatus::OK_TO_CONTINUE);
 
-            if ( successful )
+            if (successful)
             {
                 progressDialog->ForceClose();
                 SetupKeyboardShortcuts();
@@ -853,10 +853,10 @@ void TrackRobotWidget::TrackLoadButtonClicked()
             {
                 progressDialog->ForceClose();
 
-                Message::Show( this,
-                               tr( "Robot Tracking Tool" ),
-                               tr( "See the log for details!" ),
-                               Message::Severity_Critical );
+                Message::Show(this,
+                               tr("Robot Tracking Tool"),
+                               tr("See the log for details!"),
+                               Message::Severity_Critical);
             }
         }
 
@@ -888,7 +888,7 @@ void TrackRobotWidget::TrackLoadButtonClicked()
     {
         m_loaded = false;
         SetPosition(0);
-        TrackReset( m_ui->m_imageGrid );
+        TrackReset(m_ui->m_imageGrid);
 
         m_fpsSet = false;
         TrackLoadButtonClicked();
@@ -902,53 +902,53 @@ void TrackRobotWidget::TrackSaveButtonClicked()
 
     LOG_TRACE("Track Save Data");
 
-    const WbConfig runConfig( config.GetParent() );
+    const WbConfig runConfig(config.GetParent());
 
     Collection m_rooms = RoomsCollection();
 
-    m_rooms.SetConfig( runConfig );
+    m_rooms.SetConfig(runConfig);
 
-    const KeyValue roomId = runConfig.GetKeyValue( RunSchema::roomIdKey );
-    const WbConfig roomConfig = m_rooms.ElementById( roomId.ToKeyId() );
+    const KeyValue roomId = runConfig.GetKeyValue(RunSchema::roomIdKey);
+    const WbConfig roomConfig = m_rooms.ElementById(roomId.ToKeyId());
 
     const WbConfig roomLayoutConfig(
-                roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
+                roomConfig.GetSubConfig(RoomLayoutSchema::schemaName));
 
     const QString floorPlanName(
-                roomLayoutConfig.GetAbsoluteFileNameFor( "floor_plan.png" ) );
+                roomLayoutConfig.GetAbsoluteFileNameFor("floor_plan.png"));
 
     const QString trackerResultsTxtName(
-         runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.txt" ) );
+         runConfig.GetAbsoluteFileNameFor("results/track_result_raw.txt"));
     const QString trackerResultsCsvName(
-         runConfig.GetAbsoluteFileNameFor( "results/track_result_raw.csv" ) );
+         runConfig.GetAbsoluteFileNameFor("results/track_result_raw.csv"));
     const QString trackerResultsImgName(
-         runConfig.GetAbsoluteFileNameFor( "results/track_result_img_raw.png" ) );
+         runConfig.GetAbsoluteFileNameFor("results/track_result_img_raw.png"));
 
     const QString pixelOffsetsName(
-         runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets.txt" ) );
+         runConfig.GetAbsoluteFileNameFor("results/pixel_offsets.txt"));
 
     const QString trackResultsTemplate(
-         runConfig.GetAbsoluteFileNameFor( "results/track_result_view%1.txt" ) );
+         runConfig.GetAbsoluteFileNameFor("results/track_result_view%1.txt"));
     const QString pixelOffsetsTemplate(
-         runConfig.GetAbsoluteFileNameFor( "results/pixel_offsets_view%1.txt" ) );
+         runConfig.GetAbsoluteFileNameFor("results/pixel_offsets_view%1.txt"));
 
-    UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
-    progressDialog->Start( tr( "Saving" ), tr( "" ) );
+    UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg(this);
+    progressDialog->Start(tr("Saving"), tr(""));
 
-    ExitStatus::Flags exitCode = TrackSaveData( floorPlanName.toAscii().data(),
+    ExitStatus::Flags exitCode = TrackSaveData(floorPlanName.toAscii().data(),
                                                 trackerResultsTxtName.toAscii().data(),
                                                 trackerResultsCsvName.toAscii().data(),
                                                 trackerResultsImgName.toAscii().data(),
                                                 pixelOffsetsName.toAscii().data(),
                                                 trackResultsTemplate,
-                                                pixelOffsetsTemplate );
+                                                pixelOffsetsTemplate);
 
-    bool successful = ( exitCode == ExitStatus::OK_TO_CONTINUE );
+    bool successful = (exitCode == ExitStatus::OK_TO_CONTINUE);
 
-    if ( successful )
+    if (successful)
     {
-        progressDialog->Complete( tr( "Processing Successful" ),
-                                  tr( "Results have been saved.\n" ) );
+        progressDialog->Complete(tr("Processing Successful"),
+                                  tr("Results have been saved.\n"));
         m_ui->m_saveBtn->setEnabled(false);
     }
     else
@@ -1007,9 +1007,9 @@ void TrackRobotWidget::SetButtonIcon(QToolButton* button, QString iconImage)
     button->setIcon(icon);
 }
 
-void TrackRobotWidget::SelectTrack( int id, int x, int y )
+void TrackRobotWidget::SelectTrack(int id, int x, int y)
 {
-    m_scene.SetTrackPosition( id, x, y );
+    m_scene.SetTrackPosition(id, x, y);
 
     if (!m_tracking)
     {
@@ -1021,9 +1021,9 @@ void TrackRobotWidget::SelectTrack( int id, int x, int y )
     m_tracking = true;
 }
 
-void TrackRobotWidget::ClearTrack( int id )
+void TrackRobotWidget::ClearTrack(int id)
 {
-    m_scene.ClrTrackPosition( id );
+    m_scene.ClrTrackPosition(id);
 
     if (m_tracking)
     {
@@ -1035,7 +1035,7 @@ void TrackRobotWidget::ClearTrack( int id )
     m_tracking = false;
 }
 
-void TrackRobotWidget::ThreadPaused( bool trackingLost )
+void TrackRobotWidget::ThreadPaused(bool trackingLost)
 {
     m_running = false;
     m_playing = false;
@@ -1054,112 +1054,112 @@ void TrackRobotWidget::ThreadFinished()
     Stopped();
 }
 
-void TrackRobotWidget::ImageUpdate( int id, const QImage& image, double fps )
+void TrackRobotWidget::ImageUpdate(int id, const QImage& image, double fps)
 {
     // Set optimum fps rate if not already set or
     // new fps is less than old smaller > larger.
 
-    if ( (fps > 0 && !m_fpsSet) || (m_fpsSet && fps < m_fps) )
+    if ((fps > 0 && !m_fpsSet) || (m_fpsSet && fps < m_fps))
     {
         m_fps = fps;
         m_optimumRate = (int) (1000/m_fps);
         m_fpsSet = true;
     }
 
-    emit UpdateImage( id, image, fps );
+    emit UpdateImage(id, image, fps);
 }
 
-void TrackRobotWidget::ImageSet( int id, const QImage& image, double fps )
+void TrackRobotWidget::ImageSet(int id, const QImage& image, double fps)
 {
-    emit SetImage( id, image, fps );
+    emit SetImage(id, image, fps);
 }
 
-void TrackRobotWidget::SetPosition( double position )
+void TrackRobotWidget::SetPosition(double position)
 {
     QTime time = QTime(0,0);
-    m_ui->m_timeLineEdit->setText( time.addMSecs(position).toString("hh:mm:ss:zzz") );
+    m_ui->m_timeLineEdit->setText(time.addMSecs(position).toString("hh:mm:ss:zzz"));
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------------------------
 
-const ExitStatus::Flags TrackRobotWidget::TrackLoad( const WbConfig&               trackConfig,
+const ExitStatus::Flags TrackRobotWidget::TrackLoad(const WbConfig&               trackConfig,
 											             ImageGrid*                imageGrid,
-											             RobotTracker::trackerType tracker )
+											             RobotTracker::trackerType tracker)
 {
     ExitStatus::Flags exitStatus = ExitStatus::OK_TO_CONTINUE;
 
     bool successful = true;
 
-    Collection rooms  ( RoomsCollection() );
-    Collection cameras ( CamerasCollection() );
-    Collection camerasPositions ( CameraPositionsCollection() );
-    Collection robots ( RobotsCollection() );
-    Collection targets ( TargetsCollection() );
+    Collection rooms  (RoomsCollection());
+    Collection cameras (CamerasCollection());
+    Collection camerasPositions (CameraPositionsCollection());
+    Collection robots (RobotsCollection());
+    Collection targets (TargetsCollection());
 
-    rooms.SetConfig( trackConfig );
-    cameras.SetConfig( trackConfig );
-    camerasPositions.SetConfig( trackConfig );
-    robots.SetConfig( trackConfig );
-    targets.SetConfig( trackConfig );
+    rooms.SetConfig(trackConfig);
+    cameras.SetConfig(trackConfig);
+    camerasPositions.SetConfig(trackConfig);
+    robots.SetConfig(trackConfig);
+    targets.SetConfig(trackConfig);
 
     // Get the run configuration
     const WbConfig& runConfig = trackConfig.GetParent();
 
     // Get the room configuration (for this run)
-    const KeyId roomId = runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId();
-    const WbConfig roomConfig = rooms.ElementById( roomId );
+    const KeyId roomId = runConfig.GetKeyValue(RunSchema::roomIdKey).ToKeyId();
+    const WbConfig roomConfig = rooms.ElementById(roomId);
 
     // Get the robot configuration (for this run)
-    const KeyId robotId = trackConfig.GetKeyValue( TrackRobotSchema::robotIdKey ).ToKeyId();
-    const WbConfig& robotConfig = robots.ElementById( robotId );
+    const KeyId robotId = trackConfig.GetKeyValue(TrackRobotSchema::robotIdKey).ToKeyId();
+    const WbConfig& robotConfig = robots.ElementById(robotId);
 
     // Get the robot metrics configuration
-    const WbConfig& metricsConfig = robotConfig.GetSubConfig( RobotMetricsSchema::schemaName );
+    const WbConfig& metricsConfig = robotConfig.GetSubConfig(RobotMetricsSchema::schemaName);
 
     // Get the target configuration (for this robot)
-    const KeyId targetId = metricsConfig.GetKeyValue( RobotMetricsSchema::targetTypeKey ).ToKeyId();
-    const WbConfig& targetConfig = targets.ElementById( targetId );
+    const KeyId targetId = metricsConfig.GetKeyValue(RobotMetricsSchema::targetTypeKey).ToKeyId();
+    const WbConfig& targetConfig = targets.ElementById(targetId);
 
     // Get the target params configuration
-    const WbConfig& paramsConfig = targetConfig.GetSubConfig( TargetSchema::schemaName );
+    const WbConfig& paramsConfig = targetConfig.GetSubConfig(TargetSchema::schemaName);
 
     // Get the room configuration
-    const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
-    const QStringList cameraPositionIds( roomLayoutConfig
+    const WbConfig roomLayoutConfig(roomConfig.GetSubConfig(RoomLayoutSchema::schemaName));
+    const QStringList cameraPositionIds(roomLayoutConfig
             .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-             .ToQStringList() );
+             .ToQStringList());
 
     // Multi-camera ground truth system
-    m_scene.LoadTarget( paramsConfig );
+    m_scene.LoadTarget(paramsConfig);
 
-    for ( int i = 0; i < cameraPositionIds.size() && successful; ++i )
+    for (int i = 0; i < cameraPositionIds.size() && successful; ++i)
     {
-        const KeyId camPosId( cameraPositionIds.at( i ) );
-        const WbConfig camPosConfig( camerasPositions.ElementById( camPosId ) );
+        const KeyId camPosId(cameraPositionIds.at(i));
+        const WbConfig camPosConfig(camerasPositions.ElementById(camPosId));
 
-        const KeyId cameraId( camPosConfig.GetKeyValue( CameraPositionSchema::cameraIdKey ).ToQString() );
-        const WbConfig cameraConfig( cameras.ElementById( cameraId ) );
+        const KeyId cameraId(camPosConfig.GetKeyValue(CameraPositionSchema::cameraIdKey).ToQString());
+        const WbConfig cameraConfig(cameras.ElementById(cameraId));
 
         QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(i, FILE_COLUMN);
 
         if (!combo)
         {
-            Message::Show( this,
-                           tr( "Robot Tracking Tool" ),
-                           tr( "No videos found for this run" ),
-                           Message::Severity_Critical );
+            Message::Show(this,
+                           tr("Robot Tracking Tool"),
+                           tr("No videos found for this run"),
+                           Message::Severity_Critical);
             ResetUi();
             return ExitStatus::ERRORS_OCCURRED;;
         }
 
-        const VideoCaptureEntry& captureEntry = m_mapPositionsToFiles.value( camPosId );
+        const VideoCaptureEntry& captureEntry = m_mapPositionsToFiles.value(camPosId);
         const QString videoFileName =
-           trackConfig.GetAbsoluteFileNameFor( captureEntry.first.at(combo->currentIndex()) );
+           trackConfig.GetAbsoluteFileNameFor(captureEntry.first.at(combo->currentIndex()));
         const QString timestampFileName =
-           trackConfig.GetAbsoluteFileNameFor( captureEntry.second.at(combo->currentIndex()) );
+           trackConfig.GetAbsoluteFileNameFor(captureEntry.second.at(combo->currentIndex()));
 
-        successful = m_scene.LoadCameraConfig( camPosId,
+        successful = m_scene.LoadCameraConfig(camPosId,
                                                videoFileName.toAscii().data(),
                                                timestampFileName.toAscii().data(),
                                                cameraConfig,
@@ -1167,13 +1167,13 @@ const ExitStatus::Flags TrackRobotWidget::TrackLoad( const WbConfig&            
                                                roomConfig,
                                                robotConfig,
                                                trackConfig,
-                                               tracker );
+                                               tracker);
     }
 
     if (successful)
     {
-        m_scene.SetupViewWindows( this, imageGrid );
-        m_scene.SetupThread( this );
+        m_scene.SetupViewWindows(this, imageGrid);
+        m_scene.SetupThread(this);
     }
 
     if (!successful)
@@ -1184,15 +1184,15 @@ const ExitStatus::Flags TrackRobotWidget::TrackLoad( const WbConfig&            
     return exitStatus;
 }
 
-const ExitStatus::Flags TrackRobotWidget::TrackRun( double rate, bool trackingActive,
+const ExitStatus::Flags TrackRobotWidget::TrackRun(double rate, bool trackingActive,
                                                                      bool singleStep,
-                                                                     bool runForward )
+                                                                     bool runForward)
 {
     ExitStatus::Flags exitStatus = ExitStatus::OK_TO_CONTINUE;
 
     Playing();
     m_running = true;
-    m_scene.StartThread( rate, trackingActive, singleStep, runForward );
+    m_scene.StartThread(rate, trackingActive, singleStep, runForward);
 
     return exitStatus;
 }
@@ -1214,31 +1214,31 @@ const ExitStatus::Flags TrackRobotWidget::TrackStop()
     return exitStatus;
 }
 
-const ExitStatus::Flags TrackRobotWidget::TrackSaveData( char* floorPlanFile,
+const ExitStatus::Flags TrackRobotWidget::TrackSaveData(char* floorPlanFile,
                                                              char* trackerResultsTxtFile,
                                                              char* trackerResultsCsvFile,
                                                              char* trackerResultsImgFile,
                                                              char* pixelOffsetsFile,
                                                              QString trackResultsTemplate,
-                                                             QString pixelOffsetsTemplate )
+                                                             QString pixelOffsetsTemplate)
 {
     ExitStatus::Flags exitStatus = ExitStatus::OK_TO_CONTINUE;
 
-    m_scene.SaveData( floorPlanFile,
+    m_scene.SaveData(floorPlanFile,
                       trackerResultsTxtFile,
                       trackerResultsCsvFile,
                       trackerResultsImgFile,
                       pixelOffsetsFile,
                       trackResultsTemplate,
-                      pixelOffsetsTemplate );
+                      pixelOffsetsTemplate);
 
     return exitStatus;
 }
 
-const ExitStatus::Flags TrackRobotWidget::TrackReset( ImageGrid* imageGrid )
+const ExitStatus::Flags TrackRobotWidget::TrackReset(ImageGrid* imageGrid)
 {
     ExitStatus::Flags exitStatus = ExitStatus::OK_TO_CONTINUE;
-    m_scene.DestroyViewWindows( imageGrid );
+    m_scene.DestroyViewWindows(imageGrid);
     m_scene.Reset();
 
     return exitStatus;
@@ -1249,42 +1249,42 @@ const ExitStatus::Flags TrackRobotWidget::TrackReset( ImageGrid* imageGrid )
 
 bool TrackRobotWidget::CreateRunResultDirectory(const WbConfig& config)
 {
-    QDir m_resultDir( config.GetAbsoluteFileNameFor( "results" ) );
+    QDir m_resultDir(config.GetAbsoluteFileNameFor("results"));
 
     const QString resultDirName = m_resultDir.dirName();
 
-    QDir resultDirParent( m_resultDir );
+    QDir resultDirParent(m_resultDir);
 
-    if ( !resultDirParent.cdUp() )
+    if (!resultDirParent.cdUp())
     {
-        Message::Show( this,
-                       tr( "Robot Tracking Tool" ),
-                       tr( "Please save your workbench" ),
-                       Message::Severity_Critical );
+        Message::Show(this,
+                       tr("Robot Tracking Tool"),
+                       tr("Please save your workbench"),
+                       Message::Severity_Critical);
 
         return false;
     }
 
-    if (resultDirParent.exists( resultDirName ))
+    if (resultDirParent.exists(resultDirName))
     {
-        const int result = QMessageBox::question( this,
+        const int result = QMessageBox::question(this,
                                                   "Confirm delete",
                                                   QObject::tr("Are you sure you want to overwrite already saved track data."),
-                                                  QMessageBox::Yes|QMessageBox::No );
+                                                  QMessageBox::Yes|QMessageBox::No);
         if (result == QMessageBox::No)
         {
             return false;
         }
 
-        FileUtilities::DeleteDirectory( resultDirParent.absoluteFilePath(resultDirName) );
+        FileUtilities::DeleteDirectory(resultDirParent.absoluteFilePath(resultDirName));
     }
 
-    if ( !resultDirParent.mkdir( resultDirName ) || !resultDirParent.cd( resultDirName ))
+    if (!resultDirParent.mkdir(resultDirName) || !resultDirParent.cd(resultDirName))
     {
-        Message::Show( this,
-                       tr( "Robot Tracking Tool" ),
-                       tr( "Results directory cannot be found" ),
-                       Message::Severity_Critical );
+        Message::Show(this,
+                       tr("Robot Tracking Tool"),
+                       tr("Results directory cannot be found"),
+                       Message::Severity_Critical);
 
         return false;
     }

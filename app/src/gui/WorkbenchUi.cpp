@@ -52,31 +52,31 @@ namespace
 {
     const bool DONT_UPDATE_WORKBENCH_TREE = false;
 
-    /** @brief Functor to collect current active WbPath information
-     * from the active tools
+    /**
+      @brief Functor to collect current active WbPath information
+      from the active tools
      */
     struct ActivePathCollector : public ToolFunction
     {
-        ActivePathCollector( const WbSchema& workbenchSchema ) :
+        ActivePathCollector(const WbSchema& workbenchSchema) :
             m_activePath   (),
-            m_workbenchSchema( workbenchSchema )
+            m_workbenchSchema(workbenchSchema)
         {
         }
 
-        /** @brief override the current idea of path to lowest active tool with
-         * path to current tool.
-         *
-         * @param tool the current too to consider.
+        /**
+          @brief override the current idea of path to lowest active tool with
+          path to current tool.
+          @param tool the current too to consider.
          */
-        virtual void operator() ( ToolInterface& tool )
+        virtual void operator() (ToolInterface& tool)
         {
-            m_activePath =
-                 m_workbenchSchema.FindPathToSchema( tool.GetMostSpecificSubSchema() );
+            m_activePath = m_workbenchSchema.FindPathToSchema(tool.GetMostSpecificSubSchema());
         }
 
-        /** @brief Retrieve the active path
-         *
-         * @return The path to the lowest active tool
+        /**
+          @brief Retrieve the active path
+          @return The path to the lowest active tool
          */
         const WbPath GetActivePath() const
         {
@@ -88,37 +88,36 @@ namespace
          WbSchema m_workbenchSchema;
     };
 
-    /** @brief Functor to update the tools with new configs, and the UI based
-     * on the active Tools.
+    /**
+      @brief Functor to update the tools with new configs, and the UI based
+      on the active Tools.
      */
     struct ToolUpdater : public ToolFunction
     {
-        ToolUpdater( QMenu* const toolMenu,
-                     const WbConfig& config ) :
-            m_toolMenu   ( toolMenu ),
-            m_config     ( config )
+        ToolUpdater(QMenu* const toolMenu, const WbConfig& config) :
+            m_toolMenu   (toolMenu),
+            m_config     (config)
         {
-            if ( m_toolMenu ) m_toolMenu->clear();
+            if (m_toolMenu) m_toolMenu->clear();
         }
 
         ~ToolUpdater()
         {
-            if ( m_toolMenu )
+            if (m_toolMenu)
             {
                 const bool shouldEnable = !m_toolMenu->isEmpty() && !m_config.IsNull();
-                m_toolMenu->setEnabled( shouldEnable );
-                foreach( QAction* action,  m_toolMenu->actions() )
+                m_toolMenu->setEnabled(shouldEnable);
+                foreach(QAction* action,  m_toolMenu->actions())
                 {
-                    action->setEnabled( shouldEnable );
+                    action->setEnabled(shouldEnable);
                 }
             }
         }
 
-        virtual void operator() ( ToolInterface& tool )
+        virtual void operator() (ToolInterface& tool)
         {
-            tool.Reload( m_config );
-
-            if ( m_toolMenu ) tool.UpdateToolMenu( *m_toolMenu );
+            tool.Reload(m_config);
+            if (m_toolMenu) tool.UpdateToolMenu(*m_toolMenu);
         }
 
      private:
@@ -126,28 +125,29 @@ namespace
          WbConfig m_config;
      };
 
-    /** @brief Functor to update the Workbench tree widget based on the currently
-     * active tools
+    /**
+      @brief Functor to update the Workbench tree widget based on the currently
+      active tools
      */
     struct WorkbenchTreeUpdater : public ToolFunction
     {
-        WorkbenchTreeUpdater( QTreeWidget& treeWidget ) :
-            m_treeWidget( treeWidget )
+        WorkbenchTreeUpdater(QTreeWidget& treeWidget) :
+            m_treeWidget(treeWidget)
         {
         }
 
-        virtual void operator() ( ToolInterface& tool )
+        virtual void operator() (ToolInterface& tool)
         {
-            ScopedQtSignalsBlocker blockItemChangedSignals( m_treeWidget );
+            ScopedQtSignalsBlocker blockItemChangedSignals(m_treeWidget);
             const WbConfig activeConfig = tool.GetCurrentConfig();
-            if ( !activeConfig.IsNull() )
+            if (!activeConfig.IsNull())
             {
                 QTreeWidgetItem* const linkedTreeWidgetItem = activeConfig.GetLinkedTreeItem();
-                m_treeWidget.setCurrentItem( linkedTreeWidgetItem );
-                if ( linkedTreeWidgetItem )
+                m_treeWidget.setCurrentItem(linkedTreeWidgetItem);
+                if (linkedTreeWidgetItem)
                 {
-                    linkedTreeWidgetItem->setSelected( true );
-                    linkedTreeWidgetItem->setExpanded( true );
+                    linkedTreeWidgetItem->setSelected(true);
+                    linkedTreeWidgetItem->setExpanded(true);
                 }
             }
         }
@@ -158,83 +158,78 @@ namespace
 
 }
 
-WorkbenchUi::WorkbenchUi( MainWindow& mainWindow ) :
-    QWidget              ( &mainWindow ),
-    m_ui                 ( new Ui::WorkbenchUiClass ),
+WorkbenchUi::WorkbenchUi(MainWindow& mainWindow) :
+    QWidget              (&mainWindow),
+    m_ui                 (new Ui::WorkbenchUiClass),
     m_workbench          (),
-    m_cameraHardware     ( HardwareAbstraction::CreateCameraHardware() ),
-    m_toolMenu           ( 0 ),
-    m_toolTabs           ( 0 ),
-    m_itemToSwitchBackTo ( 0 ),
+    m_cameraHardware     (HardwareAbstraction::CreateCameraHardware()),
+    m_toolMenu           (0),
+    m_toolTabs           (0),
+    m_itemToSwitchBackTo (0),
     m_activePath         (),
-    m_mainWindow         ( mainWindow ),
-    m_currentlyLoadedWorkbench ( false )
+    m_mainWindow         (mainWindow),
+    m_currentlyLoadedWorkbench (false)
 {
     m_ui->setupUi(this);
 
-    CreateToolTabs( mainWindow );
-    CreateTools( mainWindow );
+    CreateToolTabs(mainWindow);
+    CreateTools(mainWindow);
     SetupSplitter();
     SetupWorkbench();
     ConnectSignals();
-}
-
-WorkbenchUi::~WorkbenchUi()
-{
 }
 
 void WorkbenchUi::SetupSplitter()
 {
     const int workbenchPane = 0;
     const int toolsPane = 1;
-    m_ui->m_splitter->setCollapsible( workbenchPane, true );
-    m_ui->m_splitter->setCollapsible( toolsPane, false );
+    m_ui->m_splitter->setCollapsible(workbenchPane, true);
+    QList<int> sizes;
+    sizes.append(0);
+    sizes.append(640);
+    m_ui->m_splitter->setSizes(sizes);
+    m_ui->m_splitter->setCollapsible(toolsPane, false);
 }
 
 void WorkbenchUi::SetupWorkbench()
 {
-    m_workbench.reset( new Workbench( *m_ui->m_workbenchTree, *m_toolTabs ) );
+    m_workbench.reset(new Workbench(*m_ui->m_workbenchTree, *m_toolTabs));
 
     SetUpWorkbenchSchema();
 
-    const QString workbenchToOpen( GetWorkbenchToOpenAtStartup() );
+    const QString workbenchToOpen(GetWorkbenchToOpenAtStartup());
     m_activePath = GetActivePathFromTools();
 
-    if ( !workbenchToOpen.isEmpty() )
+    if (!workbenchToOpen.isEmpty())
     {
-        OpenWorkbench( workbenchToOpen );
+        OpenWorkbench(workbenchToOpen);
     }
 }
 
 void WorkbenchUi::ConnectSignals()
 {
-    QObject::connect( m_ui->m_workbenchTree,
-                      SIGNAL( currentItemChanged( QTreeWidgetItem*,
-                                                  QTreeWidgetItem* ) ),
-                      this,
-                      SLOT( TreeCurrentItemChanged( QTreeWidgetItem*,
-                                                    QTreeWidgetItem* ) ) );
-
-    QObject::connect( m_ui->m_workbenchTree,
-                      SIGNAL( itemSelectionChanged() ),
-                      this,
-                      SLOT( TreeSelectionChanged() ) );
-
-    QObject::connect( m_workbench->GetConfigListener(),
-                      SIGNAL( changed() ),
-                      this,
-                      SLOT( ConfigChanged() ) );
+    QObject::connect(m_ui->m_workbenchTree,
+                     SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+                     this,
+                     SLOT(TreeCurrentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)));
+    QObject::connect(m_ui->m_workbenchTree,
+                     SIGNAL(itemSelectionChanged()),
+                     this,
+                     SLOT(TreeSelectionChanged()));
+    QObject::connect(m_workbench->GetConfigListener(),
+                     SIGNAL(changed()),
+                     this,
+                     SLOT(ConfigChanged()));
 }
 
 const QString WorkbenchUi::GetWorkbenchToOpenAtStartup() const
 {
-    QString workbenchToOpen( TryToGetWorkbenchFromCmdLineArgs() );
+    QString workbenchToOpen(TryToGetWorkbenchFromCmdLineArgs());
 
-    if ( workbenchToOpen.isEmpty() )
+    if (workbenchToOpen.isEmpty())
     {
         QSettings settings;
-
-        workbenchToOpen = settings.value( "wb/lastOpenWorkbench", QString() ).toString();
+        workbenchToOpen = settings.value("wb/lastOpenWorkbench", QString()).toString();
     }
 
     return workbenchToOpen;
@@ -243,18 +238,18 @@ const QString WorkbenchUi::GetWorkbenchToOpenAtStartup() const
 const QString WorkbenchUi::TryToGetWorkbenchFromCmdLineArgs() const
 {
     QString workbenchInArgs;
-    const QStringList cmdLineArgs( QApplication::instance()->arguments() );
-    const QRegExp workbenchOptions( tr( "^(?:-w=|--workbench=)(.*)$" ) );
+    const QStringList cmdLineArgs(QApplication::instance()->arguments());
+    const QRegExp workbenchOptions(tr("^(?:-w=|--workbench=)(.*)$"));
 
-    const QStringList workbenchArgs( cmdLineArgs.filter( workbenchOptions ) );
+    const QStringList workbenchArgs(cmdLineArgs.filter(workbenchOptions));
 
-    if ( workbenchArgs.size() > 0 )
+    if (workbenchArgs.size() > 0)
     {
-        const int pos = workbenchOptions.indexIn( workbenchArgs.at( 0 ) );
-        assert( pos != -1 );
-        if ( pos != -1 )
+        const int pos = workbenchOptions.indexIn(workbenchArgs.at(0));
+        assert(pos != -1);
+        if (pos != -1)
         {
-            workbenchInArgs = workbenchOptions.cap( 1 );
+            workbenchInArgs = workbenchOptions.cap(1);
         }
     }
 
@@ -263,21 +258,21 @@ const QString WorkbenchUi::TryToGetWorkbenchFromCmdLineArgs() const
 
 const WbPath WorkbenchUi::GetActivePathFromTools()
 {
-    ActivePathCollector pathCollector( m_workbench->Schema() );
-    m_toolTabs->CallOnActiveTools( pathCollector );
+    ActivePathCollector pathCollector(m_workbench->Schema());
+    m_toolTabs->CallOnActiveTools(pathCollector);
 
-    const WbPath activePathFromTools( pathCollector.GetActivePath() );
+    const WbPath activePathFromTools(pathCollector.GetActivePath());
     return activePathFromTools;
 }
 
 bool WorkbenchUi::HasOpenModifiedWorkbench() const
 {
-    if ( !m_workbench.get() )
+    if (!m_workbench.get())
     {
         return false;
     }
 
-    if ( !m_workbench->GetCurrentConfig().IsModified() )
+    if (!m_workbench->GetCurrentConfig().IsModified())
     {
         return false;
     }
@@ -287,7 +282,7 @@ bool WorkbenchUi::HasOpenModifiedWorkbench() const
 
 void WorkbenchUi::SetUpWorkbenchSchema()
 {
-    WbSchema schema( KeyName( "workbench" ) );
+    WbSchema schema(KeyName("workbench"));
     schema.AddSingleValueKey(WbDefaultKeys::displayNameKey,
                              WbSchemaElement::Multiplicity::One,
                              KeyValue::from(tr("Workbench")));
@@ -296,49 +291,45 @@ void WorkbenchUi::SetUpWorkbenchSchema()
     m_workbench->SetSchema(schema);
 }
 
-void WorkbenchUi::CreateToolTabs( MainWindow& mainWindow )
+void WorkbenchUi::CreateToolTabs(MainWindow& mainWindow)
 {
-    m_toolTabs = new ToolTabsContainerWidget( &mainWindow, m_ui->m_splitter );
-    m_toolTabs->setObjectName( QString::fromUtf8("m_toolTabs") );
+    m_toolTabs = new ToolTabsContainerWidget(&mainWindow, m_ui->m_splitter);
+    m_toolTabs->setObjectName(QString::fromUtf8("m_toolTabs"));
 
-    QSizePolicy tabsSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding);
-    tabsSizePolicy.setHorizontalStretch( 5 );
-    tabsSizePolicy.setVerticalStretch  ( 0 );
-    m_toolTabs->setSizePolicy( tabsSizePolicy );
+    QSizePolicy tabsSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    tabsSizePolicy.setHorizontalStretch(5);
+    tabsSizePolicy.setVerticalStretch  (0);
+    m_toolTabs->setSizePolicy(tabsSizePolicy);
 
-    m_ui->m_splitter->addWidget( m_toolTabs );
+    m_ui->m_splitter->addWidget(m_toolTabs);
 }
 
-void WorkbenchUi::CreateTools( MainWindow& mainWindow )
+void WorkbenchUi::CreateTools(MainWindow& mainWindow)
 {
-    m_toolTabs->AddTool( new TargetCollectionTool ( this, mainWindow ) );
-    m_toolTabs->AddTool( new RobotCollectionTool  ( this, mainWindow ) );
-    m_toolTabs->AddTool( new CameraCollectionTool( *m_cameraHardware, this, mainWindow ) );
-    m_toolTabs->AddTool( new PositionCollectionTool( *m_cameraHardware,
-                                                     this,
-                                                     mainWindow ) );
-    m_toolTabs->AddTool( new RoomCollectionTool ( *m_cameraHardware, this, mainWindow ) );
-    m_toolTabs->AddTool( new RunCollectionTool ( *m_cameraHardware, this, mainWindow ) );
-    m_toolTabs->AddTool( new AnalysisTool ( this, mainWindow ) );
+    m_toolTabs->AddTool(new CameraCollectionTool(*m_cameraHardware, this, mainWindow));
+    m_toolTabs->AddTool(new PositionCollectionTool(*m_cameraHardware,this, mainWindow));
+    m_toolTabs->AddTool(new RoomCollectionTool(*m_cameraHardware, this, mainWindow));
+    m_toolTabs->AddTool(new TargetCollectionTool(this, mainWindow));
+    m_toolTabs->AddTool(new RobotCollectionTool(this, mainWindow));
+    m_toolTabs->AddTool(new RunCollectionTool(*m_cameraHardware, this, mainWindow));
+    m_toolTabs->AddTool(new AnalysisTool(this, mainWindow));
 }
 
-void WorkbenchUi::Reload( const bool updateWorkbench )
+void WorkbenchUi::Reload(const bool updateWorkbench)
 {
-    if ( this && m_ui.get() )
+    if (this && m_ui.get())
     {
-        MergeWithActivePath( GetActivePathFromTools() );
+        MergeWithActivePath(GetActivePathFromTools());
 
-        ToolUpdater toolUpdater( m_toolMenu,
-                                 m_workbench->GetCurrentConfig()
-                                                 .GetFromPath( m_activePath ) );
+        ToolUpdater toolUpdater(m_toolMenu,m_workbench->GetCurrentConfig().GetFromPath(m_activePath));
 
-        m_toolTabs->CallOnActiveTools( toolUpdater );
+        m_toolTabs->CallOnActiveTools(toolUpdater);
 
-        if ( updateWorkbench )
+        if (updateWorkbench)
         {
             m_workbench->ReloadConfig();
-            WorkbenchTreeUpdater workbenchTreeUpdater( *m_ui->m_workbenchTree );
-            m_toolTabs->CallOnActiveTools( workbenchTreeUpdater );
+            WorkbenchTreeUpdater workbenchTreeUpdater(*m_ui->m_workbenchTree);
+            m_toolTabs->CallOnActiveTools(workbenchTreeUpdater);
         }
     }
 }
@@ -346,9 +337,8 @@ void WorkbenchUi::Reload( const bool updateWorkbench )
 void WorkbenchUi::OpenWorkbench()
 {
     QString initialDir;
-
     QSettings settings;
-    const QString lastWb = settings.value( "wb/lastOpenWorkbench", QString() ).toString();
+    const QString lastWb = settings.value("wb/lastOpenWorkbench", QString()).toString();
 
     if (lastWb.isEmpty())
     {
@@ -359,21 +349,21 @@ void WorkbenchUi::OpenWorkbench()
         initialDir = QFileInfo(lastWb).absolutePath();
     }
 
-    const QString workbenchConfigFileName = QFileDialog::getOpenFileName( this,
-                                                                          tr( "Open Workbench" ),
+    const QString workbenchConfigFileName = QFileDialog::getOpenFileName(this,
+                                                                          tr("Open Workbench"),
                                                                           initialDir,
-                                                                          tr("XML workbench files (*.xml )") );
+                                                                          tr("XML workbench files (*.xml)"));
 
-    OpenWorkbench( workbenchConfigFileName );
+    OpenWorkbench(workbenchConfigFileName);
 }
 
 void WorkbenchUi::NewOrOpenWorkbenchQuestion()
 {
-    QMessageBox question( QMessageBox::Information,
-                          tr("Create New Workbench or Open Existing Workbench?"),
-                          tr("Create New Workbench or Open Existing Workbench?"),
-                          QMessageBox::Open | QMessageBox::Close,
-                          this );
+    QMessageBox question(QMessageBox::Information,
+                         tr("Create New Workbench or Open Existing Workbench?"),
+                         tr("Create New Workbench or Open Existing Workbench?"),
+                         QMessageBox::Open | QMessageBox::Close,
+                         this);
     question.addButton("New", QMessageBox::ActionRole);
     question.setDefaultButton(QMessageBox::Close);
 
@@ -389,23 +379,22 @@ void WorkbenchUi::NewOrOpenWorkbenchQuestion()
             std::exit(0);
             break;
 
-        // Create new workbench
         default:
             NewWorkbench();
             break;
     }
 }
 
-void WorkbenchUi::OpenWorkbench( const QString& workbenchConfigFileName )
+void WorkbenchUi::OpenWorkbench(const QString& workbenchConfigFileName)
 {
-    if ( !workbenchConfigFileName.isEmpty() )
+    if (!workbenchConfigFileName.isEmpty())
     {
-        if ( m_workbench->Open( QFileInfo( workbenchConfigFileName ) ) )
+        if (m_workbench->Open(QFileInfo(workbenchConfigFileName)))
         {
             Reload();
 
             QSettings settings;
-            settings.setValue( "wb/lastOpenWorkbench", workbenchConfigFileName );
+            settings.setValue("wb/lastOpenWorkbench", workbenchConfigFileName);
 
             QString title = QString("Ground Truth System (v%1) - %2").arg(GTS_BUILD_REVN).arg(workbenchConfigFileName);
             m_mainWindow.setWindowTitle(title);
@@ -416,7 +405,7 @@ void WorkbenchUi::OpenWorkbench( const QString& workbenchConfigFileName )
             NewOrOpenWorkbenchQuestion();
         }
     }
-    else if ( !m_currentlyLoadedWorkbench && workbenchConfigFileName.isEmpty() )
+    else if (!m_currentlyLoadedWorkbench && workbenchConfigFileName.isEmpty())
     {
         NewOrOpenWorkbenchQuestion();
     }
@@ -429,17 +418,16 @@ void WorkbenchUi::NewWorkbench()
                                                                           getenv("HOME"),
                                                                           QFileDialog::ShowDirsOnly);
 
-    if (!m_currentlyLoadedWorkbench && workbenchConfigFolderName.isEmpty() )
+    if (!m_currentlyLoadedWorkbench && workbenchConfigFolderName.isEmpty())
     {
         NewOrOpenWorkbenchQuestion();
     }
-    QString workbenchConfigFileName = QString("%1/%2").arg(workbenchConfigFolderName).
-                                                        arg("workbench.xml");
+    QString workbenchConfigFileName = QString("%1/%2").arg(workbenchConfigFolderName).arg("workbench.xml");
 
-    if ( m_workbench->New( QFileInfo( workbenchConfigFileName ) ) )
+    if (m_workbench->New(QFileInfo(workbenchConfigFileName)))
     {
         QSettings settings;
-        settings.setValue( "wb/lastOpenWorkbench", workbenchConfigFileName );
+        settings.setValue("wb/lastOpenWorkbench", workbenchConfigFileName);
 
         Reload();
 
@@ -450,16 +438,16 @@ void WorkbenchUi::NewWorkbench()
     }
     else
     {
-        Message::Show( this,
-                       tr( "New Workbench" ),
-                       tr( "Failed to create workbench!" ),
-                       Message::Severity_Critical );
+        Message::Show(this,
+                       tr("New Workbench"),
+                       tr("Failed to create workbench!"),
+                       Message::Severity_Critical);
     }
 }
 
 void WorkbenchUi::SaveWorkbench()
 {
-    if ( m_workbench->Save() )
+    if (m_workbench->Save())
     {
         Reload();
     }
@@ -467,16 +455,15 @@ void WorkbenchUi::SaveWorkbench()
 
 void WorkbenchUi::ConfigChanged()
 {
-    // Save automagically...
     SaveWorkbench();
 }
 
-void WorkbenchUi::MergeWithActivePath( const WbPath& desiredPath )
+void WorkbenchUi::MergeWithActivePath(const WbPath& desiredPath)
 {
-    m_activePath = m_activePath.BestFitWith( desiredPath );
+    m_activePath = m_activePath.BestFitWith(desiredPath);
 }
 
-void WorkbenchUi::SwitchBackToItemAfterSelectionChanges( QTreeWidgetItem* const item )
+void WorkbenchUi::SwitchBackToItemAfterSelectionChanges(QTreeWidgetItem* const item)
 {
     // Qt may deliver this selectionChanged signal before or after currentItemChanged
     // So we need to call TreeSelectionChanged() twice -- once here, once when the
@@ -488,45 +475,33 @@ void WorkbenchUi::SwitchBackToItemAfterSelectionChanges( QTreeWidgetItem* const 
 
 void WorkbenchUi::TreeSelectionChanged()
 {
-    if ( m_itemToSwitchBackTo )
+    if (m_itemToSwitchBackTo)
     {
-        ScopedQtSignalsBlocker blockAnotherItemChangeSignal( *m_ui->m_workbenchTree );
-        m_ui->m_workbenchTree->setCurrentItem( m_itemToSwitchBackTo );
+        ScopedQtSignalsBlocker blockAnotherItemChangeSignal(*m_ui->m_workbenchTree);
+        m_ui->m_workbenchTree->setCurrentItem(m_itemToSwitchBackTo);
         m_itemToSwitchBackTo = 0;
     }
 }
 
-void WorkbenchUi::TreeCurrentItemChanged( QTreeWidgetItem* current,
-                                          QTreeWidgetItem* previous )
+void WorkbenchUi::TreeCurrentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
 {
     m_itemToSwitchBackTo = 0;
-    if ( current && ( current != previous ) )
+    if (current && (current != previous))
     {
-        if ( m_workbench->ActivateToolFor( *current ) )
+        if (m_workbench->ActivateToolFor(*current))
         {
-            MergeWithActivePath( WbPath::FromWbConfig(
-                                            WbConfig::FromTreeItem( *current ) ) );
-            Reload( DONT_UPDATE_WORKBENCH_TREE );
+            MergeWithActivePath(WbPath::FromWbConfig(
+                                            WbConfig::FromTreeItem(*current)));
+            Reload(DONT_UPDATE_WORKBENCH_TREE);
         }
         else
         {
-            SwitchBackToItemAfterSelectionChanges( previous );
+            SwitchBackToItemAfterSelectionChanges(previous);
         }
     }
 }
 
-void WorkbenchUi::SetToolMenu( QMenu& toolMenu )
+void WorkbenchUi::SetToolMenu(QMenu& toolMenu)
 {
     m_toolMenu = &toolMenu;
-}
-
-void WorkbenchUi::SetCornerWidget( QWidget* const widget )
-{
-    m_toolTabs->setCornerWidget( widget );
-    m_toolTabs->cornerWidget()->setVisible( false );
-}
-
-QWidget* WorkbenchUi::GetCornerWidget()
-{
-    return m_toolTabs->cornerWidget();
 }

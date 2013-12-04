@@ -33,16 +33,16 @@ class WbSchemaKeyGroup : public WbSchemaElement
     };
 
 public:
-    WbSchemaKeyGroup( const KeyName& name, const Multiplicity::Type& multiplicity );
+    WbSchemaKeyGroup(const KeyName& name, const Multiplicity::Type& multiplicity);
 
     virtual WbSchemaKeyGroup* const Clone() const;
 
-    void AddKey( const WbSchemaValueKey& key );
+    void AddKey(const WbSchemaValueKey& key);
 
-    void ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const;
-    bool WriteTo ( WbConfigFileWriter& writer, const WbConfig& config ) const;
-    virtual void PrintOn( std::ostream& os, const std::string& indent ) const;
-    virtual void SetDefaultTo( WbConfig& config ) const;
+    void ReadFrom(WbConfigFileReader& reader, WbConfig& config) const;
+    bool WriteTo (WbConfigFileWriter& writer, const WbConfig& config) const;
+    virtual void PrintOn(std::ostream& os, const std::string& indent) const;
+    virtual void SetDefaultTo(WbConfig& config) const;
 
 private:
     std::vector< WbSchemaValueKey > m_keys;

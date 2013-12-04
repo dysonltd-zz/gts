@@ -27,20 +27,20 @@
 
 namespace
 {
-    const KeyName targetsSchemaName( "targets" );
+    const KeyName targetsSchemaName("targets");
 
-    const KeyName targetSchemaName ( "target" );
+    const KeyName targetSchemaName ("target");
 }
 
-TargetCollectionTool::TargetCollectionTool( QWidget* parent,
-                                            MainWindow& mainWindow ) :
-    CollectionToolWidget( tr( "Target" ),
+TargetCollectionTool::TargetCollectionTool(QWidget* parent,
+                                            MainWindow& mainWindow) :
+    CollectionToolWidget(tr("Target"),
                           CreateCollectionSchema(),
                           CreateElementSchema(),
                           parent,
-                          &mainWindow )
+                          &mainWindow)
 {
-    AddSubTool( new TargetsWidget( this ) );
+    AddSubTool(new TargetsWidget(this));
 }
 
 TargetCollectionTool::~TargetCollectionTool()
@@ -49,7 +49,7 @@ TargetCollectionTool::~TargetCollectionTool()
 
 const QString TargetCollectionTool::Name() const
 {
-    return tr( "Targets" );
+    return tr("Targets");
 }
 
 const QString TargetCollectionTool::GetSubSchemaDefaultFileName() const
@@ -59,17 +59,17 @@ const QString TargetCollectionTool::GetSubSchemaDefaultFileName() const
 
 const WbSchema TargetCollectionTool::CreateCollectionSchema()
 {
-    WbSchema targetSchema( CreateWorkbenchSubSchema( targetsSchemaName, tr( "Targets" ) ) );
+    WbSchema targetSchema(CreateWorkbenchSubSchema(targetsSchemaName, tr("Targets")));
 
     return targetSchema;
 }
 
 const WbSchema TargetCollectionTool::CreateElementSchema()
 {
-    WbSchema schema( CreateElementWorkbenchSubSchema( targetSchemaName, Unnamed( tr( "Target" ) ) ) );
+    WbSchema schema(CreateElementWorkbenchSubSchema(targetSchemaName, Unnamed(tr("Target"))));
 
-    schema.AddDependant( RobotMetricsSchema::schemaName,
-                         RobotMetricsSchema::targetTypeKey );
+    schema.AddDependant(RobotMetricsSchema::schemaName,
+                         RobotMetricsSchema::targetTypeKey);
 
     return schema;
 }

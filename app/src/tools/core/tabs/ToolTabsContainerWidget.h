@@ -30,14 +30,14 @@ class MainWindow;
 class ToolContainer
 {
 public:
-    virtual void AddTool( ToolInterface* const tool ) = 0;
-    virtual bool TryToOpenTool( const WbConfig& config ) = 0;
+    virtual void AddTool(ToolInterface* const tool) = 0;
+    virtual bool TryToOpenTool(const WbConfig& config) = 0;
 
-    virtual void CallOnActiveTools( ToolFunction& func ) = 0;
+    virtual void CallOnActiveTools(ToolFunction& func) = 0;
 
-    virtual void AddToolsFullWorkbenchSchemaSubTreeTo( WbSchema& parentSchema ) = 0;
-    virtual void AddToolsFullWorkbenchSchemaSubTreeTo( WbSchema& parentSchema,
-                                                       const KeyName& schemaToAddTo ) = 0;
+    virtual void AddToolsFullWorkbenchSchemaSubTreeTo(WbSchema& parentSchema) = 0;
+    virtual void AddToolsFullWorkbenchSchemaSubTreeTo(WbSchema& parentSchema,
+                                                       const KeyName& schemaToAddTo) = 0;
 
     virtual bool ActiveToolCanClose() const = 0;
     virtual const QString ActiveToolCannotCloseReason() const = 0;
@@ -49,23 +49,23 @@ class ToolTabsContainerWidget : public QTabWidget, public ToolContainer
     Q_OBJECT
 
 public:
-    explicit ToolTabsContainerWidget( MainWindow* const mainWindow, QWidget* const parent = 0 );
+    explicit ToolTabsContainerWidget(MainWindow* const mainWindow, QWidget* const parent = 0);
     virtual ~ToolTabsContainerWidget();
 
-    void AddTool( ToolInterface* const tool );
+    void AddTool(ToolInterface* const tool);
 
-    virtual void CallOnActiveTools( ToolFunction& func );
-    virtual bool TryToOpenTool( const WbConfig & config );
-    virtual void AddToolsFullWorkbenchSchemaSubTreeTo( WbSchema& parentSchema );
-    virtual void AddToolsFullWorkbenchSchemaSubTreeTo( WbSchema& parentSchema,
-                                                       const KeyName& schemaToAddTo );
+    virtual void CallOnActiveTools(ToolFunction& func);
+    virtual bool TryToOpenTool(const WbConfig & config);
+    virtual void AddToolsFullWorkbenchSchemaSubTreeTo(WbSchema& parentSchema);
+    virtual void AddToolsFullWorkbenchSchemaSubTreeTo(WbSchema& parentSchema,
+                                                       const KeyName& schemaToAddTo);
 
     virtual bool ActiveToolCanClose() const;
     virtual const QString ActiveToolCannotCloseReason() const;
     virtual void ShowCannotCloseMessage();
 
 private slots:
-    void CurrentTabChanged( const int newTabIndex );
+    void CurrentTabChanged(const int newTabIndex);
 
 private:
     typedef std::shared_ptr<ToolInterface> ToolPtr;

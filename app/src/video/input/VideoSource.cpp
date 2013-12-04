@@ -38,8 +38,8 @@
 #include "Debugging.h"
 
 #ifdef _MSC_VER
-#pragma warning ( push )
-#pragma warning ( disable : 4351 )
+#pragma warning (push)
+#pragma warning (disable : 4351)
 #endif
 
 const double VideoSource::FPS_7_5  = 7.5;
@@ -53,24 +53,24 @@ const double VideoSource::FPS_60   = 60.0;
  * @param imageView The ImageView to use to display the images.
  * @param recordingTimer The QLineEdit item to update with time
  */
-VideoSource::VideoSource(const CameraDescription& camera, ImageView& imageView, QLineEdit* recordingTimer ) :
-    m_camera( camera ),
+VideoSource::VideoSource(const CameraDescription& camera, ImageView& imageView, QLineEdit* recordingTimer) :
+    m_camera(camera),
     m_captureThread(),
-    m_imageView( imageView ),
+    m_imageView(imageView),
     m_displayedImage(),
     m_framesTimer(),
-    m_frameNumber( 0 ),
+    m_frameNumber(0),
     m_frameDurationsMs(),
     m_videoWriter(),
     m_startTime(),
-    m_recordingTimer( recordingTimer )
+    m_recordingTimer(recordingTimer)
 {
     m_framesTimer.start();
     std::fill_n(m_frameDurationsMs, NUM_FRAMES_TO_AVERAGE, 0.0);
 }
 
 #ifdef _MSC_VER
-#pragma warning ( pop )
+#pragma warning (pop)
 #endif
 
 /** @brief Destroy the VideoSource after waiting for the CaptureThread to finish
@@ -96,7 +96,7 @@ const QSize VideoSource::GetImageSize() const
  *
  * @param videoWriter The AviWriter to record to.
  */
-void VideoSource::RecordTo( std::unique_ptr< AviWriter >&& videoWriter )
+void VideoSource::RecordTo(std::unique_ptr< AviWriter >&& videoWriter)
 {
     m_startTime.start();
     m_videoWriter.reset(videoWriter.release());
@@ -116,22 +116,22 @@ void VideoSource::StopRecording()
  *
  * @param fps The frame rate to use for the camera.
  */
-void VideoSource::StartUpdatingImage( double fps )
+void VideoSource::StartUpdatingImage(double fps)
 {
     StopUpdatingImage();
 
-    CaptureThread* capture = new CaptureThread( m_camera.CreateVideoSequence( fps ) );
+    CaptureThread* capture = new CaptureThread(m_camera.CreateVideoSequence(fps));
 
-    QObject::connect( capture,
-                      SIGNAL( GotImage( const QImage&, const timespec, const double ) ),
+    QObject::connect(capture,
+                      SIGNAL(GotImage(const QImage&, const timespec, const double)),
                       this,
-                      SLOT( UpdateDisplayedImage( const QImage, const timespec, const double ) ),
-                      Qt::AutoConnection );
-    QObject::connect( capture,
-                      SIGNAL( finished() ),
+                      SLOT(UpdateDisplayedImage(const QImage, const timespec, const double)),
+                      Qt::AutoConnection);
+    QObject::connect(capture,
+                      SIGNAL(finished()),
                       this,
-                      SLOT( ResetCapture() ),
-                      Qt::AutoConnection );
+                      SLOT(ResetCapture()),
+                      Qt::AutoConnection);
 
     m_captureThread.reset(capture);
 }
@@ -165,39 +165,39 @@ void VideoSource::StopUpdatingImage()
  *
  * @param newImage The new image received from the camera.
  */
-void VideoSource::UpdateDisplayedImage( const QImage newImage, const timespec stamp, const double fps )
+void VideoSource::UpdateDisplayedImage(const QImage newImage, const timespec stamp, const double fps)
 {
-    if ( m_videoWriter.get() )
+    if (m_videoWriter.get())
     {
-        m_videoWriter->addFrame( reinterpret_cast< const char* >( newImage.constBits() ),
+        m_videoWriter->addFrame(reinterpret_cast< const char* >(newImage.constBits()),
                                  newImage.width(),
                                  newImage.height(),
-                                 stamp );
-        if ( m_recordingTimer )
+                                 stamp);
+        if (m_recordingTimer)
         {
             UpdateRecordingTimer();
         }
     }
 
     m_displayedImage = newImage.rgbSwapped();
-    SetImageAndUpdateFpsDisplay( fps );
+    SetImageAndUpdateFpsDisplay(fps);
     m_imageView.update();
 }
 
 bool VideoSource::IsRecording() const
 {
-    return ( m_videoWriter.get() != 0 );
+    return (m_videoWriter.get() != 0);
 }
 
 /** @brief Actually set the new and update the caption with the frame rate.
  *
  *  The frame rate is very approximate & based on the time between calls to this function.
  */
-void VideoSource::SetImageAndUpdateFpsDisplay( double devFps )
+void VideoSource::SetImageAndUpdateFpsDisplay(double devFps)
 {
-    if ( !m_displayedImage.isNull() )
+    if (!m_displayedImage.isNull())
     {
-        m_imageView.SetImage( m_displayedImage );
+        m_imageView.SetImage(m_displayedImage);
 
         static const double MSEC_PER_SEC = 1000.0;
         const double frameDurationMs = (double)m_framesTimer.restart();
@@ -205,16 +205,16 @@ void VideoSource::SetImageAndUpdateFpsDisplay( double devFps )
         m_frameDurationsMs[ m_frameNumber%NUM_FRAMES_TO_AVERAGE ] = frameDurationMs;
         m_frameNumber++;
 
-        const double avgFrameDurationMs = std::accumulate( m_frameDurationsMs,
+        const double avgFrameDurationMs = std::accumulate(m_frameDurationsMs,
                                                            m_frameDurationsMs+NUM_FRAMES_TO_AVERAGE,
-                                                           0.0 ) / NUM_FRAMES_TO_AVERAGE;
+                                                           0.0) / NUM_FRAMES_TO_AVERAGE;
 
         const double avgFps = MSEC_PER_SEC / avgFrameDurationMs;
 
-        m_imageView.SetCaption( QString( "%1x%2@%3(%4)" ).arg( m_displayedImage.width() )
-                                                         .arg( m_displayedImage.height() )
-                                                         .arg( devFps, 5, 'f', 2 )
-                                                         .arg( avgFps, 5, 'f', 2 ) );
+        m_imageView.SetCaption(QString("%1x%2@%3(%4)").arg(m_displayedImage.width())
+                                                         .arg(m_displayedImage.height())
+                                                         .arg(devFps, 5, 'f', 2)
+                                                         .arg(avgFps, 5, 'f', 2));
     }
 }
 
@@ -226,7 +226,7 @@ void VideoSource::UpdateRecordingTimer()
     int delta_ms = m_startTime.elapsed();
 
     QTime time = QTime(0,0);
-    m_recordingTimer->setText( time.addMSecs( delta_ms ).toString("hh:mm:ss:zzz") );
+    m_recordingTimer->setText(time.addMSecs(delta_ms).toString("hh:mm:ss:zzz"));
 }
 
 /** @brief Is the VideoSource getting images from the specified camera?
@@ -235,9 +235,9 @@ void VideoSource::UpdateRecordingTimer()
  * @return @a true if we're getting images from the camera described by @a cameraDescription,
  *         @a false otherwise.
  */
-bool VideoSource::IsFrom( const CameraDescription& cameraDescription ) const
+bool VideoSource::IsFrom(const CameraDescription& cameraDescription) const
 {
-    if ( m_camera.UniqueId() == cameraDescription.UniqueId() )
+    if (m_camera.UniqueId() == cameraDescription.UniqueId())
     {
         return true;
     }

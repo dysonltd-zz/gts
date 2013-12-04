@@ -32,11 +32,11 @@
 CameraDescription::CameraDescription()
     :
     m_isOfflineFileOnly(false),
-    m_api        ( 0 ),
+    m_api        (0),
     m_name       (),
     m_description(),
     m_uniqueId   (),
-    m_apiIndex   ( static_cast< size_t >( -1 ) )
+    m_apiIndex   (static_cast< size_t >(-1))
 {
 }
 
@@ -44,25 +44,25 @@ CameraDescription::CameraDescription()
  *
  *  @param api The API in which the camera was enumerated.
  */
-CameraDescription::CameraDescription( const CameraApi& api )
+CameraDescription::CameraDescription(const CameraApi& api)
     :
     m_isOfflineFileOnly(false),
-    m_api        ( &api ),
+    m_api        (&api),
     m_name       (),
     m_description(),
     m_uniqueId   (),
-    m_apiIndex   ( static_cast< size_t >( -1 ) )
+    m_apiIndex   (static_cast< size_t >(-1))
 {
 }
 
 CameraDescription::CameraDescription(const bool isOffline)
     :
     m_isOfflineFileOnly(isOffline),
-    m_api        ( 0 ),
+    m_api        (0),
     m_name       (),
     m_description(),
     m_uniqueId   (),
-    m_apiIndex   ( static_cast< size_t >( -1 ) )
+    m_apiIndex   (static_cast< size_t >(-1))
 {
 }
 
@@ -110,18 +110,18 @@ const std::wstring& CameraDescription::UniqueId() const
  *  this camera. If this is a null description a null pointer is returned. The
  *  caller takes ownership if the pointer is valid.
  */
-VideoSequence* const CameraDescription::CreateVideoSequence( double fps ) const
+VideoSequence* const CameraDescription::CreateVideoSequence(double fps) const
 {
     VideoSequence* newSequence = 0;
 
-    if ( m_api ) { newSequence = m_api->CreateVideoSequenceForCamera( *this ); }
+    if (m_api) { newSequence = m_api->CreateVideoSequenceForCamera(*this); }
 
-    if ( newSequence )
+    if (newSequence)
     {
         double newFrameRate = 0.0;
-        if ( fps > 0.0 ) { newFrameRate = fps; }
+        if (fps > 0.0) { newFrameRate = fps; }
 
-        newSequence->SetFrameRate( newFrameRate );
+        newSequence->SetFrameRate(newFrameRate);
     }
 
     return newSequence;
@@ -133,9 +133,9 @@ VideoSequence* const CameraDescription::CreateVideoSequence( double fps ) const
  *  @return A CameraDescription which is identical to this one except that it has
  *  its name set to @a name.
  */
-const CameraDescription CameraDescription::WithName( const std::wstring& name ) const
+const CameraDescription CameraDescription::WithName(const std::wstring& name) const
 {
-    CameraDescription newDescription( *this );
+    CameraDescription newDescription(*this);
     newDescription.m_name = name;
     return newDescription;
 }
@@ -146,9 +146,9 @@ const CameraDescription CameraDescription::WithName( const std::wstring& name ) 
  *  @return A CameraDescription which is identical to this one except that it has
  *  its description set to @a description.
  */
-const CameraDescription CameraDescription::WithDescription( const std::wstring& description ) const
+const CameraDescription CameraDescription::WithDescription(const std::wstring& description) const
 {
-    CameraDescription newDescription( *this );
+    CameraDescription newDescription(*this);
     newDescription.m_description = description;
     return newDescription;
 }
@@ -159,34 +159,34 @@ const CameraDescription CameraDescription::WithDescription( const std::wstring& 
  *  @return A CameraDescription which is identical to this one except that it has
  *  its unique id set to @a uniqueId.
  */
-const CameraDescription CameraDescription::WithUniqueId( const std::wstring& uniqueId ) const
+const CameraDescription CameraDescription::WithUniqueId(const std::wstring& uniqueId) const
 {
-    CameraDescription newDescription( *this );
+    CameraDescription newDescription(*this);
     newDescription.m_uniqueId = uniqueId;
     return newDescription;
 }
 
 const QString CameraDescription::ToPlainText() const
 {
-    const QString plainText( QString( "%1\n%2\n%3" )
-                            .arg( QString::fromStdWString( Name() ) )
-                            .arg( QString::fromStdWString( Description() ) )
-                            .arg( QString::fromStdWString( UniqueId() ) ) );
+    const QString plainText(QString("%1\n%2\n%3")
+                            .arg(QString::fromStdWString(Name()))
+                            .arg(QString::fromStdWString(Description()))
+                            .arg(QString::fromStdWString(UniqueId())));
     return plainText;
 }
 
 const QString CameraDescription::ToRichText() const
 {
-    const QString richText( QCoreApplication::translate( "CameraDescription",
+    const QString richText(QCoreApplication::translate("CameraDescription",
                               "<head/>\n"
                               "<body>\n"
                                   "<p><strong>Name:</strong> %1</p>\n"
                                   "<p><strong>Description:</strong> %2</p>\n"
                                   "<p><strong>Unique ID:</strong> %3</p>\n"
-                              "</body>" )
-                                .arg( QString::fromStdWString( Name() ) )
-                                .arg( QString::fromStdWString( Description() ) )
-                                .arg( QString::fromStdWString( UniqueId() ) ) );
+                              "</body>")
+                                .arg(QString::fromStdWString(Name()))
+                                .arg(QString::fromStdWString(Description()))
+                                .arg(QString::fromStdWString(UniqueId())));
     return richText;
 }
 
@@ -204,10 +204,10 @@ QTableWidgetItem* const CameraDescription::CreateTableItem() const
 const QSize CameraDescription::GetImageSize() const
 {
      /// @todo Add some error checking to video sequence creation?
-    std::auto_ptr< VideoSequence > videoSequence( CreateVideoSequence( -1.0 ) );
+    std::auto_ptr< VideoSequence > videoSequence(CreateVideoSequence(-1.0));
 
     const int width  = videoSequence->GetFrameWidth();
     const int height = videoSequence->GetFrameHeight();
 
-    return QSize( width, height );
+    return QSize(width, height);
 }

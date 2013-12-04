@@ -24,68 +24,69 @@
 
 #include "FileUtilities.h"
 
-UnknownLengthProgressDlg::UnknownLengthProgressDlg( QWidget* const parent )
+UnknownLengthProgressDlg::UnknownLengthProgressDlg(QWidget* const parent)
 :
-    QWidget( parent ),
-    m_bar( new QProgressBar( this ) ),
-    m_layout( new QGridLayout( this ) ),
-    m_label( new QLabel( this ) ),
-    m_allowClose( false )
+    QWidget(parent),
+    m_bar(new QProgressBar(this)),
+    m_layout(new QGridLayout(this)),
+    m_label(new QLabel(this)),
+    m_allowClose(false)
 {
-    setWindowModality( Qt::ApplicationModal );
-    setLayout( m_layout );
-    m_bar->setTextVisible( false );
-    m_bar->setRange( 0, 0 );
-    setWindowModality( Qt::ApplicationModal );
-    setWindowFlags( Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint );
-    layout()->addWidget( m_bar );
-    layout()->addWidget( m_label );
-    setAttribute( Qt::WA_DeleteOnClose );
+    setWindowModality(Qt::ApplicationModal);
+    setLayout(m_layout);
+    m_bar->setTextVisible(false);
+    m_bar->setRange(0, 0);
+    setWindowModality(Qt::ApplicationModal);
+    setWindowFlags(Qt::Dialog | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+    layout()->addWidget(m_bar);
+    layout()->addWidget(m_label);
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
-void UnknownLengthProgressDlg::Start( const QString& title, const QString& message )
+void UnknownLengthProgressDlg::Start(const QString& title, const QString& message)
 {
-    setWindowTitle( title );
-    SetLabelText( message );
+    setWindowTitle(title);
+    SetLabelText(message);
     show();
     AdjustGeometry();
 }
 
-void UnknownLengthProgressDlg::Complete( const QString& title, const QString& message, const QString& dirPath)
+void UnknownLengthProgressDlg::Complete(const QString& title, const QString& message, const QString& dirPath)
 {
-    setWindowTitle( title );
-    SetLabelText( message );
+    setWindowTitle(title);
+    SetLabelText(message);
     const int maxVal = 1;
-    m_bar->setRange( 0, maxVal );
-    m_bar->setValue( maxVal );
+    m_bar->setRange(0, maxVal);
+    m_bar->setValue(maxVal);
     m_allowClose = true;
 
     QGridLayout* childGridLayout = new QGridLayout();
 
-    QPushButton* const okBtn = new QPushButton( "O&K", this );
-    QObject::connect( okBtn,
-                      SIGNAL( clicked() ),
+    QPushButton* const okBtn = new QPushButton("O&K", this);
+    QObject::connect(okBtn,
+                      SIGNAL(clicked()),
                       this,
-                      SLOT( close() ) );
+                      SLOT(close()));
     okBtn->setFocus();
-    okBtn->setDefault( true );
+    okBtn->setDefault(true);
     childGridLayout->addWidget(okBtn,0,0,1,1,Qt::AlignRight);
+
     // if directory passed in, create open button
-    if ( !dirPath.isEmpty() )
+    if (!dirPath.isEmpty())
     {
-        QPushButton* const openBtn = new QPushButton( "&Open", this );
+        QPushButton* const openBtn = new QPushButton("&Open", this);
 
         QSignalMapper* signalMapper = new QSignalMapper(this) ;
-        QObject::connect( openBtn,
-                          SIGNAL( clicked() ),
+        QObject::connect(openBtn,
+                          SIGNAL(clicked()),
                           signalMapper,
-                          SLOT( map() ) );
+                          SLOT(map()));
 
         signalMapper->setMapping(openBtn, dirPath);
         QObject::connect(signalMapper,
-                         SIGNAL( mapped(const QString &)),
+                         SIGNAL(mapped(const QString &)),
                          this,
-                         SLOT( ShowInGraphicalShell(const QString &) ) ) ;
+                         SLOT(ShowInGraphicalShell(const QString &))) ;
 
         openBtn->setFocus();
         childGridLayout->addWidget(openBtn,0,1,1,1,Qt::AlignRight);
@@ -101,30 +102,30 @@ void UnknownLengthProgressDlg::ForceClose()
     close();
 }
 
-void UnknownLengthProgressDlg::closeEvent( QCloseEvent* event )
+void UnknownLengthProgressDlg::closeEvent(QCloseEvent* event)
 {
-    if ( event && !m_allowClose )
+    if (event && !m_allowClose)
     {
         event->ignore();
     }
 }
 
-void UnknownLengthProgressDlg::SetLabelText( const QString& message )
+void UnknownLengthProgressDlg::SetLabelText(const QString& message)
 {
-    m_label->setText( message );
-    m_label->setVisible( !message.isEmpty() );
+    m_label->setText(message);
+    m_label->setVisible(!message.isEmpty());
 }
 
 void UnknownLengthProgressDlg::AdjustGeometry()
 {
     adjustSize();
-    if ( parentWidget() )
+    if (parentWidget())
     {
         const int x = parentWidget()->width()/2 - width()/2;
         const int y = parentWidget()->height()/2 - height()/2;
-        const QPoint pos( parentWidget()->mapToGlobal( QPoint( x, y ) ) );
-        const QRect  rect( pos, size() );
-        setGeometry( rect );
+        const QPoint pos(parentWidget()->mapToGlobal(QPoint(x, y)));
+        const QRect  rect(pos, size());
+        setGeometry(rect);
     }
 }
 
