@@ -185,7 +185,7 @@ if(MINGW)
 elseif(MSVC)
     target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt strmiids.lib )
 elseif(UNIX)
-    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt )
+    target_link_libraries( gts ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt rt )
 endif()
 
 # ----------------------------------------------------------------------------
@@ -229,7 +229,7 @@ if(GTS_TESTS)
         link_directories( ${gtest_BINARY_DIR} )
         target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} Log4Qt gtest strmiids.lib )
     elseif(UNIX)
-        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt gtest )
+        target_link_libraries( gts_test ${OpenCV2_LIBRARIES} ${QT_LIBRARIES} ${UNICAP_LIBRARIES} Log4Qt gtest rt )
     endif()
 endif()
 
