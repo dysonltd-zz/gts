@@ -380,7 +380,7 @@ const ExitStatus::Flags PostProcessWidget::PostProcess(const WbConfig& postProcC
 
         /// @todo not handling multiple camera resolutions
 
-        float resolution = m_ui->m_postProcessResolutionSpinBox->value();
+        float resolution = m_ui->m_postProcessResolutionDoubleSpinBox->value();
 
         if (!metrics.LoadMetrics(metricsConfig, firstCamPosCalConfig, resolution))
         {

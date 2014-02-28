@@ -150,23 +150,26 @@
              </property>
             </widget>
            </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Process Resolution</string>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="1">
-            <widget class="QSpinBox" name="m_postProcessResolutionSpinBox">
+            <widget class="QDoubleSpinBox" name="m_postProcessResolutionDoubleSpinBox">
              <property name="toolTip">
               <string>Camera resolution used to calculate coverage</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="value">
-              <number>15</number>
+             <property name="singleStep">
+              <double>0.500000000000000</double>
              </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Process Resolution</string>
+             <property name="value">
+              <double>15.000000000000000</double>
              </property>
             </widget>
            </item>
