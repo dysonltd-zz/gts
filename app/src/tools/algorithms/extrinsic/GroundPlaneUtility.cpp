@@ -358,7 +358,7 @@ namespace GroundPlaneUtility
             cvDrawChessboardCorners(view, boardSize, cornerBuffer, cornerCount, found);
         }
 
-        delete cornerBuffer;
+        cvFree(&cornerBuffer);
 
         return imagePoints;
     }
