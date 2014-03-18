@@ -25,7 +25,7 @@ The GTS project welcomes new contributors. Please use this document as a guideli
 
 ## Submitting Changes
 
-* Sign the [Contributor License Agreement](INDIVIDUAL_CLA.txt) and email a PDF copy to akram.hussein@dyson.com
+* Sign the Contributor License Agreement (see below for options) and email a PDF copy to akram.hussein@dyson.com
 * Push your changes to a new branch in your fork of the repository e.g. `dev-issue44`.
 * Submit a [Pull Request](https://github.com/dysonltd/gts/compare/)
 * Update the issue with a link to the Pull Request.
