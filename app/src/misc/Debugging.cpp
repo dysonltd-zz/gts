@@ -21,10 +21,10 @@
 #ifndef NDEBUG
 namespace Debugging
 {
-    std::unique_ptr< DestructorPrinter > Print(const QString& file,
+    std::unique_ptr< DestructorPrinter > Print( const QString& file,
                              const int line,
                              const QString& function,
-                             const QString& msg)
+                             const QString& msg )
     {
         qDebug() << "At: " << file << ":" << line << " in function: " << function << "\n\t";
         return std::unique_ptr< DestructorPrinter >(new DestructorPrinter(msg));

@@ -20,21 +20,21 @@
 
 namespace RobotMetricsSchema
 {
-    const KeyName schemaName              ("metrics");
+    const KeyName schemaName              ( "metrics" );
 
-    const KeyName dimensionsGroup         ("dimensions");
-    const KeyName dimensionsHeightKey     ("heightCm");
-    const KeyName dimensionsBaseRadiusKey ("baseRadiusCm");
+    const KeyName dimensionsGroup         ( "dimensions" );
+    const KeyName dimensionsHeightKey     ( "heightCm" );
+    const KeyName dimensionsBaseRadiusKey ( "baseRadiusCm" );
 
-    const KeyName targetGroup             ("target");
-    const KeyName targetDiagonalCmKey     ("targetDiagonalCm");
-    const KeyName targetOffsetXKey        ("targetOffsetXCm");
-    const KeyName targetOffsetYKey        ("targetOffsetYCm");
-    const KeyName targetRotationKey       ("targetRotationDegrees");
-    const KeyName targetTypeKey           ("targetType");
+    const KeyName targetGroup             ( "target" );
+    const KeyName targetDiagonalCmKey     ( "targetDiagonalCm" );
+    const KeyName targetOffsetXKey        ( "targetOffsetXCm" );
+    const KeyName targetOffsetYKey        ( "targetOffsetYCm" );
+    const KeyName targetRotationKey       ( "targetRotationDegrees" );
+    const KeyName targetTypeKey           ( "targetType" );
 
-    const KeyName brushBarGroup           ("brushBar");
-    const KeyName brushBarLengthKey       ("lengthCm");
-    const KeyName brushBarOffsetKey       ("offsetCm");
+    const KeyName brushBarGroup           ( "brushBar" );
+    const KeyName brushBarLengthKey       ( "lengthCm" );
+    const KeyName brushBarOffsetKey       ( "offsetCm" );
 }
 

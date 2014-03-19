@@ -53,7 +53,7 @@
 #include <QGridLayout>
 #include <QtGlobal>
 
-TrackView::TrackView(QWidget *parent)
+TrackView::TrackView( QWidget *parent )
 {
     Q_UNUSED(parent);
 
@@ -64,43 +64,43 @@ TrackView::TrackView(QWidget *parent)
     setLayout(layout);
 }
 
-IplImage* TrackView::loadFloorPlan(const WbConfig& runConfig)
+IplImage* TrackView::loadFloorPlan( const WbConfig& runConfig )
 {
     Collection m_rooms = RoomsCollection();
-    m_rooms.SetConfig(runConfig);
+    m_rooms.SetConfig( runConfig );
 
-    const KeyValue roomId = runConfig.GetKeyValue(RunSchema::roomIdKey);
-    const WbConfig roomConfig = m_rooms.ElementById(roomId.ToKeyId());
+    const KeyValue roomId = runConfig.GetKeyValue( RunSchema::roomIdKey );
+    const WbConfig roomConfig = m_rooms.ElementById( roomId.ToKeyId() );
 
     const WbConfig roomLayoutConfig(
-                roomConfig.GetSubConfig(RoomLayoutSchema::schemaName));
+                roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
 
-    const QString floorPlanName(roomLayoutConfig.GetAbsoluteFileNameFor("floor_plan.png"));
+    const QString floorPlanName( roomLayoutConfig.GetAbsoluteFileNameFor( "floor_plan.png" ) );
 
     m_baseImg = cvLoadImage(floorPlanName.toAscii().data(), CV_LOAD_IMAGE_GRAYSCALE);
 
     return m_baseImg;
 }
 
-bool TrackView::loadMetrics(const WbConfig& runConfig)
+bool TrackView::loadMetrics( const WbConfig& runConfig )
 {
-    WbConfig trackConfig = runConfig.GetSubConfig(TrackRobotSchema::schemaName);
+    WbConfig trackConfig = runConfig.GetSubConfig( TrackRobotSchema::schemaName );
 
     Collection m_rooms = RoomsCollection();
-    m_rooms.SetConfig(runConfig);
+    m_rooms.SetConfig( runConfig );
 
-    const KeyValue roomId = runConfig.GetKeyValue(RunSchema::roomIdKey);
-    const WbConfig roomConfig = m_rooms.ElementById(roomId.ToKeyId());
+    const KeyValue roomId = runConfig.GetKeyValue( RunSchema::roomIdKey );
+    const WbConfig roomConfig = m_rooms.ElementById( roomId.ToKeyId() );
 
-    std::vector<WbConfig> camPosConfigs = GetCameraPositionsConfigs(roomConfig);
-    const WbConfig firstCamPosConfigForThisRun(camPosConfigs.at(0));
+    std::vector<WbConfig> camPosConfigs = GetCameraPositionsConfigs( roomConfig );
+    const WbConfig firstCamPosConfigForThisRun( camPosConfigs.at(0) );
 
     WbConfig firstCamPosCalibrationCfg;
-    firstCamPosCalibrationCfg = firstCamPosConfigForThisRun.GetSubConfig(ExtrinsicCalibrationSchema::schemaName);
-    const KeyValue squareSizeCmKey = firstCamPosCalibrationCfg.GetKeyValue(ExtrinsicCalibrationSchema::gridSquareSizeInCmKey);
-    const KeyValue squareSizePxKey = firstCamPosCalibrationCfg.GetKeyValue(ExtrinsicCalibrationSchema::gridSquareSizeInPxKey);
+    firstCamPosCalibrationCfg = firstCamPosConfigForThisRun.GetSubConfig( ExtrinsicCalibrationSchema::schemaName );
+    const KeyValue squareSizeCmKey = firstCamPosCalibrationCfg.GetKeyValue( ExtrinsicCalibrationSchema::gridSquareSizeInCmKey );
+    const KeyValue squareSizePxKey = firstCamPosCalibrationCfg.GetKeyValue( ExtrinsicCalibrationSchema::gridSquareSizeInPxKey );
 
-    const KeyValue resolutionKey = trackConfig.GetKeyValue(TrackRobotSchema::GlobalTrackingParams::resolution);
+    const KeyValue resolutionKey = trackConfig.GetKeyValue( TrackRobotSchema::GlobalTrackingParams::resolution );
 
     m_metricsScaleFactor = 1.0;
 
@@ -114,13 +114,13 @@ void TrackView::setModel(QAbstractItemModel *model)
     updateView();
 }
 
-void TrackView::rowsRemoved ()
+void TrackView::rowsRemoved ( )
 {
     updateView();
 }
 
-void TrackView::dataChanged (const QModelIndex& topLeft,
-                              const QModelIndex& bottomRight)
+void TrackView::dataChanged ( const QModelIndex& topLeft,
+                              const QModelIndex& bottomRight )
 {
     Q_UNUSED(topLeft);
     Q_UNUSED(bottomRight);
@@ -128,8 +128,8 @@ void TrackView::dataChanged (const QModelIndex& topLeft,
     updateView();
 }
 
-void TrackView::selectionChanged (const QItemSelection& selected,
-                                   const QItemSelection& deselected)
+void TrackView::selectionChanged ( const QItemSelection& selected,
+                                   const QItemSelection& deselected )
 {
     QModelIndexList selectedList = selected.indexes();
 
@@ -153,16 +153,16 @@ void TrackView::updateView()
     IplImage* compImg = 0;
     IplImage* compImgCol = 0;
 
-    CvScalar colours[4] = { CV_RGB(0,   0,   255),
-                            CV_RGB(0,   255, 0  ),
-                            CV_RGB(255, 255, 0  ),
-                            CV_RGB(0,   255, 255) };
+    CvScalar colours[4] = { CV_RGB( 0,   0,   255 ),
+                            CV_RGB( 0,   255, 0   ),
+                            CV_RGB( 255, 255, 0   ),
+                            CV_RGB( 0,   255, 255 ) };
 
-    compImg = cvCloneImage(m_baseImg);
+    compImg = cvCloneImage( m_baseImg );
 
     //// Plot logs
-    compImgCol = cvCreateImage(cvSize(compImg->width, compImg->height), compImg->depth, 3);
-    cvConvertImage(compImg, compImgCol); // colour copy of composite image
+    compImgCol = cvCreateImage( cvSize( compImg->width, compImg->height ), compImg->depth, 3 );
+    cvConvertImage( compImg, compImgCol ); // colour copy of composite image
 
     float timeThresh = 0.5f;
 
@@ -172,39 +172,39 @@ void TrackView::updateView()
     {
         if (m_model->data(m_model->index(row, 0), TrackModel::IS_DELETED).toBool())
         {
-            avg.push_back(TrackEntry(cvPoint2D32f(m_model->data(m_model->index(row, TrackModel::COLUMN_POSX)).toFloat(),
+            avg.push_back( TrackEntry( cvPoint2D32f( m_model->data(m_model->index(row, TrackModel::COLUMN_POSX)).toFloat(),
                                                      m_model->data(m_model->index(row, TrackModel::COLUMN_POSY)).toFloat() * -1.0),
                                                      m_model->data(m_model->index(row, TrackModel::COLUMN_HEADING)).toFloat(),
                                                      m_model->data(m_model->index(row, TrackModel::COLUMN_ERROR)).toFloat(),
                                                      m_model->data(m_model->index(row, TrackModel::COLUMN_TIME)).toDouble(),
-                                                     m_model->data(m_model->index(row, TrackModel::COLUMN_WGM)).toFloat()));
+                                                     m_model->data(m_model->index(row, TrackModel::COLUMN_WGM)).toFloat() ) );
         }
     }
 
-    ScanUtility::PlotLog(avg,
+    ScanUtility::PlotLog( avg,
                           compImgCol,
                           colours[0],
-                          cvRect(0, 0, 0, 0),
+                          cvRect( 0, 0, 0, 0 ),
                           0,
                           1,
-                          timeThresh);
+                          timeThresh );
 
     for (int row = 0; row < m_model->rowCount(); ++row)
     {
         if (m_model->data(m_model->index(row, 0), TrackModel::IS_SELECTED).toBool())
         {
-            TrackEntry pt(cvPoint2D32f(m_model->data(m_model->index(row, TrackModel::COLUMN_POSX)).toFloat(),
+            TrackEntry pt( cvPoint2D32f( m_model->data(m_model->index(row, TrackModel::COLUMN_POSX)).toFloat(),
                                          m_model->data(m_model->index(row, TrackModel::COLUMN_POSY)).toFloat() * -1.0),
                                          m_model->data(m_model->index(row, TrackModel::COLUMN_HEADING)).toFloat(),
                                          m_model->data(m_model->index(row, TrackModel::COLUMN_ERROR)).toFloat(),
                                          m_model->data(m_model->index(row, TrackModel::COLUMN_TIME)).toDouble(),
-                                         m_model->data(m_model->index(row, TrackModel::COLUMN_WGM)).toFloat());
-            ScanUtility::PlotPoint(pt,
+                                         m_model->data(m_model->index(row, TrackModel::COLUMN_WGM)).toFloat() );
+            ScanUtility::PlotPoint( pt,
                                     compImgCol,
                                     colours[2],
-                                    cvRect(0, 0, 0, 0),
+                                    cvRect( 0, 0, 0, 0 ),
                                     0,
-                                    1);
+                                    1 );
         }
     }
 
@@ -213,25 +213,25 @@ void TrackView::updateView()
     const int DONT_FLIP = 0;
     int flipFlag = DONT_FLIP;
 
-    IplImage* img = cvCreateImage(cvSize(compImgCol->width,
-                                           compImgCol->height), IPL_DEPTH_8U, 3);
-    cvConvertImage(compImgCol, img);
+    IplImage* img = cvCreateImage( cvSize( compImgCol->width,
+                                           compImgCol->height ), IPL_DEPTH_8U, 3 );
+    cvConvertImage( compImgCol, img );
 
     // Convert from IplImage to QImage
-    const QSize imgSize(img->width,img->height);
-    qimage = QImage(imgSize, QImage::Format_RGB888);
+    const QSize imgSize( img->width,img->height );
+    qimage = QImage( imgSize, QImage::Format_RGB888 );
 
 
     CvMat mtxWrapper;
-    cvInitMatHeader(&mtxWrapper,
+    cvInitMatHeader( &mtxWrapper,
                      img->height,
                      img->width,
                      CV_8UC3,
-                     qimage.bits());
+                     qimage.bits() );
 
-    cvConvertImage(img, &mtxWrapper, flipFlag);
-    cvReleaseImage(&img);
+    cvConvertImage( img, &mtxWrapper, flipFlag );
+    cvReleaseImage( &img );
 
-    m_imageView.SetImage(qimage);
+    m_imageView.SetImage( qimage );
     m_imageView.update();
 }

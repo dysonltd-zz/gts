@@ -29,9 +29,9 @@ class PositionCollectionTool : public CollectionToolWidget
     Q_OBJECT
 
 public:
-    explicit PositionCollectionTool(CameraHardware& cameraHardware,
+    explicit PositionCollectionTool( CameraHardware& cameraHardware,
                                      QWidget* parent,
-                                     MainWindow& mainWindow);
+                                     MainWindow& mainWindow );
     ~PositionCollectionTool();
 
     virtual const QString Name() const;

@@ -28,14 +28,14 @@ namespace CrossCorrelation
         The patches have to be within the images.
         @return 0 if part of the patch is outside the image.
     **/
-    float Ncc2d(const IplImage* img1, const IplImage* img2, int x1, int y1, int x2, int y2, int ww, int wh)
+    float Ncc2d( const IplImage* img1, const IplImage* img2, int x1, int y1, int x2, int y2, int ww, int wh)
     {
         // make window dimensions odd
-        if (ww%2 == 0)
+        if ( ww%2 == 0 )
         {
             ww += 1;
         }
-        if (wh%2 == 0)
+        if ( wh%2 == 0 )
         {
             wh += 1;
         }
@@ -56,37 +56,37 @@ namespace CrossCorrelation
 
         // boundary checks
         bool ok = true;
-        ok &=  (c1==c2);
-        ok &= (x1-hww>=0 && x1+hww<w1);
-        ok &= (y1-hwh>=0 && y1+hwh<h1);
-        ok &= (x2-hww>=0 && x2+hww<w2);
-        ok &= (y2-hwh>=0 && y2+hwh<h2);
+        ok &=  ( c1==c2 );
+        ok &= ( x1-hww>=0 && x1+hww<w1 );
+        ok &= ( y1-hwh>=0 && y1+hwh<h1 );
+        ok &= ( x2-hww>=0 && x2+hww<w2 );
+        ok &= ( y2-hwh>=0 && y2+hwh<h2 );
         //assert(ok);
 
-        if (!ok)
+        if ( !ok )
         {
             return 0.f;
         }
 
         // setup image row pointers
-        const char* pStart1 = img1->imageData + ((y1-hwh) * step1) + ((x1-hww) * c1);
-        const char* pEnd1 = pStart1 + (ww * c1);
+        const char* pStart1 = img1->imageData + ( (y1-hwh) * step1 ) + ( (x1-hww) * c1 );
+        const char* pEnd1 = pStart1 + ( ww * c1 );
 
-        const char* pStart2 = img2->imageData + ((y2-hwh) * step2) + ((x2-hww) * c2);
-        const char* pEnd2 = pStart2 + (ww * c2);
+        const char* pStart2 = img2->imageData + ( (y2-hwh) * step2 ) + ( (x2-hww) * c2 );
+        const char* pEnd2 = pStart2 + ( ww * c2 );
 
         // compute means
         unsigned int mean1 = 0;
         unsigned int mean2 = 0;
         unsigned int count = 0;
-        for (int y=0 ; y<wh; ++y)
+        for ( int y=0 ; y<wh; ++y )
         {
             const char* pImg1 = pStart1;
             pStart1 += step1;
             const char* pImg2 = pStart2;
             pStart2 += step2;
 
-            while (pImg2 != pEnd2)
+            while ( pImg2 != pEnd2 )
             {
                 unsigned char val1 = *pImg1++;
                 unsigned char val2 = *pImg2++;
@@ -103,24 +103,24 @@ namespace CrossCorrelation
         mean2 /= count;
 
         // Reset row pointers
-        pStart1 = img1->imageData + ((y1-hwh) * step1) + ((x1-hww) * c1);
-        pEnd1 = pStart1 + (ww * c1);
+        pStart1 = img1->imageData + ( (y1-hwh) * step1 ) + ( (x1-hww) * c1 );
+        pEnd1 = pStart1 + ( ww * c1 );
 
-        pStart2 = img2->imageData + ((y2-hwh) * step2) + ((x2-hww) * c2);
-        pEnd2 = pStart2 + (ww * c2);
+        pStart2 = img2->imageData + ( (y2-hwh) * step2 ) + ( (x2-hww) * c2 );
+        pEnd2 = pStart2 + ( ww * c2 );
 
         // Compute cross-correlation
         int corr = 0;
         unsigned int sq1 = 0;
         unsigned int sq2 = 0;
-        for (int y=0; y<wh; ++y)
+        for ( int y=0; y<wh; ++y )
         {
             const char* pImg1 = pStart1;
             pStart1 += step1;
             const char* pImg2 = pStart2;
             pStart2 += step2;
 
-            while (pImg2 != pEnd2)
+            while ( pImg2 != pEnd2 )
             {
                 unsigned char val1 = *pImg1++;
                 unsigned char val2 = *pImg2++;
@@ -138,7 +138,7 @@ namespace CrossCorrelation
         }
 
         // compute and return normalised cross correlation
-        float denom = sqrtf(sq1) * sqrtf(sq2);
+        float denom = sqrtf( sq1 ) * sqrtf( sq2 );
 
         return corr/denom;
     }
@@ -146,14 +146,14 @@ namespace CrossCorrelation
     /**
         Same as ncc2d but contributions of individual pixels are weighted by a radial mask.
     **/
-    float Ncc2dRadial(const IplImage* img1, const IplImage* img2, int x1, int y1, int x2, int y2, int ww, int wh)
+    float Ncc2dRadial( const IplImage* img1, const IplImage* img2, int x1, int y1, int x2, int y2, int ww, int wh)
     {
         // make window dimensions odd
-        if (ww%2 == 0)
+        if ( ww%2 == 0 )
         {
             ww += 1;
         }
-        if (wh%2 == 0)
+        if ( wh%2 == 0 )
         {
             wh += 1;
         }
@@ -174,11 +174,11 @@ namespace CrossCorrelation
 
         // boundary checks
         bool ok = true;
-        ok &=  (c1==c2);
-        ok &= (x1-hww>=0 && x1+hww<w1);
-        ok &= (y1-hwh>=0 && y1+hwh<h1);
-        ok &= (x2-hww>=0 && x2+hww<w2);
-        ok &= (y2-hwh>=0 && y2+hwh<h2);
+        ok &=  ( c1==c2 );
+        ok &= ( x1-hww>=0 && x1+hww<w1 );
+        ok &= ( y1-hwh>=0 && y1+hwh<h1 );
+        ok &= ( x2-hww>=0 && x2+hww<w2 );
+        ok &= ( y2-hwh>=0 && y2+hwh<h2 );
         //assert(ok);
 
         if (!ok)
@@ -187,11 +187,11 @@ namespace CrossCorrelation
         }
 
         // setup image row pointers
-        const char* pStart1 = img1->imageData + ((y1-hwh) * step1) + ((x1-hww) * c1);
-        const char* pEnd1 = pStart1 + (ww * c1);
+        const char* pStart1 = img1->imageData + ( (y1-hwh) * step1 ) + ( (x1-hww) * c1 );
+        const char* pEnd1 = pStart1 + ( ww * c1 );
 
-        const char* pStart2 = img2->imageData + ((y2-hwh) * step2) + ((x2-hww) * c2);
-        const char* pEnd2 = pStart2 + (ww * c2);
+        const char* pStart2 = img2->imageData + ( (y2-hwh) * step2 ) + ( (x2-hww) * c2 );
+        const char* pEnd2 = pStart2 + ( ww * c2 );
 
         // compute weighted means
         double mean1 = 0.0;
@@ -204,7 +204,7 @@ namespace CrossCorrelation
         float windowDiagonal = sqrtf(ww*ww + wh*wh);
         float radius = windowDiagonal*0.4f;
 
-        for (int y=0 ; y<wh; ++y)
+        for ( int y=0 ; y<wh; ++y )
         {
             const char* pImg1 = pStart1;
             const char* pImg2 = pStart2;
@@ -212,11 +212,11 @@ namespace CrossCorrelation
             ry = y-hwh;
             ry2 = ry*ry;
 
-            while (pImg2 != pEnd2)
+            while ( pImg2 != pEnd2 )
             {
                 rx = pImg1-pStart1-hww;
                 r = sqrtf(rx*rx + ry2);
-                w = expf(-powf(r/radius, 8.f)); // Compute radial weighting
+                w = expf( -powf( r/radius, 8.f ) ); // Compute radial weighting
                 wsum += w;
                 //*pImg2 = 255*w;
 
@@ -237,17 +237,17 @@ namespace CrossCorrelation
         mean2 /= wsum;
 
         // Reset row pointers
-        pStart1 = img1->imageData + ((y1-hwh) * step1) + ((x1-hww) * c1);
-        pEnd1 = pStart1 + (ww * c1);
+        pStart1 = img1->imageData + ( (y1-hwh) * step1 ) + ( (x1-hww) * c1 );
+        pEnd1 = pStart1 + ( ww * c1 );
 
-        pStart2 = img2->imageData + ((y2-hwh) * step2) + ((x2-hww) * c2);
-        pEnd2 = pStart2 + (ww * c2);
+        pStart2 = img2->imageData + ( (y2-hwh) * step2 ) + ( (x2-hww) * c2 );
+        pEnd2 = pStart2 + ( ww * c2 );
 
         // Compute cross-correlation
         double corr = 0.0;
         double sq1  = 0.0;
         double sq2  = 0.0;
-        for (int y=0; y < wh; ++y)
+        for ( int y=0; y < wh; ++y )
         {
             const char* pImg1 = pStart1;
             const char* pImg2 = pStart2;
@@ -255,11 +255,11 @@ namespace CrossCorrelation
             ry = y-hwh;
             ry2 = ry*ry;
 
-            while (pImg2 != pEnd2)
+            while ( pImg2 != pEnd2 )
             {
                 rx = pImg1-pStart1-hww;
                 r = sqrtf(rx*rx + ry2);
-                w = expf(-powf(r/radius, 8.f)); // Compute radial weighting
+                w = expf( -powf( r/radius, 8.f ) ); // Compute radial weighting
 
                 unsigned char val1 = *pImg1++;
                 unsigned char val2 = *pImg2++;
@@ -279,7 +279,7 @@ namespace CrossCorrelation
         }
 
         // compute and return normalised cross correlation
-        float denom = sqrtf(sq1 * sq2);
+        float denom = sqrtf( sq1 * sq2 );
         float ncc = corr/denom;
         return ncc;
     }
@@ -290,6 +290,6 @@ namespace CrossCorrelation
     void GetPatch(Patch* patch)
     {
         Q_UNUSED(patch);
-        assert((patch->width * patch->height) < PATCH_SIZE);
+        assert( (patch->width * patch->height) < PATCH_SIZE );
     }
 }

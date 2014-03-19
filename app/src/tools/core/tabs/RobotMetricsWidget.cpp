@@ -25,27 +25,27 @@
 #include "ImagePrintPreviewDlg.h"
 #include "TargetsCollection.h"
 
-RobotMetricsWidget::RobotMetricsWidget(QWidget* parent) :
-    Tool(parent, CreateSchema()),
-    m_ui(new Ui::RobotMetricsWidget)
+RobotMetricsWidget::RobotMetricsWidget( QWidget* parent ) :
+    Tool( parent, CreateSchema() ),
+    m_ui( new Ui::RobotMetricsWidget )
 {
-    m_ui->setupUi(this);
+    m_ui->setupUi( this );
 
     using namespace RobotMetricsSchema;
-    AddMapper(dimensionsHeightKey,     m_ui->m_dimensionsHeightSpinBox);
-    AddMapper(targetDiagonalCmKey,     m_ui->m_dimensionsTopRadiusSpinBox);
-    AddMapper(dimensionsBaseRadiusKey, m_ui->m_dimensionsBaseRadiusSpinBox);
+    AddMapper( dimensionsHeightKey,     m_ui->m_dimensionsHeightSpinBox );
+    AddMapper( targetDiagonalCmKey,     m_ui->m_dimensionsTopRadiusSpinBox );
+    AddMapper( dimensionsBaseRadiusKey, m_ui->m_dimensionsBaseRadiusSpinBox );
 
-    AddMapper(targetTypeKey, m_ui->m_targetTypeComboBox);
+    AddMapper( targetTypeKey, m_ui->m_targetTypeComboBox );
 
-    AddMapper(targetOffsetXKey,  m_ui->m_targetOffsetXSpinBox);
-    AddMapper(targetOffsetYKey,  m_ui->m_targetOffsetYSpinBox);
-    AddMapper(targetRotationKey, m_ui->m_targetRotationSpinBox);
+    AddMapper( targetOffsetXKey,  m_ui->m_targetOffsetXSpinBox );
+    AddMapper( targetOffsetYKey,  m_ui->m_targetOffsetYSpinBox );
+    AddMapper( targetRotationKey, m_ui->m_targetRotationSpinBox );
 
-    AddMapper(brushBarLengthKey,  m_ui->m_brushBarLengthSpinBox);
-    AddMapper(brushBarOffsetKey,  m_ui->m_brushBarOffsetSpinBox);
+    AddMapper( brushBarLengthKey,  m_ui->m_brushBarLengthSpinBox );
+    AddMapper( brushBarOffsetKey,  m_ui->m_brushBarOffsetSpinBox );
 
-    RegisterCollectionCombo(m_ui->m_targetTypeComboBox, TargetsCollection());
+    RegisterCollectionCombo( m_ui->m_targetTypeComboBox, TargetsCollection() );
 }
 
 RobotMetricsWidget::~RobotMetricsWidget()
@@ -59,7 +59,7 @@ bool RobotMetricsWidget::IsDataValid() const
 
     bool valid = true;
 
-    if (m_ui->m_dimensionsHeightSpinBox->value() == 0.0)
+    if ( m_ui->m_dimensionsHeightSpinBox->value() == 0.0 )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_dimensionsHeightLabel, true);
@@ -67,7 +67,7 @@ bool RobotMetricsWidget::IsDataValid() const
     else {
         Tool::HighlightLabel(m_ui->m_dimensionsHeightLabel, false);
     }
-    if (m_ui->m_dimensionsTopRadiusSpinBox->value() == 0.0)
+    if ( m_ui->m_dimensionsTopRadiusSpinBox->value() == 0.0 )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_dimensionsTopRadiusLabel, true);
@@ -75,7 +75,7 @@ bool RobotMetricsWidget::IsDataValid() const
     else {
         Tool::HighlightLabel(m_ui->m_dimensionsTopRadiusLabel, false);
     }
-    if (m_ui->m_dimensionsBaseRadiusSpinBox->value() == 0.0)
+    if ( m_ui->m_dimensionsBaseRadiusSpinBox->value() == 0.0 )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_dimensionsBaseRadiusLabel, true);
@@ -84,7 +84,7 @@ bool RobotMetricsWidget::IsDataValid() const
         Tool::HighlightLabel(m_ui->m_dimensionsBaseRadiusLabel, false);
     }
 
-    if (m_ui->m_targetTypeComboBox->currentText().isEmpty())
+    if ( m_ui->m_targetTypeComboBox->currentText().isEmpty() )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_targetTypeLabel, true);
@@ -97,7 +97,7 @@ bool RobotMetricsWidget::IsDataValid() const
 
 bool RobotMetricsWidget::CanClose() const
 {
-    if (!IsDataValid())
+    if ( !IsDataValid() )
         return false;
 
     return true;
@@ -112,25 +112,25 @@ const WbSchema RobotMetricsWidget::CreateSchema()
 {
     using namespace RobotMetricsSchema;
 
-    WbSchema schema(CreateWorkbenchSubSchema(schemaName, tr("Metrics")));
+    WbSchema schema( CreateWorkbenchSubSchema( schemaName, tr( "Metrics" ) ) );
 
-    schema.AddKeyGroup(dimensionsGroup,
+    schema.AddKeyGroup( dimensionsGroup,
                         WbSchemaElement::Multiplicity::One,
                         KeyNameList() << dimensionsHeightKey
-                                      << dimensionsBaseRadiusKey);
+                                      << dimensionsBaseRadiusKey );
 
-    schema.AddKeyGroup(targetGroup,
+    schema.AddKeyGroup( targetGroup,
                         WbSchemaElement::Multiplicity::One,
                         KeyNameList() << targetOffsetXKey
                                       << targetOffsetYKey
                                       << targetRotationKey
                                       << targetDiagonalCmKey
-                                      << targetTypeKey);
+                                      << targetTypeKey );
 
-    schema.AddKeyGroup(brushBarGroup,
+    schema.AddKeyGroup( brushBarGroup,
                         WbSchemaElement::Multiplicity::One,
                         KeyNameList() << brushBarLengthKey
-                                      << brushBarOffsetKey);
+                                      << brushBarOffsetKey );
 
     return schema;
 }

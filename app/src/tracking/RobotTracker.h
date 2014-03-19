@@ -59,17 +59,17 @@ public:
 
     virtual CvPoint2D32f GetPosition() const = 0;
     virtual float GetHeading()  const = 0;
-    virtual CvPoint2D32f GetBrushBarLeft(CvPoint2D32f position, float heading) const = 0;
-    virtual CvPoint2D32f GetBrushBarRight(CvPoint2D32f position, float heading) const = 0;
+    virtual CvPoint2D32f GetBrushBarLeft( CvPoint2D32f position, float heading ) const = 0;
+    virtual CvPoint2D32f GetBrushBarRight( CvPoint2D32f position, float heading ) const = 0;
 
-    virtual void SetPosition(CvPoint2D32f robotPosition) = 0;
+    virtual void SetPosition( CvPoint2D32f robotPosition ) = 0;
 
     virtual void SetCurrentImage(const IplImage* const pImg) = 0;
     virtual const IplImage* GetCurrentImage() const = 0;
-    virtual bool Track(double timeStampMillisecs) = 0;
-    virtual void Rewind(double timeStamp) = 0;
+    virtual bool Track( double timeStampMillisecs ) = 0;
+    virtual void Rewind( double timeStamp ) = 0;
 
-    virtual bool LoadTargetImage(const char* fileName) = 0;
+    virtual bool LoadTargetImage( const char* fileName ) = 0;
 
     virtual float GetError() const = 0;
     virtual const TrackHistory::TrackLog& GetHistory() const = 0;
@@ -88,21 +88,21 @@ public:
     virtual const RobotMetrics*      GetMetrics()        const = 0;
     virtual const CvPoint2D32f*      GetOffsetParams()    const;
 
-    virtual void ConvertLogForProcessing(TrackHistory::TrackLog& newlog, bool relative) const;
+    virtual void ConvertLogForProcessing( TrackHistory::TrackLog& newlog, bool relative ) const;
     virtual void WriteTrackData(const char* fileName, bool relative=false) const;
 
     virtual CvPoint2D32f AdjustTrackForRobotHeight(CvPoint2D32f pos, float heading) const;
 
-    virtual void SetParam(paramType param, float value) = 0;
+    virtual void SetParam( paramType param, float value ) = 0;
 
-    CvPoint2D32f ConvertTrackToCm(CvPoint2D32f pos) const;
-    CvPoint2D32f ConvertTrackToPx(CvPoint2D32f p) const;
+    CvPoint2D32f ConvertTrackToCm( CvPoint2D32f pos ) const;
+    CvPoint2D32f ConvertTrackToPx( CvPoint2D32f p ) const;
 
 protected:
     trackerStatus m_status; // status is recorded and managed in base class
 
 private:
-    RobotTracker(RobotTracker& rt); // Trackers are deliberately uncopyable!
+    RobotTracker( RobotTracker& rt ); // Trackers are deliberately uncopyable!
 };
 
 #endif // ROBOTTRACKER_H

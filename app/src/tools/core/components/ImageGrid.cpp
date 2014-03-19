@@ -29,17 +29,17 @@
 
 #include "Debugging.h"
 
-ImageGrid::ImageGrid(QWidget* parent) :
-    QScrollArea(parent),
-    m_ui(new Ui::ImageGrid),
-    m_zoom(1.0)
+ImageGrid::ImageGrid( QWidget* parent ) :
+    QScrollArea( parent ),
+    m_ui( new Ui::ImageGrid ),
+    m_zoom( 1.0 )
 {
-    m_ui->setupUi(this);
-    setContentsMargins(0, 0, 0, 0);
-    m_frame = new QFrame(this);
-    setWidget(m_frame);
-    m_gridLayout = new QGridLayout(m_frame);
-    m_frame->setLayout(m_gridLayout);
+    m_ui->setupUi( this );
+    setContentsMargins( 0, 0, 0, 0 );
+    m_frame = new QFrame( this );
+    setWidget( m_frame );
+    m_gridLayout = new QGridLayout( m_frame );
+    m_frame->setLayout( m_gridLayout );
 }
 
 ImageGrid::~ImageGrid()
@@ -51,17 +51,17 @@ ImageGrid::~ImageGrid()
  *
  *  @param imageIndex The index in @a m_imageViews of the view to add.
  */
-void ImageGrid::InsertImageInGrid(const int imageIndex)
+void ImageGrid::InsertImageInGrid( const int imageIndex )
 {
-    if (m_rows*m_columns > 0)
+    if ( m_rows*m_columns > 0 )
     {
         size_t numImages = m_gridLayout->count();
         size_t row       = numImages/m_columns;
         size_t column    = numImages%m_columns;
 
-        if (m_gridLayout->itemAtPosition(row, column))
+        if ( m_gridLayout->itemAtPosition( row, column ) )
         {
-            m_gridLayout->removeItem(m_gridLayout->itemAtPosition(row, column));
+            m_gridLayout->removeItem( m_gridLayout->itemAtPosition( row, column ) );
         }
 
         m_gridLayout->addWidget(m_imageViews[imageIndex].get(), row, column, 1, 1);
@@ -81,28 +81,28 @@ void ImageGrid::CalculateNumRowsColumns()
     float imageAspectRatio = m_imageViews[0]->GetImageAspectRatio(); /// @bug Currently all based on image[0]
     float gridAspectRatio  = (float)m_frame->width()/(float)m_frame->height();
 
-    float approxRowsSquared = (imageAspectRatio/gridAspectRatio)*numImages;
+    float approxRowsSquared = ( imageAspectRatio/gridAspectRatio )*numImages;
 
-    m_rows = (size_t)(std::ceil(std::sqrt(approxRowsSquared)));
+    m_rows = (size_t)( std::ceil( std::sqrt( approxRowsSquared ) ) );
 
-    if (m_rows == 0)
+    if ( m_rows == 0 )
     {
         m_columns = 0;
     }
     else
     {
         m_columns = numImages/m_rows;
-        if (m_columns == 0)
+        if ( m_columns == 0 )
         {
             m_columns = 1;
         }
 
-        if (m_columns*m_rows < numImages)
+        if ( m_columns*m_rows < numImages )
         {
-            const int possibleColumns = std::ceil((float)numImages/(float)m_rows);
-            const int possibleRows    = std::ceil((float)numImages/(float)m_columns);
-            if (GetImageAreaWith(possibleRows, m_columns) >
-                 GetImageAreaWith(m_rows, possibleColumns))
+            const int possibleColumns = std::ceil( (float)numImages/(float)m_rows );
+            const int possibleRows    = std::ceil( (float)numImages/(float)m_columns );
+            if ( GetImageAreaWith( possibleRows, m_columns ) >
+                 GetImageAreaWith( m_rows, possibleColumns ) )
             {
                 m_rows = possibleRows;
             }
@@ -111,7 +111,7 @@ void ImageGrid::CalculateNumRowsColumns()
                 m_columns = possibleColumns;
             }
         }
-        ASSERT_GREATER_THAN_OR_EQUAL(m_rows*m_columns, numImages);
+        ASSERT_GREATER_THAN_OR_EQUAL( m_rows*m_columns, numImages );
     }
 }
 
@@ -123,11 +123,11 @@ void ImageGrid::CalculateNumRowsColumns()
  *
  *  @return The ideal (i.e. non-rounded) image area in pixels squared.
  */
-double ImageGrid::GetImageAreaWith(const size_t rows, const size_t columns) const
+double ImageGrid::GetImageAreaWith( const size_t rows, const size_t columns ) const
 {
-    assert(!m_imageViews.empty());
+    assert( !m_imageViews.empty() );
 
-    const QSize imageSize = m_imageViews.at(0)->GetImageSize();
+    const QSize imageSize = m_imageViews.at( 0 )->GetImageSize();
 
     const double imageCellWidth  = (double)width()/columns;
     const double imageCellHeight = (double)height()/rows;
@@ -135,7 +135,7 @@ double ImageGrid::GetImageAreaWith(const size_t rows, const size_t columns) cons
     const double scaleToFitWidth  = imageCellWidth/imageSize.width();
     const double scaleToFitHeight = imageCellHeight/imageSize.height();
 
-    const double scale = std::min(scaleToFitHeight, scaleToFitWidth);
+    const double scale = std::min( scaleToFitHeight, scaleToFitWidth );
 
     return scale*imageSize.width()*imageSize.height();
 }
@@ -145,20 +145,20 @@ double ImageGrid::GetImageAreaWith(const size_t rows, const size_t columns) cons
  */
 void ImageGrid::ReflowImages()
 {
-    m_frame->setFixedSize(maximumViewportSize()*m_zoom);
+    m_frame->setFixedSize( maximumViewportSize()*m_zoom );
 
-    if (m_imageViews.size() > 0)
+    if ( m_imageViews.size() > 0 )
     {
-        for (size_t i = 0; i < m_imageViews.size(); ++i)
+        for ( size_t i = 0; i < m_imageViews.size(); ++i )
         {
             m_gridLayout->removeWidget(m_imageViews[i].get());
         }
 
         CalculateNumRowsColumns();
 
-        for (size_t i = 0; i < m_imageViews.size(); ++i)
+        for ( size_t i = 0; i < m_imageViews.size(); ++i )
         {
-            InsertImageInGrid(i);
+            InsertImageInGrid( i );
         }
     }
     else
@@ -175,10 +175,10 @@ void ImageGrid::ReflowImages()
  *
  *  @return The ImageView which was added.  The ImageGrid retains ownership.
  */
-ImageView* const ImageGrid::AddImage(const QString& imageFileName, const QString& caption, int id)
+ImageView* const ImageGrid::AddImage( const QString& imageFileName, const QString& caption, int id )
 {
-    const QImage image(imageFileName);
-    return AddImage(image, caption, id);
+    const QImage image( imageFileName );
+    return AddImage( image, caption, id );
 }
 
 /** @brief Add an image to the grid.
@@ -188,18 +188,18 @@ ImageView* const ImageGrid::AddImage(const QString& imageFileName, const QString
  *
  *  @return The ImageView which was added.  The ImageGrid retains ownership.
  */
-ImageView* const ImageGrid::AddImage(const QImage& image, const QString& caption, int id)
+ImageView* const ImageGrid::AddImage( const QImage& image, const QString& caption, int id )
 {
     m_zoom = 1.0;
     const size_t imageNum = m_imageViews.size();
-    ImageView* newImageView = new ImageView(this, id);
-    newImageView->setObjectName(QString("imageView%1").arg(imageNum));
-    newImageView->setAutoFillBackground(false);
-    newImageView->SetImage(image);
+    ImageView* newImageView = new ImageView( this, id );
+    newImageView->setObjectName( QString( "imageView%1" ).arg( imageNum ) );
+    newImageView->setAutoFillBackground( false );
+    newImageView->SetImage( image );
 
     static const bool PRESERVE_ASPECT_RATIO = true;
-    newImageView->SetPreserveAspectRatio(PRESERVE_ASPECT_RATIO);
-    newImageView->SetCaption(caption);
+    newImageView->SetPreserveAspectRatio( PRESERVE_ASPECT_RATIO );
+    newImageView->SetCaption( caption );
 
     m_imageViews.push_back(ImageViewPtr(newImageView));
     ReflowImages();
@@ -210,7 +210,7 @@ ImageView* const ImageGrid::AddImage(const QImage& image, const QString& caption
  *
  *  Event parameter is unused.
  */
-void ImageGrid::resizeEvent(QResizeEvent*)
+void ImageGrid::resizeEvent( QResizeEvent* )
 {
     ReflowImages();
 }
@@ -222,12 +222,12 @@ void ImageGrid::Clear()
     ReflowImages();
 }
 
-ImageView* const ImageGrid::AddBlankImage(const QSize& imageSize, int id)
+ImageView* const ImageGrid::AddBlankImage( const QSize& imageSize, int id )
 {
-    QImage newBlankImage(imageSize, QImage::Format_RGB888);
-    newBlankImage.fill(0xFFFFFF);
+    QImage newBlankImage( imageSize, QImage::Format_RGB888 );
+    newBlankImage.fill( 0xFFFFFF );
 
-    ImageView* const addedImageView = AddImage(newBlankImage, QString(), id);
+    ImageView* const addedImageView = AddImage( newBlankImage, QString(), id );
     return addedImageView;
 }
 
@@ -235,32 +235,32 @@ ImageView* const ImageGrid::AddBlankImage(const QSize& imageSize, int id)
  *
  *  @param event The information about the amount of scrolling to perform & modifier keys.
  */
-void ImageGrid::wheelEvent(QWheelEvent* event)
+void ImageGrid::wheelEvent( QWheelEvent* event )
 {
-    if (event->modifiers() == Qt::CTRL)
+    if ( event->modifiers() == Qt::CTRL )
     {
         const double zoomScale = 0.001;
         m_zoom += zoomScale*event->delta();
-        m_zoom = std::max(1.0, m_zoom);
+        m_zoom = std::max( 1.0, m_zoom );
         ReflowImages();
 
-        for (size_t i = 0; i < m_imageViews.size(); ++i)
+        for ( size_t i = 0; i < m_imageViews.size(); ++i )
         {
-            m_imageViews[i].get()->setZoom(m_zoom);            
+            m_imageViews[i].get()->setZoom( m_zoom );            
         }
         ensureVisible(event->pos().x(), event->pos().y());
         event->accept();
     }
     else
     {
-        QScrollArea::wheelEvent(event);
+        QScrollArea::wheelEvent( event );
     }
 }
 
-void ImageGrid::updateImage(int id, const QImage& image, double fps)
+void ImageGrid::updateImage( int id, const QImage& image, double fps )
 {
-    m_imageViews[id].get()->SetImage(image);
-    m_imageViews[id].get()->SetCaption(QString("FPS: %1").arg(fps, 5, 'f', 2));
+    m_imageViews[id].get()->SetImage( image );
+    m_imageViews[id].get()->SetCaption( QString( "FPS: %1" ).arg( fps, 5, 'f', 2 ) );
     m_imageViews[id].get()->update();
 }
 

@@ -34,65 +34,31 @@ namespace Ui
     class MainWindow;
 }
 
-/**
- * @brief Owns the main UI window that is found inside the application
- */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    /**
-     * @brief Initialises the MainWindow with a pointer to the main application.
-     * @param parent is the owning widget (the application in this case)
-     */
-    explicit MainWindow(QWidget* parent = 0);
+    explicit MainWindow( QWidget* parent = 0 );
     virtual ~MainWindow();
 
-    /**
-     * @brief Refreshes the MainWindow UI
-     */
     void Reload();
-
-    /**
-     * @brief When the config is reloaded, the unknown path elements are filled out based
-     * on the current set up.
-     * @param Contains the unknown element
-     */
-    void MergeWithActivePath(const WbPath& desiredPath);
-
-    /**
-     * @brief Sets up MainWindow's layout, Signal & Slots as well as Actions
-     */
+    void MergeWithActivePath( const WbPath& desiredPath );
     void Start();
 
 protected:
-    /**
-     * @brief Received when the main window is closed.
-     * @param Close event
-     */
-    virtual void closeEvent(QCloseEvent* event);
+    virtual void closeEvent( QCloseEvent* event );
 
 private slots:
-    /**
-     * @brief Launches Help Dialog
-     */
     void ShowHelp();
-
-    /**
-     * @brief Launches About GTS Dialog with Version Number, Date and Open Source Licenses
-     */
     void ShowAboutGTS();
-
-    /**
-     * @brief Launches About QT Dialog
-     */
     void ShowAboutQt();
 
 private:
     Ui::MainWindow* m_ui;
-    WorkbenchUi*    m_workbenchUi;
-    HelpViewer*     m_helpViewer;
+    WorkbenchUi* m_workbenchUi;
+    HelpViewer*  m_helpViewer;
+    QToolButton* m_cornerButton;
 };
 
 #endif // MAINWINDOW_H

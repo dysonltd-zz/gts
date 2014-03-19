@@ -35,22 +35,22 @@
  *
  * @param videoSeq The VideoSequence to capture from.
  */
-CaptureThread::CaptureThread(VideoSequence* const videoSeq) :
-    m_videoSeq      (videoSeq),
-    m_stopCapturing (false),
-    m_internalImage (0),
+CaptureThread::CaptureThread( VideoSequence* const videoSeq ) :
+    m_videoSeq      ( videoSeq ),
+    m_stopCapturing ( false ),
+    m_internalImage ( 0 ),
     m_image         (),
     m_capturingMutex(),
-    m_thread        (new QThread())
+    m_thread        ( new QThread() )
 {
-    QObject::connect(m_thread.get(),
-                      SIGNAL(started()),
+    QObject::connect( m_thread.get(),
+                      SIGNAL( started() ),
                       this,
-                      SLOT(run()));
+                      SLOT( run() ) );
 
     qRegisterMetaType<timespec>("timespec");
 
-    moveToThread(m_thread.get());
+    moveToThread( m_thread.get() );
 
     m_thread->start();
 }
@@ -70,17 +70,17 @@ CaptureThread::~CaptureThread()
  */
 void CaptureThread::run()
 {
-    while (!ShouldStopCapturing())
+    while ( !ShouldStopCapturing() )
     {
-        if (!m_videoSeq.get())
+        if ( !m_videoSeq.get() )
         {
             continue;
         }
-        if (!m_videoSeq->IsSetup())
+        if ( !m_videoSeq->IsSetup() )
         {
             continue;
         }
-        if (!m_videoSeq->ReadyNextFrame())
+        if ( !m_videoSeq->ReadyNextFrame() )
         {
             continue;
         }
@@ -92,11 +92,11 @@ void CaptureThread::run()
 
 #if defined(__MINGW32__) || defined(_MSC_VER)
         timeval tval;
-        clock_gettime(0, &tval);
+        clock_gettime( 0, &tval );
         tspec.tv_sec = tval.tv_sec;
         tspec.tv_nsec = tval.tv_usec * 1000;
 #else
-        clock_gettime(CLOCK_REALTIME, &tspec);
+        clock_gettime( CLOCK_REALTIME, &tspec );
 #endif
 
         m_internalImage = m_videoSeq->RetrieveNextFrame();
@@ -104,7 +104,7 @@ void CaptureThread::run()
 
         UpdateQImage();
 
-        emit GotImage(m_image, tspec, fps);
+        emit GotImage( m_image, tspec, fps );
     }
 
     emit finished();
@@ -116,26 +116,26 @@ void CaptureThread::run()
  */
 void CaptureThread::UpdateQImage()
 {
-    if (OpenCvTools::IsValid(m_internalImage))
+    if ( OpenCvTools::IsValid( m_internalImage ) )
     {
-        const QSize internalImageSize(m_internalImage->width,
-                                       m_internalImage->height);
+        const QSize internalImageSize( m_internalImage->width,
+                                       m_internalImage->height );
 
-        if (m_image.isNull() || (m_image.size() != internalImageSize))
+        if ( m_image.isNull() || ( m_image.size() != internalImageSize ) )
         {
-            m_image = QImage(internalImageSize, QImage::Format_RGB888);
+            m_image = QImage( internalImageSize, QImage::Format_RGB888 );
         }
 
         CvMat mtxWrapper;
-        cvInitMatHeader(&mtxWrapper,
+        cvInitMatHeader( &mtxWrapper,
                          m_internalImage->height,
                          m_internalImage->width,
                          CV_8UC3,
-                         m_image.bits());
+                         m_image.bits() );
 
         const int DONT_FLIP = 0;
         int flipFlag = DONT_FLIP;
-        cvConvertImage(m_internalImage, &mtxWrapper, flipFlag);
+        cvConvertImage( m_internalImage, &mtxWrapper, flipFlag );
     }
 }
 
@@ -156,11 +156,11 @@ void CaptureThread::SetStopCapturingFlag()
 void CaptureThread::StopCapturing()
 {
     // Runs in main thread!!
-    if (m_thread && m_thread->isRunning())
+    if ( m_thread && m_thread->isRunning() )
     {
         if (!m_stopCapturing) //already stopping
         {
-            assert(QThread::currentThread() != m_thread.get());
+            assert( QThread::currentThread() != m_thread.get() );
             SetStopCapturingFlag();
             thread()->wait();
         }
@@ -175,7 +175,7 @@ void CaptureThread::StopCapturing()
  */
 bool CaptureThread::ShouldStopCapturing() const
 {
-    QMutexLocker capturingMutexLock(&m_capturingMutex);
+    QMutexLocker capturingMutexLock( &m_capturingMutex );
     return m_stopCapturing;
 }
 

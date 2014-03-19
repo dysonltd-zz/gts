@@ -19,81 +19,31 @@
 #ifndef EXTRINSICCALIBRATIONALGORITHM_H_
 #define EXTRINSICCALIBRATIONALGORITHM_H_
 
-#include <QtCore/QString>
-
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
+#include <QtCore/QString>
+
 class WbConfig;
 
-/**
- @brief Responsible for calibrating a 'position' in a room from a checkerboard pattern image.
- Handles image loading, camera calibration loading, position/extrinsic calibration and saving
- results to workbench config.
- */
 class ExtrinsicCalibrationAlgorithm
 {
 public:
     ExtrinsicCalibrationAlgorithm();
-    bool Run(WbConfig config);
+    bool Run( WbConfig config );
 
 private:
-    /**
-      @brief Loads an image file in to a OpenCV image from a given file path
-      @param imageFileName File path to image
-      @return True if successful
-    **/
-    bool LoadInputImage(const QString& imageFileName);
+    bool LoadInputImage( const QString& imageFileName );
+    bool DetectChessBoardPattern( const CvSize& gridSize );
 
-    /**
-      @brief Wrapper around GroundPlaneUtilities to take loaded image and detect a chessboard/checkboard
-      patern from a given grid size (Rows, Columns).
-      @param gridSize (Rows, Columns) loaded from config i.e. set in GUI and saved.
-      @return True if successful
-    **/
-    bool DetectChessBoardPattern(const CvSize& gridSize);
-
-    /**
-      @brief Load camera calibration parameters from workbench config and
-      populate camera calibration matrices
-      @param config Workbench config
-      @return True if successful
-    **/
-    bool LoadCameraCalibration(const WbConfig& config);
-
-    /**
-      @brief Load camera config from workbench config
-      @param calibCfg Camera calibration config
-      @param cameraCfg Camera config
-      @return True if successful
-    **/
-    bool LoadCameraConfig(const WbConfig& calibCfg, WbConfig* const cameraCfg);
-
-    /**
-      @brief Populate the Camera Calibration Matrices for a given camera config
-      @param cameraCfg Config for camera
-      @return True if successful
-    **/
-    bool PopulateCameraCalibrationMatrices(const WbConfig& cameraCfg);
-
-    /**
-      @brief Calibrate camera from given @a gridSize (rows, columns) and @a squareSizeInCm
-      @param gridSize (rows, columns)
-      @param squareSizeInCm Square size in cm (pre-conversion to pixels)
-      @return True if successful
-    **/
-    bool CalibrateCamera(const CvSize& gridSize, const double squareSizeInCm);
-
-    /**
-      @brief Compute the square size in pixels
-    **/
+    bool LoadCameraCalibration( const WbConfig& config );
+    bool LoadCameraConfig( const WbConfig& calibCfg,
+                           WbConfig* const cameraCfg );
+    bool PopulateCameraCalibrationMatrices( const WbConfig& cameraCfg );
+    bool CalibrateCamera( const CvSize& gridSize,
+                          const double squareSizeInCm );
     void ComputeSquareSize();
-
-    /**
-      @brief Write the calibration to the config
-      @param config The config you want to write the calibration to
-    **/
-    void RecordCalibration(WbConfig config);
+    void RecordCalibration( WbConfig config );
 
     IplImage*         m_inputImageAsGrey;
     CvMat*            m_imagePoints;

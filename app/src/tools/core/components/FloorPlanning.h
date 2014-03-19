@@ -30,7 +30,7 @@
 
 namespace FloorPlanning
 {
-    bool LoadFile(WbConfig config, QString cameraPosition, IplImage** camImg, QString fileName, CvPoint2D32f* offset, bool unWarp);
+    bool LoadFile( WbConfig config, QString cameraPosition, IplImage** camImg, QString fileName, CvPoint2D32f* offset, bool unWarp );
 
     bool CheckMappingIsComplete(WbConfig config);
 

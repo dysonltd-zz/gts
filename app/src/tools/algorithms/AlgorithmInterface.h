@@ -19,17 +19,13 @@
 #ifndef ALGORITHMINTERFACE_H
 #define ALGORITHMINTERFACE_H
 
-/**
-  @brief Exit status identifiers to be used when running algorithms.
-  Identifies if algorithm has experienced errors.
- **/
 namespace ExitStatus
 {
     enum
     {
         OK_TO_CONTINUE  = 0,
-        ERRORS_OCCURRED = 1,
-        HELP_DISPLAYED  = 2
+        ERRORS_OCCURRED = 1<<0,
+        HELP_DISPLAYED  = 1<<1
     };
 
     typedef int Flags;

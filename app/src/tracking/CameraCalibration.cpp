@@ -35,9 +35,9 @@
 
 struct CalibViewArgs
 {
-    CalibViewArgs(const CameraCalibration* cal, const RobotMetrics& met) :
-        m_cal (cal),
-        m_met (met)
+    CalibViewArgs( const CameraCalibration* cal, const RobotMetrics& met ) :
+        m_cal ( cal ),
+        m_met ( met )
     {
     };
 
@@ -46,47 +46,47 @@ struct CalibViewArgs
 };
 
 CameraCalibration::CameraCalibration() :
-    m_mapx         (0),
-    m_mapy         (0),
-    m_mapDx        (0),
-    m_mapDy        (0),
-    m_mapGM        (0),
-    m_imageWidth   (0),
-    m_imageHeight  (0),
-    m_offset       (cvPoint2D32f(0.f,0.f)),
-    m_rot          (cvMat(3,3,CV_32F, m_rot_f)),
-    m_trans        (cvMat(3,1,CV_32F, m_trans_f)),
-    m_cameraCentre (cvMat(3,1,CV_32F, m_cC_f)),
-    m_intrinsic    (cvMat(3,3,CV_32F, m_intrinsic_f)),
-    m_distortion   (cvMat(1,5,CV_32F, m_distortion_f)),
-    m_inverse      (cvMat(1,5,CV_32F, m_inverse_f)),
-    m_transform    (cvMat(3,3,CV_32F, m_transform_f)),
-    m_calWarpImg   (0)
+    m_mapx         ( 0 ),
+    m_mapy         ( 0 ),
+    m_mapDx        ( 0 ),
+    m_mapDy        ( 0 ),
+    m_mapGM        ( 0 ),
+    m_imageWidth   ( 0 ),
+    m_imageHeight  ( 0 ),
+    m_offset       ( cvPoint2D32f(0.f,0.f) ),
+    m_rot          ( cvMat(3,3,CV_32F, m_rot_f) ),
+    m_trans        ( cvMat(3,1,CV_32F, m_trans_f) ),
+    m_cameraCentre ( cvMat(3,1,CV_32F, m_cC_f) ),
+    m_intrinsic    ( cvMat(3,3,CV_32F, m_intrinsic_f) ),
+    m_distortion   ( cvMat(1,5,CV_32F, m_distortion_f) ),
+    m_inverse      ( cvMat(1,5,CV_32F, m_inverse_f) ),
+    m_transform    ( cvMat(3,3,CV_32F, m_transform_f) ),
+    m_calWarpImg   ( 0 )
 {
 }
 
 CameraCalibration::~CameraCalibration()
 {
-    cvReleaseMat(&m_mapx);
-    cvReleaseMat(&m_mapy);
-    cvReleaseMat(&m_mapDx);
-    cvReleaseMat(&m_mapDy);
-    cvReleaseMat(&m_mapGM);
+    cvReleaseMat( &m_mapx );
+    cvReleaseMat( &m_mapy );
+    cvReleaseMat( &m_mapDx );
+    cvReleaseMat( &m_mapDy );
+    cvReleaseMat( &m_mapGM );
 
-    cvReleaseImage(&m_calWarpImg);
+    cvReleaseImage( &m_calWarpImg );
 }
 
 /**
     Load the intrinsic camera parameters from config.
 **/
-bool CameraCalibration::LoadIntrinsicCalibration(const WbConfig& cameraCalCfg)
+bool CameraCalibration::LoadIntrinsicCalibration( const WbConfig& cameraCalCfg )
 {
     bool successful = true;
 
     m_imageWidth = cameraCalCfg.GetKeyValue(
-                       CalibrationSchema::imageWidthKey).ToInt();
+                       CalibrationSchema::imageWidthKey ).ToInt();
     m_imageHeight = cameraCalCfg.GetKeyValue(
-                       CalibrationSchema::imageHeightKey).ToInt();
+                       CalibrationSchema::imageHeightKey ).ToInt();
 
     if (successful)
     {
@@ -127,22 +127,22 @@ bool CameraCalibration::LoadIntrinsicCalibration(const WbConfig& cameraCalCfg)
 /**
     Load the camera transform parameters from config.
 **/
-bool CameraCalibration::LoadCameraTransform(const KeyId camPosId, const WbConfig& floorPlanCfg)
+bool CameraCalibration::LoadCameraTransform( const KeyId camPosId, const WbConfig& floorPlanCfg )
 {
     bool successful = false;
 
     const WbKeyValues::ValueIdPairList cameraTransformIds =
-        floorPlanCfg.GetKeyValues(FloorPlanSchema::transformKey);
+        floorPlanCfg.GetKeyValues( FloorPlanSchema::transformKey );
     for (WbKeyValues::ValueIdPairList::const_iterator itt = cameraTransformIds.begin(); itt != cameraTransformIds.end(); ++itt)
     {
-        const KeyId cameraId(floorPlanCfg.GetKeyValue(FloorPlanSchema::cameraIdKey, itt->id).ToKeyId());
+        const KeyId cameraId( floorPlanCfg.GetKeyValue( FloorPlanSchema::cameraIdKey, itt->id ).ToKeyId() );
 
         if (cameraId == camPosId)
         {
             LOG_INFO(QObject::tr("Camera position id: %1").arg(camPosId));
 
             float transf_f[9];
-            CvMat transf = cvMat(3, 3, CV_32F, transf_f);
+            CvMat transf = cvMat( 3, 3, CV_32F, transf_f );
 
             successful = floorPlanCfg.GetKeyValue(
                              FloorPlanSchema::transformKey, itt->id).ToCvMat(transf);
@@ -156,8 +156,8 @@ bool CameraCalibration::LoadCameraTransform(const KeyId camPosId, const WbConfig
                                  FloorPlanSchema::offsetYKey, itt->id).ToDouble();
 
             float transl_f[9];
-            CvMat transl = cvMat(3, 3, CV_32F, transl_f);
-            cvSetIdentity(&transl);
+            CvMat transl = cvMat( 3, 3, CV_32F, transl_f );
+            cvSetIdentity( &transl );
             transl_f[2] = offsetX;
             transl_f[5] = offsetY;
 
@@ -180,27 +180,27 @@ bool CameraCalibration::LoadCameraTransform(const KeyId camPosId, const WbConfig
     @param viewWarp  Pointer to the image to use for calibration
     @param interactive If it is true then the calibration will be interactive displaying images and waiting for key-presses before continuing.
 **/
-bool CameraCalibration::PerformExtrinsicCalibration(CvSize        boardSize,
+bool CameraCalibration::PerformExtrinsicCalibration( CvSize        boardSize,
                                                      RobotMetrics& metrics,
                                                      IplImage**    viewWarp,
                                                      const bool    scaled,
-                                                     const char*   calImage )
+                                                     const char*   calImage  )
 {
     bool success = true;
-    IplImage* view = cvLoadImage(calImage, 1);
+    IplImage* view = cvLoadImage( calImage, 1 );
 
-    if (view)
+    if ( view )
     {
         LOG_INFO(QObject::tr("Opened calibration image: %1.")
                     .arg(calImage));
 
         // Make a grey-level version of the image and show it
-        IplImage* viewGrey = cvCreateImage(cvGetSize(view), IPL_DEPTH_8U, 1);
-        cvCvtColor(view, viewGrey, CV_BGR2GRAY);
+        IplImage* viewGrey = cvCreateImage( cvGetSize(view), IPL_DEPTH_8U, 1 );
+        cvCvtColor( view, viewGrey, CV_BGR2GRAY );
 
-        CvMat* imagePoints = GroundPlaneUtility::FindChessBoard(view, viewGrey, boardSize, 1);
+        CvMat* imagePoints = GroundPlaneUtility::findChessBoard( view, viewGrey, boardSize, 1 );
 
-        if (imagePoints)
+        if ( imagePoints )
         {
             LOG_INFO(QObject::tr("Found %1/%2 calibration corners.")
                         .arg(imagePoints->cols)
@@ -215,23 +215,23 @@ bool CameraCalibration::PerformExtrinsicCalibration(CvSize        boardSize,
             CvMat* objectPoints;
             if (scaled)
             {
-                objectPoints = GroundPlaneUtility::CreateCalibrationObject(boardSize.width,
+                objectPoints = GroundPlaneUtility::createCalibrationObject( boardSize.width,
                                                                             boardSize.height,
 #ifdef SCALED_PIXELS
-                                                                            squarePx * metrics->GetResolution());
+                                                                            squarePx * metrics->GetResolution() );
 #else
-                                                                            metrics.GetSquareSizePx());
+                                                                            metrics.GetSquareSizePx() );
 #endif
             }
             else
             {
-                objectPoints = GroundPlaneUtility::CreateCalibrationObject(boardSize.width,
+                objectPoints = GroundPlaneUtility::createCalibrationObject( boardSize.width,
                                                                             boardSize.height,
-                                                                            metrics.GetSquareSizeCm());
+                                                                            metrics.GetSquareSizeCm() );
             }
 
             LOG_TRACE("Computing extrinsic params");
-            ComputeExtrinsicParams(objectPoints, imagePoints);
+            ComputeExtrinsicParams( objectPoints, imagePoints );
 
             LOG_INFO("Camera rotation:");
             OpenCvUtility::LogCvMat32F(&m_rot);
@@ -243,7 +243,7 @@ bool CameraCalibration::PerformExtrinsicCalibration(CvSize        boardSize,
 
             // Compute undistortion maps for the ground plane
             // (these will be used to undistort entire sequence)
-            *viewWarp = GroundPlaneUtility::ComputeGroundPlaneWarpBatch(viewGrey,
+            *viewWarp = GroundPlaneUtility::computeGroundPlaneWarpBatch( viewGrey,
                                                                          GetIntrinsicParams(),
                                                                          GetDistortionParams(),
                                                                          GetUndistortionParams(),
@@ -251,29 +251,29 @@ bool CameraCalibration::PerformExtrinsicCalibration(CvSize        boardSize,
                                                                          GetTranslationParams(),
                                                                          &m_mapx,
                                                                          &m_mapy,
-                                                                         &m_offset);
+                                                                         &m_offset );
 
             LOG_TRACE("Warping ground plane image");
 
-            cvSetZero(*viewWarp);
-            cvRemap(viewGrey, *viewWarp, m_mapx, m_mapy, CV_INTER_LINEAR);
+            cvSetZero( *viewWarp );
+            cvRemap( viewGrey, *viewWarp, m_mapx, m_mapy, CV_INTER_LINEAR );
 
-            CalibViewArgs args(this, metrics);
-            PlotCameraCentre(*viewWarp, metrics);
-            m_calWarpImg = cvCloneImage(*viewWarp);
+            CalibViewArgs args( this, metrics );
+            PlotCameraCentre( *viewWarp, metrics );
+            m_calWarpImg = cvCloneImage( *viewWarp );
 
             // Compute the warp gradients
             ComputeWarpGradientMagnitude();
 
-            cvReleaseMat(&objectPoints);
+            cvReleaseMat( &objectPoints );
         }
         else
         {
             success = false;
         }
 
-        cvReleaseMat(&imagePoints);
-        cvReleaseImage(&viewGrey);
+        cvReleaseMat( &imagePoints );
+        cvReleaseImage( &viewGrey );
     }
     else
     {
@@ -282,7 +282,7 @@ bool CameraCalibration::PerformExtrinsicCalibration(CvSize        boardSize,
         success = false;
     }
 
-    cvReleaseImage(&view);
+    cvReleaseImage( &view );
 
     return success;
 }
@@ -302,26 +302,26 @@ float CameraCalibration::ComputeSquareSize(CvMat* imagePoints)
 
 void CameraCalibration::ComputeWarpGradientMagnitude()
 {
-    m_mapDx = OpenCvUtility::GradientMagCv32fc1(m_mapx);
-    m_mapDy = OpenCvUtility::GradientMagCv32fc1(m_mapy);
-    m_mapGM = cvCloneMat(m_mapDy);
+    m_mapDx = OpenCvUtility::GradientMagCv32fc1( m_mapx );
+    m_mapDy = OpenCvUtility::GradientMagCv32fc1( m_mapy );
+    m_mapGM = cvCloneMat( m_mapDy );
 
-    cvAdd(m_mapDx, m_mapDy, m_mapGM);
+    cvAdd( m_mapDx, m_mapDy, m_mapGM );
 }
 
-void CameraCalibration::ComputeExtrinsicParams(const CvMat* objectPoints,
-                                                const CvMat* imagePoints)
+void CameraCalibration::ComputeExtrinsicParams( const CvMat* objectPoints,
+                                                const CvMat* imagePoints )
 {
     // Compute parameters and convert rotation
     // from axis-angle to matrix representation.
     float rot_f[3];
-    CvMat rot = cvMat(1, 3, CV_32F, rot_f);
-    cvFindExtrinsicCameraParams2(objectPoints,
+    CvMat rot = cvMat( 1, 3, CV_32F, rot_f );
+    cvFindExtrinsicCameraParams2( objectPoints,
                                   imagePoints,
                                   &m_intrinsic,
                                   &m_distortion,
                                   &rot,
-                                  &m_trans);
+                                  &m_trans );
 
     LOG_INFO("Object points:");
     OpenCvUtility::LogCvMat32F(objectPoints);
@@ -351,7 +351,7 @@ void CameraCalibration::ComputeExtrinsicParams(const CvMat* objectPoints,
 /**
     Converts a point from image coordinates to ground-plane coordinates.
 **/
-CvPoint2D32f CameraCalibration::ImageToPlane(CvPoint2D32f p) const
+CvPoint2D32f CameraCalibration::ImageToPlane( CvPoint2D32f p ) const
 {
     // Extract homography components and invert
     float    h[9];
@@ -400,7 +400,7 @@ CvPoint2D32f CameraCalibration::ImageToPlane(CvPoint2D32f p) const
 /**
     Convert from ground-plane coordinates to image coordinates
 **/
-CvPoint2D32f CameraCalibration::PlaneToImage(CvPoint2D32f p) const
+CvPoint2D32f CameraCalibration::PlaneToImage( CvPoint2D32f p ) const
 {
     float x,y,z;
 
@@ -436,7 +436,7 @@ CvPoint2D32f CameraCalibration::PlaneToImage(CvPoint2D32f p) const
     camera centre's x,y-position in the ground plane (if we dropped a plum
     line from the camera it would roughly land there.)
 **/
-void CameraCalibration::PlotCameraCentre(IplImage* img, const RobotMetrics& metrics)
+void CameraCalibration::PlotCameraCentre( IplImage* img, const RobotMetrics& metrics )
 {
     float c[3];
     const CvMat* C = GetCameraCentrePx();
@@ -457,15 +457,15 @@ void CameraCalibration::PlotCameraCentre(IplImage* img, const RobotMetrics& metr
     int cx = (int)(c[0]-GetUnwarpOffset()->x+.5f);
     int cy = (int)(c[1]-GetUnwarpOffset()->y+.5f);
 
-    cvLine(img,
-            cvPoint(ox, oy),
-            cvPoint(cx, cy),
+    cvLine( img,
+            cvPoint( ox, oy ),
+            cvPoint( cx, cy ),
             cvScalar(255,255,255),
             3, CV_AA);
 
-    cvLine(img,
-            cvPoint(ox, oy),
-            cvPoint(cx, cy),
+    cvLine( img,
+            cvPoint( ox, oy ),
+            cvPoint( cx, cy ),
             cvScalar(0,0,0),
             1, CV_AA);
 }

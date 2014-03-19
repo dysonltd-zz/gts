@@ -39,20 +39,20 @@
 
 namespace
 {
-    const KeyName camerasSchemaName("cameras");
+    const KeyName camerasSchemaName( "cameras" );
 }
 
-CameraCollectionTool::CameraCollectionTool(CameraHardware& cameraHardware,
+CameraCollectionTool::CameraCollectionTool( CameraHardware& cameraHardware,
                                             QWidget* parent,
-                                            MainWindow& mainWindow ) :
-    CollectionToolWidget(tr("Camera"),
+                                            MainWindow& mainWindow  ) :
+    CollectionToolWidget( tr( "Camera" ),
                           CreateCollectionSchema(),
                           CreateElementSchema(),
                           parent,
-                          &mainWindow),
-    m_cameraHardware(cameraHardware)
+                          &mainWindow ),
+    m_cameraHardware( cameraHardware )
 {
-    AddSubTool(new CameraCalibrationWidget(cameraHardware, this));
+    AddSubTool( new CameraCalibrationWidget( cameraHardware, this ) );
 }
 
 CameraCollectionTool::~CameraCollectionTool()
@@ -61,7 +61,7 @@ CameraCollectionTool::~CameraCollectionTool()
 
 const QString CameraCollectionTool::Name() const
 {
-    return tr("Cameras");
+    return tr( "Cameras" );
 }
 
 const QString CameraCollectionTool::GetSubSchemaDefaultFileName() const
@@ -83,11 +83,11 @@ const WbSchema CameraCollectionTool::CreateCollectionSchema()
 
 void CameraCollectionTool::SetToolSpecificConfigItems(WbConfig newElement, NewElementWizard& wizard)
 {
-    const CameraDescription chosenCamera(wizard.field(CamerasPage::chosenCameraField)
-                                                      .value<CameraDescription>());
+    const CameraDescription chosenCamera( wizard.field( CamerasPage::chosenCameraField )
+                                                      .value<CameraDescription>() );
     newElement.SetKeyValue(WbDefaultKeys::descriptionKey, KeyValue::from(chosenCamera.ToPlainText()));
     newElement.SetKeyValue(CameraSchema::uniqueIdKey,
-                           KeyValue::from(QString::fromStdWString(chosenCamera.UniqueId())));
+                           KeyValue::from( QString::fromStdWString(chosenCamera.UniqueId())));
 }
 
 const WbSchema CameraCollectionTool::CreateElementSchema()
@@ -95,8 +95,8 @@ const WbSchema CameraCollectionTool::CreateElementSchema()
     WbSchema schema(CreateElementWorkbenchSubSchema(CameraSchema::schemaName, Unnamed("Camera")));
     schema.AddSingleValueKey(CameraSchema::uniqueIdKey, WbSchemaElement::Multiplicity::One);
 
-    schema.AddDependant(CameraPositionSchema::schemaName,
-                         CameraPositionSchema::cameraIdKey);
+    schema.AddDependant( CameraPositionSchema::schemaName,
+                         CameraPositionSchema::cameraIdKey );
 
     return schema;
 }

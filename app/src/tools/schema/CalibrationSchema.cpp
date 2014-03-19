@@ -20,37 +20,37 @@
 
 namespace CalibrationSchema
 {
-    const KeyName schemaName                  ("cameraCalibration");
+    const KeyName schemaName                  ( "cameraCalibration" );
 
-    const KeyName gridGroup                   ("calibrationGrid");
-    const KeyName gridSquareSizeInCmKey       ("squareSizeCm");
-    const KeyName gridRowsKey                 ("rows");
-    const KeyName gridColumnsKey              ("columns");
+    const KeyName gridGroup                   ( "calibrationGrid" );
+    const KeyName gridSquareSizeInCmKey       ( "squareSizeCm" );
+    const KeyName gridRowsKey                 ( "rows" );
+    const KeyName gridColumnsKey              ( "columns" );
 
-    const KeyName imageGroup                  ("calibrationImage");
-    const KeyName imageFileKey                ("calibrationImageFile");
-    const KeyName imageErrorKey               ("calibrationImageError");
-    const KeyName imageReprojectedPointsKey   ("calibrationImageReprojectedPoints");
+    const KeyName imageGroup                  ( "calibrationImage" );
+    const KeyName imageFileKey                ( "calibrationImageFile" );
+    const KeyName imageErrorKey               ( "calibrationImageError" );
+    const KeyName imageReprojectedPointsKey   ( "calibrationImageReprojectedPoints" );
 
-    const KeyName advancedGroup               ("advancedIntrinsicCalibration");
-    const KeyName noTangentialDistortionKey   ("noTangentialDistortion");
-    const KeyName fixPrincipalPointKey        ("fixPrincipalPoint");
-    const KeyName flipImagesKey               ("flipImages");
-    const KeyName shouldFixAspectRatioKey     ("shouldFixAspectRatio");
-    const KeyName fixedAspectRatioKey         ("fixedAspectRatio");
+    const KeyName advancedGroup               ( "advancedIntrinsicCalibration" );
+    const KeyName noTangentialDistortionKey   ( "noTangentialDistortion" );
+    const KeyName fixPrincipalPointKey        ( "fixPrincipalPoint" );
+    const KeyName flipImagesKey               ( "flipImages" );
+    const KeyName shouldFixAspectRatioKey     ( "shouldFixAspectRatio" );
+    const KeyName fixedAspectRatioKey         ( "fixedAspectRatio" );
 
-    const KeyName resultsGroup                ("calibrationResults");
-    const KeyName calibrationDateKey          ("calibrationDate");
-    const KeyName calibrationTimeKey          ("calibrationTime");
-    const KeyName calibrationSuccessfulKey    ("calibrationSuccessful");
-    const KeyName rowsUsedForCalibrationKey   ("rowsUsedForCalibration");
-    const KeyName columnsUsedForCalibrationKey("columnsUsedForCalibration");
-    const KeyName imageHeightKey              ("imageHeight");
-    const KeyName imageWidthKey               ("imageWidth");
-    const KeyName cameraMatrixKey             ("cameraMatrix");
-    const KeyName distortionCoefficientsKey   ("distortionCoefficients");
-    const KeyName invDistortionCoefficientsKey("invDistortionCoefficients");
-    const KeyName avgReprojectionErrorKey     ("avgReprojectionError");
+    const KeyName resultsGroup                ( "calibrationResults" );
+    const KeyName calibrationDateKey          ( "calibrationDate" );
+    const KeyName calibrationTimeKey          ( "calibrationTime" );
+    const KeyName calibrationSuccessfulKey    ( "calibrationSuccessful" );
+    const KeyName rowsUsedForCalibrationKey   ( "rowsUsedForCalibration" );
+    const KeyName columnsUsedForCalibrationKey( "columnsUsedForCalibration" );
+    const KeyName imageHeightKey              ( "imageHeight" );
+    const KeyName imageWidthKey               ( "imageWidth" );
+    const KeyName cameraMatrixKey             ( "cameraMatrix" );
+    const KeyName distortionCoefficientsKey   ( "distortionCoefficients" );
+    const KeyName invDistortionCoefficientsKey( "invDistortionCoefficients" );
+    const KeyName avgReprojectionErrorKey     ( "avgReprojectionError" );
 }
 
 

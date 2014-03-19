@@ -37,9 +37,9 @@ class DefaultValueMap
 public:
     DefaultValueMap();
 
-    DefaultValueMap WithDefault(const KeyName& name, const KeyValue& value);
+    DefaultValueMap WithDefault( const KeyName& name, const KeyValue& value );
 
-    const KeyValue DefaultFor(const KeyName& name) const;
+    const KeyValue DefaultFor( const KeyName& name ) const;
 
 private:
     typedef std::map< KeyName, KeyValue > DefaultsMap;
@@ -90,58 +90,58 @@ public:
 
     typedef QList< SchemaKeyPair > SchemaKeyPairList;
 
-    explicit WbSchema(const KeyName& name);
-    WbSchema(const WbSchema& other);
+    explicit WbSchema( const KeyName& name );
+    WbSchema( const WbSchema& other );
 
     WbSchema();
     ~WbSchema();
 
-    WbSchema& operator =(const WbSchema& other);
+    WbSchema& operator =( const WbSchema& other );
 
     const KeyName& Name() const;
 
-    void AddSingleValueKey(const KeyName& keyName,
+    void AddSingleValueKey( const KeyName& keyName,
                             const WbSchemaElement::Multiplicity::Type& multiplicity,
-                            const KeyValue& defaultValue =  KeyValue());
-    void AddKeyGroup      (const KeyName& groupName,
+                            const KeyValue& defaultValue =  KeyValue() );
+    void AddKeyGroup      ( const KeyName& groupName,
                             const WbSchemaElement::Multiplicity::Type& multiplicity,
                             const KeyNameList& keyNames,
-                            const DefaultValueMap& defaults = DefaultValueMap());
-    void AddSubSchema     (const WbSchema& subSchema,
+                            const DefaultValueMap& defaults = DefaultValueMap() );
+    void AddSubSchema     ( const WbSchema& subSchema,
                             const WbSchemaElement::Multiplicity::Type& multiplicity,
-                            const QString& defaultFileName = QString());
+                            const QString& defaultFileName = QString() );
 
-    void AddDependant     (const KeyName& schemaName, const KeyName& keyName);
+    void AddDependant     ( const KeyName& schemaName, const KeyName& keyName );
 
-    bool AddSubSchemaToSchema(const WbSchema& subSchema,
+    bool AddSubSchemaToSchema( const WbSchema& subSchema,
                                      const KeyName& nameOfSchemaToAddTo,
                                      const WbSchemaElement::Multiplicity::Type& multiplicity,
-                                     const QString& defaultFileName = QString());
+                                     const QString& defaultFileName = QString() );
 
-    const WbSchema FindSubSchema(const KeyName& name) const;
+    const WbSchema FindSubSchema( const KeyName& name ) const;
     const WbSchema GetMostSpecificSubSchema() const;
 
-    const WbPath FindPathToSchema(const WbSchema& schema,
+    const WbPath FindPathToSchema( const WbSchema& schema,
                                    const WbSchemaElement::Multiplicity::Type& multiplicity =
-                                       WbSchemaElement::Multiplicity::One) const;
+                                       WbSchemaElement::Multiplicity::One ) const;
 
     const size_t GetNumSubSchemas() const;
 
     const SchemaKeyPairList GetDependants() const;
 
-    bool ReadFrom(WbConfigFileReader& reader, WbConfig& config) const;
-    bool WriteTo(WbConfigFileWriter& writer, const WbConfig& config) const;
-    void SetDefaultsTo(WbConfig& config) const;
+    bool ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const;
+    bool WriteTo( WbConfigFileWriter& writer, const WbConfig& config ) const;
+    void SetDefaultsTo( WbConfig& config ) const;
 
-    void PrintOn(std::ostream& os, const std::string& indent = "") const;
+    void PrintOn( std::ostream& os, const std::string& indent = "" ) const;
 
     bool IsNull() const;
-    bool ContainsSchemaAnywhere(const KeyName& schemaName) const;
+    bool ContainsSchemaAnywhere( const KeyName& schemaName ) const;
 
-    bool ContainsKey      (const KeyName& keyName) const;
-    bool ContainsSubSchema(const KeyName& schemaName) const;
+    bool ContainsKey      ( const KeyName& keyName ) const;
+    bool ContainsSubSchema( const KeyName& schemaName ) const;
 
-    const WbSchemaElement::Multiplicity::Type GetMultiplicity(const KeyName& keyName) const;
+    const WbSchemaElement::Multiplicity::Type GetMultiplicity( const KeyName& keyName ) const;
 
 private:
     typedef std::map< KeyName, WbSubSchema* > SubSchemaMap;
@@ -162,9 +162,9 @@ private:
  *  @param os The output stream to print on.
  *  @param schema The schema to print
  */
-inline std::ostream& operator <<(std::ostream& os, const WbSchema& schema)
+inline std::ostream& operator <<( std::ostream& os, const WbSchema& schema )
 {
-    schema.PrintOn(os);
+    schema.PrintOn( os );
     return os;
 }
 

@@ -16,219 +16,177 @@
  *
  */
 
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
+
 #include "ExtrinsicCalibrationAlgorithm.h"
 
 #include "AlgorithmInterface.h"
 #include "GroundPlaneUtility.h"
+
 #include "CalibrationSchema.h"
 #include "CameraPositionSchema.h"
 #include "ExtrinsicCalibrationSchema.h"
 #include "Message.h"
 #include "CamerasCollection.h"
-#include "Logging.h"
-#include "OpenCvUtility.h"
 
 #include <QtCore/QString>
 #include <QtCore/QTime>
 
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include "OpenCvUtility.h"
+
+#include "Logging.h"
 
 ExtrinsicCalibrationAlgorithm::ExtrinsicCalibrationAlgorithm() :
-    m_inputImageAsGrey (0),
-    m_imagePoints      (0),
-    m_errorString      (),
-    m_intrinsicMatrix  (0),
-    m_distortionCoeffs (0),
-    m_inverseCoeffs    (0),
-    m_rot              (),
-    m_trans            ()
+    m_inputImageAsGrey ( 0 ),
+    m_imagePoints      ( 0 ),
+    m_errorString      ( ),
+    m_intrinsicMatrix  ( 0 ),
+    m_distortionCoeffs ( 0 ),
+    m_inverseCoeffs    ( 0 ),
+    m_rot              ( ),
+    m_trans            ( )
 {
-    m_intrinsicMatrix  = cvCreateMat(3, 3, CV_32F);
-    m_distortionCoeffs = cvCreateMat(5, 1, CV_32F);
-    m_inverseCoeffs    = cvCreateMat(5, 1, CV_32F);
+    m_intrinsicMatrix  = cvCreateMat( 3, 3, CV_32F );
+    m_distortionCoeffs = cvCreateMat( 5, 1, CV_32F );
+    m_inverseCoeffs    = cvCreateMat( 5, 1, CV_32F );
 }
 
-bool ExtrinsicCalibrationAlgorithm::Run(WbConfig config)
+bool ExtrinsicCalibrationAlgorithm::LoadInputImage( const QString& imageFileName )
 {
-    using namespace ExtrinsicCalibrationSchema;
-
-    const QString imageFileName(config.GetAbsoluteFileNameFor(config.GetKeyValue(calibrationImageKey)
-                                                                    .ToQString()));
-
-    const double squareSizeInCm = config.GetKeyValue(gridSquareSizeInCmKey).ToDouble();
-    const int    gridWidth      = config.GetKeyValue(gridColumnsKey).ToInt();
-    const int    gridHeight     = config.GetKeyValue(gridRowsKey).ToInt();
-
-    // Grid size must be greater than 3x3 of OpenCV throws exception
-    assert(gridWidth >= 3);
-    assert(gridHeight >= 3);
-
-    const CvSize gridSize(cvSize(gridWidth, gridHeight));
-
-    bool successful = LoadInputImage(imageFileName);
-
-    if (successful)
+    bool successful = true;
+    m_inputImageAsGrey = cvLoadImage( imageFileName.toAscii(),
+                                      CV_LOAD_IMAGE_GRAYSCALE );
+    if ( !m_inputImageAsGrey )
     {
-        successful = DetectChessBoardPattern(gridSize);
+        m_errorString = QObject::tr( "Could not open image: %1!" )
+                                   .arg( imageFileName );
+        successful = false;
     }
+    return successful;
+}
 
-    if (successful)
+bool ExtrinsicCalibrationAlgorithm::DetectChessBoardPattern( const CvSize& gridSize )
+{
+    bool successful = true;
+
+    // Chess board pattern detection
+    m_imagePoints = GroundPlaneUtility::findChessBoard( m_inputImageAsGrey, gridSize );
+
+    if ( !m_imagePoints )
     {
-        successful = LoadCameraCalibration(config);
+        m_errorString =  QObject::tr( "%1x%2 grid not found in the image.  "
+                                      "Check image and parameters and try again.",
+                                      "ExtrinsicCalibrationAlgorithm" )
+                                    .arg( gridSize.height )
+                                    .arg( gridSize.width );
+        successful = false;
     }
+    return successful;
+}
 
-    if (successful)
+bool ExtrinsicCalibrationAlgorithm::PopulateCameraCalibrationMatrices( const WbConfig& cameraCfg )
+{
+    using namespace CalibrationSchema;
+    bool successful = true;
+    const WbConfig cameraIntrisicConfig( cameraCfg.GetSubConfig( schemaName ) );
+
+    const bool calibrationWasSuccessful = cameraIntrisicConfig
+                    .GetKeyValue( calibrationSuccessfulKey )
+                    .ToBool();
+    const bool cameraMtxValid = cameraIntrisicConfig
+                    .GetKeyValue( cameraMatrixKey )
+                    .ToCvMat( *m_intrinsicMatrix );
+    const bool distortionCoeffsValid = cameraIntrisicConfig
+                    .GetKeyValue( distortionCoefficientsKey )
+                    .ToCvMat( *m_distortionCoeffs );
+    const bool inverseCoeffsValid = cameraIntrisicConfig
+                    .GetKeyValue( invDistortionCoefficientsKey )
+                    .ToCvMat( *m_inverseCoeffs );
+
+    if ( !calibrationWasSuccessful ||
+         !cameraMtxValid ||
+         !distortionCoeffsValid ||
+         !inverseCoeffsValid )
     {
-        ComputeSquareSize();
+        m_errorString = QObject::tr( "The specified camera is not correctly calibrated."
+                                     " Please return to the Calibrate Camera tab,"
+                                     " repeat the calibration then try again",
+                                     "ExtrinsicCalibrationAlgorithm" );
+        successful = false;
     }
+    return successful;
+}
 
-    if (successful)
+bool ExtrinsicCalibrationAlgorithm::LoadCameraCalibration( const WbConfig& config )
+{
+    WbConfig cameraCfg;
+
+    bool successful = LoadCameraConfig( config, &cameraCfg );
+
+    if ( successful )
     {
-#if WRONG
-        successful = CalibrateCamera(gridSize, m_squareSizePx);
-#else
-        successful = CalibrateCamera(gridSize, squareSizeInCm);
-#endif
+        successful = PopulateCameraCalibrationMatrices( cameraCfg );
     }
-
-    if (successful)
-    {
-        RecordCalibration(config);
-    }
-    else
-    {
-        Message::Show(0,
-                      QObject::tr("Extrinsic Calibration"),
-                      m_errorString,
-                      Message::Severity_Critical);
-
-    }
-
-    // Clean-up
-    cvReleaseMat(&m_imagePoints);
-    cvReleaseMat(&m_intrinsicMatrix);
-    cvReleaseMat(&m_distortionCoeffs);
-    cvReleaseMat(&m_inverseCoeffs);
-    cvReleaseImage(&m_inputImageAsGrey);
-
-    cvReleaseMat(&m_rot);
-    cvReleaseMat(&m_trans);
 
     return successful;
 }
 
-bool ExtrinsicCalibrationAlgorithm::LoadInputImage(const QString& imageFileName)
+bool ExtrinsicCalibrationAlgorithm::LoadCameraConfig( const WbConfig& calibCfg,
+                                                      WbConfig* const cameraCfg )
 {
-    m_inputImageAsGrey = cvLoadImage(imageFileName.toAscii(), CV_LOAD_IMAGE_GRAYSCALE);
-    if (!m_inputImageAsGrey)
+    bool successful = true;
+
+    if ( cameraCfg == 0 )
     {
-        m_errorString = QObject::tr("Could not open image: %1!").arg(imageFileName);
-        return false;
+        m_errorString =
+            QObject::tr( "cameraCfg cannot be null",
+                         "ExtrinsicCalibrationAlgorithm" );
+        successful = false;
     }
-    return true;
+
+    if ( successful )
+    {
+        // Load calibration
+        const WbConfig camPosCfg( calibCfg.GetParent() );
+        const KeyId cameraId( camPosCfg
+                        .GetKeyValue( CameraPositionSchema::cameraIdKey ).ToQString() );
+        Collection cameras( CamerasCollection() );
+        cameras.SetConfig( calibCfg );
+        *cameraCfg = cameras.ElementById( cameraId );
+
+        if ( cameraCfg->IsNull() )
+        {
+            m_errorString = QObject::tr( "Configuration missing for camera: %1!" )
+                                       .arg( cameraId );
+            successful = false;
+        }
+    }
+
+    return successful;
 }
 
-bool ExtrinsicCalibrationAlgorithm::DetectChessBoardPattern(const CvSize& gridSize)
+bool ExtrinsicCalibrationAlgorithm::CalibrateCamera( const CvSize& gridSize,
+                                                     const double squareSizeInCm )
 {
-    // Chess board pattern detection
-    m_imagePoints = GroundPlaneUtility::FindChessBoard(m_inputImageAsGrey, gridSize);
+    bool successful = true; /// @todo Shouldn't assume success here!
 
-    if (!m_imagePoints)
-    {
-        m_errorString =  QObject::tr("%1x%2 grid not found in the image.  "
-                                      "Check image and parameters and try again.",
-                                      "ExtrinsicCalibrationAlgorithm")
-                                    .arg(gridSize.height)
-                                    .arg(gridSize.width);
-        return false;
-    }
-    return true;
-}
-
-bool ExtrinsicCalibrationAlgorithm::LoadCameraCalibration(const WbConfig& config)
-{
-    WbConfig cameraCfg;
-    if (LoadCameraConfig(config, &cameraCfg))
-    {
-        return PopulateCameraCalibrationMatrices(cameraCfg);
-    }
-
-    return false;
-}
-
-bool ExtrinsicCalibrationAlgorithm::LoadCameraConfig(const WbConfig& calibCfg, WbConfig* const cameraCfg)
-{
-    if (cameraCfg == 0)
-    {
-        m_errorString = QObject::tr("cameraCfg cannot be null", "ExtrinsicCalibrationAlgorithm");
-        return false;
-    }
-
-    // Load calibration
-    const WbConfig camPosCfg(calibCfg.GetParent());
-    const KeyId cameraId(camPosCfg.GetKeyValue(CameraPositionSchema::cameraIdKey).ToQString());
-    Collection cameras(CamerasCollection());
-    cameras.SetConfig(calibCfg);
-    *cameraCfg = cameras.ElementById(cameraId);
-
-    if (cameraCfg->IsNull())
-    {
-        m_errorString = QObject::tr("Configuration missing for camera: %1!").arg(cameraId);
-        return false;
-    }
-
-    return true;
-}
-
-bool ExtrinsicCalibrationAlgorithm::PopulateCameraCalibrationMatrices(const WbConfig& cameraCfg)
-{
-    using namespace CalibrationSchema;
-    const WbConfig cameraIntrisicConfig(cameraCfg.GetSubConfig(schemaName));
-
-    const bool calibrationWasSuccessful = cameraIntrisicConfig
-                    .GetKeyValue(calibrationSuccessfulKey)
-                    .ToBool();
-    const bool cameraMtxValid = cameraIntrisicConfig
-                    .GetKeyValue(cameraMatrixKey)
-                    .ToCvMat(*m_intrinsicMatrix);
-    const bool distortionCoeffsValid = cameraIntrisicConfig
-                    .GetKeyValue(distortionCoefficientsKey)
-                    .ToCvMat(*m_distortionCoeffs);
-    const bool inverseCoeffsValid = cameraIntrisicConfig
-                    .GetKeyValue(invDistortionCoefficientsKey)
-                    .ToCvMat(*m_inverseCoeffs);
-
-    if (!calibrationWasSuccessful || !cameraMtxValid || !distortionCoeffsValid || !inverseCoeffsValid)
-    {
-        m_errorString = QObject::tr("The specified camera is not correctly calibrated."
-                                     "\nPlease return to the Calibrate Camera tab,"
-                                     " repeat the calibration then try again",
-                                     "ExtrinsicCalibrationAlgorithm");
-        return false;
-    }
-    return true;
-}
-
-bool ExtrinsicCalibrationAlgorithm::CalibrateCamera(const CvSize& gridSize, const double squareSizeInCm)
-{
-
-    CvMat* objectPoints = GroundPlaneUtility::CreateCalibrationObject(gridSize.width,
-                                                                      gridSize.height,
-                                                                      squareSizeInCm);
+    CvMat* objectPoints = GroundPlaneUtility::createCalibrationObject( gridSize.width,
+                                                                       gridSize.height,
+                                                                       squareSizeInCm );
 
     // Compute extrinsic camera parameters
-    m_rot = cvCreateMat(3, 3, CV_32F);
-    m_trans = cvCreateMat(1, 3, CV_32F);
+    m_rot = cvCreateMat( 3, 3, CV_32F );
+    m_trans = cvCreateMat( 1, 3, CV_32F );
 
     LOG_TRACE("Computing extrinsic params");
 
-    GroundPlaneUtility::ComputeExtrinsicParameters(objectPoints,
-                                                   m_imagePoints,
-                                                   m_intrinsicMatrix,
-                                                   m_distortionCoeffs,
-                                                   m_rot,
-                                                   m_trans);
+    GroundPlaneUtility::computeExtrinsicParameters( objectPoints,
+                                                    m_imagePoints,
+                                                    m_intrinsicMatrix,
+                                                    m_distortionCoeffs,
+                                                    m_rot,
+                                                    m_trans );
 
     LOG_INFO("Rotation matrix:");
     OpenCvUtility::LogCvMat32F(m_rot);
@@ -236,9 +194,9 @@ bool ExtrinsicCalibrationAlgorithm::CalibrateCamera(const CvSize& gridSize, cons
     LOG_INFO("Translation matrix:");
     OpenCvUtility::LogCvMat32F(m_trans);
 
-    cvReleaseMat(&objectPoints);
+    cvReleaseMat( &objectPoints );
 
-    return true;
+    return successful;
 }
 
 void ExtrinsicCalibrationAlgorithm::ComputeSquareSize()
@@ -254,21 +212,92 @@ void ExtrinsicCalibrationAlgorithm::ComputeSquareSize()
     m_squareSizePx = sqrt(x*x + y*y);
 }
 
-void ExtrinsicCalibrationAlgorithm::RecordCalibration(WbConfig config)
+void ExtrinsicCalibrationAlgorithm::RecordCalibration( WbConfig config )
 {
     using namespace ExtrinsicCalibrationSchema;
 
-    const QString currentDateString(QDate::currentDate().
-                                    toString(QObject::tr("d MMMM yyyy", "Calibration Date Format")));
-    const QString currentTimeString(QTime::currentTime().
-                                    toString(QObject::tr("h.mmap", "Calibration Time Format")));
+    const QString currentDateString(
+        QDate::currentDate().toString( QObject::tr( "d MMMM yyyy", "Calibration Date Format" ) ) );
+    const QString currentTimeString(
+        QTime::currentTime().toString( QObject::tr( "h.mmap", "Calibration Time Format" ) ) );
 
-    config.SetKeyValue(calibrationSuccessfulKey, KeyValue::from(true));
-    config.SetKeyValue(calibrationDateKey, KeyValue::from(currentDateString));
-    config.SetKeyValue(calibrationTimeKey, KeyValue::from(currentTimeString));
+    config.SetKeyValue( calibrationSuccessfulKey, KeyValue::from( true ) );
+    config.SetKeyValue( calibrationDateKey, KeyValue::from( currentDateString ) );
+    config.SetKeyValue( calibrationTimeKey, KeyValue::from( currentTimeString ) );
 
-    config.SetKeyValue(rotationMatrixKey, KeyValue::from(*m_rot));
-    config.SetKeyValue(translationKey, KeyValue::from(*m_trans));
+    config.SetKeyValue( rotationMatrixKey, KeyValue::from( *m_rot ) );
+    config.SetKeyValue( translationKey, KeyValue::from( *m_trans ) );
 
-    config.SetKeyValue(gridSquareSizeInPxKey, KeyValue::from(m_squareSizePx));
+    config.SetKeyValue( gridSquareSizeInPxKey, KeyValue::from( m_squareSizePx ) );
+}
+
+/** @todo @bug here and in the Intrinsic algorithm need to be sure grid size >= 3x3
+ * or OpenCV throws exception.  Currently limited by GUI, but should check here too.
+ *
+ */
+bool ExtrinsicCalibrationAlgorithm::Run( WbConfig config )
+{
+    using namespace ExtrinsicCalibrationSchema;
+
+    const QString imageFileName( config.GetAbsoluteFileNameFor(
+                                        config.GetKeyValue( calibrationImageKey )
+                                                                    .ToQString() ) );
+
+    const double squareSizeInCm = config.GetKeyValue( gridSquareSizeInCmKey ).ToDouble();
+    const int    gridWidth      = config.GetKeyValue( gridColumnsKey ).ToInt();
+    const int    gridHeight     = config.GetKeyValue( gridRowsKey ).ToInt();
+    const CvSize gridSize( cvSize( gridWidth, gridHeight ) );
+
+    bool successful = LoadInputImage( imageFileName );
+
+    if ( successful )
+    {
+        successful = DetectChessBoardPattern( gridSize );
+    }
+
+    WbConfig cameraConfig;
+
+    if ( successful )
+    {
+        successful = LoadCameraCalibration( config );
+    }
+
+    if ( successful )
+    {
+        ComputeSquareSize();
+    }
+
+    if ( successful )
+    {
+#if WRONG
+        successful = CalibrateCamera( gridSize, m_squareSizePx );
+#else
+        successful = CalibrateCamera( gridSize, squareSizeInCm );
+#endif
+    }
+
+    if ( successful )
+    {
+        RecordCalibration( config );
+    }
+    else
+    {
+        Message::Show( 0,
+                       QObject::tr( "Extrinsic Calibration" ),
+                       m_errorString,
+                       Message::Severity_Critical );
+
+    }
+
+    // Clean-up
+    cvReleaseMat(&m_imagePoints);
+    cvReleaseMat(&m_intrinsicMatrix);
+    cvReleaseMat(&m_distortionCoeffs);
+    cvReleaseMat(&m_inverseCoeffs);
+    cvReleaseImage(&m_inputImageAsGrey);
+
+    cvReleaseMat(&m_rot);
+    cvReleaseMat(&m_trans);
+
+    return successful;
 }

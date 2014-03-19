@@ -25,29 +25,29 @@
 
 Collection CameraPositionsCollection()
 {
-    return Collection(KeyName("cameraPositions"),
-                       CameraPositionSchema::schemaName);
+    return Collection( KeyName( "cameraPositions" ),
+                       CameraPositionSchema::schemaName );
 }
 
 std::vector<WbConfig> GetCameraPositionsConfigs(const WbConfig roomConfig)
 {
     Collection camerasPositions = CameraPositionsCollection();
-    camerasPositions.SetConfig(roomConfig);
+    camerasPositions.SetConfig( roomConfig );
 
     std::vector<WbConfig> camPosConfigs;
-    const WbConfig roomLayoutConfig = roomConfig.GetSubConfig(RoomLayoutSchema::schemaName);
-    const KeyValue camPosIds = roomLayoutConfig.GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey);
+    const WbConfig roomLayoutConfig = roomConfig.GetSubConfig( RoomLayoutSchema::schemaName );
+    const KeyValue camPosIds = roomLayoutConfig.GetKeyValue( RoomLayoutSchema::cameraPositionIdsKey );
     const QStringList strCamPosIds = camPosIds.ToQStringList();
 
     LOG_INFO(QObject::tr("Got %1 camera positions:").arg(strCamPosIds.size()));
 
     for (int n = 0; n < strCamPosIds.size(); ++n)
     {
-        const KeyId camPosId = strCamPosIds.at(n);
+        const KeyId camPosId = strCamPosIds.at( n );
 
         LOG_INFO(QObject::tr(" - %1").arg(camPosId));
 
-        const WbConfig camPosConfig = camerasPositions.ElementById(camPosId);
+        const WbConfig camPosConfig = camerasPositions.ElementById( camPosId );
         camPosConfigs.push_back(camPosConfig);
     }
 

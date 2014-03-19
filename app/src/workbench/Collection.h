@@ -34,30 +34,30 @@ public:
         Status_CollectionNotFound
     };
 
-    Collection(const KeyName&   collectionSchemaName,
-                const KeyName&   elementSchemaName);
+    Collection( const KeyName&   collectionSchemaName,
+                const KeyName&   elementSchemaName );
 
-    const StatusType SetConfig(const WbConfig& config);
+    const StatusType SetConfig( const WbConfig& config );
     const size_t NumElements() const;
 
-    const WbConfig::SubConfigs::ValueIdPair ElementAt(const size_t index) const;
-    const WbConfig ElementById(const KeyId& id) const;
+    const WbConfig::SubConfigs::ValueIdPair ElementAt( const size_t index ) const;
+    const WbConfig ElementById( const KeyId& id ) const;
     const WbConfig CollectionConfig() const;
 
-    WbConfig AddNewElement(const KeyValue& name);
-    void DeleteElement(const KeyId& keyId);
+    WbConfig AddNewElement( const KeyValue& name );
+    void DeleteElement( const KeyId& keyId );
 
-    bool AnyElementHas(const KeyId& keyId) const;
-    bool AnyElementHas(const KeyName& keyName,
+    bool AnyElementHas( const KeyId& keyId ) const;
+    bool AnyElementHas( const KeyName& keyName,
                               const KeyValue& keyValue,
                               const Qt::CaseSensitivity& caseSensitivity =
-                                                              Qt::CaseSensitive) const;
+                                                              Qt::CaseSensitive ) const;
 
 private:
-    void FindCollection(const WbConfig& config);
+    void FindCollection( const WbConfig& config );
     const StatusType Status() const;
 
-    //const QString GetSubConfigFileName(const KeyValue& name) const;
+    //const QString GetSubConfigFileName( const KeyValue& name ) const;
 
     KeyName    m_collectionSchemaName;
     KeyName    m_elementSchemaName;

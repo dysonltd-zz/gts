@@ -30,8 +30,8 @@ class AnalysisTool : public CollectionToolWidget
     Q_OBJECT
 
 public:
-    AnalysisTool(QWidget* parent,
-                        MainWindow& mainWindow);
+    AnalysisTool( QWidget* parent,
+                        MainWindow& mainWindow );
     virtual ~AnalysisTool();
 
     virtual const QString Name() const;

@@ -30,23 +30,23 @@
 class ModifiedToolTabs : public QTabBar
 {
 public:
-    ModifiedToolTabs(ToolTabsContainerWidget& tabWidget)
+    ModifiedToolTabs( ToolTabsContainerWidget& tabWidget )
     :
-        m_tabWidget(tabWidget)
+        m_tabWidget( tabWidget )
     {
     }
 
 protected:
-    virtual void mousePressEvent(QMouseEvent* event)
+    virtual void mousePressEvent( QMouseEvent* event )
     {
-        if (!m_tabWidget.ActiveToolCanClose())
+        if ( !m_tabWidget.ActiveToolCanClose() )
         {
             m_tabWidget.ShowCannotCloseMessage();
             event->accept();
         }
         else
         {
-            QTabBar::mousePressEvent(event);
+            QTabBar::mousePressEvent( event );
         }
 
     }
@@ -55,59 +55,59 @@ private:
     ToolTabsContainerWidget& m_tabWidget;
 };
 
-ToolTabsContainerWidget::ToolTabsContainerWidget(MainWindow* const mainWindow, QWidget* parent) :
-    QTabWidget(parent),
-    m_mainWindow(mainWindow),
+ToolTabsContainerWidget::ToolTabsContainerWidget( MainWindow* const mainWindow, QWidget* parent ) :
+    QTabWidget( parent ),
+    m_mainWindow( mainWindow ),
     m_tools()
 {
-    setTabBar(new ModifiedToolTabs(*this));
+    setTabBar( new ModifiedToolTabs( *this ) );
 
-    QObject::connect(this,
-                      SIGNAL(currentChanged(int)),
+    QObject::connect( this,
+                      SIGNAL( currentChanged( int ) ),
                       this,
-                      SLOT(CurrentTabChanged(const int)));
+                      SLOT( CurrentTabChanged( const int ) ) );
 }
 
 ToolTabsContainerWidget::~ToolTabsContainerWidget()
 {
-    ScopedQtSignalsBlocker blockChangePageSignalsDuringClear(*this);
+    ScopedQtSignalsBlocker blockChangePageSignalsDuringClear( *this );
     // Make sure tab widget doesn't delete the tab page widgets
     // -- that's the Tool's responsibility
     clear();
 }
 
-void ToolTabsContainerWidget::AddTool(ToolInterface* const tool)
+void ToolTabsContainerWidget::AddTool( ToolInterface* const tool )
 {
-    addTab(tool->Widget(), tool->Name());
-    m_tools.push_back(std::shared_ptr<ToolInterface>(tool));
+    addTab( tool->Widget(), tool->Name() );
+    m_tools.push_back( std::shared_ptr<ToolInterface>(tool) );
 
-    tabBar()->setHidden(count() == 1);
+    tabBar()->setHidden( count() == 1 );
 
 }
 
 void ToolTabsContainerWidget::ShowCannotCloseMessage()
 {
-    Message::Show(this,
-                   tr("Stop!"),
+    Message::Show( this,
+                   tr( "Stop!" ),
                    ActiveToolCannotCloseReason(),
-                   Message::Severity_NonBlockingInfo);
+                   Message::Severity_NonBlockingInfo );
 }
 
-void ToolTabsContainerWidget::ActivateTabWithoutInvokingSignals(const size_t tabIndex)
+void ToolTabsContainerWidget::ActivateTabWithoutInvokingSignals( const size_t tabIndex )
 {
-    ScopedQtSignalsBlocker blockChangePageSignals(*this);
-    this->setCurrentIndex(static_cast<int>(tabIndex));
+    ScopedQtSignalsBlocker blockChangePageSignals( *this );
+    this->setCurrentIndex( static_cast<int>( tabIndex ) );
 }
 
-bool ToolTabsContainerWidget::TryToOpenTool(const WbConfig& config)
+bool ToolTabsContainerWidget::TryToOpenTool( const WbConfig& config )
 {
     bool openedAnyTool = false;
     size_t index = 0;
     for (auto tool  = m_tools.begin(); tool != m_tools.end(); ++tool)
     {
-        const bool openedThisTool = (*tool)->TryToOpenTool(config);
+        const bool openedThisTool = (*tool)->TryToOpenTool( config );
 
-        if (!openedAnyTool && openedThisTool)
+        if ( !openedAnyTool && openedThisTool )
         {
             ActivateTabWithoutInvokingSignals(index);
             openedAnyTool = true;
@@ -118,50 +118,50 @@ bool ToolTabsContainerWidget::TryToOpenTool(const WbConfig& config)
     return openedAnyTool;
 }
 
-void ToolTabsContainerWidget::CallOnActiveTools(ToolFunction& func)
+void ToolTabsContainerWidget::CallOnActiveTools( ToolFunction& func )
 {
     const ToolPtr activeTab = FindActiveTool();
-    if (activeTab != 0)
+    if ( activeTab != 0 )
     {
-        activeTab->CallOnSelfAndActiveSubTools(func);
+        activeTab->CallOnSelfAndActiveSubTools( func );
     }
 }
 
 const ToolTabsContainerWidget::ToolPtr ToolTabsContainerWidget::FindActiveTool() const
 {
     const int activeTab = currentIndex();
-    if ((activeTab >= 0) && (activeTab < (int)m_tools.size()))
+    if ( ( activeTab >= 0 ) && ( activeTab < (int)m_tools.size() ) )
     {
-        return m_tools.at(activeTab);
+        return m_tools.at( activeTab );
     }
     return ToolPtr();
 }
 
-void ToolTabsContainerWidget::AddToolsFullWorkbenchSchemaSubTreeTo(WbSchema& parentSchema,
-                                                                    const KeyName& schemaToAddTo)
+void ToolTabsContainerWidget::AddToolsFullWorkbenchSchemaSubTreeTo( WbSchema& parentSchema,
+                                                                    const KeyName& schemaToAddTo )
 {
     for (auto tool = m_tools.begin(); tool != m_tools.end(); ++tool)
     {
-        (*tool)->AddFullWorkbenchSchemaSubTreeTo(parentSchema, schemaToAddTo);
+        (*tool)->AddFullWorkbenchSchemaSubTreeTo( parentSchema, schemaToAddTo );
     }
 }
 
-void ToolTabsContainerWidget::AddToolsFullWorkbenchSchemaSubTreeTo(WbSchema& parentSchema)
+void ToolTabsContainerWidget::AddToolsFullWorkbenchSchemaSubTreeTo( WbSchema& parentSchema )
 {
-    AddToolsFullWorkbenchSchemaSubTreeTo(parentSchema, parentSchema.Name());
+    AddToolsFullWorkbenchSchemaSubTreeTo( parentSchema, parentSchema.Name() );
 }
 
-void ToolTabsContainerWidget::CurrentTabChanged(const int newTabIndex)
+void ToolTabsContainerWidget::CurrentTabChanged( const int newTabIndex )
 {
     Q_UNUSED(newTabIndex);
 
-    if (m_mainWindow)
+    if ( m_mainWindow )
     {
         m_mainWindow->Reload();
     }
 
     const ToolPtr activeTab = FindActiveTool();
-    if (activeTab != 0)
+    if ( activeTab != 0 )
     {
         activeTab->Activated();
     }
@@ -170,7 +170,7 @@ void ToolTabsContainerWidget::CurrentTabChanged(const int newTabIndex)
 bool ToolTabsContainerWidget::ActiveToolCanClose() const
 {
     const ToolPtr activeTab = FindActiveTool();
-    if (activeTab != 0)
+    if ( activeTab != 0 )
     {
         return activeTab->CanClose();
     }
@@ -180,7 +180,7 @@ bool ToolTabsContainerWidget::ActiveToolCanClose() const
 const QString ToolTabsContainerWidget::ActiveToolCannotCloseReason() const
 {
     const ToolPtr activeTab = FindActiveTool();
-    if (activeTab != 0)
+    if ( activeTab != 0 )
     {
         return activeTab->CannotCloseReason();
     }

@@ -29,29 +29,29 @@
 
 namespace
 {
-    std::ostream& operator << (std::ostream& os, const QString& qString)
+    std::ostream& operator << ( std::ostream& os, const QString& qString )
     {
-        return (os << qString.toStdString());
+        return ( os << qString.toStdString() );
     }
 
-    std::ostream& operator << (std::ostream& os, const QStringList& qStringList)
+    std::ostream& operator << ( std::ostream& os, const QStringList& qStringList )
     {
-        if (qStringList.size() == 1)
+        if ( qStringList.size() == 1 )
         {
-            return (os << qStringList.at(0).toStdString());
+            return ( os << qStringList.at( 0 ).toStdString() );
         }
 
-        for (int i = 0; i < qStringList.size(); ++i)
+        for ( int i = 0; i < qStringList.size(); ++i )
         {
-            os << " [" << i << "]" << qStringList.at(i).toStdString();
+            os << " [" << i << "]" << qStringList.at( i ).toStdString();
         }
 
         return os;
     }
 
-    std::ostream& operator << (std::ostream& os, const KeyValue& keyValue)
+    std::ostream& operator << ( std::ostream& os, const KeyValue& keyValue )
     {
-        return (os << keyValue.ToQStringList());
+        return ( os << keyValue.ToQStringList() );
     }
 }
 
@@ -68,20 +68,20 @@ public:
         Recursive
     };
 
-    OStreamConfigFileWriter(std::ostream& os = std::cout,
-                             const Recursiveness& recursiveness = Recursive)
+    OStreamConfigFileWriter( std::ostream& os = std::cout,
+                             const Recursiveness& recursiveness = Recursive )
     :
-        m_os(os),
-        m_indent(0),
-        m_recursiveness(recursiveness)
+        m_os( os ),
+        m_indent( 0 ),
+        m_recursiveness( recursiveness )
     {
     }
 
     virtual WbConfigFileWriter* const Clone() const
     {
-        if (m_recursiveness == Recursive)
+        if ( m_recursiveness == Recursive )
         {
-            return new OStreamConfigFileWriter(*this);
+            return new OStreamConfigFileWriter( *this );
         }
         else
         {
@@ -89,45 +89,45 @@ public:
         }
     }
 
-    virtual bool WriteTo(QIODevice& ioDevice)
+    virtual bool WriteTo( QIODevice& ioDevice )
     {
         Q_UNUSED(ioDevice);
 
         return true;
     }
 
-    virtual void StartConfigFile(const KeyName& name)
+    virtual void StartConfigFile( const KeyName& name )
     {
         Q_UNUSED(name);
 
         IncreaseIndent();
     }
 
-    virtual void EndConfigFile(const KeyName& name)
+    virtual void EndConfigFile( const KeyName& name )
     {
         Q_UNUSED(name);
 
         DecreaseIndent();
     }
 
-    virtual void WriteKey(const KeyName& name, const KeyValue& value, const KeyId& id = KeyId())
+    virtual void WriteKey( const KeyName& name, const KeyValue& value, const KeyId& id = KeyId() )
     {
-        m_os << Indent() << "Key: " << name << IdOrEmpty(id) << ", Value: " << value << std::endl;
+        m_os << Indent() << "Key: " << name << IdOrEmpty( id ) << ", Value: " << value << std::endl;
     }
 
-    virtual void StartGroup(const KeyName& name, const KeyId& id)
+    virtual void StartGroup( const KeyName& name, const KeyId& id )
     {
         m_os << Indent()
              << "Start Group: "
              << name
-             << IdOrEmpty(id)
+             << IdOrEmpty( id )
              << " -------------"
              << std::endl;
 
         IncreaseIndent();
     }
 
-    virtual void EndGroup(const KeyName& name, const KeyId& id)
+    virtual void EndGroup( const KeyName& name, const KeyId& id )
     {
         Q_UNUSED(name);
         Q_UNUSED(id);
@@ -135,27 +135,27 @@ public:
         DecreaseIndent();
     }
 
-    virtual void WriteSubConfig(const KeyName& name, const QFileInfo& configFileLocation, const KeyId& id)
+    virtual void WriteSubConfig( const KeyName& name, const QFileInfo& configFileLocation, const KeyId& id )
     {
         m_os << Indent()
              << "SubConfig: "
              << name
-             << IdOrEmpty(id)
+             << IdOrEmpty( id )
              << ", at: "
              << configFileLocation.filePath()
              << std::endl;
     }
 
 private:
-    const QString IdOrEmpty(const KeyId& id) const
+    const QString IdOrEmpty( const KeyId& id ) const
     {
         QString idString;
 
-        if (!id.isEmpty())
+        if ( !id.isEmpty() )
         {
-            idString.append(" (id: ");
-            idString.append(id);
-            idString.append(")");
+            idString.append( " (id: " );
+            idString.append( id );
+            idString.append( ")" );
         }
         return idString;
     }
@@ -163,7 +163,7 @@ private:
     const std::string Indent() const
     {
         std::string indent;
-        for (size_t i = 0; i < m_indent; ++i)
+        for ( size_t i = 0; i < m_indent; ++i )
         {
             indent += "  ";
         }
@@ -175,7 +175,7 @@ private:
     }
     void DecreaseIndent()
     {
-        assert(m_indent > 0);
+        assert( m_indent > 0 );
         m_indent--;
     }
 

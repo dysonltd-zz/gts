@@ -90,10 +90,10 @@ namespace
         // Rotate the rectangle
         std::vector<cv::Point2f> rp;
 
-        rp.push_back(rotPoint(R, cv::Point2f(bb.x, bb.y)));
-        rp.push_back(rotPoint(R, cv::Point2f(bb.x + bb.width, bb.y)));
-        rp.push_back(rotPoint(R, cv::Point2f(bb.x + bb.width, bb.y + bb.height)));
-        rp.push_back(rotPoint(R, cv::Point2f(bb.x, bb.y + bb.height)));
+        rp.push_back( rotPoint(R, cv::Point2f(bb.x, bb.y)) );
+        rp.push_back( rotPoint(R, cv::Point2f(bb.x + bb.width, bb.y)) );
+        rp.push_back( rotPoint(R, cv::Point2f(bb.x + bb.width, bb.y + bb.height)) );
+        rp.push_back( rotPoint(R, cv::Point2f(bb.x, bb.y + bb.height)) );
 
         // Find box
         float x = rp[0].x;
@@ -166,20 +166,20 @@ namespace
     }
 }
 
-CreateFloorPlanWidget::CreateFloorPlanWidget(CameraHardware& cameraHardware,
-                                                      QWidget* parent) :
-    Tool                        (parent, CreateSchema()),
-    m_ui                        (new Ui::CreateFloorPlanWidget),
+CreateFloorPlanWidget::CreateFloorPlanWidget( CameraHardware& cameraHardware,
+                                                      QWidget* parent ) :
+    Tool                        ( parent, CreateSchema() ),
+    m_ui                        ( new Ui::CreateFloorPlanWidget ),
     m_captureLiveDualController (),
-    m_rotAngle                  (0)
+    m_rotAngle                  ( 0 )
 {
     SetupUi();
 
     m_captureLiveDualController.reset(
-            new CaptureLiveDualController(*m_ui->m_captureLiveBtn,
+            new CaptureLiveDualController( *m_ui->m_captureLiveBtn,
                                            *m_ui->m_captureCancelBtn,
                                            *this,
-                                           cameraHardware));
+                                           cameraHardware ) );
 
     ConnectSignals();
     CreateMappers();
@@ -187,14 +187,14 @@ CreateFloorPlanWidget::CreateFloorPlanWidget(CameraHardware& cameraHardware,
 
 void CreateFloorPlanWidget::SetupUi()
 {
-    m_ui->setupUi(this);
+    m_ui->setupUi( this );
 
 #if 0
     ResetUi();
 #endif
 }
 
-void CreateFloorPlanWidget::FillOutCameraCombo(QComboBox& comboBox)
+void CreateFloorPlanWidget::FillOutCameraCombo( QComboBox& comboBox )
 {
     WbConfig config = GetCurrentConfig();
 
@@ -203,14 +203,14 @@ void CreateFloorPlanWidget::FillOutCameraCombo(QComboBox& comboBox)
 
     comboBox.clear();
 
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList camPosIds(roomLayoutConfig
                                  .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                 .ToQStringList());
+                                 .ToQStringList() );
 
     for (auto camPosId = camPosIds.begin(); camPosId != camPosIds.end(); ++camPosId)
     {
-        comboBox.addItem(WbConfigTools::DisplayNameOf(camPosCollection.ElementById(*camPosId)), QVariant(*camPosId));
+        comboBox.addItem( WbConfigTools::DisplayNameOf(camPosCollection.ElementById(*camPosId)), QVariant( *camPosId ) );
     }
 
 }
@@ -220,26 +220,26 @@ void CreateFloorPlanWidget::ReloadCurrentConfigToolSpecific()
     WbConfig config = GetCurrentConfig();
 
     // Check whether the room has more than one camera position
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList());
+                                        .ToQStringList() );
 
-    FillOutCameraCombo(*m_ui->m_camera1Combo);
-    FillOutCameraCombo(*m_ui->m_camera2Combo);
+    FillOutCameraCombo( *m_ui->m_camera1Combo );
+    FillOutCameraCombo( *m_ui->m_camera2Combo );
 
     if (cameraPositionIds.size() > 1)
     {
         m_ui->m_camera1Combo->setEnabled(true);
         m_ui->m_camera2Combo->setEnabled(true);
 
-        m_ui->m_camera1Combo->setCurrentIndex(0);
-        m_ui->m_camera2Combo->setCurrentIndex(1);
+        m_ui->m_camera1Combo->setCurrentIndex( 0 );
+        m_ui->m_camera2Combo->setCurrentIndex( 1 );
     }
     else
     {
-        m_ui->m_camera1Combo->setCurrentIndex(-1);
-        m_ui->m_camera2Combo->setCurrentIndex(-1);
+        m_ui->m_camera1Combo->setCurrentIndex( -1 );
+        m_ui->m_camera2Combo->setCurrentIndex( -1 );
         m_ui->m_mappingsTable->setDisabled(true);
         m_ui->m_createFloorPlanBtn->setStyleSheet("color: blue"); // highlight button in red
     }
@@ -247,68 +247,68 @@ void CreateFloorPlanWidget::ReloadCurrentConfigToolSpecific()
 
 void CreateFloorPlanWidget::ConnectSignals()
 {
-    QObject::connect(m_ui->m_camera1Combo,
-                      SIGNAL(currentIndexChanged (int)),
+    QObject::connect( m_ui->m_camera1Combo,
+                      SIGNAL( currentIndexChanged (int) ),
                       this,
-                      SLOT(CameraComboChanged()));
-    QObject::connect(m_ui->m_camera2Combo,
-                      SIGNAL(currentIndexChanged (int)),
+                      SLOT( CameraComboChanged() ) );
+    QObject::connect( m_ui->m_camera2Combo,
+                      SIGNAL( currentIndexChanged (int) ),
                       this,
-                      SLOT(CameraComboChanged()));
+                      SLOT( CameraComboChanged() ) );
 
-    QObject::connect(m_ui->m_getImageFromFileBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_getImageFromFileBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(FromFileBtnClicked()));
-    QObject::connect(m_ui->m_captureLiveBtn,
-                      SIGNAL(clicked()),
+                      SLOT( FromFileBtnClicked() ) );
+    QObject::connect( m_ui->m_captureLiveBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(CaptureLiveBtnClicked()));
+                      SLOT( CaptureLiveBtnClicked() ) );
 
-    QObject::connect(m_ui->m_captureCancelBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_captureCancelBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(CaptureCancelBtnClicked()));
+                      SLOT( CaptureCancelBtnClicked() ) );
 
-    QObject::connect(m_ui->m_rotateBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_rotateBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(RotateBtnClicked()));
+                      SLOT( RotateBtnClicked() ) );
 
-    QObject::connect(m_ui->m_matchBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_matchBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(MatchBtnClicked()));
-    QObject::connect(m_ui->m_stitchBtn,
-                      SIGNAL(clicked()),
+                      SLOT( MatchBtnClicked() ) );
+    QObject::connect( m_ui->m_stitchBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(StitchBtnClicked()));
+                      SLOT( StitchBtnClicked() ) );
 
-    QObject::connect(m_ui->m_saveBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_saveBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(SaveBtnClicked()));
+                      SLOT( SaveBtnClicked() ) );
 
-    QObject::connect(m_ui->m_cancelBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_cancelBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(CancelBtnClicked()));
+                      SLOT( CancelBtnClicked() ) );
 
-    QObject::connect(m_ui->m_createFloorPlanBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_createFloorPlanBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(CreateFloorPlanBtnClicked()));
+                      SLOT( CreateFloorPlanBtnClicked() ) );
 }
 
 void CreateFloorPlanWidget::CreateMappers()
 {
     using namespace FloorPlanSchema;
 
-    AddMapper(calGridRowsKey, m_ui->m_gridRowsSpinBox);
-    AddMapper(calGridColsKey, m_ui->m_gridColumnsSpinBox);
+    AddMapper( calGridRowsKey, m_ui->m_gridRowsSpinBox );
+    AddMapper( calGridColsKey, m_ui->m_gridColumnsSpinBox );
 
-    m_relationsMapper = new CameraRelationsTableMapper(*m_ui->m_mappingsTable);
-    AddMapper(m_relationsMapper);
+    m_relationsMapper = new CameraRelationsTableMapper( *m_ui->m_mappingsTable );
+    AddMapper( m_relationsMapper );
 }
 
 CreateFloorPlanWidget::~CreateFloorPlanWidget()
@@ -326,14 +326,14 @@ const QString CreateFloorPlanWidget::GetSubSchemaDefaultFileName() const
     return "floorPlan.xml";
 }
 
-ImageView* const CreateFloorPlanWidget::GetStreamingView1(const QSize& imageSize)
+ImageView* const CreateFloorPlanWidget::GetStreamingView1( const QSize& imageSize )
 {
     Q_UNUSED(imageSize);
 
     return m_ui->m_liveView1;
 }
 
-ImageView* const CreateFloorPlanWidget::GetStreamingView2(const QSize& imageSize)
+ImageView* const CreateFloorPlanWidget::GetStreamingView2( const QSize& imageSize )
 {
     Q_UNUSED(imageSize);
 
@@ -345,23 +345,23 @@ void CreateFloorPlanWidget::ResetUi()
     WbConfig config = GetCurrentConfig();
 
     //Check whether the room has more than one camera position
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                          .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                         .ToQStringList());
+                                         .ToQStringList() );
 
     m_ui->m_camera1Combo->setEnabled(true);
     m_ui->m_camera2Combo->setEnabled(true);
 
     if (cameraPositionIds.size() > 1)
     {
-        m_ui->m_camera1Combo->setCurrentIndex(0);
-        m_ui->m_camera2Combo->setCurrentIndex(0);
+        m_ui->m_camera1Combo->setCurrentIndex( 0 );
+        m_ui->m_camera2Combo->setCurrentIndex( 0 );
     }
     else
     {
-        m_ui->m_camera1Combo->setCurrentIndex(-1);
-        m_ui->m_camera2Combo->setCurrentIndex(-1);
+        m_ui->m_camera1Combo->setCurrentIndex( -1 );
+        m_ui->m_camera2Combo->setCurrentIndex( -1 );
     }
 
     m_ui->m_getImageFromFileBtn->setEnabled(false);
@@ -383,7 +383,7 @@ const QString CreateFloorPlanWidget::GetCamera1Id() const
 {
     QComboBox* const cameraCombo = m_ui->m_camera1Combo;
     const int newTargetIndex = cameraCombo->currentIndex();
-    const QString cameraId(cameraCombo->itemData(newTargetIndex).toString());
+    const QString cameraId( cameraCombo->itemData( newTargetIndex ).toString() );
     return cameraId;
 }
 
@@ -391,40 +391,40 @@ const QString CreateFloorPlanWidget::GetCamera2Id() const
 {
     QComboBox* const cameraCombo = m_ui->m_camera2Combo;
     const int newTargetIndex = cameraCombo->currentIndex();
-    const QString cameraId(cameraCombo->itemData(newTargetIndex).toString());
+    const QString cameraId( cameraCombo->itemData( newTargetIndex ).toString() );
     return cameraId;
 }
 
 const WbSchema CreateFloorPlanWidget::CreateSchema()
 {
     using namespace FloorPlanSchema;
-    WbSchema floorPlanSchema(CreateWorkbenchSubSchema(schemaName,
-                                                        tr("Floor Plan")));
+    WbSchema floorPlanSchema( CreateWorkbenchSubSchema( schemaName,
+                                                        tr( "Floor Plan" ) ) );
 
-    floorPlanSchema.AddKeyGroup(calGridGroup,
+    floorPlanSchema.AddKeyGroup( calGridGroup,
                                  WbSchemaElement::Multiplicity::One,
                                  KeyNameList() << calGridRowsKey
                                                << calGridColsKey,
-                                 DefaultValueMap().WithDefault(calGridRowsKey,
-                                                                KeyValue::from(0))
-                                                  .WithDefault(calGridColsKey,
-                                                                KeyValue::from(0)));
+                                 DefaultValueMap().WithDefault( calGridRowsKey,
+                                                                KeyValue::from( 0 ) )
+                                                  .WithDefault( calGridColsKey,
+                                                                KeyValue::from( 0 ) ) );
 
-    floorPlanSchema.AddKeyGroup(mappingGroup,
+    floorPlanSchema.AddKeyGroup( mappingGroup,
                                  WbSchemaElement::Multiplicity::One,
 
                                  KeyNameList() << camera1IdKey
                                                << camera2IdKey
                                                << camera1ImgKey
                                                << camera2ImgKey
-                                               << homographyKey);
+                                               << homographyKey );
 
-    floorPlanSchema.AddKeyGroup(transformGroup,
+    floorPlanSchema.AddKeyGroup( transformGroup,
                                  WbSchemaElement::Multiplicity::One,
                                  KeyNameList() << cameraIdKey
                                                << transformKey
                                                << offsetXKey
-                                               << offsetYKey);
+                                               << offsetYKey );
 
     return floorPlanSchema;
 }
@@ -435,7 +435,7 @@ void CreateFloorPlanWidget::CameraComboChanged()
     const KeyId camera1Id = KeyId(GetCamera1Id());
     const KeyId camera2Id = KeyId(GetCamera2Id());
 
-    if (camera1Id != camera2Id)
+    if ( camera1Id != camera2Id )
     {
          m_ui->m_getImageFromFileBtn->setEnabled(true);
          m_ui->m_captureLiveBtn->setEnabled(true);
@@ -447,30 +447,30 @@ void CreateFloorPlanWidget::CameraComboChanged()
     }
 }
 
-void CreateFloorPlanWidget::ShowImage(IplImage* img, ImageView* view)
+void CreateFloorPlanWidget::ShowImage( IplImage* img, ImageView* view )
 {
     // Convert image
-    IplImage* imgTmp = cvCreateImage(cvSize(img->width, img->height), IPL_DEPTH_8U, 3);
-    cvConvertImage(img, imgTmp);
+    IplImage* imgTmp = cvCreateImage( cvSize( img->width, img->height ), IPL_DEPTH_8U, 3 );
+    cvConvertImage( img, imgTmp );
 
-    const QSize imgSize(imgTmp->width, imgTmp->height);
-    QImage qImg = QImage(imgSize, QImage::Format_RGB888);
+    const QSize imgSize( imgTmp->width, imgTmp->height );
+    QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
 
     CvMat mtxWrapper;
-    cvInitMatHeader(&mtxWrapper,
+    cvInitMatHeader( &mtxWrapper,
                      imgTmp->height,
                      imgTmp->width,
                      CV_8UC3,
-                     qImg.bits());
+                     qImg.bits() );
 
-    cvConvertImage(imgTmp, &mtxWrapper, 0);
+    cvConvertImage( imgTmp, &mtxWrapper, 0 );
 
     // Display image
     view->Clear();
-    view->SetImage(qImg);
+    view->SetImage( qImg );
     view->update();
 
-    cvReleaseImage(&imgTmp);
+    cvReleaseImage( &imgTmp );
 }
 
 void CreateFloorPlanWidget::RotateBtnClicked()
@@ -480,39 +480,39 @@ void CreateFloorPlanWidget::RotateBtnClicked()
     // Rotate image
 
 #if LOSSY_ROTATION
-    IplImage* imgCpy = cvCloneImage(m_cam2Img);
+    IplImage* imgCpy = cvCloneImage( m_cam2Img );
 
     CvPoint2D32f centre;
     centre.x = m_cam2Img->width / 2;
     centre.y = m_cam2Img->height / 2;
 
-    CvMat* rotMat = cvCreateMat(2, 3, CV_32F);
-    cv2DRotationMatrix(centre, 90.0, 1.0, rotMat);
+    CvMat* rotMat = cvCreateMat( 2, 3, CV_32F );
+    cv2DRotationMatrix( centre, 90.0, 1.0, rotMat );
 
-    cvWarpAffine(imgCpy, m_cam2Img, rotMat);
+    cvWarpAffine( imgCpy, m_cam2Img, rotMat );
 
-    cvReleaseImage(&imgCpy);
+    cvReleaseImage( &imgCpy );
 
-    cvReleaseMat(&rotMat);
+    cvReleaseMat( &rotMat );
 #else
     IplImage *imageRotated = cvCloneImage(m_cam2Img);
     CvMat* rot_mat = cvCreateMat(2,3,CV_32FC1);
 
     // Compute rotation matrix
-    CvPoint2D32f center = cvPoint2D32f(cvGetSize(imageRotated).width/2, cvGetSize(imageRotated).height/2);
-    cv2DRotationMatrix(center, 90.0, 1, rot_mat);
+    CvPoint2D32f center = cvPoint2D32f( cvGetSize(imageRotated).width/2, cvGetSize(imageRotated).height/2 );
+    cv2DRotationMatrix( center, 90.0, 1, rot_mat );
 
     // Do the transformation
-    cvWarpAffine(m_cam2Img, imageRotated, rot_mat);
-    cvReleaseImage(&m_cam2Img);
-    m_cam2Img = cvCloneImage(imageRotated);
+    cvWarpAffine( m_cam2Img, imageRotated, rot_mat );
+    cvReleaseImage( &m_cam2Img );
+    m_cam2Img = cvCloneImage( imageRotated );
 #endif
 
-    ShowImage(m_cam2Img, m_ui->m_liveView2);
+    ShowImage( m_cam2Img, m_ui->m_liveView2 );
 
-    m_ui->m_matchBtn->setEnabled(true);
-    m_ui->m_stitchBtn->setEnabled(false);
-    m_ui->m_saveBtn->setEnabled(false);
+    m_ui->m_matchBtn->setEnabled( true );
+    m_ui->m_stitchBtn->setEnabled( false );
+    m_ui->m_saveBtn->setEnabled( false );
 }
 
 void CreateFloorPlanWidget::MatchBtnClicked()
@@ -522,40 +522,40 @@ void CreateFloorPlanWidget::MatchBtnClicked()
     std::vector< cv::Point2f > imagePoints1;
     std::vector< cv::Point2f > imagePoints2;
 
-    cv::Size gridSize = cv::Size(GetCurrentConfig().GetKeyValue(calGridColsKey).ToInt(),
-                                  GetCurrentConfig().GetKeyValue(calGridRowsKey).ToInt());
+    cv::Size gridSize = cv::Size( GetCurrentConfig().GetKeyValue( calGridColsKey ).ToInt(),
+                                  GetCurrentConfig().GetKeyValue( calGridRowsKey ).ToInt() );
 
-    const bool foundCorners1 = cv::findChessboardCorners(cv::Mat(m_cam1Img),
+    const bool foundCorners1 = cv::findChessboardCorners( cv::Mat( m_cam1Img ),
                                                           gridSize,
                                                           imagePoints1,
-                                                          CV_CALIB_CB_ADAPTIVE_THRESH);
+                                                          CV_CALIB_CB_ADAPTIVE_THRESH );
 
-    const bool foundCorners2 = cv::findChessboardCorners(cv::Mat(m_cam2Img),
+    const bool foundCorners2 = cv::findChessboardCorners( cv::Mat( m_cam2Img ),
                                                           gridSize,
                                                           imagePoints2,
-                                                          CV_CALIB_CB_ADAPTIVE_THRESH);
+                                                          CV_CALIB_CB_ADAPTIVE_THRESH );
 
     if (foundCorners1 && foundCorners2)
     {
-        DisplayMatched(imagePoints1, imagePoints2);
+        DisplayMatched( imagePoints1, imagePoints2 );
         m_ui->m_stitchBtn->setEnabled(true);
     }
     else
     {
-        Message::Show(this,
-                       tr("Create Floor Plan"),
-                       tr("Cannot find chessboard!"),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Create Floor Plan" ),
+                       tr( "Cannot find chessboard!" ),
+                       Message::Severity_Critical );
     }
 }
 
-void CreateFloorPlanWidget::DisplayMatched(std::vector< cv::Point2f > ip1,
-                                                std::vector< cv::Point2f > ip2)
+void CreateFloorPlanWidget::DisplayMatched( std::vector< cv::Point2f > ip1,
+                                                std::vector< cv::Point2f > ip2 )
 {
     using namespace FloorPlanSchema;
 
-    cv::Size gridSize = cv::Size(GetCurrentConfig().GetKeyValue(calGridColsKey).ToInt(),
-                                  GetCurrentConfig().GetKeyValue(calGridRowsKey).ToInt());
+    cv::Size gridSize = cv::Size( GetCurrentConfig().GetKeyValue( calGridColsKey ).ToInt(),
+                                  GetCurrentConfig().GetKeyValue( calGridRowsKey ).ToInt() );
 
     // Draw matches
     std::vector<cv::KeyPoint> keypoints1(gridSize.width * gridSize.height);
@@ -567,7 +567,7 @@ void CreateFloorPlanWidget::DisplayMatched(std::vector< cv::Point2f > ip1,
     std::vector<cv::DMatch> matches(1);
 #endif
 
-    for (int p=0; p<gridSize.width*gridSize.height; p++)
+    for ( int p=0; p<gridSize.width*gridSize.height; p++ )
     {
         keypoints1.at(p) = cv::KeyPoint(ip1.at(p), 1.0);
         keypoints2.at(p) = cv::KeyPoint(ip2.at(p), 1.0);
@@ -581,10 +581,10 @@ void CreateFloorPlanWidget::DisplayMatched(std::vector< cv::Point2f > ip1,
 
     cv::Mat img_composite;
 
-    cv::Mat frm_1 = cv::Mat(m_cam1Img);
-    cv::Mat frm_2 = cv::Mat(m_cam2Img);
+    cv::Mat frm_1 = cv::Mat( m_cam1Img );
+    cv::Mat frm_2 = cv::Mat( m_cam2Img );
 
-    cv::drawMatches(frm_1, keypoints1,
+    cv::drawMatches( frm_1, keypoints1,
                      frm_2, keypoints2,
                      matches,
                      img_composite,
@@ -592,9 +592,9 @@ void CreateFloorPlanWidget::DisplayMatched(std::vector< cv::Point2f > ip1,
                      cv::Scalar::all(-1),
                      std::vector<char>(),
 #if SHOW_ALL_MATCHES
-                     cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+                     cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
 #else
-                     cv::DrawMatchesFlags::DEFAULT);
+                     cv::DrawMatchesFlags::DEFAULT );
 #endif
 
     IplImage img_comp = IplImage(img_composite);
@@ -608,23 +608,23 @@ void CreateFloorPlanWidget::StitchBtnClicked()
     std::vector< cv::Point2f > imagePoints1;
     std::vector< cv::Point2f > imagePoints2;
 
-    cv::Size gridSize = cv::Size(GetCurrentConfig().GetKeyValue(calGridColsKey).ToInt(),
-                                  GetCurrentConfig().GetKeyValue(calGridRowsKey).ToInt());
+    cv::Size gridSize = cv::Size( GetCurrentConfig().GetKeyValue( calGridColsKey ).ToInt(),
+                                  GetCurrentConfig().GetKeyValue( calGridRowsKey ).ToInt() );
 
-    const bool foundCorners1 = cv::findChessboardCorners(cv::Mat(m_cam1Img),
+    const bool foundCorners1 = cv::findChessboardCorners( cv::Mat( m_cam1Img ),
                                                           gridSize,
                                                           imagePoints1,
-                                                          CV_CALIB_CB_ADAPTIVE_THRESH);
+                                                          CV_CALIB_CB_ADAPTIVE_THRESH );
 
-    const bool foundCorners2 = cv::findChessboardCorners(cv::Mat(m_cam2Img),
+    const bool foundCorners2 = cv::findChessboardCorners( cv::Mat( m_cam2Img ),
                                                           gridSize,
                                                           imagePoints2,
-                                                          CV_CALIB_CB_ADAPTIVE_THRESH);
+                                                          CV_CALIB_CB_ADAPTIVE_THRESH );
 
     if (foundCorners1 && foundCorners2)
     {
         // Calculate the homography
-        m_homography = cv::findHomography(cv::Mat(imagePoints2), cv::Mat(imagePoints1), 0);
+        m_homography = cv::findHomography( cv::Mat(imagePoints2), cv::Mat(imagePoints1), 0 );
 
         DisplayStitched();
 
@@ -632,10 +632,10 @@ void CreateFloorPlanWidget::StitchBtnClicked()
     }
     else
     {
-        Message::Show(this,
-                       tr("Create Floor Plan"),
-                       tr("Cannot find chessboard!"),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Create Floor Plan" ),
+                       tr( "Cannot find chessboard!" ),
+                       Message::Severity_Critical );
     }
 }
 
@@ -644,7 +644,7 @@ void CreateFloorPlanWidget::DisplayStitched()
     // Stitch the two images together
     const IplImage* rootImg = m_cam1Img;
 
-    CvMat* I = cvCreateMat(3, 3, CV_32F);
+    CvMat* I = cvCreateMat( 3, 3, CV_32F );
     cvSetIdentity(I);
 
     GroundPlaneUtility::Rect32f cmpBox;
@@ -661,30 +661,30 @@ void CreateFloorPlanWidget::DisplayStitched()
     CvPoint2D32f baseOrigin; baseOrigin.x = 0.0; baseOrigin.y = 0.0;
     CvPoint2D32f cmpOrigin; cmpOrigin.x = 0.0; cmpOrigin.y = 0.0;
 
-    GroundPlaneUtility::CompositeImageBoundingBox(&matH, m_cam2Img, m_origin2, baseOrigin, &cmpOrigin, &cmpBox);
+    GroundPlaneUtility::compositeImageBoundingBox( &matH, m_cam2Img, m_origin2, baseOrigin, &cmpOrigin, &cmpBox );
 
     // Now we know the dimensions and origin of the composite
     // image so we can allocate it and transform all images.
     int sizex = (int)(cmpBox.dim.x+.5f);
     int sizey = (int)(cmpBox.dim.y+.5f);
 
-    sizex += 4 -(sizex % 4);
+    sizex += 4 -( sizex % 4 );
 
-    CvSize cmpSize = cvSize(sizex,sizey);
-    IplImage *compImg = cvCreateImage(cmpSize, rootImg->depth, rootImg->nChannels);
+    CvSize cmpSize = cvSize( sizex,sizey );
+    IplImage *compImg = cvCreateImage( cmpSize, rootImg->depth, rootImg->nChannels );
 
     // Align image.
-    cvZero(compImg);
-    GroundPlaneUtility::AlignGroundPlane(&matH, m_cam2Img, compImg, m_origin2, cmpOrigin);
-    IplImage *img2 = cvCloneImage(compImg);
+    cvZero( compImg );
+    GroundPlaneUtility::alignGroundPlane( &matH, m_cam2Img, compImg, m_origin2, cmpOrigin );
+    IplImage *img2 = cvCloneImage( compImg );
 
     // Align root.
-    cvZero(compImg);
-    GroundPlaneUtility::AlignGroundPlane(I, m_cam1Img, compImg, m_origin1, cmpOrigin);
-    IplImage *img1 = cvCloneImage(compImg);
+    cvZero( compImg );
+    GroundPlaneUtility::alignGroundPlane( I, m_cam1Img, compImg, m_origin1, cmpOrigin );
+    IplImage *img1 = cvCloneImage( compImg );
 
-    GroundPlaneUtility::CreateCompositeImage(img1, compImg, compImg);
-    GroundPlaneUtility::CreateCompositeImage(img2, compImg, compImg);
+    GroundPlaneUtility::createCompositeImage( img1, compImg, compImg );
+    GroundPlaneUtility::createCompositeImage( img2, compImg, compImg );
 
     ImageViewer(compImg, this).exec();
 
@@ -701,11 +701,11 @@ void CreateFloorPlanWidget::SaveBtnClicked()
 
     bool duplicate = false;
 
-    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::camera2IdKey);
+    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::camera2IdKey );
 
     for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
     {
-        if (it->value == KeyValue::from(m_camPosId2))
+        if (it->value == KeyValue::from( m_camPosId2 ))
         {
             duplicate = true;
         }
@@ -751,30 +751,30 @@ void CreateFloorPlanWidget::SaveBtnClicked()
 
         cvMatMul(&xH, &rotH, &tH);
 
-        const KeyId mappingKeyId = config.AddKeyValue(FloorPlanSchema::homographyKey,
-                                                       KeyValue::from(tH));
+        const KeyId mappingKeyId = config.AddKeyValue( FloorPlanSchema::homographyKey,
+                                                       KeyValue::from( tH ) );
 
-        config.SetKeyValue(FloorPlanSchema::camera1IdKey,
-                            KeyValue::from(m_camPosId1),
-                            mappingKeyId);
+        config.SetKeyValue( FloorPlanSchema::camera1IdKey,
+                            KeyValue::from( m_camPosId1 ),
+                            mappingKeyId );
 
-        config.SetKeyValue(FloorPlanSchema::camera2IdKey,
-                            KeyValue::from(m_camPosId2),
-                            mappingKeyId);
+        config.SetKeyValue( FloorPlanSchema::camera2IdKey,
+                            KeyValue::from( m_camPosId2 ),
+                            mappingKeyId );
 
-        WbConfigTools::SetFileName(config,
+        WbConfigTools::SetFileName( config,
                                     m_camera1FileName,
                                     FloorPlanSchema::camera1ImgKey,
                                     WbConfigTools::FileNameMode_RelativeInsideWorkbench,
-                                    mappingKeyId);
+                                    mappingKeyId );
 
-        WbConfigTools::SetFileName(config,
+        WbConfigTools::SetFileName( config,
                                     m_camera2FileName,
                                     FloorPlanSchema::camera2ImgKey,
                                     WbConfigTools::FileNameMode_RelativeInsideWorkbench,
-                                    mappingKeyId);
+                                    mappingKeyId );
 
-        cvReleaseMat(&rotMat);
+        cvReleaseMat( &rotMat );
 
         cvReleaseImage(&m_cam1Img);
         cvReleaseImage(&m_cam2Img);
@@ -785,10 +785,10 @@ void CreateFloorPlanWidget::SaveBtnClicked()
     }
     else
     {
-        Message::Show(this,
-                       tr("Create Floor Plan"),
-                       tr("Camera already mapped!"),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Create Floor Plan" ),
+                       tr( "Camera already mapped!" ),
+                       Message::Severity_Critical );
     }
 }
 
@@ -807,15 +807,15 @@ void CreateFloorPlanWidget::CreateFloorPlanBtnClicked()
     WbConfig config = GetCurrentConfig();
 
     // Remove all existing transforms
-    config.KeepKeys(FloorPlanSchema::cameraIdKey);
-    config.KeepKeys(FloorPlanSchema::transformKey);
-    config.KeepKeys(FloorPlanSchema::offsetXKey);
-    config.KeepKeys(FloorPlanSchema::offsetYKey);
+    config.KeepKeys( FloorPlanSchema::cameraIdKey );
+    config.KeepKeys( FloorPlanSchema::transformKey );
+    config.KeepKeys( FloorPlanSchema::offsetXKey );
+    config.KeepKeys( FloorPlanSchema::offsetYKey );
 
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList());
+                                        .ToQStringList() );
 
     if (cameraPositionIds.size() > 0)
     {
@@ -835,15 +835,15 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
     WbConfig config = GetCurrentConfig();
 
     Collection m_camPositions = CameraPositionsCollection();
-    m_camPositions.SetConfig(config);
+    m_camPositions.SetConfig( config );
 
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
-    const KeyId camPosId = roomLayoutConfig.GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey).ToKeyId();
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
+    const KeyId camPosId = roomLayoutConfig.GetKeyValue( RoomLayoutSchema::cameraPositionIdsKey ).ToKeyId();
 
-    const WbConfig camPosCfg = m_camPositions.ElementById(camPosId);
+    const WbConfig camPosCfg = m_camPositions.ElementById( camPosId );
 
-    const WbConfig camPosCalCfg = camPosCfg.GetSubConfig(ExtrinsicCalibrationSchema::schemaName);
-    const KeyValue imgKey = camPosCalCfg.GetKeyValue(ExtrinsicCalibrationSchema::calibrationImageKey);
+    const WbConfig camPosCalCfg = camPosCfg.GetSubConfig( ExtrinsicCalibrationSchema::schemaName );
+    const KeyValue imgKey = camPosCalCfg.GetKeyValue( ExtrinsicCalibrationSchema::calibrationImageKey );
 
     const QString imgFile(camPosCalCfg.GetAbsoluteFileNameFor(imgKey.ToQString()));
 
@@ -853,80 +853,80 @@ void CreateFloorPlanWidget::CreateFloorPlanSingle()
 
     LOG_TRACE(QObject::tr("Creating (single) floor plan for %1").arg(camPosId));
 
-    if (FloorPlanning::LoadFile(config, camPosId, &imgComposite, imgFile, &offset, true))
+    if (FloorPlanning::LoadFile( config, camPosId, &imgComposite, imgFile, &offset, true ))
     {
         LOG_INFO(QObject::tr("Loading image %1.").arg(imgFile));
 
         // Convert image
-        IplImage* imgTmp = cvCreateImage(cvSize(imgComposite->width,
-                                                  imgComposite->height), IPL_DEPTH_8U, 3);
-        cvConvertImage(imgComposite, imgTmp);
+        IplImage* imgTmp = cvCreateImage( cvSize( imgComposite->width,
+                                                  imgComposite->height ), IPL_DEPTH_8U, 3 );
+        cvConvertImage( imgComposite, imgTmp );
 
-        const QSize imgSize(imgTmp->width, imgTmp->height);
-        QImage qImg = QImage(imgSize, QImage::Format_RGB888);
+        const QSize imgSize( imgTmp->width, imgTmp->height );
+        QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
 
         CvMat mtxWrapper;
-        cvInitMatHeader(&mtxWrapper,
+        cvInitMatHeader( &mtxWrapper,
                          imgTmp->height,
                          imgTmp->width,
                          CV_8UC3,
-                         qImg.bits());
+                         qImg.bits() );
 
-        cvConvertImage(imgTmp, &mtxWrapper, 0);
+        cvConvertImage( imgTmp, &mtxWrapper, 0 );
 
-        const QString fileName(config.GetAbsoluteFileNameFor("floor_plan.png"));
+        const QString fileName( config.GetAbsoluteFileNameFor( "floor_plan.png" ) );
 
-        if (!qImg.save(fileName))
+        if (!qImg.save( fileName ))
         {
-            Message::Show(this,
-                           tr("Create Floor Plan"),
-                           tr("Cannot write to: %1")
-                               .arg(fileName),
-                           Message::Severity_Critical);
+            Message::Show( this,
+                           tr( "Create Floor Plan" ),
+                           tr( "Cannot write to: %1" )
+                               .arg( fileName ),
+                           Message::Severity_Critical );
         }
 
-        cvReleaseImage(&imgComposite);
+        cvReleaseImage( &imgComposite );
 
         // show floor plan
         ImageViewer(imgTmp, this).exec();
-        cvReleaseImage(&imgTmp);
-        Message::Show(this,
-                       tr("Floor Plan Information"),
-                       tr("Single-position floor plan successfully created."
+        cvReleaseImage( &imgTmp );
+        Message::Show( this,
+                       tr( "Floor Plan Information" ),
+                       tr( "Single-position floor plan successfully created."
                            "\nFloor plan saved to: %1").arg(fileName),
-                       Message::Severity_Information);
+                       Message::Severity_Information );
     }
     else
     {
-        Message::Show(this,
-                       tr("Create Floor Plan"),
-                       tr("Cannot load from: %1!")
-                           .arg(imgFile),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Create Floor Plan" ),
+                       tr( "Cannot load from: %1!" )
+                           .arg( imgFile ),
+                       Message::Severity_Critical );
     }
 
-    CvMat* identity = cvCreateMat(3, 3, CV_32F);
+    CvMat* identity = cvCreateMat( 3, 3, CV_32F );
 
-    cvSetIdentity(identity);
+    cvSetIdentity( identity );
 
     // Store transform for root camera
-    const KeyId transformId = config.AddKeyValue(FloorPlanSchema::transformKey,
-                                                  KeyValue::from(*identity));
+    const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
+                                                  KeyValue::from( *identity ) );
 
-    config.SetKeyValue(FloorPlanSchema::cameraIdKey,
+    config.SetKeyValue( FloorPlanSchema::cameraIdKey,
                         KeyValue::from(camPosId),
-                        transformId);
+                        transformId );
 
-    config.SetKeyValue(FloorPlanSchema::offsetXKey,
+    config.SetKeyValue( FloorPlanSchema::offsetXKey,
                         KeyValue::from(0.0),
-                        transformId);
-    config.SetKeyValue(FloorPlanSchema::offsetYKey,
+                        transformId );
+    config.SetKeyValue( FloorPlanSchema::offsetYKey,
                         KeyValue::from(0.0),
-                        transformId);
+                        transformId );
 
     LOG_TRACE("Done.");
 
-    cvReleaseMat(&identity);
+    cvReleaseMat( &identity );
 }
 
 void CreateFloorPlanWidget::CreateFloorPlanMulti()
@@ -938,10 +938,10 @@ void CreateFloorPlanWidget::CreateFloorPlanMulti()
     // Check camera mapping(s)
     if (!FloorPlanning::CheckMappingIsComplete(GetCurrentConfig()))
     {
-        Message::Show(this,
-                       tr("Create Floor Plan"),
-                       tr("Warning - Mapping incomplete."),
-                       Message::Severity_Warning);
+        Message::Show( this,
+                       tr( "Create Floor Plan" ),
+                       tr( "Warning - Mapping incomplete." ),
+                       Message::Severity_Warning );
     }
 
     LOG_TRACE("Finding root");
@@ -962,18 +962,18 @@ void CreateFloorPlanWidget::CreateFloorPlanMulti()
         }
         else
         {
-            Message::Show(this,
-                           tr("Create Floor Plan"),
-                           tr("Mapping incomplete!"),
-                           Message::Severity_Critical);
+            Message::Show( this,
+                           tr( "Create Floor Plan" ),
+                           tr( "Mapping incomplete!" ),
+                           Message::Severity_Critical );
         }
     }
     else
     {
-        Message::Show(this,
-                       tr("Create Floor Plan"),
-                       tr("Need one root camera!"),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Create Floor Plan" ),
+                       tr( "Need one root camera!" ),
+                       Message::Severity_Critical );
     }
 
     LOG_TRACE("Done.");
@@ -986,21 +986,21 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
     // Create composite
     IplImage *imgComposite;
 
-    CvMat* transform = cvCreateMat(3, 3, CV_32F);
-    CvMat* identity = cvCreateMat(3, 3, CV_32F);
+    CvMat* transform = cvCreateMat( 3, 3, CV_32F );
+    CvMat* identity = cvCreateMat( 3, 3, CV_32F );
 
     // Load root image
     KeyValue rootImage;
 
-    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::homographyKey);
+    const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
 
     for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
     {
-        const KeyId cameraId(config.GetKeyValue(FloorPlanSchema::camera1IdKey, it->id).ToKeyId());
+        const KeyId cameraId( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
 
         if (cameraId == camRoot)
         {
-            rootImage = config.GetKeyValue(FloorPlanSchema::camera1ImgKey, it->id);
+            rootImage = config.GetKeyValue( FloorPlanSchema::camera1ImgKey, it->id );
             break;
         }
     }
@@ -1011,7 +1011,7 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
     IplImage* rootImg;
     CvPoint2D32f offset;
-    FloorPlanning::LoadFile(config, camRoot, &rootImg, rootFileName, &offset, true);
+    FloorPlanning::LoadFile( config, camRoot, &rootImg, rootFileName, &offset, true );
 
     const QString rootFile(config.GetAbsoluteFileNameFor("plan_" + camRoot + ".png"));
     cvSaveImage(rootFile.toAscii().data(), rootImg);
@@ -1030,19 +1030,19 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
                                                                   .arg(cmpBox.pos.y));
 
     // Process remaining (non-root) cameras
-    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
+    const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(roomLayoutConfig
                                         .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                        .ToQStringList());
+                                        .ToQStringList() );
 
     CvPoint2D32f imgOrigin; imgOrigin.x = 0.0; imgOrigin.y = 0.0;
 
     CvPoint2D32f baseOrigin; baseOrigin.x = 0.0; baseOrigin.y = 0.0;
     CvPoint2D32f cmpOrigin; cmpOrigin.x = 0.0; cmpOrigin.y = 0.0;
 
-    for (int i = 0; i < cameraPositionIds.size(); ++i)
+    for ( int i = 0; i < cameraPositionIds.size(); ++i )
     {
-        const KeyId camPosId = cameraPositionIds.at(i);
+        const KeyId camPosId = cameraPositionIds.at( i );
 
         if ((camPosId != camRoot) && FloorPlanning::IsRef(config, camPosId))
         {
@@ -1052,18 +1052,18 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
             std::vector<KeyId> chain = FloorPlanning::FindChain(config, camPosId, camRoot, std::vector<KeyId>());
 
             cvSetIdentity(transform);
-            FloorPlanning::ComputeTransform(config, camPosId, chain, transform);
+            FloorPlanning::ComputeTransform( config, camPosId, chain, transform );
 
             // Load camera image
             KeyValue camImageFile;
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
             {
-                const KeyId cameraId(config.GetKeyValue(FloorPlanSchema::camera2IdKey, it->id).ToKeyId());
+                const KeyId cameraId( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
 
                 if (cameraId == camPosId)
                 {
-                    camImageFile = config.GetKeyValue(FloorPlanSchema::camera2ImgKey, it->id);
+                    camImageFile = config.GetKeyValue( FloorPlanSchema::camera2ImgKey, it->id );
                     break;
                 }
             }
@@ -1074,10 +1074,10 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
             IplImage* camImg;
             CvPoint2D32f offset;
-            FloorPlanning::LoadFile(GetCurrentConfig(), camPosId, &camImg, camFileName, &offset, true);
+            FloorPlanning::LoadFile( GetCurrentConfig(), camPosId, &camImg, camFileName, &offset, true );
 
             // Stitch the images together
-            GroundPlaneUtility::CompositeImageBoundingBox(transform, camImg, imgOrigin, baseOrigin, &cmpOrigin, &cmpBox);
+            GroundPlaneUtility::compositeImageBoundingBox( transform, camImg, imgOrigin, baseOrigin, &cmpOrigin, &cmpBox );
 
             LOG_INFO(QObject::tr("Composite bounding box is %1 %2 %3 %4.").arg(cmpBox.dim.x)
                                                                           .arg(cmpBox.dim.y)
@@ -1088,19 +1088,19 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
 
     // Store transform for root camera
-    const KeyId transformId = config.AddKeyValue(FloorPlanSchema::transformKey,
-                                                  KeyValue::from(*identity));
+    const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
+                                                  KeyValue::from( *identity ) );
 
-    config.SetKeyValue(FloorPlanSchema::cameraIdKey,
+    config.SetKeyValue( FloorPlanSchema::cameraIdKey,
                         KeyValue::from(camRoot),
-                        transformId);
+                        transformId );
 
-    config.SetKeyValue(FloorPlanSchema::offsetXKey,
+    config.SetKeyValue( FloorPlanSchema::offsetXKey,
                         KeyValue::from(cmpOrigin.x - imgOrigin.x),
-                        transformId);
-    config.SetKeyValue(FloorPlanSchema::offsetYKey,
+                        transformId );
+    config.SetKeyValue( FloorPlanSchema::offsetYKey,
                         KeyValue::from(cmpOrigin.y - imgOrigin.y),
-                        transformId);
+                        transformId );
 
 
     // Now we know dimensions and origin of the composite
@@ -1108,40 +1108,40 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
     int sizex = (int)(cmpBox.dim.x+.5f);
     int sizey = (int)(cmpBox.dim.y+.5f);
 
-    sizex += 4 -(sizex % 4);
+    sizex += 4 -( sizex % 4 );
 
-    CvSize cmpSize = cvSize(sizex,sizey);
-    imgComposite = cvCreateImage(cmpSize, rootImg->depth, rootImg->nChannels);
+    CvSize cmpSize = cvSize( sizex,sizey );
+    imgComposite = cvCreateImage( cmpSize, rootImg->depth, rootImg->nChannels );
 
-    GroundPlaneUtility::AlignGroundPlane(identity, rootImg, imgComposite, imgOrigin, cmpOrigin);
+    GroundPlaneUtility::alignGroundPlane( identity, rootImg, imgComposite, imgOrigin, cmpOrigin );
 
     // Process remaining (non-root) cameras
-    for (int i = 0; i < cameraPositionIds.size(); ++i)
+    for ( int i = 0; i < cameraPositionIds.size(); ++i )
     {
-        const KeyId camPosId = cameraPositionIds.at(i);
+        const KeyId camPosId = cameraPositionIds.at( i );
 
         if ((camPosId != camRoot) && FloorPlanning::IsRef(config, camPosId))
         {
             std::vector<KeyId> chain = FloorPlanning::FindChain(config, camPosId, camRoot, std::vector<KeyId>());
 
             cvSetIdentity(transform);
-            FloorPlanning::ComputeTransform(GetCurrentConfig(), camPosId, chain, transform);
+            FloorPlanning::ComputeTransform( GetCurrentConfig(), camPosId, chain, transform );
 
 
             // Store transform for camera
-            const KeyId transformId = config.AddKeyValue(FloorPlanSchema::transformKey,
-                                                          KeyValue::from(*transform));
+            const KeyId transformId = config.AddKeyValue( FloorPlanSchema::transformKey,
+                                                          KeyValue::from( *transform ) );
 
-            config.SetKeyValue(FloorPlanSchema::cameraIdKey,
+            config.SetKeyValue( FloorPlanSchema::cameraIdKey,
                                 KeyValue::from(camPosId),
-                                transformId);
+                                transformId );
 
-            config.SetKeyValue(FloorPlanSchema::offsetXKey,
+            config.SetKeyValue( FloorPlanSchema::offsetXKey,
                                 KeyValue::from(cmpOrigin.x - imgOrigin.x),
-                                transformId);
-            config.SetKeyValue(FloorPlanSchema::offsetYKey,
+                                transformId );
+            config.SetKeyValue( FloorPlanSchema::offsetYKey,
                                 KeyValue::from(cmpOrigin.y - imgOrigin.y),
-                                transformId);
+                                transformId );
 
 
             // Load camera image
@@ -1149,11 +1149,11 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
             {
-                const KeyId cameraId(config.GetKeyValue(FloorPlanSchema::camera2IdKey, it->id).ToKeyId());
+                const KeyId cameraId( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
 
                 if (camPosId == cameraId)
                 {
-                    camImageFile = config.GetKeyValue(FloorPlanSchema::camera2ImgKey, it->id);
+                    camImageFile = config.GetKeyValue( FloorPlanSchema::camera2ImgKey, it->id );
                     break;
                 }
             }
@@ -1164,59 +1164,59 @@ void CreateFloorPlanWidget::Stitch(KeyId camRoot)
 
             IplImage* camImg;
             CvPoint2D32f offset;
-            FloorPlanning::LoadFile(GetCurrentConfig(), camPosId, &camImg, camFileName, &offset, true);
+            FloorPlanning::LoadFile( GetCurrentConfig(), camPosId, &camImg, camFileName, &offset, true );
 
             const QString camFile(config.GetAbsoluteFileNameFor("plan_" + camPosId + ".png"));
             cvSaveImage(camFile.toAscii().data(), camImg);
 
             // Align the image.
-            IplImage *imgTmp = cvCloneImage(imgComposite);
-            cvZero(imgTmp);
-            GroundPlaneUtility::AlignGroundPlane(transform, camImg, imgTmp, imgOrigin, cmpOrigin);
-            GroundPlaneUtility::CreateCompositeImage(imgTmp, imgComposite, imgComposite);
-            cvReleaseImage(&imgTmp);
+            IplImage *imgTmp = cvCloneImage( imgComposite );
+            cvZero( imgTmp );
+            GroundPlaneUtility::alignGroundPlane( transform, camImg, imgTmp, imgOrigin, cmpOrigin );
+            GroundPlaneUtility::createCompositeImage( imgTmp, imgComposite, imgComposite );
+            cvReleaseImage( &imgTmp );
         }
     }
 
     // Convert image
-    IplImage* imgTmp = cvCreateImage(cvSize(imgComposite->width,
-                                              imgComposite->height), IPL_DEPTH_8U, 3);
-    cvConvertImage(imgComposite, imgTmp);
+    IplImage* imgTmp = cvCreateImage( cvSize( imgComposite->width,
+                                              imgComposite->height ), IPL_DEPTH_8U, 3 );
+    cvConvertImage( imgComposite, imgTmp );
 
-    const QSize imgSize(imgTmp->width, imgTmp->height);
-    QImage qImg = QImage(imgSize, QImage::Format_RGB888);
+    const QSize imgSize( imgTmp->width, imgTmp->height );
+    QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
 
     CvMat mtxWrapper;
-    cvInitMatHeader(&mtxWrapper,
+    cvInitMatHeader( &mtxWrapper,
                      imgTmp->height,
                      imgTmp->width,
                      CV_8UC3,
-                     qImg.bits());
+                     qImg.bits() );
 
-    cvConvertImage(imgTmp, &mtxWrapper, 0);
+    cvConvertImage( imgTmp, &mtxWrapper, 0 );
 
-    const QString fileName(config.GetAbsoluteFileNameFor("floor_plan.png"));
+    const QString fileName( config.GetAbsoluteFileNameFor( "floor_plan.png" ) );
 
-    if (!qImg.save(fileName))
+    if (!qImg.save( fileName ))
     {
-        Message::Show(this,
-                       tr("Create Floor Plan"),
-                       tr("Cannot write to: %1!")
-                           .arg(fileName),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Create Floor Plan" ),
+                       tr( "Cannot write to: %1!" )
+                           .arg( fileName ),
+                       Message::Severity_Critical );
     }
 
-    cvReleaseMat(&transform);
-    cvReleaseMat(&identity);
+    cvReleaseMat( &transform );
+    cvReleaseMat( &identity );
 
-    cvReleaseImage(&imgComposite);
+    cvReleaseImage( &imgComposite );
     ImageViewer(imgTmp, this).exec();
-    cvReleaseImage(&imgTmp);
-    Message::Show(this,
-                   tr("Floor Plan"),
-                   tr("Multi-position floor plan successfully created."
+    cvReleaseImage( &imgTmp );
+    Message::Show( this,
+                   tr( "Floor Plan" ),
+                   tr( "Multi-position floor plan successfully created."
                        "\nFloor plan saved to: %1").arg(fileName),
-                   Message::Severity_Information);
+                   Message::Severity_Information );
 }
 
 void CreateFloorPlanWidget::CaptureLiveBtnClicked()
@@ -1232,28 +1232,28 @@ void CreateFloorPlanWidget::CaptureLiveBtnClicked()
     m_ui->m_getImageFromFileBtn->setEnabled(false);
     m_ui->m_cancelBtn->setEnabled(false);
 
-    Collection camerasCollection(CamerasCollection());
-    Collection cameraPositionsCollection(CameraPositionsCollection());
+    Collection camerasCollection( CamerasCollection() );
+    Collection cameraPositionsCollection( CameraPositionsCollection() );
 
-    camerasCollection.SetConfig(config);
-    cameraPositionsCollection.SetConfig(config);
+    camerasCollection.SetConfig( config );
+    cameraPositionsCollection.SetConfig( config );
 
-    const WbConfig camPosConfig1 = cameraPositionsCollection.ElementById(m_camPosId1);
-    const WbConfig camPosConfig2 = cameraPositionsCollection.ElementById(m_camPosId2);
+    const WbConfig camPosConfig1 = cameraPositionsCollection.ElementById( m_camPosId1 );
+    const WbConfig camPosConfig2 = cameraPositionsCollection.ElementById( m_camPosId2 );
 
-    const KeyId cameraId1(camPosConfig1.GetKeyValue(
-                CameraPositionSchema::cameraIdKey)
-                        .ToQString());
+    const KeyId cameraId1( camPosConfig1.GetKeyValue(
+                CameraPositionSchema::cameraIdKey )
+                        .ToQString() );
 
-    const KeyId cameraId2(camPosConfig2.GetKeyValue(
-                CameraPositionSchema::cameraIdKey)
-                        .ToQString());
+    const KeyId cameraId2( camPosConfig2.GetKeyValue(
+                CameraPositionSchema::cameraIdKey )
+                        .ToQString() );
 
-    const WbConfig cameraConfig1(camerasCollection.ElementById(cameraId1));
-    const WbConfig cameraConfig2(camerasCollection.ElementById(cameraId2));
+    const WbConfig cameraConfig1( camerasCollection.ElementById( cameraId1 ) );
+    const WbConfig cameraConfig2( camerasCollection.ElementById( cameraId2 ) );
 
     const QString newFileNameFormat(
-        config.GetAbsoluteFileNameFor("calibrationImage/Calib%1.png"));
+        config.GetAbsoluteFileNameFor( "calibrationImage/Calib%1.png" ) );
 
     bool capturedImages(
         m_captureLiveDualController->CaptureLiveBtnClicked(
@@ -1261,10 +1261,10 @@ void CreateFloorPlanWidget::CaptureLiveBtnClicked()
                     cameraConfig2,
                     newFileNameFormat,
 #if defined(__MINGW32__) || defined(__GNUC__)
-                    MakeCallback(this,
+                    MakeCallback( this,
                                   &CreateFloorPlanWidget::GetStreamingView1),
-                    MakeCallback(this,
-                                  &CreateFloorPlanWidget::GetStreamingView2)));
+                    MakeCallback( this,
+                                  &CreateFloorPlanWidget::GetStreamingView2) ) );
 #else
                     [this](const QSize& imageSize) -> ImageView*
                     {
@@ -1273,7 +1273,7 @@ void CreateFloorPlanWidget::CaptureLiveBtnClicked()
                     [this](const QSize& imageSize) -> ImageView*
                     {
                        return GetStreamingView2(imageSize);
-                    }));
+                    } ) );
 #endif
 
      if (capturedImages)
@@ -1283,12 +1283,12 @@ void CreateFloorPlanWidget::CaptureLiveBtnClicked()
          m_camera1FileName = m_captureLiveDualController->CapturedFileName1();
          m_camera2FileName = m_captureLiveDualController->CapturedFileName2();
 
-         if (FloorPlanning::LoadFile(config, m_camPosId1, &m_cam1Img, m_camera1FileName, &offset, true))
+         if (FloorPlanning::LoadFile( config, m_camPosId1, &m_cam1Img, m_camera1FileName, &offset, true ))
          {
              ShowImage(m_cam1Img, m_ui->m_liveView1);
          }
 
-         if (FloorPlanning::LoadFile(config, m_camPosId2, &m_cam2Img, m_camera2FileName, &offset, true))
+         if (FloorPlanning::LoadFile( config, m_camPosId2, &m_cam2Img, m_camera2FileName, &offset, true ))
          {
              ShowImage(m_cam2Img, m_ui->m_liveView2);
          }
@@ -1315,15 +1315,15 @@ void CreateFloorPlanWidget::CaptureCancelBtnClicked()
 void CreateFloorPlanWidget::FromFileBtnClicked()
 {
     // Make sure folder is there before adding file
-    const QString fileDirPath(GetCurrentConfig().GetAbsoluteFileNameFor("calibrationImage/"));
-    const bool mkPathSuccessful = QDir().mkpath(fileDirPath);
+    const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImage/" ) );
+    const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
 
     if (!mkPathSuccessful)
     {
-        Message::Show(this,
-                       tr("Floor Plan Creation Tool"),
-                       tr("Folder is missing!"),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Floor Plan Creation Tool" ),
+                       tr( "Folder is missing!"),
+                       Message::Severity_Critical );
         return;
     }
 
@@ -1337,33 +1337,33 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
 
     m_ui->m_captureLiveBtn->setEnabled(false);
 
-    if (!m_camPosId1.isEmpty() && !m_camPosId2.isEmpty())
+    if ( !m_camPosId1.isEmpty() && !m_camPosId2.isEmpty() )
     {
         // Display file selection dialog
-        FileDialogs::ExtendedFileDialog fileDialog(this,
-                                                    tr("Select Image File"),
+        FileDialogs::ExtendedFileDialog fileDialog( this,
+                                                    tr( "Select Image File" ),
                                                     config.GetAbsoluteFileInfo().absolutePath(),
-                                                    "Images(*.png *.jpg *.bmp *.ppm);;All Files(*)",
-                                                    true);
+                                                    "Images( *.png *.jpg *.bmp *.ppm );;All Files( * )",
+                                                    true );
 
         // get first file
         const int result1 = fileDialog.exec();
-        if (result1 == QFileDialog::Accepted)
+        if ( result1 == QFileDialog::Accepted )
         {
             m_camera1FileName = fileDialog.selectedFiles().front();
 
-            if (!m_camera1FileName.isEmpty())
+            if ( !m_camera1FileName.isEmpty() )
             {
-                if (FileUtilities::FileIsExternal(m_camera1FileName, config))
+                if ( FileUtilities::FileIsExternal( m_camera1FileName, config ) )
                 {
-                    if (fileDialog.CopyFileSelected())
+                    if ( fileDialog.CopyFileSelected() )
                     {
-                        const QString dstFile = QFileInfo(m_camera1FileName).fileName();
+                        const QString dstFile = QFileInfo( m_camera1FileName ).fileName();
 
                         const QString newImageName(
-                            config.GetAbsoluteFileNameFor("calibrationImage/" + dstFile));
+                            config.GetAbsoluteFileNameFor( "calibrationImage/" + dstFile ) );
 
-                        QFile::copy(m_camera1FileName, newImageName);
+                        QFile::copy( m_camera1FileName, newImageName );
 
                         m_camera1FileName = newImageName;
                     }
@@ -1373,22 +1373,22 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
 
         // get second file
         const int result2 = fileDialog.exec();
-        if (result2 == QFileDialog::Accepted)
+        if ( result2 == QFileDialog::Accepted )
         {
             m_camera2FileName = fileDialog.selectedFiles().front();
 
-            if (!m_camera2FileName.isEmpty())
+            if ( !m_camera2FileName.isEmpty() )
             {
-                if (FileUtilities::FileIsExternal(m_camera2FileName, config))
+                if ( FileUtilities::FileIsExternal( m_camera2FileName, config ) )
                 {
-                    if (fileDialog.CopyFileSelected())
+                    if ( fileDialog.CopyFileSelected() )
                     {
-                        const QString dstFile = QFileInfo(m_camera2FileName).fileName();
+                        const QString dstFile = QFileInfo( m_camera2FileName ).fileName();
 
                         const QString newImageName(
-                            config.GetAbsoluteFileNameFor("calibrationImage/" + dstFile));
+                            config.GetAbsoluteFileNameFor( "calibrationImage/" + dstFile ) );
 
-                        QFile::copy(m_camera2FileName, newImageName);
+                        QFile::copy( m_camera2FileName, newImageName );
 
                         m_camera2FileName = newImageName;
                     }
@@ -1398,14 +1398,14 @@ void CreateFloorPlanWidget::FromFileBtnClicked()
 
         CvPoint2D32f offset;
 
-        if (!m_camera1FileName.isEmpty() && !m_camera2FileName.isEmpty())
+        if ( !m_camera1FileName.isEmpty() && !m_camera2FileName.isEmpty() )
         {
-            if (FloorPlanning::LoadFile(config, m_camPosId1, &m_cam1Img, m_camera1FileName, &offset, true))
+            if (FloorPlanning::LoadFile( config, m_camPosId1, &m_cam1Img, m_camera1FileName, &offset, true ))
             {
                 ShowImage(m_cam1Img, m_ui->m_liveView1);
             }
 
-            if (FloorPlanning::LoadFile(config, m_camPosId2, &m_cam2Img, m_camera2FileName, &offset, true))
+            if (FloorPlanning::LoadFile( config, m_camPosId2, &m_cam2Img, m_camera2FileName, &offset, true ))
             {
                 ShowImage(m_cam2Img, m_ui->m_liveView2);
             }
@@ -1433,7 +1433,7 @@ bool CreateFloorPlanWidget::IsDataValid() const
 
     bool valid = true;
 
-    if (m_ui->m_gridRowsSpinBox->value() == 0)
+    if ( m_ui->m_gridRowsSpinBox->value() == 0 )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->rowsLabel, true);
@@ -1441,7 +1441,7 @@ bool CreateFloorPlanWidget::IsDataValid() const
     else {
         Tool::HighlightLabel(m_ui->rowsLabel, false);
     }
-    if (m_ui->m_gridColumnsSpinBox->value() == 0)
+    if ( m_ui->m_gridColumnsSpinBox->value() == 0 )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->columnsLabel, true);

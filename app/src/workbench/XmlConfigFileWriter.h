@@ -45,71 +45,71 @@ public:
         return new XmlConfigFileWriter;
     }
 
-    virtual void StartConfigFile(const KeyName& name)
+    virtual void StartConfigFile( const KeyName& name )
     {
-        QDomElement rootElement = m_domDocument.createElement(name.ToQString());
+        QDomElement rootElement = m_domDocument.createElement( name.ToQString() );
         m_currentElement = rootElement;
-        m_domDocument.appendChild(rootElement);
+        m_domDocument.appendChild( rootElement );
     }
 
-    virtual void EndConfigFile(const KeyName& name)
+    virtual void EndConfigFile( const KeyName& name )
     {
         Q_UNUSED(name);
     }
 
-    virtual bool WriteTo(QIODevice& ioDevice)
+    virtual bool WriteTo( QIODevice& ioDevice )
     {
-        bool successful = ioDevice.open(QIODevice::WriteOnly);
+        bool successful = ioDevice.open( QIODevice::WriteOnly );
 
-        if (successful)
+        if ( successful )
         {
-            qint64 bytesWritten = ioDevice.write(m_domDocument.toByteArray());
-            successful = (bytesWritten != -1);
+            qint64 bytesWritten = ioDevice.write( m_domDocument.toByteArray() );
+            successful = ( bytesWritten != -1 );
         }
 
         ioDevice.close();
         return successful;
     }
 
-    virtual void WriteKey(const KeyName& name, const KeyValue& value, const KeyId& id)
+    virtual void WriteKey( const KeyName& name, const KeyValue& value, const KeyId& id )
     {
-        if (DocumentStarted())
+        if ( DocumentStarted() )
         {
-            QDomElement newKeyElement = m_domDocument.createElement(name.ToQString());
-            QString idToWrite(id);
+            QDomElement newKeyElement = m_domDocument.createElement( name.ToQString() );
+            QString idToWrite( id );
 
-            if (m_currentElement != m_domDocument.documentElement())
+            if ( m_currentElement != m_domDocument.documentElement() )
             {
                 idToWrite.clear();
             }
 
-            if (!idToWrite.isEmpty())
+            if ( !idToWrite.isEmpty() )
             {
-                newKeyElement.setAttribute(XmlTools::xmlIdAttribute, idToWrite);
+                newKeyElement.setAttribute( XmlTools::xmlIdAttribute, idToWrite );
             }
 
-            value.AddTo(newKeyElement, m_domDocument);
-            m_currentElement.appendChild(newKeyElement);
+            value.AddTo( newKeyElement, m_domDocument );
+            m_currentElement.appendChild( newKeyElement );
         }
     }
 
-    virtual void StartGroup(const KeyName& name, const KeyId& id)
+    virtual void StartGroup( const KeyName& name, const KeyId& id )
     {
-        if (DocumentStarted())
+        if ( DocumentStarted() )
         {
-            QDomElement newKeyGroup = m_domDocument.createElement(name.ToQString());
+            QDomElement newKeyGroup = m_domDocument.createElement( name.ToQString() );
 
-            if (!id.isEmpty())
+            if ( !id.isEmpty() )
             {
-                newKeyGroup.setAttribute(XmlTools::xmlIdAttribute, id);
+                newKeyGroup.setAttribute( XmlTools::xmlIdAttribute, id );
             }
 
-            m_currentElement.appendChild(newKeyGroup);
+            m_currentElement.appendChild( newKeyGroup );
             m_currentElement = newKeyGroup;
         }
     }
 
-    virtual void EndGroup(const KeyName& name, const KeyId& id)
+    virtual void EndGroup( const KeyName& name, const KeyId& id )
     {
         Q_UNUSED(name);
         Q_UNUSED(id);
@@ -117,24 +117,24 @@ public:
         m_currentElement = m_currentElement.parentNode().toElement();
     }
 
-    virtual void WriteSubConfig(const KeyName& name,
+    virtual void WriteSubConfig( const KeyName& name,
                                  const QFileInfo& configFileLocation,
-                                 const KeyId& id)
+                                 const KeyId& id )
     {
-        if (DocumentStarted())
+        if ( DocumentStarted() )
         {
-            StartGroup(name, id);
-            WriteKey(KeyName(XmlTools::xmlConfigFileNameTag),
-                      KeyValue::from(configFileLocation.filePath()),
-                      KeyId());
-            EndGroup(name, id);
+            StartGroup( name, id );
+            WriteKey( KeyName( XmlTools::xmlConfigFileNameTag ),
+                      KeyValue::from( configFileLocation.filePath() ),
+                      KeyId() );
+            EndGroup( name, id );
         }
     }
 
 private:
     bool DocumentStarted() const
     {
-        if (m_currentElement.isNull())
+        if ( m_currentElement.isNull() )
         {
             return false;
         }

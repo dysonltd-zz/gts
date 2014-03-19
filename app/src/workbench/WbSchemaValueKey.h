@@ -26,16 +26,16 @@
 class WbSchemaValueKey : public WbSchemaElement
 {
 public:
-    WbSchemaValueKey(const KeyName& name,
+    WbSchemaValueKey( const KeyName& name,
                       const Multiplicity::Type& multiplicity,
-                      const KeyValue& defaultValue =  KeyValue());
+                      const KeyValue& defaultValue =  KeyValue() );
 
     virtual WbSchemaValueKey* const Clone() const;
 
-    void ReadFrom(WbConfigFileReader& reader, WbConfig& config) const;
-    bool WriteTo (WbConfigFileWriter& writer, const WbConfig& config) const;
-    virtual void PrintOn(std::ostream& os, const std::string& indent) const;
-    virtual void SetDefaultTo(WbConfig& config) const;
+    void ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const;
+    bool WriteTo ( WbConfigFileWriter& writer, const WbConfig& config ) const;
+    virtual void PrintOn( std::ostream& os, const std::string& indent ) const;
+    virtual void SetDefaultTo( WbConfig& config ) const;
 
 private:
     KeyValue m_defaultValue;

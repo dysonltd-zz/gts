@@ -38,10 +38,10 @@ class PostProcessWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit PostProcessWidget(QWidget* const parent = 0);
+    explicit PostProcessWidget(QWidget* const parent = 0 );
     ~PostProcessWidget();
 
-    virtual const QString Name() const { return tr("Post Process"); }
+    virtual const QString Name() const { return tr( "Post Process" ); }
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
 
@@ -55,7 +55,7 @@ private:
     void ShowNoRoomError();
     virtual const QString GetSubSchemaDefaultFileName() const;
     const WbSchema CreateSchema();
-    const ExitStatus::Flags PostProcess(const WbConfig& postProcConfig,
+    const ExitStatus::Flags PostProcess( const WbConfig& postProcConfig,
                                          char*           trackerResultsCsvFile,
                                          char*           trackerResultsTxtFile,
                                          char*           trackerResultsImgFile,
@@ -69,11 +69,11 @@ private:
                                          char*           coverageHistogramFile,
                                          char*           coverageRawFile,
                                          char*           headingFile,
-                                         double          incTimeStep);
+                                         double          incTimeStep );
 
-    void PlotTrackLog(TrackHistory::TrackLog& log,
+    void PlotTrackLog( TrackHistory::TrackLog& log,
                        char*                   floorPlanFile,
-                       char*                   trackerResultsImgFile);
+                       char*                   trackerResultsImgFile );
 
 
     Ui::PostProcessWidget* m_ui;

@@ -32,9 +32,9 @@ namespace GroundTruthUI
 {
     struct CalibViewArgs
     {
-	    CalibViewArgs(const CameraCalibration* cal, const RobotMetrics* met) :
-		    m_cal (cal),
-		    m_met (met)
+	    CalibViewArgs( const CameraCalibration* cal, const RobotMetrics* met ) :
+		    m_cal ( cal ),
+		    m_met ( met )
 	    {
 	    };
 
@@ -46,8 +46,8 @@ namespace GroundTruthUI
     	This file contains drawing functionas and OpenCV-style mouse call-backs
     	used for the ground truth system user interface.
     **/
-    QImage showRobotTrackUndistorted(IplImage* img, const RobotTracker* tracker, int flip=0);
-    QImage showRobotTrack(const RobotTracker* tracker, bool tracking);
+    QImage showRobotTrackUndistorted( IplImage* img, const RobotTracker* tracker, int flip=0 );
+    QImage showRobotTrack(const RobotTracker* tracker, bool tracking );
 }
 
 #endif // GROUNDTRUTHUI_H

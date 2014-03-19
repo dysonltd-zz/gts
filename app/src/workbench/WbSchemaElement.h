@@ -41,17 +41,17 @@ public:
         };
     };
 
-    WbSchemaElement(const KeyName& name, const Multiplicity::Type& muliplicity);
+    WbSchemaElement( const KeyName& name, const Multiplicity::Type& muliplicity );
     virtual ~WbSchemaElement();
     virtual const KeyName GetKeyName() const;
     virtual const WbSchemaElement::Multiplicity::Type GetMultiplicity() const;
 
     virtual WbSchemaElement* const Clone() const = 0;
-    virtual void ReadFrom(WbConfigFileReader& reader, WbConfig& config) const = 0;
-    virtual bool WriteTo (WbConfigFileWriter& writer, const WbConfig& config) const = 0;
-    virtual void SetDefaultTo(WbConfig& config) const = 0;
+    virtual void ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const = 0;
+    virtual bool WriteTo ( WbConfigFileWriter& writer, const WbConfig& config ) const = 0;
+    virtual void SetDefaultTo( WbConfig& config ) const = 0;
 
-    virtual void PrintOn(std::ostream& os, const std::string& indent) const = 0;
+    virtual void PrintOn( std::ostream& os, const std::string& indent ) const = 0;
 
 private:
     KeyName m_keyName;

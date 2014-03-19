@@ -25,60 +25,64 @@
 
 HelpViewer::HelpViewer()
 {
-    m_helpLaunched = false;
+	m_help_exec = false;
 }
 
 HelpViewer::~HelpViewer()
 {
 }
 
-void HelpViewer::OnEndHelp(int, QProcess::ExitStatus)
+void HelpViewer::ShowHelpClicked()
 {
-    m_helpLaunched = false;
+    Show();
 }
 
 void HelpViewer::Show()
 {
-    // if help not already loaded
-    if (!m_helpLaunched)
+    if (!m_help_exec)
     {
-        m_helpProcess = new QProcess;
-
+        m_process_help = new QProcess;
         QStringList args;
+
         args << QLatin1String("-collectionFile")
         #ifdef __GNUC__
-             << (qApp->applicationDirPath() + "/" + HELP_FILE);
+             << ( qApp->applicationDirPath() + "/" + HELP_FILE )
         #else
-             << (qApp->applicationDirPath() + "/../doc/" + HELP_FILE);
+             << ( qApp->applicationDirPath() + "/../doc/" + HELP_FILE )
         #endif
 
-        QObject::connect(m_helpProcess,
-                         SIGNAL(finished(int, QProcess::ExitStatus)),
+             << QLatin1String("-enableRemoteControl");
+        QObject::connect( m_process_help,
+                         SIGNAL( started() ),
                          this,
-                         SLOT(OnEndHelp(int, QProcess::ExitStatus)));
+                         SLOT( OnStartedHelp() ) );
+        QObject::connect( m_process_help,
+                         SIGNAL( finished( int, QProcess::ExitStatus ) ),
+                         this,
+                         SLOT( OnEndHelp( int, QProcess::ExitStatus ) ) );
 
-        m_helpProcess->start(QLatin1String("assistant"), args);
-        m_helpProcess->waitForStarted();
-        if(!m_helpProcess->waitForStarted())
+        m_process_help->start(QLatin1String("assistant"), args);
+        m_process_help->waitForStarted();
+        if( !m_process_help->waitForStarted() )
         {
             return;
         }
 
-        m_helpLaunched = true;
+        m_help_exec = true;
     }
 }
 
 void HelpViewer::Close()
 {
-    if (m_helpLaunched)
+    if (m_help_exec)
     {
-        m_helpProcess->terminate();
-        m_helpProcess->waitForFinished();
-        m_helpLaunched = false;
+        m_process_help->terminate();
+		m_process_help->waitForFinished();
+		m_help_exec = false;
     }
 }
 
-void HelpViewer::ShowHelp()
+void HelpViewer::OnEndHelp( int, QProcess::ExitStatus )
 {
-    Show();
+	m_help_exec = false;
 }

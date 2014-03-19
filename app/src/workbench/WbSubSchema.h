@@ -28,16 +28,16 @@
 class WbSubSchema : public WbSchemaElement
 {
 public:
-    WbSubSchema(const WbSchema& schema,
+    WbSubSchema( const WbSchema& schema,
                  const Multiplicity::Type& multiplicity,
-                 const QString& defaultFileName);
+                 const QString& defaultFileName );
 
     virtual WbSubSchema* const Clone() const;
 
-    void ReadFrom(WbConfigFileReader& reader, WbConfig& config) const;
-    bool WriteTo (WbConfigFileWriter& writer, const WbConfig& config) const;
-    virtual void PrintOn(std::ostream& os, const std::string& indent) const;
-    virtual void SetDefaultTo(WbConfig& config) const;
+    void ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const;
+    bool WriteTo ( WbConfigFileWriter& writer, const WbConfig& config ) const;
+    virtual void PrintOn( std::ostream& os, const std::string& indent ) const;
+    virtual void SetDefaultTo( WbConfig& config ) const;
 
     WbSchema& ModifiableSchema();
 

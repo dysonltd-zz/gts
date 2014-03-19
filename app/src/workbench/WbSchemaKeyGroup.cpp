@@ -26,85 +26,85 @@
 #include "WbConfigFileReader.h"
 #include "WbConfigFileWriter.h"
 
-WbSchemaKeyGroup::WbSchemaKeyGroup(const KeyName& name,
-                                    const Multiplicity::Type& multiplicity)
+WbSchemaKeyGroup::WbSchemaKeyGroup( const KeyName& name,
+                                    const Multiplicity::Type& multiplicity )
     :
-    WbSchemaElement(name, multiplicity) {}
+    WbSchemaElement( name, multiplicity ) {}
 
-void WbSchemaKeyGroup::AddKey(const WbSchemaValueKey& key)
+void WbSchemaKeyGroup::AddKey( const WbSchemaValueKey& key )
 {
-    m_keys.push_back(key);
+    m_keys.push_back( key );
 }
 
 WbSchemaKeyGroup* const WbSchemaKeyGroup::Clone() const
 {
-    return new WbSchemaKeyGroup(*this);
+    return new WbSchemaKeyGroup( *this );
 }
 
-void WbSchemaKeyGroup::ReadFrom(WbConfigFileReader& reader, WbConfig& config) const
+void WbSchemaKeyGroup::ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const
 {
-    const KeyName groupName(GetKeyName());
+    const KeyName groupName( GetKeyName() );
     WbKeyValues keyValues;
 
-    for (size_t i = 0; i < m_keys.size(); ++i)
+    for ( size_t i = 0; i < m_keys.size(); ++i )
     {
-        reader.ReadKeyValuesFromGroup(m_keys[ i ].GetKeyName(), groupName, keyValues);
+        reader.ReadKeyValuesFromGroup( m_keys[ i ].GetKeyName(), groupName, keyValues );
     }
 
-    config.SetKeyValues(keyValues);
+    config.SetKeyValues( keyValues );
 }
 
-bool WbSchemaKeyGroup::WriteTo(WbConfigFileWriter& writer, const WbConfig& config) const
+bool WbSchemaKeyGroup::WriteTo( WbConfigFileWriter& writer, const WbConfig& config ) const
 {
     std::map< KeyId, std::vector< KeyNameValuePair > > keysByGroup;
 
-    for (size_t i = 0; i < m_keys.size(); ++i)
+    for ( size_t i = 0; i < m_keys.size(); ++i )
     {
-        const KeyName subKeyName(m_keys[ i ].GetKeyName());
-        WbKeyValues::ValueIdPairList keyValueIdPairs = config.GetKeyValues(subKeyName);
+        const KeyName subKeyName( m_keys[ i ].GetKeyName() );
+        WbKeyValues::ValueIdPairList keyValueIdPairs = config.GetKeyValues( subKeyName );
 
-        for (size_t j = 0; j < keyValueIdPairs.size(); ++j)
+        for ( size_t j = 0; j < keyValueIdPairs.size(); ++j )
         {
             KeyNameValuePair nameValuePair = { subKeyName, keyValueIdPairs[ j ].value };
-            keysByGroup[ keyValueIdPairs[ j ].id ].push_back(nameValuePair);
+            keysByGroup[ keyValueIdPairs[ j ].id ].push_back( nameValuePair );
         }
     }
 
-    for (std::map< KeyId, std::vector< KeyNameValuePair > >::const_iterator itr = keysByGroup.begin();
+    for ( std::map< KeyId, std::vector< KeyNameValuePair > >::const_iterator itr = keysByGroup.begin();
             itr != keysByGroup.end();
-            ++itr)
+            ++itr )
     {
         const KeyId thisGroupId = itr->first;
 
-        writer.StartGroup(GetKeyName(), thisGroupId);
+        writer.StartGroup( GetKeyName(), thisGroupId );
         const std::vector< KeyNameValuePair >& thisGroupKeys = itr->second;
 
-        for (size_t i = 0; i < thisGroupKeys.size(); ++i)
+        for ( size_t i = 0; i < thisGroupKeys.size(); ++i )
         {
-            writer.WriteKey(thisGroupKeys[ i ].name, thisGroupKeys[ i ].value, thisGroupId);
+            writer.WriteKey( thisGroupKeys[ i ].name, thisGroupKeys[ i ].value, thisGroupId );
         }
 
-        writer.EndGroup(GetKeyName(), thisGroupId);
+        writer.EndGroup( GetKeyName(), thisGroupId );
     }
     return true;
 }
 
-void WbSchemaKeyGroup::SetDefaultTo(WbConfig& config) const
+void WbSchemaKeyGroup::SetDefaultTo( WbConfig& config ) const
 {
-    for (size_t i = 0; i < m_keys.size(); ++i)
+    for ( size_t i = 0; i < m_keys.size(); ++i )
     {
-        m_keys[ i ].SetDefaultTo(config);
+        m_keys[ i ].SetDefaultTo( config );
     }
 
 }
 
-void WbSchemaKeyGroup::PrintOn(std::ostream& os, const std::string& indent) const
+void WbSchemaKeyGroup::PrintOn( std::ostream& os, const std::string& indent ) const
 {
     os << indent << "Start Group: " << GetKeyName() << std::endl;
 
-    for (size_t i = 0; i < m_keys.size(); ++i)
+    for ( size_t i = 0; i < m_keys.size(); ++i )
     {
-        m_keys[ i ].PrintOn(os, indent + " ");
+        m_keys[ i ].PrintOn( os, indent + " " );
     }
 
     os << indent << "End Group: " << GetKeyName() << std::endl;

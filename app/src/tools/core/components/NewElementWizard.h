@@ -36,7 +36,7 @@ protected:
 class WizardStartPage : public NewElementWizardPage
 {
 public:
-    WizardStartPage(const Collection& collection, const QString& title);
+    WizardStartPage( const Collection& collection, const QString& title );
 
     virtual void initializePage();
     virtual bool isComplete() const;
@@ -55,9 +55,9 @@ class NewElementWizard : public QWizard
     Q_OBJECT
 
 public:
-    NewElementWizard(const Collection& collection,
+    NewElementWizard( const Collection& collection,
                       const QString& elementType,
-                      QWidget* const parent = 0);
+                      QWidget* const parent = 0 );
 };
 
 class RenameElementWizard : public QWizard
@@ -65,9 +65,9 @@ class RenameElementWizard : public QWizard
     Q_OBJECT
 
 public:
-    RenameElementWizard(const Collection& collection,
+    RenameElementWizard( const Collection& collection,
                          const QString& elementType,
-                         QWidget* const parent = 0);
+                         QWidget* const parent = 0 );
 };
 
 #endif // NEWELEMENTWIZARD_H

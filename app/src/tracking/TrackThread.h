@@ -36,7 +36,7 @@ class TrackThread : public QObject
     Q_OBJECT
 
 public:
-    explicit TrackThread(GtsScene& scene);
+    explicit TrackThread( GtsScene& scene );
     ~TrackThread();
 
     void Run();
@@ -56,10 +56,10 @@ public slots:
     void Execute();
 
 signals:
-	void paused(bool);
+	void paused( bool );
     void finished();
 
-	void position(double position);
+	void position( double position );
 
 private:
 

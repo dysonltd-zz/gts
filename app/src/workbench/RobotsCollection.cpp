@@ -20,6 +20,6 @@
 
 Collection RobotsCollection()
 {
-    return Collection(KeyName("robots"), KeyName("robot"));
+    return Collection( KeyName( "robots" ), KeyName( "robot" ) );
 }
 

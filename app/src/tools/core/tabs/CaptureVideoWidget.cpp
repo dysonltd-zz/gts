@@ -68,17 +68,17 @@ static const int NUM_COLS = 2;
  * @param cameraHardware
  * @param parent
  */
-CaptureVideoWidget::CaptureVideoWidget(CameraHardware& cameraHardware,
-                                        QWidget* parent) :
-    Tool                (parent, CreateSchema()),
-    m_ui                (new Ui::CaptureVideoWidget),
-    m_cameraHardware    (cameraHardware),
-    m_fps               (-1.0),
-    m_codec             (AviWriter::CODEC_XVID),
-    m_fname             (QString("video%1.avi")),
-    m_tname             (QString("timestamps%1.txt")),
-    m_videoSourcesAdded (false),
-    m_videoSourcesOpen  (false)
+CaptureVideoWidget::CaptureVideoWidget( CameraHardware& cameraHardware,
+                                        QWidget* parent ) :
+    Tool                ( parent, CreateSchema() ),
+    m_ui                ( new Ui::CaptureVideoWidget ),
+    m_cameraHardware    ( cameraHardware ),
+    m_fps               ( -1.0 ),
+    m_codec             ( AviWriter::CODEC_XVID ),
+    m_fname             ( QString("video%1.avi") ),
+    m_tname             ( QString("timestamps%1.txt") ),
+    m_videoSourcesAdded ( false ),
+    m_videoSourcesOpen  ( false )
 {
     SetupUi();
     ConnectSignals();
@@ -91,34 +91,34 @@ CaptureVideoWidget::~CaptureVideoWidget()
 
 void CaptureVideoWidget::SetupUi()
 {
-    m_ui->setupUi(this);
+    m_ui->setupUi( this );
 
-    m_ui->m_videoTable->setColumnCount(NUM_COLS);
-    m_ui->m_videoTable->setSortingEnabled(false);
+    m_ui->m_videoTable->setColumnCount( NUM_COLS );
+    m_ui->m_videoTable->setSortingEnabled( false );
 }
 
 void CaptureVideoWidget::ConnectSignals()
 {
-    QObject::connect(m_ui->m_captureLiveConnectDisconnectBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_captureLiveConnectDisconnectBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(CaptureLiveConnectDisconnectButtonClicked()));
-    QObject::connect(m_ui->m_captureLoadResetBtn,
-                      SIGNAL(clicked()),
+                      SLOT( CaptureLiveConnectDisconnectButtonClicked() ) );
+    QObject::connect( m_ui->m_captureLoadResetBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(CaptureLoadResetButtonClicked()));
-    QObject::connect(m_ui->m_recordBtn,
-                      SIGNAL(clicked(bool)),
+                      SLOT( CaptureLoadResetButtonClicked() ) );
+    QObject::connect( m_ui->m_recordBtn,
+                      SIGNAL( clicked(bool) ),
                       this,
-                      SLOT(RecordButtonClicked(const bool)));
-    QObject::connect(m_ui->m_formatXVIDRadioBtn,
-                      SIGNAL(clicked()),
+                      SLOT( RecordButtonClicked(const bool) ) );
+    QObject::connect( m_ui->m_formatXVIDRadioBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(FormatXVIDButtonClicked()));
-    QObject::connect(m_ui->m_formatMP4RadioBtn,
-                      SIGNAL(clicked()),
+                      SLOT( FormatXVIDButtonClicked() ) );
+    QObject::connect( m_ui->m_formatMP4RadioBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(FormatMP4ButtonClicked()));
+                      SLOT( FormatMP4ButtonClicked() ) );
 }
 
 const QString CaptureVideoWidget::GetSubSchemaDefaultFileName() const
@@ -128,11 +128,11 @@ const QString CaptureVideoWidget::GetSubSchemaDefaultFileName() const
 
 void CaptureVideoWidget::CaptureLoadResetButtonClicked()
 {
-    if(!m_videoSourcesAdded)
+    if( !m_videoSourcesAdded )
     {
 #if defined(__MINGW32__) || defined(__GNUC__)
-        SetUpVideoSources(MakeCallback(this,
-                                            &CaptureVideoWidget::AddLiveSourcesForEachCameraPosition));
+        SetUpVideoSources(MakeCallback( this,
+                                            &CaptureVideoWidget::AddLiveSourcesForEachCameraPosition ) );
 #else
         SetUpVideoSources([this](const QStringList& camPosIds) -> bool
                       {
@@ -163,9 +163,9 @@ void CaptureVideoWidget::FormatMP4ButtonClicked()
     m_fname = QString("video%1.mp4");
 }
 
-void CaptureVideoWidget::RecordButtonClicked(const bool shouldRecord)
+void CaptureVideoWidget::RecordButtonClicked( const bool shouldRecord )
 {
-    if (shouldRecord)
+    if ( shouldRecord )
     {
         TryToGetOutputDirectoryAndStartRecording();
         m_ui->m_captureLiveConnectDisconnectBtn->setEnabled(false);
@@ -179,10 +179,10 @@ void CaptureVideoWidget::RecordButtonClicked(const bool shouldRecord)
 
 void CaptureVideoWidget::StopRecording()
 {
-    const int result = QMessageBox::question(this,
+    const int result = QMessageBox::question( this,
                                               "Confirm stop recording",
                                               QObject::tr("Are you sure you want to stop recording?"),
-                                              QMessageBox::Yes|QMessageBox::No);
+                                              QMessageBox::Yes|QMessageBox::No );
     if (result == QMessageBox::Yes)
     {
         for (auto videoSource = m_videoSources.begin();
@@ -208,43 +208,43 @@ bool CaptureVideoWidget::AnyViewIsRecording() const
     return false;
 }
 
-void CaptureVideoWidget::AddVideoFileConfigKey(const KeyId& camPosId,
+void CaptureVideoWidget::AddVideoFileConfigKey( const KeyId& camPosId,
                                                 const QString& videoFileName,
-                                                const QString& timestampFileName)
+                                                const QString& timestampFileName )
 {
     WbConfig config(GetCurrentConfig());
 
     const KeyId keyId = config.AddKeyValue(VideoCaptureSchema::cameraPositionIdKey, KeyValue::from(camPosId));
 
-    WbConfigTools::SetFileName(config,
+    WbConfigTools::SetFileName( config,
                                 videoFileName,
                                 VideoCaptureSchema::videoFileNameKey,
                                 WbConfigTools::FileNameMode_RelativeInsideWorkbench,
-                                keyId);
+                                keyId );
 
-    WbConfigTools::SetFileName(config,
+    WbConfigTools::SetFileName( config,
                                 timestampFileName,
                                 VideoCaptureSchema::timestampFileNameKey,
                                 WbConfigTools::FileNameMode_RelativeInsideWorkbench,
-                                keyId);
+                                keyId );
 }
 
-void CaptureVideoWidget::StartRecordingInDirectory(const QString& outputDirectoryName)
+void CaptureVideoWidget::StartRecordingInDirectory( const QString& outputDirectoryName )
 {
-    QDir outputDirectory(outputDirectoryName);
+    QDir outputDirectory( outputDirectoryName );
     bool directoryExists = outputDirectory.exists();
-    if (!directoryExists)
+    if ( !directoryExists )
     {
-        directoryExists = QDir().mkpath(outputDirectory.absolutePath());
+        directoryExists = QDir().mkpath( outputDirectory.absolutePath() );
     }
 
-    if (!directoryExists)
+    if ( !directoryExists )
     {
-        Message::Show(this,
-                       tr("Capture Video"),
-                       tr("Failed to create directory: %1!")
-                         .arg(outputDirectory.absolutePath()),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Capture Video" ),
+                       tr( "Failed to create directory: %1!" )
+                         .arg( outputDirectory.absolutePath() ),
+                       Message::Severity_Critical );
         return;
     }
 
@@ -260,11 +260,11 @@ void CaptureVideoWidget::StartRecordingInDirectory(const QString& outputDirector
         /// timestamps for video1.avi could be in the file timestamps0.txt if there was
         /// a stray file named video0.avi already in the capture directory. Are we ok
         /// with this?
-        const QString videoFileName(FileUtilities::GetUniqueFileName(
-                                        outputDirectory.absoluteFilePath(m_fname)));
+        const QString videoFileName( FileUtilities::GetUniqueFileName(
+                                        outputDirectory.absoluteFilePath(m_fname) ) );
 
-        const QString timestampFileName(FileUtilities::GetUniqueFileName(
-                                            outputDirectory.absoluteFilePath(m_tname)));
+        const QString timestampFileName( FileUtilities::GetUniqueFileName(
+                                            outputDirectory.absoluteFilePath(m_tname) ) );
 
         // Identify frame rate
         QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(row, RATE_COLUMN);
@@ -272,25 +272,25 @@ void CaptureVideoWidget::StartRecordingInDirectory(const QString& outputDirector
 
         AddVideoFileConfigKey((*videoSource)->cameraPositionId, videoFileName, timestampFileName);
 
-        const QFileInfo fileInfo(videoFileName);
-        if (!fileInfo.exists() || fileInfo.isWritable())
+        const QFileInfo fileInfo( videoFileName );
+        if ( !fileInfo.exists() || fileInfo.isWritable() )
         {
             (*videoSource)->videoSource->RecordTo(
-                        std::unique_ptr< AviWriter >(new AviWriter(m_codec,
+                        std::unique_ptr< AviWriter >(new AviWriter( m_codec,
                                                                     imageSize.width(),
                                                                     imageSize.height(),
                                                                     videoFileName.toAscii(),
                                                                     timestampFileName.toAscii(),
-                                                                    frameRate)));
+                                                                    frameRate )));
         }
         else
         {
             StopRecording();
-            Message::Show(this,
-                           tr("Capture Video"),
-                           tr("Cannot write video: %1!")
+            Message::Show( this,
+                           tr( "Capture Video" ),
+                           tr( "Cannot write video: %1!" )
                              .arg(videoFileName),
-                           Message::Severity_Critical);
+                           Message::Severity_Critical );
             return;
         }
 
@@ -300,7 +300,7 @@ void CaptureVideoWidget::StartRecordingInDirectory(const QString& outputDirector
 
 void CaptureVideoWidget::TryToGetOutputDirectoryAndStartRecording()
 {
-    StartRecordingInDirectory(GetCurrentConfig().GetAbsoluteFileNameFor("capturedVideos/"));
+    StartRecordingInDirectory( GetCurrentConfig().GetAbsoluteFileNameFor("capturedVideos/") );
 }
 
 namespace
@@ -308,16 +308,16 @@ namespace
     class MatchesAny
     {
     public:
-        MatchesAny(const VideoSourcesCollection& videoSources) :
-            m_videoSources(videoSources) {}
+        MatchesAny( const VideoSourcesCollection& videoSources ) :
+            m_videoSources( videoSources ) {}
 
-        bool operator() (const CameraDescription& description) const
+        bool operator() ( const CameraDescription& description ) const
         {
             for (auto videoSource = m_videoSources.begin();
                       videoSource != m_videoSources.end();
                       ++videoSource)
             {
-                if ((*videoSource)->videoSource->IsFrom(description))
+                if ((*videoSource)->videoSource->IsFrom( description ))
                 {
                     return true;
                 }
@@ -330,14 +330,14 @@ namespace
     };
 }
 
-void CaptureVideoWidget::RemovePreviouslyChosenCameras(CameraApi::CameraList& connectedCameras)
+void CaptureVideoWidget::RemovePreviouslyChosenCameras( CameraApi::CameraList& connectedCameras )
 {
     const CameraApi::CameraList::iterator newEnd =
-        std::remove_if(connectedCameras.begin(),
+        std::remove_if( connectedCameras.begin(),
                         connectedCameras.end(),
-                        MatchesAny(m_videoSources));
+                        MatchesAny( m_videoSources ) );
 
-    connectedCameras.erase(newEnd, connectedCameras.end());
+    connectedCameras.erase( newEnd, connectedCameras.end() );
 }
 
 void CaptureVideoWidget::RemoveAllVideoSources()
@@ -353,63 +353,63 @@ void CaptureVideoWidget::RemoveAllVideoSources()
 
     QStringList headerlabels;
     headerlabels << "Source" << "Rate";
-    m_ui->m_videoTable->setHorizontalHeaderLabels(headerlabels);
+    m_ui->m_videoTable->setHorizontalHeaderLabels( headerlabels );
 
     m_ui->m_recordBtn->setEnabled(false);
 }
 
 void CaptureVideoWidget::ShowNoRoomError()
 {
-    Message::Show(this,
-                   tr("Capture Video"),
-                   tr("There is no room selected!"),
-                   Message::Severity_Critical);
+    Message::Show( this,
+                   tr( "Capture Video" ),
+                   tr( "There is no room selected!" ),
+                   Message::Severity_Critical );
 }
 
 void CaptureVideoWidget::ShowEmptyRoomError()
 {
-    Message::Show(this,
-                   tr("Capture Video"),
-                   tr("The selected room is empty!"),
-                   Message::Severity_Critical);
+    Message::Show( this,
+                   tr( "Capture Video" ),
+                   tr( "The selected room is empty!" ),
+                   Message::Severity_Critical );
 }
 
 void CaptureVideoWidget::ShowNullCameraPosError()
 {
-    Message::Show(this,
-                   tr("Capture Video"),
-                   tr("One of the camera positions is invalid!"),
-                   Message::Severity_Critical);
+    Message::Show( this,
+                   tr( "Capture Video" ),
+                   tr( "One of the camera positions is invalid!" ),
+                   Message::Severity_Critical );
 }
 
 void CaptureVideoWidget::ShowMissingCameraError(const QString& cameraPosDisplayName)
 {
-    Message::Show(this,
-                   tr("Capture Video"),
-                   tr("Camera position %1 is missing camera!")
+    Message::Show( this,
+                   tr( "Capture Video" ),
+                   tr( "Camera position %1 is missing camera!" )
                       .arg(cameraPosDisplayName),
-                   Message::Severity_Critical);
+                   Message::Severity_Critical );
 }
 
 const KeyId CaptureVideoWidget::GetRoomIdToCapture() const
 {
-    const WbConfig capturedVideosConfig(GetCurrentConfig());
-    const WbConfig runConfig(capturedVideosConfig.GetParent());
-    const KeyId roomIdToCapture(runConfig.GetKeyValue(RunSchema::roomIdKey).ToKeyId());
+    const WbConfig capturedVideosConfig( GetCurrentConfig() );
+    const WbConfig runConfig( capturedVideosConfig.GetParent() );
+    const KeyId roomIdToCapture( runConfig.GetKeyValue( RunSchema::roomIdKey ).ToKeyId() );
 
     return roomIdToCapture;
 }
 
 const QStringList CaptureVideoWidget::GetCameraPositionIds(const KeyId& roomIdToCapture)
 {
-    Collection roomsCollection(RoomsCollection());
+    Collection roomsCollection( RoomsCollection() );
     roomsCollection.SetConfig(GetCurrentConfig());
 
-    const WbConfig roomConfig(roomsCollection.ElementById(roomIdToCapture));
-    const WbConfig roomLayoutConfig(roomConfig.GetSubConfig(RoomLayoutSchema::schemaName));
+    const WbConfig roomConfig( roomsCollection.ElementById( roomIdToCapture ) );
+    const WbConfig roomLayoutConfig( roomConfig.GetSubConfig( RoomLayoutSchema::schemaName ) );
     const QStringList cameraPositionIds(
         roomLayoutConfig.GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-        .ToQStringList());
+        .ToQStringList() );
 
     return cameraPositionIds;
 }
@@ -445,9 +445,9 @@ bool CaptureVideoWidget::TryToAddLiveVideoFor(const KeyId& camPosId)
 
     if (!camera.IsValid())
     {
-        QMessageBox::critical(0,
-                               QObject::tr("Error"),
-                               QObject::tr("%1 camera is not valid").arg(camPosId));
+        QMessageBox::critical( 0,
+                               QObject::tr( "Error" ),
+                               QObject::tr( "%1 camera is not valid" ).arg( camPosId ) );
         return FAILURE;
     }
 
@@ -493,7 +493,7 @@ void CaptureVideoWidget::SetUpVideoSources(GetVideoSourcesForCallback getVideoSo
     const bool success = getVideoSourcesFor(cameraPositionIds);
 #endif
 
-    if (success)
+    if ( success )
     {
         m_ui->m_captureLoadResetBtn->setText("&Clear");
         m_ui->m_captureLiveConnectDisconnectBtn->setEnabled(true);
@@ -508,11 +508,11 @@ void CaptureVideoWidget::SetUpVideoSources(GetVideoSourcesForCallback getVideoSo
 
 void CaptureVideoWidget::CaptureLiveConnectDisconnectButtonClicked()
 {
-    if (!m_videoSourcesOpen )
+    if ( !m_videoSourcesOpen  )
     {
         StartVideoSources();
 
-        if (CanClose())
+        if ( CanClose() )
         {
             m_ui->m_captureLiveConnectDisconnectBtn->setText("&Disconnect");
         }
@@ -523,7 +523,7 @@ void CaptureVideoWidget::CaptureLiveConnectDisconnectButtonClicked()
         StopVideoSources();
 
         m_ui->m_captureLiveConnectDisconnectBtn->setText("&Connect");
-        m_ui->m_time->setText(QString("00:00:00:000"));
+        m_ui->m_time->setText( QString("00:00:00:000") );
         m_ui->m_videoTable->setEnabled(true);
     }
 }
@@ -538,7 +538,7 @@ void CaptureVideoWidget::StartUpdatingImages()
     {
         QComboBox* combo = (QComboBox*)m_ui->m_videoTable->cellWidget(row, RATE_COLUMN);
 
-        (*videoSource)->videoSource->StartUpdatingImage(rate[combo->currentIndex()]);
+        (*videoSource)->videoSource->StartUpdatingImage( rate[combo->currentIndex()]);
 
         row++;
     }
@@ -584,25 +584,25 @@ void CaptureVideoWidget::AddTableRow(QTableWidgetItem* tableItem)
 {
     const int newAppendedRow = m_ui->m_videoTable->rowCount();
 
-    m_ui->m_videoTable->insertRow(newAppendedRow);
+    m_ui->m_videoTable->insertRow( newAppendedRow );
     m_ui->m_videoTable->setItem(newAppendedRow, SOURCE_COLUMN, tableItem);
 
     QComboBox* rateSpinBox = new QComboBox();
-    rateSpinBox->addItem("7.5");
-    rateSpinBox->addItem("15");
-    rateSpinBox->addItem("30");
-    rateSpinBox->addItem("60");
+    rateSpinBox->addItem( "7.5" );
+    rateSpinBox->addItem( "15" );
+    rateSpinBox->addItem( "30" );
+    rateSpinBox->addItem( "60" );
 
-    m_ui->m_videoTable->setCellWidget(newAppendedRow, RATE_COLUMN, rateSpinBox);
+    m_ui->m_videoTable->setCellWidget( newAppendedRow, RATE_COLUMN, rateSpinBox );
 }
 
-void CaptureVideoWidget::AddLiveVideo(const CameraDescription& chosenCamera, const KeyId& camPosId)
+void CaptureVideoWidget::AddLiveVideo( const CameraDescription& chosenCamera, const KeyId& camPosId )
 {
     ImageView* const addedImageView(m_ui->m_imageGrid->AddBlankImage(chosenCamera.GetImageSize()));
 
-    if (addedImageView)
+    if ( addedImageView )
     {
-        VideoSource* newVideoSource = new VideoSource(chosenCamera, *addedImageView, m_ui->m_time);
+        VideoSource* newVideoSource = new VideoSource( chosenCamera, *addedImageView, m_ui->m_time );
         AddTableRow(chosenCamera.CreateTableItem());
         m_videoSources.push_back(std::unique_ptr<VideoSourceAndCameraPosition>(
                                      new VideoSourceAndCameraPosition(newVideoSource, camPosId)));
@@ -623,14 +623,14 @@ const WbSchema CaptureVideoWidget::CreateSchema()
 {
     using namespace VideoCaptureSchema;
 
-    WbSchema schema(CreateWorkbenchSubSchema(schemaName,
-                                               tr("Video Source(s)")));
+    WbSchema schema( CreateWorkbenchSubSchema( schemaName,
+                                               tr( "Video Source(s)" ) ) );
 
-    schema.AddKeyGroup(capturedVideoGroup,
+    schema.AddKeyGroup( capturedVideoGroup,
                         WbSchemaElement::Multiplicity::Many,
                         KeyNameList() << cameraPositionIdKey
                                       << videoFileNameKey
-                                      << timestampFileNameKey);
+                                      << timestampFileNameKey );
 
     return schema;
 }

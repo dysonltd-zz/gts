@@ -29,13 +29,13 @@ class WbConfigFileWriter
 public:
     virtual WbConfigFileWriter* const Clone() const = 0;
 
-    virtual bool WriteTo(QIODevice& ioDevice) = 0;
-    virtual void StartConfigFile(const KeyName& name) = 0;
-    virtual void EndConfigFile(const KeyName& name) = 0;
-    virtual void WriteKey(const KeyName& name, const KeyValue& value, const KeyId& id) = 0;
-    virtual void StartGroup(const KeyName& name, const KeyId& id) = 0;
-    virtual void EndGroup(const KeyName& name, const KeyId& id) = 0;
-    virtual void WriteSubConfig(const KeyName& name, const QFileInfo& configFileLocation, const KeyId& id) = 0;
+    virtual bool WriteTo( QIODevice& ioDevice ) = 0;
+    virtual void StartConfigFile( const KeyName& name ) = 0;
+    virtual void EndConfigFile( const KeyName& name ) = 0;
+    virtual void WriteKey( const KeyName& name, const KeyValue& value, const KeyId& id ) = 0;
+    virtual void StartGroup( const KeyName& name, const KeyId& id ) = 0;
+    virtual void EndGroup( const KeyName& name, const KeyId& id ) = 0;
+    virtual void WriteSubConfig( const KeyName& name, const QFileInfo& configFileLocation, const KeyId& id ) = 0;
 };
 
 #endif // WBCONFIGFILEWRITER_H

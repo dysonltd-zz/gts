@@ -38,30 +38,30 @@
 #endif
 
 #define START_TIMING() QTime TIMING_MACRO_stopwatch; TIMING_MACRO_stopwatch.start();
-#define TIME_IT()      std::printf("Took %d msec\n", TIMING_MACRO_stopwatch.restart());
+#define TIME_IT()      std::printf( "Took %d msec\n", TIMING_MACRO_stopwatch.restart() );
 
 #ifndef NDEBUG
 
-#define PRINT(msg) (*Debugging::Print(__FILE__, __LINE__, __func__, msg))
-#define PRINT_VAR(var) PRINT(QString(#var " = %1").arg(var))
-#define PRINT_VAR_MESSAGE(var, msg) \
-    PRINT(QString(#var " = %1 (%2)").arg(var).arg(msg))
+#define PRINT( msg ) ( *Debugging::Print( __FILE__, __LINE__, __func__, msg ) )
+#define PRINT_VAR( var ) PRINT( QString( #var " = %1" ).arg( var ) )
+#define PRINT_VAR_MESSAGE( var, msg ) \
+    PRINT( QString( #var " = %1 ( %2 )" ).arg( var ).arg( msg ) )
 
-#define ASSERT(expression) assert(expression)
-#define ASSERT_COMPARISON(value1, value2, op) do { \
-                                                    if (!(value1 op value2)) \
+#define ASSERT( expression ) assert( expression )
+#define ASSERT_COMPARISON( value1, value2, op ) do { \
+                                                    if ( !( value1 op value2 ) ) \
                                                     { \
-                                                        PRINT_VAR(value1); \
-                                                        PRINT_VAR(value2); \
+                                                        PRINT_VAR( value1 ); \
+                                                        PRINT_VAR( value2 ); \
                                                     } \
-                                                    assert(value1 op value2); \
-                                                } while(false)
+                                                    assert( value1 op value2 ); \
+                                                } while( false )
 
-#define ASSERT_EQUAL(v1, v2) ASSERT_COMPARISON(v1, v2, ==)
-#define ASSERT_LESS_THAN(v1, v2) ASSERT_COMPARISON(v1, v2, <)
-#define ASSERT_LESS_THAN_OR_EQUAL(v1, v2) ASSERT_COMPARISON(v1, v2, <=)
-#define ASSERT_GREATER_THAN(v1, v2) ASSERT_COMPARISON(v1, v2, >)
-#define ASSERT_GREATER_THAN_OR_EQUAL(v1, v2) ASSERT_COMPARISON(v1, v2, >=)
+#define ASSERT_EQUAL( v1, v2 ) ASSERT_COMPARISON( v1, v2, == )
+#define ASSERT_LESS_THAN( v1, v2 ) ASSERT_COMPARISON( v1, v2, < )
+#define ASSERT_LESS_THAN_OR_EQUAL( v1, v2 ) ASSERT_COMPARISON( v1, v2, <= )
+#define ASSERT_GREATER_THAN( v1, v2 ) ASSERT_COMPARISON( v1, v2, > )
+#define ASSERT_GREATER_THAN_OR_EQUAL( v1, v2 ) ASSERT_COMPARISON( v1, v2, >= )
 
 
 namespace Debugging
@@ -69,8 +69,8 @@ namespace Debugging
     class DestructorPrinter
     {
     public:
-        explicit DestructorPrinter(const QString& qstring) :
-            m_string(qstring)
+        explicit DestructorPrinter( const QString& qstring ) :
+            m_string( qstring )
         {
         }
 
@@ -80,9 +80,9 @@ namespace Debugging
         }
 
         template< class Type >
-        DestructorPrinter& With(const Type& value)
+        DestructorPrinter& With( const Type& value )
         {
-            m_string.arg(value);
+            m_string.arg( value );
             return *this;
         }
 
@@ -90,25 +90,25 @@ namespace Debugging
         QString m_string;
     };
 
-    std::unique_ptr< DestructorPrinter> Print(const QString& file,
+    std::unique_ptr< DestructorPrinter> Print( const QString& file,
                                     const int line,
                                     const QString& function,
-                                    const QString& msg);
+                                    const QString& msg );
 }
 
 #else
 
-#define PRINT(msg)
-#define PRINT_VAR(msg)
-#define PRINT_VAR_MESSAGE(var, msg)
+#define PRINT( msg )
+#define PRINT_VAR( msg )
+#define PRINT_VAR_MESSAGE( var, msg )
 
-#define ASSERT(expression)
-#define ASSERT_COMPARISON(value1, value2, op)
-#define ASSERT_EQUAL(v1, v2)
-#define ASSERT_LESS_THAN(v1, v2)
-#define ASSERT_LESS_THAN_OR_EQUAL(v1, v2)
-#define ASSERT_GREATER_THAN(v1, v2)
-#define ASSERT_GREATER_THAN_OR_EQUAL(v1, v2)
+#define ASSERT( expression )
+#define ASSERT_COMPARISON( value1, value2, op )
+#define ASSERT_EQUAL( v1, v2 )
+#define ASSERT_LESS_THAN( v1, v2 )
+#define ASSERT_LESS_THAN_OR_EQUAL( v1, v2 )
+#define ASSERT_GREATER_THAN( v1, v2 )
+#define ASSERT_GREATER_THAN_OR_EQUAL( v1, v2 )
 
 #endif
 

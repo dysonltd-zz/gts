@@ -28,23 +28,23 @@
 
 #include <QtGui/QTableWidget>
 
-SetUpRoomWidget::SetUpRoomWidget(QWidget* parent) :
-    Tool(parent, CreateSchema()),
-    m_ui(new Ui::SetUpRoomWidget),
-    m_roomTableMapper(0)
+SetUpRoomWidget::SetUpRoomWidget( QWidget* parent ) :
+    Tool( parent, CreateSchema() ),
+    m_ui( new Ui::SetUpRoomWidget ),
+    m_roomTableMapper( 0 )
 {
-    m_ui->setupUi(this);
-    m_roomTableMapper = new RoomTableMapper(*m_ui->m_roomLayoutTable);
-    AddMapper(m_roomTableMapper);
+    m_ui->setupUi( this );
+    m_roomTableMapper = new RoomTableMapper( *m_ui->m_roomLayoutTable );
+    AddMapper( m_roomTableMapper );
 
-    QObject::connect(m_ui->m_addBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_addBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(AddClicked()));
-    QObject::connect(m_ui->m_removeBtn,
-                      SIGNAL(clicked()),
+                      SLOT( AddClicked() ) );
+    QObject::connect( m_ui->m_removeBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(RemoveClicked()));
+                      SLOT( RemoveClicked() ) );
 }
 
 SetUpRoomWidget::~SetUpRoomWidget()
@@ -53,7 +53,7 @@ SetUpRoomWidget::~SetUpRoomWidget()
 
 const QString SetUpRoomWidget::Name() const
 {
-    return tr("Room Layout");
+    return tr( "Room Layout" );
 }
 
 QWidget* SetUpRoomWidget::Widget()
@@ -69,10 +69,10 @@ const QString SetUpRoomWidget::GetSubSchemaDefaultFileName() const
 const WbSchema SetUpRoomWidget::CreateSchema()
 {
     using namespace RoomLayoutSchema;
-    WbSchema roomLayoutSchema(CreateWorkbenchSubSchema(schemaName,
-                                                         tr("Room Layout")));
-    roomLayoutSchema.AddSingleValueKey(cameraPositionIdsKey,
-                                        WbSchemaElement::Multiplicity::One);
+    WbSchema roomLayoutSchema( CreateWorkbenchSubSchema( schemaName,
+                                                         tr( "Room Layout" ) ) );
+    roomLayoutSchema.AddSingleValueKey( cameraPositionIdsKey,
+                                        WbSchemaElement::Multiplicity::One );
     return roomLayoutSchema;
 }
 

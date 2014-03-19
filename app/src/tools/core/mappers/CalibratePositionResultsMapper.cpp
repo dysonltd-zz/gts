@@ -28,96 +28,96 @@
 
 using namespace ExtrinsicCalibrationSchema;
 
-const QString CalibratePositionResultsMapper::startHeader(tr("<p style=\"text-decoration:underline\">"));
-const QString CalibratePositionResultsMapper::endHeader(tr("</p>"));
-const QString CalibratePositionResultsMapper::startBody(tr("<p style=\"margin-left:1em\">"));
-const QString CalibratePositionResultsMapper::endBody(tr("</p>"));
+const QString CalibratePositionResultsMapper::startHeader( tr( "<p style=\"text-decoration:underline\">" ) );
+const QString CalibratePositionResultsMapper::endHeader( tr( "</p>" ) );
+const QString CalibratePositionResultsMapper::startBody( tr( "<p style=\"margin-left:1em\">" ) );
+const QString CalibratePositionResultsMapper::endBody( tr( "</p>" ) );
 
-CalibratePositionResultsMapper::CalibratePositionResultsMapper(QTextBrowser& textBrowser) :
-    ConfigKeyMapper(ExtrinsicCalibrationSchema::resultsGroup),
-    m_textBrowser(textBrowser)
+CalibratePositionResultsMapper::CalibratePositionResultsMapper( QTextBrowser& textBrowser ) :
+    ConfigKeyMapper( ExtrinsicCalibrationSchema::resultsGroup ),
+    m_textBrowser( textBrowser )
 {
 }
 
-void CalibratePositionResultsMapper::CommitData(WbConfig& config)
+void CalibratePositionResultsMapper::CommitData( WbConfig& config )
 {
     Q_UNUSED(config);
 }
 
-const QString CalibratePositionResultsMapper::MatrixText(const WbConfig& config,
+const QString CalibratePositionResultsMapper::MatrixText( const WbConfig& config,
                                                         const KeyName keyName,
                                                         const int rows,
-                                                        const int columns)
+                                                        const int columns )
 {
-    QString matrixText(tr("<Unknown>"));
-    cv::Mat matrix(rows, columns, CV_64FC1);
-    const bool success = config.GetKeyValue(keyName).TocvMat(matrix);
-    if (success)
+    QString matrixText( tr( "<Unknown>" ) );
+    cv::Mat matrix( rows, columns, CV_64FC1 );
+    const bool success = config.GetKeyValue( keyName ).TocvMat( matrix );
+    if ( success )
     {
         matrixText = "<table border=\"1\" cellpadding=\"2\" cellspacing=\"0\">\n";
-        for (int r = 0; r < rows; ++r)
+        for ( int r = 0; r < rows; ++r )
         {
-            matrixText.append("<tr>\n");
-            for (int c = 0; c < columns; ++c)
+            matrixText.append( "<tr>\n" );
+            for ( int c = 0; c < columns; ++c )
             {
-                const double thisElement = matrix.at<double>(r, c);
-                matrixText.append(QString("<td align=\"right\">%1</td>\n").arg(thisElement));
+                const double thisElement = matrix.at<double>( r, c );
+                matrixText.append( QString( "<td align=\"right\">%1</td>\n" ).arg( thisElement ) );
             }
-            matrixText.append("</tr>\n");
+            matrixText.append( "</tr>\n" );
         }
-        matrixText.append("</table>\n");
+        matrixText.append( "</table>\n" );
     }
     return matrixText;
 }
 
-void CalibratePositionResultsMapper::SetConfig(const WbConfig& config)
+void CalibratePositionResultsMapper::SetConfig( const WbConfig& config )
 {
     QString resultsText;
 
     const bool calibrationWasSuccessful =
-        config.GetKeyValue(calibrationSuccessfulKey).ToBool();
+        config.GetKeyValue( calibrationSuccessfulKey ).ToBool();
 
-    resultsText.append(GetSuccessOrFailureText(config, calibrationWasSuccessful));
+    resultsText.append( GetSuccessOrFailureText( config, calibrationWasSuccessful ) );
 
     if (calibrationWasSuccessful)
     {
-        resultsText.append(startHeader % tr("Rotation Matrix") % endHeader);
-        resultsText.append(startBody % MatrixText(config, rotationMatrixKey, 3, 3) % endBody);
+        resultsText.append( startHeader % tr( "Rotation Matrix" ) % endHeader );
+        resultsText.append( startBody % MatrixText( config, rotationMatrixKey, 3, 3 ) % endBody );
 
-        resultsText.append(startHeader % tr("Translation Coefficients") % endHeader);
-        resultsText.append(startBody % MatrixText(config, translationKey, 3, 1) % endBody);
+        resultsText.append( startHeader % tr( "Translation Coefficients" ) % endHeader );
+        resultsText.append( startBody % MatrixText( config, translationKey, 3, 1 ) % endBody );
 
-        resultsText.append(startHeader % tr("Square Size") % endHeader);
-        resultsText.append(startBody %
-                            tr("%1 pixels")
-                                .arg(config.GetKeyValue(gridSquareSizeInPxKey).ToDouble()) %
-                            endBody);
+        resultsText.append( startHeader % tr( "Square Size" ) % endHeader );
+        resultsText.append( startBody %
+                            tr( "%1 pixels" )
+                                .arg( config.GetKeyValue( gridSquareSizeInPxKey ).ToDouble() ) %
+                            endBody );
     }
 
-    m_textBrowser.setHtml(resultsText);
+    m_textBrowser.setHtml( resultsText );
 }
 
 const QString
-CalibratePositionResultsMapper::GetSuccessOrFailureText(const WbConfig& config, bool successful) const
+CalibratePositionResultsMapper::GetSuccessOrFailureText( const WbConfig& config, bool successful ) const
 {
     QString successOrFailureText;
 
-    if (successful)
+    if ( successful )
     {
-        const QString calibDate(config.GetKeyValue(calibrationDateKey).ToQString());
-        const QString calibTime(config.GetKeyValue(calibrationTimeKey).ToQString());
+        const QString calibDate( config.GetKeyValue( calibrationDateKey ).ToQString() );
+        const QString calibTime( config.GetKeyValue( calibrationTimeKey ).ToQString() );
 
         successOrFailureText = startHeader %
-                               tr("<strong>Calibrated</strong>") %
+                               tr( "<strong>Calibrated</strong>" ) %
                                endHeader %
                                startBody %
-                               tr("On: %1, at: %2.").arg(calibDate).arg(calibTime) %
+                               tr( "On: %1, at: %2." ).arg( calibDate ).arg( calibTime ) %
                                endBody;
     }
     else
     {
         successOrFailureText = startHeader %
-                               tr("<strong>Uncalibrated</strong>") %
+                               tr( "<strong>Uncalibrated</strong>" ) %
                                endHeader;
     }
 

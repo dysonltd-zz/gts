@@ -38,15 +38,15 @@ namespace ScanMatch
         @param a Input tracking data.
         @param r Resulting tracking data after removing points.
     **/
-    void ScanRemoveBadPoints(const TrackHistory::TrackLog& a,
+    void ScanRemoveBadPoints( const TrackHistory::TrackLog& a,
                               TrackHistory::TrackLog& r,
-                              float thresh)
+                              float thresh )
     {
         r.clear();
 
-        for (unsigned int i=0; i<a.size()-1; ++i)
+        for ( unsigned int i=0; i<a.size()-1; ++i )
         {
-            if (a[i].GetError()>thresh)
+            if ( a[i].GetError()>thresh )
             {
                 r.push_back(a[i]);
             }
@@ -64,23 +64,23 @@ namespace ScanMatch
         @param a Input tracking data.
         @param r Resulting tracking data after removing points.
     **/
-    void ScanRemoveStationaryPoints(const TrackHistory::TrackLog& a,
+    void ScanRemoveStationaryPoints( const TrackHistory::TrackLog& a,
                                      TrackHistory::TrackLog& r,
-                                     float thresh)
+                                     float thresh )
     {
         float dx,dy,d;
 
         r.clear();
 
         // remove points which were recorded on the spot
-        for (unsigned int i=0; i<a.size()-1; ++i)
+        for ( unsigned int i=0; i<a.size()-1; ++i )
         {
             dx = a[i].x() - a[i+1].x();
             dy = a[i].y() - a[i+1].y();
-            d  = sqrtf(dx*dx + dy*dy);
+            d  = sqrtf( dx*dx + dy*dy );
 
             // only copy element to r if distance to next position is above threshold
-            if (d>thresh)
+            if ( d>thresh )
             {
                 r.push_back(a[i]);
             }
@@ -94,31 +94,31 @@ namespace ScanMatch
 
         Assumption: an element at LATER index can not have an EARLIER time-stamp than an element from a lower index.
     **/
-    void ScanAssociationNearest(const TrackHistory::TrackLog& a1,
+    void ScanAssociationNearest( const TrackHistory::TrackLog& a1,
                                  const TrackHistory::TrackLog& b1,
                                  TrackHistory::TrackLog& a2,
                                  TrackHistory::TrackLog& b2,
                                  float thresh,
-                                 float timeOffset)
+                                 float timeOffset )
     {
         // associations are stored in a2 and b2
         a2.clear();
         b2.clear();
 
-        if (a1.size()==0 || b1.size()==0) return;
+        if ( a1.size()==0 || b1.size()==0 ) return;
 
         unsigned int last = 0; // last index (of b1) at which we found association
-        for (unsigned int i=0; i<a1.size(); ++i)
+        for ( unsigned int i=0; i<a1.size(); ++i )
         {
             float tp = static_cast<float>(a1[i].t());
-            float mindt = fabsf(tp - static_cast<float>(b1[last].t())+timeOffset);
+            float mindt = fabsf( tp - static_cast<float>(b1[last].t())+timeOffset );
             unsigned int mindx = 0;
 
-            for (unsigned int j=last+1; j<b1.size(); ++j)
+            for ( unsigned int j=last+1; j<b1.size(); ++j )
             {
-                float dt = fabsf(tp - static_cast<float>(b1[j].t())+timeOffset);
+                float dt = fabsf( tp - static_cast<float>(b1[j].t())+timeOffset );
 
-                if (dt < mindt)
+                if ( dt < mindt )
                 {
                     mindt = dt;
                    mindx = j;
@@ -127,11 +127,11 @@ namespace ScanMatch
 
             // If the time difference for the best association is below
             // a threshold then we add it to our list of associations
-            if (mindt < thresh)
+            if ( mindt < thresh )
             {
                 if (mindx>0) last = mindx-1; // match indices must increase monotonically (so we don't need to search whole of b1 each loop)
-                a2.push_back(a1[i]);
-                b2.push_back(b1[mindx]);
+                a2.push_back( a1[i] );
+                b2.push_back( b1[mindx] );
             }
         }
     }
@@ -154,12 +154,12 @@ namespace ScanMatch
         @param thresh Time threshold for declaring points to be adjacent
         @param timeOffset A time offset in seconds to be added to the timestamps of b1.
     **/
-    void ScanAssociationInterpolated(const TrackHistory::TrackLog& a1,
+    void ScanAssociationInterpolated( const TrackHistory::TrackLog& a1,
                                       const TrackHistory::TrackLog& b1,
                                       TrackHistory::TrackLog& a2,
                                       TrackHistory::TrackLog& b2,
                                       float thresh,
-                                      float timeOffset)
+                                      float timeOffset )
     {
         a2.clear();
         b2.clear();
@@ -167,19 +167,19 @@ namespace ScanMatch
 #ifndef NDEBUG
         // print timestamps
         std::cerr << "TrackHistory::TrackLog a1: "<<std::endl;
-        for (size_t i = 0; i < a1.size(); ++i)
+        for ( size_t i = 0; i < a1.size(); ++i )
         {
             std::cerr << a1[i].t() << " ";
         }
         std::cerr << "TrackHistory::TrackLog b1: "<<std::endl;
-        for (size_t i = 0; i < b1.size(); ++i)
+        for ( size_t i = 0; i < b1.size(); ++i )
         {
             std::cerr << b1[i].t() << " ";
         }
 #endif
 
         unsigned int last = 0;
-        for (unsigned int i=0; i<a1.size(); ++i)
+        for ( unsigned int i=0; i<a1.size(); ++i )
         {
             float    ts = static_cast<float>(a1[i].t()); // time stamp we must find in b1
             int        e_idx = -1; // earlier index
@@ -189,20 +189,20 @@ namespace ScanMatch
 
             // for each element of a1 we find the index of the points in b1 which
             // have the closest EARLIER time-stamp and the closest LATER time-stamp
-            for (unsigned int j=last; j<b1.size(); ++j)
+            for ( unsigned int j=last; j<b1.size(); ++j )
             {
                 float dt = static_cast<float>(b1[j].t()) - (ts + timeOffset); // earlier timestamps have -ve dt
 
-                if (dt <= 0.f && // if its an earlier (or equal) timestamp
-                    (e_idx==-1 || dt>e_dt) // and, we don't have an earlier index or it is a closer earlier index
-                   )
+                if ( dt <= 0.f && // if its an earlier (or equal) timestamp
+                    ( e_idx==-1 || dt>e_dt ) // and, we don't have an earlier index or it is a closer earlier index
+                    )
                 {
                     e_idx = j;
                     e_dt  = dt;
                 }
-                else if (dt > 0.f && // if its a later index
-                        (l_idx==-1 || dt<l_dt) // and, we don't have a later index or it is a closer later index
-                       )
+                else if ( dt > 0.f && // if its a later index
+                        ( l_idx==-1 || dt<l_dt ) // and, we don't have a later index or it is a closer later index
+                        )
                 {
                     l_idx = j;
                     l_dt  = dt;
@@ -210,18 +210,18 @@ namespace ScanMatch
                 }
             }
 
-            if (e_idx != -1 && l_idx != -1) // if we found an earlier AND a later index
+            if ( e_idx != -1 && l_idx != -1 ) // if we found an earlier AND a later index
             {
                 if (
                     l_dt-e_dt < thresh
-                   ) // and they are both within time threshold of each other
+                    ) // and they are both within time threshold of each other
                 {
                     // create associated point by interpolation
                     float w = l_dt / (l_dt-e_dt); // MLP's notebook 17/10/2007
-                    TrackEntry assoc = TrackHistory::InterpolateEntries(b1[e_idx], b1[l_idx], w);
-                    assoc.SetTimeStamp(ts);
-                    a2.push_back(a1[i]);
-                    b2.push_back(assoc);
+                    TrackEntry assoc = TrackHistory::InterpolateEntries( b1[e_idx], b1[l_idx], w );
+                    assoc.SetTimeStamp( ts );
+                    a2.push_back( a1[i] );
+                    b2.push_back( assoc );
                     last = e_idx; // optimisation: earlier match indices must be monotonically increasing
                 }
             }
@@ -240,18 +240,18 @@ namespace ScanMatch
         @param b second input robot trajectory
         @return ScanPose structure storing the translation and rotation which aligns a to b (error field is not computed)
     **/
-    ScanPose ScanComputePose(const TrackHistory::TrackLog& a,
-                              const TrackHistory::TrackLog& b)
+    ScanPose ScanComputePose( const TrackHistory::TrackLog& a,
+                              const TrackHistory::TrackLog& b )
     {
         float mxa = 0.f; // mean x coord
         float mya = 0.f; // mean y coord
         float mxb = 0.f; // mean x coord
         float myb = 0.f; // mean y coord
 
-        assert(a.size()==b.size()) ;
+        assert( a.size()==b.size() ) ;
 
         // first compute means
-        for (unsigned int i=0; i<a.size(); ++i)
+        for ( unsigned int i=0; i<a.size(); ++i )
         {
             mxa += a[i].x();
             mya += a[i].y();
@@ -271,7 +271,7 @@ namespace ScanMatch
         float syx = 0.f;
         float syy = 0.f;
 
-        for (unsigned int i=0; i<a.size(); ++i)
+        for ( unsigned int i=0; i<a.size(); ++i )
         {
             sxx += (a[i].x()-mxa) * (b[i].x()-mxb);
             sxy += (a[i].x()-mxa) * (b[i].y()-myb);
@@ -282,8 +282,8 @@ namespace ScanMatch
         // pose and error computation
         ScanMatch::ScanPose pose;
         pose.dth  = atan2f(sxy-syx,sxx+syy);
-        pose.dx  = mxb - (cos(pose.dth)*mxa  - sin(pose.dth)*mya);
-        pose.dy  = myb - (sin(pose.dth)*mxa  + cos(pose.dth)*mya);
+        pose.dx  = mxb - ( cos(pose.dth)*mxa  - sin(pose.dth)*mya );
+        pose.dy  = myb - ( sin(pose.dth)*mxa  + cos(pose.dth)*mya );
 
         return pose;
     }
@@ -297,8 +297,8 @@ namespace ScanMatch
         @param thresh Threshold for defining weighting function (actually a soft cutoff about this threshold).
         @return ScanPose structure storing the translation and rotation which aligns a to b (error field is not computed)
     **/
-    ScanPose ScanComputePoseWeighted(const TrackHistory::TrackLog& a,
-                                      const TrackHistory::TrackLog& b)
+    ScanPose ScanComputePoseWeighted( const TrackHistory::TrackLog& a,
+                                      const TrackHistory::TrackLog& b )
     {
         if (a.size()==0 || b.size()==0)
         {
@@ -310,11 +310,11 @@ namespace ScanMatch
         float mxb = 0.f; // mean x coord
         float myb = 0.f; // mean y coord
 
-        assert(a.size()==b.size()) ;
+        assert( a.size()==b.size() ) ;
 
         // first compute means
         float wsum = 0.f;
-        for (unsigned int i=0; i<a.size(); ++i)
+        for ( unsigned int i=0; i<a.size(); ++i )
         {
             float w = a[i].GetWeighting();
 
@@ -337,7 +337,7 @@ namespace ScanMatch
         float syx = 0.f;
         float syy = 0.f;
 
-        for (unsigned int i=0; i<a.size(); ++i)
+        for ( unsigned int i=0; i<a.size(); ++i )
         {
             float w = a[i].GetWeighting();
 
@@ -350,8 +350,8 @@ namespace ScanMatch
         // pose and error computation
         ScanMatch::ScanPose pose;
         pose.dth  = atan2f(sxy-syx,sxx+syy);
-        pose.dx  = mxb - (cos(pose.dth)*mxa  - sin(pose.dth)*mya);
-        pose.dy  = myb - (sin(pose.dth)*mxa  + cos(pose.dth)*mya);
+        pose.dx  = mxb - ( cos(pose.dth)*mxa  - sin(pose.dth)*mya );
+        pose.dy  = myb - ( sin(pose.dth)*mxa  + cos(pose.dth)*mya );
 
         return pose;
     }
@@ -364,16 +364,16 @@ namespace ScanMatch
         @param b second input robot trajectory.
         @return the mean error for the specified pose.
     **/
-    float ScanComputeError(ScanPose pose,
+    float ScanComputeError( ScanPose pose,
                             const TrackHistory::TrackLog& a,
-                            const TrackHistory::TrackLog& b)
+                            const TrackHistory::TrackLog& b )
     {
         float err = 0.f;
 
         float costh = cos(pose.dth);
         float sinth = sin(pose.dth);
 
-        for (unsigned int i=0; i<a.size(); ++i)
+        for ( unsigned int i=0; i<a.size(); ++i )
         {
             float nx = costh*a[i].x() - sinth*a[i].y() + pose.dx;
             float ny = sinth*a[i].x() + costh*a[i].y() + pose.dy;
@@ -382,7 +382,7 @@ namespace ScanMatch
             err += ex*ex + ey*ey;
         }
 
-        return sqrtf(err) / a.size();
+        return sqrtf( err ) / a.size();
     }
 
     /**
@@ -398,30 +398,30 @@ namespace ScanMatch
 
         @return ScanPose structure storing the translation and rotation which aligns a to b and the associated mean-squared error
     **/
-    ScanPose ScanMatches(const TrackHistory::TrackLog& a,
+    ScanPose ScanMatches( const TrackHistory::TrackLog& a,
                           const TrackHistory::TrackLog& b,
                           TrackHistory::TrackLog& a2,
                           TrackHistory::TrackLog& b2,
                           float thresh,
-                          float timeOffset)
+                          float timeOffset )
     {
         TrackHistory::TrackLog a1,am;
         TrackHistory::TrackLog b1,bm;
 
-        ScanRemoveStationaryPoints(a, a1, MIN_DIST);
-        //scan_remove_bad_points(am, a1, 0.5);
+        ScanRemoveStationaryPoints( a, a1, MIN_DIST );
+        //scan_remove_bad_points( am, a1, 0.5 );
 
-        ScanRemoveStationaryPoints(b, b1, MIN_DIST);
-        //scan_remove_bad_points(bm, b1, 0.5);
+        ScanRemoveStationaryPoints( b, b1, MIN_DIST );
+        //scan_remove_bad_points( bm, b1, 0.5 );
 
-        ScanAssociationInterpolated(a1, b1, a2, b2, thresh, timeOffset);
-        //scan_association_nearest(a1, b1, a2, b2, thresh, timeOffset);
+        ScanAssociationInterpolated( a1, b1, a2, b2, thresh, timeOffset );
+        //scan_association_nearest( a1, b1, a2, b2, thresh, timeOffset );
 
-        assert(!a2.empty());
-        assert(!b2.empty());
+        assert( !a2.empty() );
+        assert( !b2.empty() );
 
         ScanPose pose = ScanComputePoseWeighted(a2, b2);
-        pose.error = ScanComputeError(pose, a2, b2);
+        pose.error = ScanComputeError( pose, a2, b2 );
 
         return pose;
     }
@@ -434,28 +434,28 @@ namespace ScanMatch
         @param pose Pose estimate at the best found time offset.
         @return The temporal offset giving minimal alignment error.
     **/
-    float ScanMatchTemporal(const TrackHistory::TrackLog& a,
+    float ScanMatchTemporal( const TrackHistory::TrackLog& a,
                              const TrackHistory::TrackLog& b,
                              TrackHistory::TrackLog& asc_a,
                              TrackHistory::TrackLog& asc_b,
                              ScanPose& pose,
-                             float timeThresh)
+                             float timeThresh )
     {
         pose.error = 9999999.f;
         float min_dt = 0.f; // will store the best offset found
 
         // Repeat scan matching for a number of time offsets from -1 to 1 second
         float dt = -1.f;
-        while(dt <= 1.f)
+        while( dt <= 1.f )
         {
-            ScanPose result = ScanMatches(a,
+            ScanPose result = ScanMatches( a,
                                            b,
                                            asc_a,
                                            asc_b,
                                            timeThresh,
-                                           dt);
+                                           dt );
 
-            if (result.error < pose.error)
+            if ( result.error < pose.error )
             {
                 pose = result;
                 min_dt = dt;
@@ -486,15 +486,15 @@ namespace ScanMatch
         @param timeOffset The time offset between the two tracks.
 
     **/
-    void ScanCombine(const TrackHistory::TrackLog& a1,
+    void ScanCombine( const TrackHistory::TrackLog& a1,
                       const TrackHistory::TrackLog& b1,
                       double thresh,
-                      TrackHistory::TrackLog& avg)
+                      TrackHistory::TrackLog& avg )
     {
         avg.clear();
 
         unsigned int last = 0;
-        for (unsigned int i=0; i<a1.size(); ++i)
+        for ( unsigned int i=0; i<a1.size(); ++i )
         {
             float ts = static_cast<float>(a1[i].t()); // time stamp we must find in b1
             int e_idx = -1;        // earlier index
@@ -504,20 +504,20 @@ namespace ScanMatch
 
             // for each element of a1 we find the index of the points in b1 which
             // have the closest EARLIER time-stamp and the closest LATER time-stamp
-            for (unsigned int j=last; j<b1.size(); ++j)
+            for ( unsigned int j=last; j<b1.size(); ++j )
             {
                 float dt = static_cast<float>(b1[j].t()) - ts; // earlier timestamps have -ve dt
 
-                if (dt <= 0.f && // if its an earlier (or equal) timestamp
-                    (e_idx==-1 || dt>e_dt) // and, we don't have an earlier index or it is a closer earlier index
-                   )
+                if ( dt <= 0.f && // if its an earlier (or equal) timestamp
+                    ( e_idx==-1 || dt>e_dt ) // and, we don't have an earlier index or it is a closer earlier index
+                    )
                 {
                     e_idx = j;
                     e_dt  = dt;
                 }
-                else if (dt > 0.f && // if its a later index
-                        (l_idx==-1 || dt<l_dt) // and, we don't have a later index or it is a closer later index
-                       )
+                else if ( dt > 0.f && // if its a later index
+                        ( l_idx==-1 || dt<l_dt ) // and, we don't have a later index or it is a closer later index
+                        )
                 {
                     l_idx = j;
                     l_dt  = dt;
@@ -528,37 +528,37 @@ namespace ScanMatch
             if (
                 e_idx != -1 && l_idx != -1    // if we found an earlier AND a later index
                 && l_dt-e_dt < thresh        // and they are within time threshold of each other
-               )
+                )
             {
                 // create associated point by interpolation
-                assert(e_idx < l_idx);
+                assert( e_idx < l_idx );
                 float w = l_dt / (l_dt-e_dt);
-                assert(w >= 0.0);
-                assert(w <= 1.0);
-                TrackEntry assoc = TrackHistory::InterpolateEntries(b1[l_idx],b1[e_idx], w);
+                assert( w >= 0.0 );
+                assert( w <= 1.0 );
+                TrackEntry assoc = TrackHistory::InterpolateEntries( b1[l_idx],b1[e_idx], w );
 
                 // Now average interpolated point with point from a1
                 // (but weight the average based weighting functions)
                 float wa = a1[i].GetWeighting();
                 float wi = assoc.GetWeighting();
 
-                assert(wa >= 0.0);
-                assert(wi >= 0.0);
+                assert( wa >= 0.0 );
+                assert( wi >= 0.0 );
 
                 w = wi / (wa+wi);
-                assert(w >= 0.0);
-                assert(w <= 1.0);
-                TrackEntry average = TrackHistory::InterpolateEntries(a1[i], assoc, w);
-                average.SetTimeStamp(ts);
+                assert( w >= 0.0 );
+                assert( w <= 1.0 );
+                TrackEntry average = TrackHistory::InterpolateEntries( a1[i], assoc, w );
+                average.SetTimeStamp( ts );
 
-                avg.push_back(average);
+                avg.push_back( average );
 
                 last = e_idx; // optimisation: earlier match indices must be monotonically increasing
             }
             else
             {
                 // If we can't find an association then we just add in the original point
-                avg.push_back(a1[i]);
+                avg.push_back( a1[i] );
             }
         }
     }
@@ -575,16 +575,16 @@ namespace ScanMatch
         @param m Merged track..
         @param timethresh The minimum timeoffset between two points in final merged track.
     **/
-    void ScanMergeAndRemove(const TrackHistory::TrackLog& a,
+    void ScanMergeAndRemove( const TrackHistory::TrackLog& a,
                              const TrackHistory::TrackLog& b,
                              double timeThresh,
-                             TrackHistory::TrackLog& m)
+                             TrackHistory::TrackLog& m )
     {
         m.clear();
 
         // set current time-stamp earlier than either a or b's first
         double cts = a[0].t();
-        if (b[0].t() < a[0].t())
+        if ( b[0].t() < a[0].t() )
         {
             cts = b[0].t();
         }
@@ -593,37 +593,37 @@ namespace ScanMatch
         unsigned int aidx=0;
         unsigned int bidx=0;
 
-        while (aidx<a.size() && bidx<b.size())
+        while ( aidx<a.size() && bidx<b.size() )
         {
             double ats = a[aidx].t();
             double bts = b[bidx].t();
             double diff = fabs(ats - bts);
 
-            if (diff<timeThresh)
+            if ( diff<timeThresh )
             {
                 // We have to decide which to keep and which to lose based on weighting.
                 float wa = a[aidx].GetWeighting();
                 float wb = b[bidx].GetWeighting();
 
-                if (wa > wb)
+                if ( wa > wb )
                 {
-                    m.push_back(a[aidx]);
+                    m.push_back( a[aidx] );
                 }
                 else
                 {
-                    m.push_back(b[bidx]);
+                    m.push_back( b[bidx] );
                 }
             }
             else
-            if (bts<ats)
+            if ( bts<ats )
             {
                 // take from b
-                m.push_back(b[bidx]);
+                m.push_back( b[bidx] );
             }
             else
             {
                 // take from a
-                m.push_back(a[aidx]);
+                m.push_back( a[aidx] );
             }
 
             cts = m.back().t();
@@ -632,14 +632,14 @@ namespace ScanMatch
             while(
                 aidx < a.size()
                 && a[aidx].t() <= cts
-               )
+                )
             {
                 aidx++;
             }
             while (
                 bidx < b.size()
                 && b[bidx].t() <= cts
-               )
+                )
             {
                 bidx++;
             }
@@ -647,30 +647,30 @@ namespace ScanMatch
 
         // If one history was bigger we need to add all remaining elements to merged list
         // (At most one of these for loops will be entered)
-        for (; aidx < a.size(); ++aidx)
+        for (; aidx < a.size(); ++aidx )
         {
-            m.push_back(a[aidx]);
+            m.push_back( a[aidx] );
         }
 
-        for (; bidx < b.size(); ++bidx)
+        for (; bidx < b.size(); ++bidx )
         {
-            m.push_back(b[bidx]);
+            m.push_back( b[bidx] );
         }
     }
 
     /**
         Adds an offset to thetime stamp of the input track.
     **/
-    void ScanTimeShift(const TrackHistory::TrackLog& in,
+    void ScanTimeShift( const TrackHistory::TrackLog& in,
                         TrackHistory::TrackLog& out,
-                        double offset)
+                        double offset )
     {
         out.clear();
 
-        for (unsigned int i=0; i<in.size(); ++i)
+        for ( unsigned int i=0; i<in.size(); ++i )
         {
-            out.push_back(in[i]);
-            out[out.size()-1].SetTimeStamp(in[i].t() + offset);
+            out.push_back( in[i] );
+            out[out.size()-1].SetTimeStamp( in[i].t() + offset );
         }
     }
 
@@ -686,15 +686,15 @@ namespace ScanMatch
         @param fps Data rate in Hz (frames per second).
         @param avg The final averaged/merged track is returned through this parameter.
     **/
-    void ScanAverage(const TrackHistory::TrackLog& a,
+    void ScanAverage( const TrackHistory::TrackLog& a,
                       const TrackHistory::TrackLog& b,
                       double fps,
-                      TrackHistory::TrackLog& avg)
+                      TrackHistory::TrackLog& avg )
     {
         TrackHistory::TrackLog ab, ba;
-        ScanCombine(a, b, 2.0/fps, ab);
-        ScanCombine(b, a, 2.0/fps, ba);
-        ScanMergeAndRemove(ab, ba, 1.0/(fps), avg);
+        ScanCombine( a, b, 2.0/fps, ab );
+        ScanCombine( b, a, 2.0/fps, ba );
+        ScanMergeAndRemove( ab, ba, 1.0/(fps), avg );
     }
 
     /**
@@ -709,13 +709,13 @@ namespace ScanMatch
         @param B Second scan data.
         @param thresh Thresh to pass to association function.
     **/
-    float ScanOverlap(const TrackHistory::TrackLog& A,
+    float ScanOverlap( const TrackHistory::TrackLog& A,
                        const TrackHistory::TrackLog& B,
-                       float thresh)
+                       float thresh )
     {
         TrackHistory::TrackLog assocA, assocB;
-        ScanAssociationNearest(A, B, assocA, assocB, thresh, 0.f);
-        assert(assocA.size() == assocB.size());
+        ScanAssociationNearest( A, B, assocA, assocB, thresh, 0.f );
+        assert( assocA.size() == assocB.size() );
 
         return assocA.size() / ((float)(A.size() + B.size()));
     }

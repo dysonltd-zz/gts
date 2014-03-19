@@ -20,13 +20,13 @@
 
 namespace TrackRobotSchema
 {
-    const KeyName schemaName("trackerOutput");
+    const KeyName schemaName( "trackerOutput" );
 
-    const KeyName robotIdKey("robotId");
+    const KeyName robotIdKey( "robotId" );
 
-    const KeyName trackedVideoGroup  ("trackedVideo");
-    const KeyName videoFileNameKey   ("videoFileName");
-    const KeyName cameraPositionIdKey("cameraPositionId");
+    const KeyName trackedVideoGroup  ( "trackedVideo" );
+    const KeyName videoFileNameKey   ( "videoFileName" );
+    const KeyName cameraPositionIdKey( "cameraPositionId" );
 
     namespace GlobalTrackingParams
     {

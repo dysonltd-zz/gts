@@ -48,7 +48,7 @@ public:
      *  a CameraDescription returned from EnumerateCameras().
      *  @return A newly-allocated VideoSequence. The caller takes ownership.
      */
-    virtual VideoSequence* const CreateVideoSequenceForCamera(const CameraDescription& camera) const = 0;
+    virtual VideoSequence* const CreateVideoSequenceForCamera( const CameraDescription& camera ) const = 0;
 };
 
 #endif // CAMERAAPI_H_

@@ -30,59 +30,18 @@ namespace Ui
     class ImageViewer;
 }
 
-/**
-  @brief Display a QImage or IplImage in a QDialog box
- */
 class ImageViewer : public QDialog
 {
     Q_OBJECT
     
 public:
-    /**
-     * @brief Initialises and displays dialog with a QImage
-     * @param image QImage to display
-     * @param parent The parent widget that is launching this dialog
-     */
     explicit ImageViewer(const QImage& image, QWidget *parent = 0);
-
-    /**
-     * @brief Initialises and displays dialog with an old OpenCV style IplImage
-     * @param image IplImage (OpenCV) to display
-     * @param parent The parent widget that is launching this dialog
-     */
     explicit ImageViewer(const IplImage* image, QWidget *parent = 0);
-
-    /**
-     * @brief Initialises and displays dialog with C++ OpenCV Mat
-     * @param image CV::Mate (OpenCV) to display
-     * @param parent The parent widget that is launching this dialog
-     */
-    explicit ImageViewer(const cv::Mat *image, QWidget *parent = 0);
-    virtual ~ImageViewer();
+    ~ImageViewer();
     
 private:
-    /**
-      @brief Replace current QImage if one exists and display in dialog
-      @param image QImage
-     */
     void ShowImage(const QImage& image);
-
-    /**
-      @brief Convert IplImage to QImage and replace current one if it exists and display in dialog
-      @param image IplImage
-     */
     void ShowImage(const IplImage* image);
-
-    /**
-      @brief Convert cv::Mat to QImage and replace current one if it exists and display in dialog
-      @param image cv::Mat
-     */
-    void ShowImage(const cv::Mat* image);
-
-    /**
-      @brief Set up signal to handle accept button being clicked
-     */
-    void Connectsignals();
 
     Ui::ImageViewer* m_ui;
 };

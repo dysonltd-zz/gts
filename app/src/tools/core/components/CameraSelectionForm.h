@@ -19,12 +19,12 @@
 #ifndef CAMERASELECTIONFORM_H_
 #define CAMERASELECTIONFORM_H_
 
-#include "CameraApi.h"
-
 #include <QtGui/QDialog>
 #include <QtCore/QString>
 #include <QtCore/QTimer>
 #include <QtGui/QTableWidget>
+
+#include "CameraApi.h"
 
 #include <memory>
 
@@ -35,35 +35,22 @@ namespace Ui
 
 class CameraSelectionFormContents;
 
-/**
-  @brief Provides a dialog displaying a preview image for connected
-  cameras and allows user to select from them.
-**/
+/** @brief Provides a dialog displaying a preview image for connected
+ *  cameras and allows user to select from them.
+ */
 class CameraSelectionForm : private QDialog
 {
     Q_OBJECT
 
 public:
-    /**
-      @brief Create a dialog listing connected cameras to select from with a preview.
-    **/
-    CameraSelectionForm(QWidget* const parent);
+    CameraSelectionForm( QWidget* const parent );
     virtual ~CameraSelectionForm();
 
-    /**
-      @brief Display the dialog to select a camera.
-      If the camera list is empty, then display a warning message and close.
-
-      @param cameras List of a description of each camera to display.
-      @param fps     The frame rate to use for the preview image (or as close as possible).
-      @return A CameraDescription describing the camera selected by the user,
-      or a an invalid description if the user does not select a camera, there
-      are no cameras to select from, or the user cancels.
-    **/
-    const CameraDescription ChooseConnectedCamera(const CameraApi::CameraList& cameras);
+    const CameraDescription ChooseConnectedCamera( const CameraApi::CameraList& cameras );
 
 private:
     Ui::CameraSelectionForm* m_ui;
+
     CameraSelectionFormContents* m_contents;
 };
 

@@ -45,60 +45,60 @@ class Tool : public QWidget, public ToolInterface
 {
     Q_OBJECT
 public:
-    Tool(QWidget* const parent, const WbSchema& schema);
+    Tool( QWidget* const parent, const WbSchema& schema );
     virtual ~Tool() {}
 
-    virtual bool TryToOpenTool(const WbConfig& config);
+    virtual bool TryToOpenTool( const WbConfig& config );
 
-    virtual void AddFullWorkbenchSchemaSubTreeTo(WbSchema& parentSchema,
-                                                  const KeyName& schemaToAttachTo) const;
-    virtual void UpdateToolMenu(QMenu& toolMenu);
-    virtual void CallOnSelfAndActiveSubTools(ToolFunction& func);
+    virtual void AddFullWorkbenchSchemaSubTreeTo( WbSchema& parentSchema,
+                                                  const KeyName& schemaToAttachTo ) const;
+    virtual void UpdateToolMenu( QMenu& toolMenu );
+    virtual void CallOnSelfAndActiveSubTools( ToolFunction& func );
 
-    virtual void Reload(const WbConfig& config);
+    virtual void Reload( const WbConfig& config );
 
     virtual const WbConfig GetCurrentConfig() const;
 
     virtual const WbSchema GetMostSpecificSubSchema() const;
     virtual QWidget* Widget() { return this; }
-    void ReloadCurrentConfig(const ConfigKeyMapper* const excludeMapper = 0);
+    void ReloadCurrentConfig( const ConfigKeyMapper* const excludeMapper = 0 );
 
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
 
 protected:
-    virtual void SetEnabled(const bool shouldEnable);
+    virtual void SetEnabled( const bool shouldEnable );
 
     WbConfig& GetCurrentConfig();
 
     const WbSchema GetHandledSchema() const;
-    bool CanHandleSchema(const KeyName& schemaName) const;
+    bool CanHandleSchema( const KeyName& schemaName ) const;
 
     template< class WidgetClass >
-    void AddMapper(const KeyName& keyToMap, WidgetClass* const widgetToMap);
-    void AddMapper(ConfigKeyMapper* const mapper);
+    void AddMapper( const KeyName& keyToMap, WidgetClass* const widgetToMap );
+    void AddMapper( ConfigKeyMapper* const mapper );
 
-    static const QString Unnamed(const QString& typeName);
-    static const WbSchema CreateWorkbenchSubSchema(const KeyName& schemaName,
-                                                    const QString& defaultName);
-    void RegisterCollectionCombo(QComboBox* const comboBox,
+    static const QString Unnamed( const QString& typeName );
+    static const WbSchema CreateWorkbenchSubSchema( const KeyName& schemaName,
+                                                    const QString& defaultName );
+    void RegisterCollectionCombo( QComboBox* const comboBox,
                                   const Collection& collection,
-                                  const bool hasSelect = false);
+                                  const bool hasSelect = false );
 
-    virtual void FillOutComboBoxes(const ConfigKeyMapper* const requester);
+    virtual void FillOutComboBoxes( const ConfigKeyMapper* const requester );
 
     static const QString selectItemString;
 
     virtual void Activated();
 
-    void HighlightLabel(QLabel* label, bool highlight) const;
+    void HighlightLabel( QLabel* label, bool highlight ) const;
 
 private slots:
-    void CommitDataAndUpdate(ConfigKeyMapper& mapper);
+    void CommitDataAndUpdate( ConfigKeyMapper& mapper );
 
 private:
-    Tool(const Tool&);
-    Tool& operator =(const Tool&);
+    Tool( const Tool& );
+    Tool& operator =( const Tool& );
 
     virtual const WbSchema GetFullWorkbenchSchemaSubTree() const;
     virtual const QString GetSubSchemaDefaultFileName() const;
@@ -109,14 +109,14 @@ private:
     typedef std::vector<BlockerPtr> BlockerVector;
 
     void BlockAllMapperSignalsUsing(BlockerVector& blockers);
-    void SetCurrentConfigFrom(const WbConfig& config);
+    void SetCurrentConfigFrom( const WbConfig& config );
 
-    const WbConfig GetConfigToOpen(const WbConfig& config) const;
-    bool ShouldEnableForConfig(const WbConfig& configToCheck) const;
+    const WbConfig GetConfigToOpen( const WbConfig& config ) const;
+    bool ShouldEnableForConfig( const WbConfig& configToCheck ) const;
     const KeyName EnableToolSchemaName() const;
 
-    static const WbSchema AddKeysRequiredByWorkbench(const WbSchema& schema,
-                                                      const QString& defaultName);
+    static const WbSchema AddKeysRequiredByWorkbench( const WbSchema& schema,
+                                                      const QString& defaultName );
     WbConfig m_currentConfig;
     const WbSchema m_schema;
     std::vector< std::unique_ptr<ConfigKeyMapper> > m_mappers;
@@ -132,10 +132,10 @@ private:
 };
 
 template< class WidgetClass >
-void Tool::AddMapper(const KeyName& keyToMap, WidgetClass* const widgetToMap)
+void Tool::AddMapper( const KeyName& keyToMap, WidgetClass* const widgetToMap )
 {
-    AddMapper(new ConfigKeyMapperImplementation< WidgetClass >(keyToMap,
-                                                                 widgetToMap));
+    AddMapper( new ConfigKeyMapperImplementation< WidgetClass >( keyToMap,
+                                                                 widgetToMap ) );
 }
 
 

@@ -32,41 +32,41 @@
 
 #include "Debugging.h"
 
-const QString WizardStartPage::nameField("name");
+const QString WizardStartPage::nameField( "name" );
 
-WizardStartPage::WizardStartPage(const Collection& collection, const QString& title) :
+WizardStartPage::WizardStartPage( const Collection& collection, const QString& title ) :
     NewElementWizardPage(),
-    m_explanationIcon   (new QLabel()),
-    m_explanationInfo   (new QLabel()),
-    m_nameEdit          (new QLineEdit()),
-    m_collection        (collection)
+    m_explanationIcon   ( new QLabel() ),
+    m_explanationInfo   ( new QLabel() ),
+    m_nameEdit          ( new QLineEdit() ),
+    m_collection        ( collection )
 {
-    setTitle(title);
+    setTitle( title );
 
-    QLabel* const nameLabel = new QLabel(tr("&Name"));
+    QLabel* const nameLabel = new QLabel( tr( "&Name" ) );
     QRegExpValidator* const newValidator =
-        new QRegExpValidator(QRegExp("[a-zA-Z0-9_]+"), m_nameEdit);
-    m_nameEdit->setValidator(newValidator);
-    nameLabel->setBuddy(m_nameEdit);
+        new QRegExpValidator( QRegExp( "[a-zA-Z0-9_]+" ), m_nameEdit );
+    m_nameEdit->setValidator( newValidator );
+    nameLabel->setBuddy( m_nameEdit );
 
     QGridLayout* layout = new QGridLayout;
-    m_explanationInfo->setWordWrap(true);
-    layout->addWidget(nameLabel,  0, 0);
-    layout->addWidget(m_nameEdit, 0, 1);
+    m_explanationInfo->setWordWrap( true );
+    layout->addWidget( nameLabel,  0, 0 );
+    layout->addWidget( m_nameEdit, 0, 1 );
 
     QHBoxLayout* explanationLayout = new QHBoxLayout;
-    explanationLayout->addWidget(m_explanationIcon);
-    explanationLayout->addWidget(m_explanationInfo, 10);
-    explanationLayout->setSpacing(6);
-    layout->addItem(explanationLayout,  1, 1, 1, 2);
+    explanationLayout->addWidget( m_explanationIcon );
+    explanationLayout->addWidget( m_explanationInfo, 10 );
+    explanationLayout->setSpacing( 6 );
+    layout->addItem( explanationLayout,  1, 1, 1, 2 );
     setLayout(layout);
 
-    registerField(nameField % mandatoryFieldSuffix, m_nameEdit);
+    registerField( nameField % mandatoryFieldSuffix, m_nameEdit );
 }
 
 void WizardStartPage::initializePage()
 {
-    setField(nameField, QString());
+    setField( nameField, QString() );
     m_nameEdit->clear();
 }
 
@@ -75,26 +75,26 @@ bool WizardStartPage::isComplete() const
     bool complete = QWizardPage::isComplete();
     m_explanationInfo->clear();
     m_explanationIcon->clear();
-    if (!complete)
+    if ( !complete )
     {
-        m_explanationInfo->setText(tr("The name must contain only numbers, "
+        m_explanationInfo->setText( tr( "The name must contain only numbers, "
                                         "letters and underscores, and must "
-                                        "contain at least one character."));
+                                        "contain at least one character." ) );
     }
-    if (m_collection.AnyElementHas(WbDefaultKeys::displayNameKey,
-                                     KeyValue::from(m_nameEdit->text()),
-                                     Qt::CaseInsensitive))
+    if ( m_collection.AnyElementHas( WbDefaultKeys::displayNameKey,
+                                     KeyValue::from( m_nameEdit->text() ),
+                                     Qt::CaseInsensitive ) )
     {
-        m_explanationInfo->setText(tr("The name must not match that of any "
-                                        "existing item (regardless of case)."));
+        m_explanationInfo->setText( tr( "The name must not match that of any "
+                                        "existing item (regardless of case)." ) );
         complete = false;
     }
 
-    if (!complete)
+    if ( !complete )
     {
         m_explanationIcon->setPixmap(
-            QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation)
-                .pixmap(24, 24, QIcon::Normal, QIcon::On));
+            QApplication::style()->standardIcon( QStyle::SP_MessageBoxInformation)
+                .pixmap( 24, 24, QIcon::Normal, QIcon::On ) );
     }
 
     return complete;
@@ -103,34 +103,34 @@ bool WizardStartPage::isComplete() const
 
 //=================================================================================================================
 
-const QString NewElementWizardPage::mandatoryFieldSuffix("*");
+const QString NewElementWizardPage::mandatoryFieldSuffix( "*" );
 
 //=================================================================================================================
 
-NewElementWizard::NewElementWizard(const Collection& collection,
+NewElementWizard::NewElementWizard( const Collection& collection,
                                     const QString& elementType,
-                                    QWidget* const parent) :
-    QWizard(parent)
+                                    QWidget* const parent ) :
+    QWizard( parent )
 {
-    const QString title(tr("New %1").arg(elementType));
-    setWindowTitle(title);
-    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    setOption(QWizard::NoBackButtonOnStartPage, true);
-    setOption(QWizard::HaveNextButtonOnLastPage, false);
+    const QString title( tr( "New %1" ).arg( elementType ) );
+    setWindowTitle( title );
+    setWindowFlags( windowFlags() & ~Qt::WindowContextHelpButtonHint );
+    setOption( QWizard::NoBackButtonOnStartPage, true );
+    setOption( QWizard::HaveNextButtonOnLastPage, false );
 
-    addPage(new WizardStartPage(collection, title));
+    addPage( new WizardStartPage( collection, title ) );
 }
 
-RenameElementWizard::RenameElementWizard(const Collection& collection,
+RenameElementWizard::RenameElementWizard( const Collection& collection,
                                           const QString& elementName,
-                                          QWidget* const parent) :
-    QWizard(parent)
+                                          QWidget* const parent ) :
+    QWizard( parent )
 {
-    const QString title(tr("Rename %1").arg(elementName));
-    setWindowTitle(title);
-    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    setOption(QWizard::NoBackButtonOnStartPage, true);
-    setOption(QWizard::HaveNextButtonOnLastPage, false);
+    const QString title( tr( "Rename %1" ).arg( elementName ) );
+    setWindowTitle( title );
+    setWindowFlags( windowFlags() & ~Qt::WindowContextHelpButtonHint );
+    setOption( QWizard::NoBackButtonOnStartPage, true );
+    setOption( QWizard::HaveNextButtonOnLastPage, false );
 
-    addPage(new WizardStartPage(collection, title));
+    addPage( new WizardStartPage( collection, title ) );
 }

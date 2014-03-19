@@ -20,5 +20,5 @@
 
 namespace PostProcessSchema
 {
-    const KeyName schemaName("postProcessing");
+    const KeyName schemaName( "postProcessing" );
 }

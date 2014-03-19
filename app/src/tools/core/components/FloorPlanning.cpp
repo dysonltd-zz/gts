@@ -47,31 +47,31 @@
 
 namespace FloorPlanning
 {
-    bool LoadFile(WbConfig config, KeyId cameraPosition, IplImage** camImg, QString fileName, CvPoint2D32f* offset, bool unWarp)
+    bool LoadFile( WbConfig config, KeyId cameraPosition, IplImage** camImg, QString fileName, CvPoint2D32f* offset, bool unWarp )
     {
         bool successful = true;
 
         // Get configuration information
-        Collection camerasCollection(CamerasCollection());
-        Collection cameraPositionsCollection(CameraPositionsCollection());
+        Collection camerasCollection( CamerasCollection() );
+        Collection cameraPositionsCollection( CameraPositionsCollection() );
 
-        camerasCollection.SetConfig(config);
-        cameraPositionsCollection.SetConfig(config);
+        camerasCollection.SetConfig( config );
+        cameraPositionsCollection.SetConfig( config );
 
         const KeyId camPosId = cameraPosition;
 
         LOG_INFO(QObject::tr("Camera position id: %1").arg(camPosId));
 
-        const WbConfig camPosConfig = cameraPositionsCollection.ElementById(camPosId);
+        const WbConfig camPosConfig = cameraPositionsCollection.ElementById( camPosId );
 
         if (camPosConfig.IsNull()) successful = false;
 
-        CvMat* cameraMtx = cvCreateMat(3, 3, CV_32F);
-        CvMat* distortionCoeffs = cvCreateMat(5, 1, CV_32F);
-        CvMat* inverseCoeffs = cvCreateMat(5, 1, CV_32F);
+        CvMat* cameraMtx = cvCreateMat( 3, 3, CV_32F );
+        CvMat* distortionCoeffs = cvCreateMat( 5, 1, CV_32F );
+        CvMat* inverseCoeffs = cvCreateMat( 5, 1, CV_32F );
 
-        CvMat* rot = cvCreateMat(3, 3, CV_32F);
-        CvMat* trans = cvCreateMat(1, 3, CV_32F);
+        CvMat* rot = cvCreateMat( 3, 3, CV_32F );
+        CvMat* trans = cvCreateMat( 1, 3, CV_32F );
 
         if (successful)
         {
@@ -79,31 +79,31 @@ namespace FloorPlanning
 
             LOG_INFO(QObject::tr("Camera id: %1").arg(camId));
 
-            WbConfig cameraConfig = camerasCollection.ElementById(camId);
+            WbConfig cameraConfig = camerasCollection.ElementById( camId );
 
             if (cameraConfig.IsNull()) successful = false;
 
             if (successful)
             {
                 // Intrinsic Parameters
-                const WbConfig cameraIntrisicConfig(cameraConfig.GetSubConfig(CalibrationSchema::schemaName));
+                const WbConfig cameraIntrisicConfig( cameraConfig.GetSubConfig( CalibrationSchema::schemaName ) );
 
                 if (cameraIntrisicConfig.IsNull()) successful = false;
 
                 if (successful)
                 {
                     const bool calibrationWasSuccessful = cameraIntrisicConfig
-                                        .GetKeyValue(CalibrationSchema::calibrationSuccessfulKey)
+                                        .GetKeyValue( CalibrationSchema::calibrationSuccessfulKey )
                                         .ToBool();
                     const bool cameraMtxValid = cameraIntrisicConfig
-                                    .GetKeyValue(CalibrationSchema::cameraMatrixKey)
-                                    .ToCvMat(*cameraMtx);
+                                    .GetKeyValue( CalibrationSchema::cameraMatrixKey )
+                                    .ToCvMat( *cameraMtx );
                     const bool distortionCoeffsValid = cameraIntrisicConfig
-                                    .GetKeyValue(CalibrationSchema::distortionCoefficientsKey)
-                                    .ToCvMat(*distortionCoeffs);
+                                    .GetKeyValue( CalibrationSchema::distortionCoefficientsKey )
+                                    .ToCvMat( *distortionCoeffs );
                     const bool inverseCoeffsValid = cameraIntrisicConfig
-                                    .GetKeyValue(CalibrationSchema::invDistortionCoefficientsKey)
-                                    .ToCvMat(*inverseCoeffs);
+                                    .GetKeyValue( CalibrationSchema::invDistortionCoefficientsKey )
+                                    .ToCvMat( *inverseCoeffs );
 
                     successful = calibrationWasSuccessful &&
                                  cameraMtxValid &&
@@ -119,11 +119,11 @@ namespace FloorPlanning
                 if (successful)
                 {
                     const bool rotMatValid = cameraExtrisicConfig
-                                    .GetKeyValue(ExtrinsicCalibrationSchema::rotationMatrixKey)
-                                    .ToCvMat(*rot);
+                                    .GetKeyValue( ExtrinsicCalibrationSchema::rotationMatrixKey )
+                                    .ToCvMat( *rot );
                     const bool transValid = cameraExtrisicConfig
-                                    .GetKeyValue(ExtrinsicCalibrationSchema::translationKey)
-                                    .ToCvMat(*trans);
+                                    .GetKeyValue( ExtrinsicCalibrationSchema::translationKey )
+                                    .ToCvMat( *trans );
 
                     successful = rotMatValid && transValid;
                 }
@@ -133,32 +133,32 @@ namespace FloorPlanning
         if (successful)
         {
             // Load file
-            IplImage* imgGrey = cvLoadImage(fileName.toAscii(), CV_LOAD_IMAGE_GRAYSCALE);
+            IplImage* imgGrey = cvLoadImage( fileName.toAscii(), CV_LOAD_IMAGE_GRAYSCALE );
 
             if (unWarp)
             {
-                *camImg = GroundPlaneUtility::UnwarpGroundPlane(imgGrey,
+                *camImg = GroundPlaneUtility::unwarpGroundPlane( imgGrey,
                                                                  cameraMtx,
                                                                  distortionCoeffs,
                                                                  inverseCoeffs,
                                                                  rot,
                                                                  trans,
-                                                                 offset);
+                                                                 offset );
             }
             else
             {
                 *camImg = cvCloneImage(imgGrey);
             }
 
-            cvReleaseImage(&imgGrey);
+            cvReleaseImage( &imgGrey );
         }
 
-        cvReleaseMat(&cameraMtx);
-        cvReleaseMat(&distortionCoeffs);
-        cvReleaseMat(&inverseCoeffs);
+        cvReleaseMat( &cameraMtx );
+        cvReleaseMat( &distortionCoeffs );
+        cvReleaseMat( &inverseCoeffs );
 
-        cvReleaseMat(&rot);
-        cvReleaseMat(&trans);
+        cvReleaseMat( &rot );
+        cvReleaseMat( &trans );
 
         return successful;
     }
@@ -176,16 +176,16 @@ namespace FloorPlanning
         //       break
         // return found
 
-        const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
+        const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
         const QStringList cameraPositionIds(roomLayoutConfig
                                             .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                            .ToQStringList());
+                                            .ToQStringList() );
 
-        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::homographyKey);
+        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
 
-        for (int n = 0; n < cameraPositionIds.size(); ++n)
+        for ( int n = 0; n < cameraPositionIds.size(); ++n )
         {
-            const KeyId camPosId = cameraPositionIds.at(n);
+            const KeyId camPosId = cameraPositionIds.at( n );
 
             bool found = false;
 
@@ -193,8 +193,8 @@ namespace FloorPlanning
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
             {
-                const KeyId camera1Id(config.GetKeyValue(FloorPlanSchema::camera1IdKey, it->id).ToKeyId());
-                const KeyId camera2Id(config.GetKeyValue(FloorPlanSchema::camera2IdKey, it->id).ToKeyId());
+                const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
+                const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
 
                 if ((camPosId == camera1Id) || (camPosId == camera2Id))
                 {
@@ -219,13 +219,13 @@ namespace FloorPlanning
         //    if camera1 == camera
         //      base = true
 
-        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::homographyKey);
+        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
 
         bool base = false;
 
         for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
         {
-            const KeyId camera1Id(config.GetKeyValue(FloorPlanSchema::camera1IdKey, it->id).ToKeyId());
+            const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
 
             if (camId == camera1Id)
             {
@@ -243,13 +243,13 @@ namespace FloorPlanning
         //    if camera2 == camera
         //      ref = true
 
-        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::homographyKey);
+        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
 
         bool ref = false;
 
         for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
         {
-            const KeyId camera2Id(config.GetKeyValue(FloorPlanSchema::camera2IdKey, it->id).ToKeyId());
+            const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
 
             if (camId == camera2Id)
             {
@@ -272,23 +272,23 @@ namespace FloorPlanning
         //    if root
         //       add to set
 
-        const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
+        const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
         const QStringList cameraPositionIds(roomLayoutConfig
                                             .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                            .ToQStringList());
+                                            .ToQStringList() );
 
-        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::homographyKey);
+        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
 
-        for (int n = 0; n < cameraPositionIds.size(); ++n)
+        for ( int n = 0; n < cameraPositionIds.size(); ++n )
         {
-            const KeyId camPosId = cameraPositionIds.at(n);
+            const KeyId camPosId = cameraPositionIds.at( n );
 
             bool root = true;
 
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
             {
-                const KeyId camera1Id(config.GetKeyValue(FloorPlanSchema::camera1IdKey, it->id).ToKeyId());
-                const KeyId camera2Id(config.GetKeyValue(FloorPlanSchema::camera2IdKey, it->id).ToKeyId());
+                const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
+                const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
 
                 if (camPosId == camera2Id)
                 {
@@ -308,12 +308,12 @@ namespace FloorPlanning
 
     std::vector<KeyId> FindChain(WbConfig config, KeyId camId, KeyId rootId, std::vector<KeyId> mappingChain)
     {
-        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::homographyKey);
+        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
 
         for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
         {
-            const KeyId camera1Id(config.GetKeyValue(FloorPlanSchema::camera1IdKey, it->id).ToKeyId());
-            const KeyId camera2Id(config.GetKeyValue(FloorPlanSchema::camera2IdKey, it->id).ToKeyId());
+            const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
+            const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
 
             LOG_INFO(QObject::tr("Camera1 id = %1.").arg(camera1Id));
             LOG_INFO(QObject::tr("Camera2 id = %1.").arg(camera2Id));
@@ -364,15 +364,15 @@ namespace FloorPlanning
         //      break
         //   else
 
-        const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig(RoomLayoutSchema::schemaName));
+        const WbConfig roomLayoutConfig(config.GetParent().GetSubConfig( RoomLayoutSchema::schemaName ) );
         const QStringList cameraPositionIds(roomLayoutConfig
                                             .GetKeyValue(RoomLayoutSchema::cameraPositionIdsKey)
-                                            .ToQStringList());
+                                            .ToQStringList() );
 
-        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::homographyKey);
-        for (int n = 0; n < cameraPositionIds.size(); ++n)
+        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
+        for ( int n = 0; n < cameraPositionIds.size(); ++n )
         {
-            const KeyId camPosId = cameraPositionIds.at(n);
+            const KeyId camPosId = cameraPositionIds.at( n );
 
             if ((camPosId != rootId) && IsRef(config, camPosId))
             {
@@ -396,26 +396,26 @@ namespace FloorPlanning
 
     void ComputeTransform(WbConfig config, KeyId refId, std::vector<KeyId> chain, CvMat* transform)
     {
-        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues(FloorPlanSchema::homographyKey);
+        const WbKeyValues::ValueIdPairList cameraMappingIds = config.GetKeyValues( FloorPlanSchema::homographyKey );
 
         for (std::vector<KeyId>::iterator elt = chain.begin(); elt != chain.end(); ++elt)
         {
             for (WbKeyValues::ValueIdPairList::const_iterator it = cameraMappingIds.begin(); it != cameraMappingIds.end(); ++it)
             {
-                const KeyId camera1Id(config.GetKeyValue(FloorPlanSchema::camera1IdKey, it->id).ToKeyId());
-                const KeyId camera2Id(config.GetKeyValue(FloorPlanSchema::camera2IdKey, it->id).ToKeyId());
+                const KeyId camera1Id( config.GetKeyValue( FloorPlanSchema::camera1IdKey, it->id ).ToKeyId() );
+                const KeyId camera2Id( config.GetKeyValue( FloorPlanSchema::camera2IdKey, it->id ).ToKeyId() );
 
                 if ((camera1Id == *elt) && (camera2Id == refId))
                 {
-                    CvMat* homography = cvCreateMat(3, 3, CV_32F);
+                    CvMat* homography = cvCreateMat( 3, 3, CV_32F );
 
                     const bool homographyValid = config
-                                    .GetKeyValue(FloorPlanSchema::homographyKey, it->id)
-                                    .ToCvMat(*homography);
+                                    .GetKeyValue( FloorPlanSchema::homographyKey, it->id )
+                                    .ToCvMat( *homography );
                     Q_UNUSED(homographyValid);
 
-                    CvMat* tmp = cvCreateMat(3, 3, CV_32F);
-                    cvMatMul(homography, transform, tmp);
+                    CvMat* tmp = cvCreateMat( 3, 3, CV_32F );
+                    cvMatMul( homography, transform, tmp );
 
                     cvmSet(transform,0,0, cvmGet(tmp,0,0));
                     cvmSet(transform,0,1, cvmGet(tmp,0,1));

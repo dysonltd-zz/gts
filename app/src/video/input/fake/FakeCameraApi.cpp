@@ -32,7 +32,7 @@ namespace
     {
     public:
         FakeVideoSequence() :
-            m_image(cvCreateImage(cvSize(600, 400), IPL_DEPTH_8U, 1))
+            m_image( cvCreateImage(cvSize(600, 400), IPL_DEPTH_8U, 1) )
         {
         }
 
@@ -77,7 +77,7 @@ namespace
             return true;
         }
 
-        virtual bool ReadyNextFrame(double msec)
+        virtual bool ReadyNextFrame( double msec)
         {
             Q_UNUSED(msec);
             GenerateRandomImage();
@@ -144,7 +144,7 @@ namespace
          *
          *  @param fps The new frame rate to set.
          */
-        virtual void SetFrameRate(const double fps)
+        virtual void SetFrameRate( const double fps )
         {
             Q_UNUSED(fps);
         }
@@ -197,13 +197,13 @@ FakeCameraApi::~FakeCameraApi()
 const CameraApi::CameraList FakeCameraApi::EnumerateCameras() const
 {
     CameraList list;
-    list.push_back(CameraDescription(*this).WithName(L"The Fake Camera")
+    list.push_back( CameraDescription(*this).WithName(L"The Fake Camera")
                                             .WithDescription(L"For Testing Purposes")
                                             .WithUniqueId(L"fakeCamera:://00000"));
     return list;
 }
 
-VideoSequence* const FakeCameraApi::CreateVideoSequenceForCamera(const CameraDescription& camera) const
+VideoSequence* const FakeCameraApi::CreateVideoSequenceForCamera( const CameraDescription& camera ) const
 {
     Q_UNUSED(camera);
 

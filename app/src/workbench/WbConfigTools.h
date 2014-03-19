@@ -27,15 +27,15 @@ class Collection;
 
 namespace WbConfigTools
 {
-    void FillOutComboBoxWithCollectionElements(QComboBox& comboBox,
-                                                const Collection& collection);
+    void FillOutComboBoxWithCollectionElements( QComboBox& comboBox,
+                                                const Collection& collection );
 
-    void AddComboBoxItemForElement(QComboBox& comboBox,
-                                    const WbConfig::SubConfigs::ValueIdPair& element);
+    void AddComboBoxItemForElement( QComboBox& comboBox,
+                                    const WbConfig::SubConfigs::ValueIdPair& element );
 
 
 
-    const QString DisplayNameOf(const WbConfig& config);
+    const QString DisplayNameOf( const WbConfig& config );
 
     enum FileNameMode
     {
@@ -44,23 +44,23 @@ namespace WbConfigTools
         FileNameMode_Absolute
     };
 
-    const QString ConvertFileName(const WbConfig& config,
+    const QString ConvertFileName( const WbConfig& config,
                                    const QString& absoluteFileName,
                                    const FileNameMode& mode,
-                                   const bool fileIsInternal);
+                                   const bool fileIsInternal );
 
-    const QString GetFileName(const WbConfig& config, const KeyName& fileNameKeyName);
+    const QString GetFileName( const WbConfig& config, const KeyName& fileNameKeyName );
 
-    KeyId AddFileName(WbConfig config,
+    KeyId AddFileName( WbConfig config,
                        const QString& possiblyRelativeFileName,
                        const KeyName& fileNameKeyName,
-                       const FileNameMode& mode);
+                       const FileNameMode& mode );
 
-    void SetFileName(WbConfig config,
+    void SetFileName( WbConfig config,
                       const QString& possiblyRelativeFileName,
                       const KeyName& fileNameKeyName,
                       const FileNameMode& mode,
-                      const KeyId& keyId = KeyId());
+                      const KeyId& keyId = KeyId() );
 }
 
 #endif // WBCONFIGTOOLS_H

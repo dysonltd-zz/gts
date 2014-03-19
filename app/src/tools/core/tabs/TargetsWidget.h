@@ -34,10 +34,10 @@ class TargetsWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit TargetsWidget(QWidget* parent = 0);
+    explicit TargetsWidget( QWidget* parent = 0 );
     virtual ~TargetsWidget();
 
-    virtual const QString Name() const { return tr("Targets"); }
+    virtual const QString Name() const { return tr( "Targets" ); }
     virtual bool CanClose() const;
     const QString CannotCloseReason() const;
 
@@ -68,7 +68,7 @@ private:
 
     QString BrowseTargetImage();
 
-    bool DirectoryExists(const QString& outputDirectoryName);
+    bool DirectoryExists( const QString& outputDirectoryName );
 
     Ui::TargetsWidget* m_ui;
 };

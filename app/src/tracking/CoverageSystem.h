@@ -33,38 +33,38 @@ public:
 	CoverageSystem(CvSize warpedImageSize);
 	~CoverageSystem();
 
-	//void Update(const RoboTrackKlt& tracker);
-	void DirectUpdate(CvPoint pb, float robotRadiusPx);
-	void Update(CvPoint2D32f prev, CvPoint2D32f curr, float robotRadiusPx);
+	//void Update( const RoboTrackKlt& tracker );
+	void DirectUpdate( CvPoint pb, float robotRadiusPx );
+	void Update( CvPoint2D32f prev, CvPoint2D32f curr, float robotRadiusPx );
 	void BrushBarUpdate(
 			CvPoint2D32f pl, CvPoint2D32f pr,
 			CvPoint2D32f cl, CvPoint2D32f cr
 		);
 
 
-	void DrawMask(IplImage* img, CvScalar colour) const;
-	void SaveMask(const char* filename);
-	void DrawMap(IplImage* img) const;
+	void DrawMask( IplImage* img, CvScalar colour ) const;
+	void SaveMask( const char* filename );
+	void DrawMap( IplImage* img ) const;
 
 	unsigned int GetCoveredPixelCount() const;
-	float EstimateCoverage(const IplImage* floormask) const;
+	float EstimateCoverage( const IplImage* floormask ) const;
 	float EstimateCoverage() const;
 	float EstimateRepeatCoverage() const;
-	void CoverageHistogram(const char* file_name) const;
+	void CoverageHistogram( const char* file_name ) const;
 
-	bool LoadFloorMask(const char* filename);
-	void SetFloorMask(const IplImage* mask);
+	bool LoadFloorMask( const char* filename );
+	void SetFloorMask( const IplImage* mask );
 	const IplImage* GetFloorMask() const { return m_floorMask; };
 
-	static unsigned int CountWhitePixels(const IplImage* floormask);
-	static unsigned int CountRepeatCoverage(const IplImage* mask);
+	static unsigned int CountWhitePixels( const IplImage* floormask );
+	static unsigned int CountRepeatCoverage( const IplImage* mask );
 
 	void IncrementUncoveredPixels();
 	void CreateColouredMap();
 
 
-    void WriteIncrementalCoverage(FILE* fp, unsigned int count = 1);
-    int MissedMask(const char* fileName);
+    void WriteIncrementalCoverage( FILE* fp, unsigned int count = 1 );
+    int MissedMask( const char* fileName );
 
 private:
 

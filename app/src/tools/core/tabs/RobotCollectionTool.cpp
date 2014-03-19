@@ -32,20 +32,20 @@
 
 namespace
 {
-    const KeyName robotsSchemaName("robots");
+    const KeyName robotsSchemaName( "robots" );
 
-    const KeyName robotSchemaName ("robot");
+    const KeyName robotSchemaName ( "robot" );
 }
 
-RobotCollectionTool::RobotCollectionTool(QWidget* parent,
-                                        MainWindow& mainWindow) :
-    CollectionToolWidget(tr("Robot"),
+RobotCollectionTool::RobotCollectionTool( QWidget* parent,
+                                        MainWindow& mainWindow ) :
+    CollectionToolWidget( tr( "Robot" ),
                           CreateCollectionSchema(),
                           CreateElementSchema(),
                           parent,
-                          &mainWindow)
+                          &mainWindow )
 {
-    AddSubTool(new RobotMetricsWidget(this));
+    AddSubTool( new RobotMetricsWidget( this ) );
 }
 
 RobotCollectionTool::~RobotCollectionTool()
@@ -54,7 +54,7 @@ RobotCollectionTool::~RobotCollectionTool()
 
 const QString RobotCollectionTool::Name() const
 {
-    return tr("Robots");
+    return tr( "Robots" );
 }
 
 const QString RobotCollectionTool::GetSubSchemaDefaultFileName() const
@@ -64,14 +64,14 @@ const QString RobotCollectionTool::GetSubSchemaDefaultFileName() const
 
 const WbSchema RobotCollectionTool::CreateCollectionSchema()
 {
-    WbSchema robotsSchema(CreateWorkbenchSubSchema(robotsSchemaName, tr("Robots")));
+    WbSchema robotsSchema( CreateWorkbenchSubSchema( robotsSchemaName, tr( "Robots" ) ) );
     return robotsSchema;
 }
 
 const WbSchema RobotCollectionTool::CreateElementSchema()
 {
-    WbSchema robotSchema(CreateElementWorkbenchSubSchema(robotSchemaName,
-                                                           Unnamed(tr("Robot"))));
+    WbSchema robotSchema( CreateElementWorkbenchSubSchema( robotSchemaName,
+                                                           Unnamed( tr( "Robot" ) ) ) );
     return robotSchema;
 }
 

@@ -29,20 +29,20 @@
 #include <QtGui/QLabel>
 #include <QtGui/QComboBox>
 
-RunCollectionTool::RunCollectionTool(CameraHardware& cameraHardware,
+RunCollectionTool::RunCollectionTool( CameraHardware& cameraHardware,
                                       QWidget* parent,
-                                      MainWindow& mainWindow ) :
-    CollectionToolWidget(tr("Run"), CreateCollectionSchema(), CreateElementSchema(), parent, &mainWindow),
-    m_roomCombo(new QComboBox)
+                                      MainWindow& mainWindow  ) :
+    CollectionToolWidget( tr( "Run" ), CreateCollectionSchema(), CreateElementSchema(), parent, &mainWindow ),
+    m_roomCombo( new QComboBox )
 {
-    AddToolDetail(new QLabel(tr("Room")), m_roomCombo);
-    AddMapper(RunSchema::roomIdKey, m_roomCombo);
+    AddToolDetail( new QLabel( tr( "Room" ) ), m_roomCombo );
+    AddMapper( RunSchema::roomIdKey, m_roomCombo );
 
-    AddSubTool(new CaptureVideoWidget(cameraHardware, this));
-    AddSubTool(new TrackRobotWidget(this));
-    AddSubTool(new PostProcessWidget(this));
+    AddSubTool( new CaptureVideoWidget( cameraHardware, this ) );
+    AddSubTool( new TrackRobotWidget( this ) );
+    AddSubTool( new PostProcessWidget( this ) );
 
-    RegisterCollectionCombo(m_roomCombo, RoomsCollection());
+    RegisterCollectionCombo( m_roomCombo, RoomsCollection() );
 }
 
 RunCollectionTool::~RunCollectionTool()
@@ -61,14 +61,14 @@ const QString RunCollectionTool::GetSubSchemaDefaultFileName() const
 
 const WbSchema RunCollectionTool::CreateCollectionSchema()
 {
-    WbSchema runsSchema(CreateWorkbenchSubSchema(KeyName("runs"), tr("Runs")));
+    WbSchema runsSchema( CreateWorkbenchSubSchema( KeyName( "runs" ), tr( "Runs" ) ) );
     return runsSchema;
 }
 
 const WbSchema RunCollectionTool::CreateElementSchema()
 {
     using namespace RunSchema;
-    WbSchema runSchema(CreateElementWorkbenchSubSchema(schemaName, Unnamed(tr("Run"))));
-    runSchema.AddSingleValueKey(roomIdKey, WbSchemaElement::Multiplicity::One);
+    WbSchema runSchema( CreateElementWorkbenchSubSchema( schemaName, Unnamed( tr( "Run" ) ) ) );
+    runSchema.AddSingleValueKey( roomIdKey, WbSchemaElement::Multiplicity::One );
     return runSchema;
 }

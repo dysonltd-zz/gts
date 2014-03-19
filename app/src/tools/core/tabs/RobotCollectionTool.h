@@ -30,8 +30,8 @@ class RobotCollectionTool : public CollectionToolWidget
     Q_OBJECT
 
 public:
-    RobotCollectionTool(QWidget* parent,
-                          MainWindow& mainWindow);
+    RobotCollectionTool( QWidget* parent,
+                          MainWindow& mainWindow );
     virtual ~RobotCollectionTool();
 
     virtual const QString Name() const;

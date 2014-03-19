@@ -31,19 +31,19 @@ class NullConfigFileWriter: public  WbConfigFileWriter
 public:
     virtual WbConfigFileWriter* const Clone() const { return new NullConfigFileWriter; }
 
-    virtual bool WriteTo(QIODevice& ioDevice) { Q_UNUSED(ioDevice); return true; }
-    virtual void StartConfigFile(const KeyName& name) { Q_UNUSED(name); }
-    virtual void EndConfigFile(const KeyName& name) { Q_UNUSED(name); }
-    virtual void WriteKey(const KeyName& name,
+    virtual bool WriteTo( QIODevice& ioDevice ) { Q_UNUSED(ioDevice); return true; }
+    virtual void StartConfigFile( const KeyName& name ) { Q_UNUSED(name); }
+    virtual void EndConfigFile( const KeyName& name ) { Q_UNUSED(name); }
+    virtual void WriteKey( const KeyName& name,
                            const KeyValue& value,
-                           const KeyId& id) { Q_UNUSED(name); Q_UNUSED(value); Q_UNUSED(id); }
-    virtual void StartGroup(const KeyName& name,
-                             const KeyId& id) { Q_UNUSED(name); Q_UNUSED(id);}
-    virtual void EndGroup(const KeyName& name,
-                           const KeyId& id) { Q_UNUSED(name); Q_UNUSED(id); }
-    virtual void WriteSubConfig(const KeyName& name,
+                           const KeyId& id ) { Q_UNUSED(name); Q_UNUSED(value); Q_UNUSED(id); }
+    virtual void StartGroup( const KeyName& name,
+                             const KeyId& id ) { Q_UNUSED(name); Q_UNUSED(id);}
+    virtual void EndGroup( const KeyName& name,
+                           const KeyId& id ) { Q_UNUSED(name); Q_UNUSED(id); }
+    virtual void WriteSubConfig( const KeyName& name,
                                  const QFileInfo& configFileLocation,
-                                 const KeyId& id)
+                                 const KeyId& id )
     {
         Q_UNUSED(name);
         Q_UNUSED(configFileLocation);

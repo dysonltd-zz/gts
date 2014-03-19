@@ -54,9 +54,9 @@ public:
 
         /** @brief Equality operator
          */
-        const bool operator ==(const ValueIdPair& other) const
+        const bool operator ==( const ValueIdPair& other ) const
         {
-            return (id == other.id) && (value == other.value);
+            return ( id == other.id ) && ( value == other.value );
         }
     };
 
@@ -78,21 +78,21 @@ public:
      *  @param keyName The key name for the keys to retrieve.
      *  @return A list of values and the IDs associated with them.
      */
-    const ValueIdPairList GetKeyValues(const KeyName& keyName) const
+    const ValueIdPairList GetKeyValues( const KeyName& keyName ) const
     {
         ValueIdPairList keyValues;
 
-        typename KeyNameMap::const_iterator keyIdMap = m_keys.find(keyName);
+        typename KeyNameMap::const_iterator keyIdMap = m_keys.find( keyName );
 
-        if (keyIdMap != m_keys.end())
+        if ( keyIdMap != m_keys.end() )
         {
-            for (typename KeyIdMap::const_iterator itr = keyIdMap->second.begin(); itr != keyIdMap->second.end(); ++itr)
+            for ( typename KeyIdMap::const_iterator itr = keyIdMap->second.begin(); itr != keyIdMap->second.end(); ++itr )
             {
                 ValueIdPair pair;
                 pair.id    = itr->first;
                 pair.value = itr->second;
 
-                keyValues.push_back(pair);
+                keyValues.push_back( pair );
             }
         }
 
@@ -106,15 +106,15 @@ public:
      *  @param keyId The ID to use to distinguish multiple keys with the same name.  The default (KeyId()) is
      *  intended to be used for keys that should only occur once in the schema.
      */
-    void SetKeyValue(const KeyName& keyName, const KeyValueType& value, const KeyId& keyId = KeyId())
+    void SetKeyValue( const KeyName& keyName, const KeyValueType& value, const KeyId& keyId = KeyId() )
     {
         m_keys[ keyName ][ keyId ] = value;
 
-        if (!container(m_orderedKeys).contains(keyName))
+        if ( !container( m_orderedKeys ).contains( keyName ) )
         {
             // if we haven't previously added this key, remember its
             // insertion order
-            m_orderedKeys.push_back(keyName);
+            m_orderedKeys.push_back( keyName );
         }
     }
 
@@ -123,12 +123,12 @@ public:
      *  @param keyName The name of the key to remove.
      *  @param keyId The ID of the key to remove.
      */
-    void RemoveKeyValue(const KeyName& keyName, const KeyId& keyId = KeyId())
+    void RemoveKeyValue( const KeyName& keyName, const KeyId& keyId = KeyId() )
     {
-        typename KeyNameMap::iterator keyIdMap = m_keys.find(keyName);
-        if (keyIdMap != m_keys.end())
+        typename KeyNameMap::iterator keyIdMap = m_keys.find( keyName );
+        if ( keyIdMap != m_keys.end() )
         {
-            keyIdMap->second.erase(keyId);
+            keyIdMap->second.erase( keyId );
         }
     }
 
@@ -138,18 +138,18 @@ public:
      *  @param keyId The ID to use to distinguish multiple keys with the same name.  The default (KeyId()) is
      *  intended to be used for keys that should only occur once in the schema.
      */
-    const KeyValueType GetKeyValue(const KeyName& keyName, const KeyId& keyId = QString()) const
+    const KeyValueType GetKeyValue( const KeyName& keyName, const KeyId& keyId = QString() ) const
     {
         KeyValueType value;
-        typename KeyNameMap::const_iterator keyIdMap = m_keys.find(keyName);
+        typename KeyNameMap::const_iterator keyIdMap = m_keys.find( keyName );
 
-        if (keyIdMap != m_keys.end())
+        if ( keyIdMap != m_keys.end() )
         {
-            typename KeyIdMap::const_iterator keyValue = keyIdMap->second.find(keyId);
+            typename KeyIdMap::const_iterator keyValue = keyIdMap->second.find( keyId );
 
-            if (keyValue != keyIdMap->second.end())
+            if ( keyValue != keyIdMap->second.end() )
             {
-                value = (keyValue->second);
+                value = ( keyValue->second );
             }
         }
 
@@ -163,15 +163,15 @@ public:
      *  @param func A function or functor to apply to the triples.
      */
     template < class FunctionType >
-    void ForEachOrderedByKeyName(const FunctionType& func) const
+    void ForEachOrderedByKeyName( const FunctionType& func ) const
     {
-        for (typename KeyNameMap::const_iterator keyIdMap = m_keys.begin();
-                keyIdMap != m_keys.end(); ++keyIdMap)
+        for ( typename KeyNameMap::const_iterator keyIdMap = m_keys.begin();
+                keyIdMap != m_keys.end(); ++keyIdMap )
         {
-            for (typename KeyIdMap::const_iterator keyValueItr = keyIdMap->second.begin();
-                    keyValueItr != keyIdMap->second.end(); ++keyValueItr)
+            for ( typename KeyIdMap::const_iterator keyValueItr = keyIdMap->second.begin();
+                    keyValueItr != keyIdMap->second.end(); ++keyValueItr )
             {
-                func(keyValueItr->second);
+                func( keyValueItr->second );
             }
         }
     }
@@ -185,21 +185,21 @@ public:
      *  @param func A function or functor to apply to the triples.
      */
     template < class FunctionType >
-    void ForEachOrderedByInsertion(const FunctionType& func) const
+    void ForEachOrderedByInsertion( const FunctionType& func ) const
     {
-        for (size_t i = 0; i < m_orderedKeys.size(); ++i)
+        for ( size_t i = 0; i < m_orderedKeys.size(); ++i )
         {
 #if defined(__MINGW32__) || defined(__GNUC__)
-            typename KeyNameMap::const_iterator keyIdMapItr = m_keys.find(m_orderedKeys[ i ]);
+            typename KeyNameMap::const_iterator keyIdMapItr = m_keys.find( m_orderedKeys[ i ] );
 #else
-            const KeyNameMap::const_iterator keyIdMapItr = m_keys.find(m_orderedKeys[ i ]);
+            const KeyNameMap::const_iterator keyIdMapItr = m_keys.find( m_orderedKeys[ i ] );
 #endif
-            assert(keyIdMapItr != m_keys.end());
+            assert( keyIdMapItr != m_keys.end() );
             const KeyIdMap& keyIdMap = keyIdMapItr->second;
-            for (typename KeyIdMap::const_iterator keyValueItr = keyIdMap.begin();
-                    keyValueItr != keyIdMap.end(); ++keyValueItr)
+            for ( typename KeyIdMap::const_iterator keyValueItr = keyIdMap.begin();
+                    keyValueItr != keyIdMap.end(); ++keyValueItr )
             {
-                func(keyValueItr->second);
+                func( keyValueItr->second );
             }
         }
     }
@@ -210,15 +210,15 @@ public:
      *
      *  @param other The container with the keys to copy.
      */
-    void SetKeys(const WbKeyValueTypeContainer& other)
+    void SetKeys( const WbKeyValueTypeContainer& other )
     {
-        for (typename KeyNameMap::const_iterator keyIdMap = other.m_keys.begin();
-                keyIdMap != other.m_keys.end(); ++keyIdMap)
+        for ( typename KeyNameMap::const_iterator keyIdMap = other.m_keys.begin();
+                keyIdMap != other.m_keys.end(); ++keyIdMap )
         {
-            for (typename KeyIdMap::const_iterator keyValueItr = keyIdMap->second.begin();
-                    keyValueItr != keyIdMap->second.end(); ++keyValueItr)
+            for ( typename KeyIdMap::const_iterator keyValueItr = keyIdMap->second.begin();
+                    keyValueItr != keyIdMap->second.end(); ++keyValueItr )
             {
-                SetKeyValue(keyIdMap->first, keyValueItr->second, keyValueItr->first);
+                SetKeyValue( keyIdMap->first, keyValueItr->second, keyValueItr->first );
             }
         }
     }
@@ -232,13 +232,13 @@ public:
     const std::vector< KeyValueType > EnumerateValues() const
     {
         std::vector< KeyValueType > values;
-        for (typename KeyNameMap::const_iterator keyIdMap = m_keys.begin();
-                keyIdMap != m_keys.end(); ++keyIdMap)
+        for ( typename KeyNameMap::const_iterator keyIdMap = m_keys.begin();
+                keyIdMap != m_keys.end(); ++keyIdMap )
         {
-            for (typename KeyIdMap::const_iterator keyValueItr = keyIdMap->second.begin();
-                    keyValueItr != keyIdMap->second.end(); ++keyValueItr)
+            for ( typename KeyIdMap::const_iterator keyValueItr = keyIdMap->second.begin();
+                    keyValueItr != keyIdMap->second.end(); ++keyValueItr )
             {
-                values.push_back(keyValueItr->second);
+                values.push_back( keyValueItr->second );
             }
         }
         return values;

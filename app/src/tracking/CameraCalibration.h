@@ -40,25 +40,25 @@ public:
     CameraCalibration();
     ~CameraCalibration();
 
-    bool LoadIntrinsicCalibration(const WbConfig& cameraCalCfg);
+    bool LoadIntrinsicCalibration( const WbConfig& cameraCalCfg );
 
-    bool LoadCameraTransform(const KeyId camPosId, const WbConfig& floorPlanCfg);
+    bool LoadCameraTransform( const KeyId camPosId, const WbConfig& floorPlanCfg );
 
     bool PerformExtrinsicCalibration(CvSize        boardSize,
                                       RobotMetrics& metrics,
                                       IplImage**    viewWarp,
                                       const bool    scaled,
-                                      const char*   calImage);
+                                      const char*   calImage );
 
     void ComputeWarpGradientMagnitude();
 
     float ComputeSquareSize(CvMat* imagePoints);
 
-    void ComputeExtrinsicParams(const CvMat* objectPoints, const CvMat* imagePoints);
+    void ComputeExtrinsicParams( const CvMat* objectPoints, const CvMat* imagePoints );
 
-    void UnwarpGroundPlane(const IplImage* src, IplImage* dst) { cvRemap(src, dst, m_mapx, m_mapy, CV_INTER_LINEAR); };
+    void UnwarpGroundPlane( const IplImage* src, IplImage* dst ) { cvRemap( src, dst, m_mapx, m_mapy, CV_INTER_LINEAR ); };
 
-    void PlotCameraCentre(IplImage* img, const RobotMetrics& metrics);
+    void PlotCameraCentre( IplImage* img, const RobotMetrics& metrics );
 
     CvPoint2D32f ImageToPlane(CvPoint2D32f p) const;
     CvPoint2D32f PlaneToImage(CvPoint2D32f p) const;
@@ -92,7 +92,7 @@ public:
     const float& ik5() const { return m_inverse_f[4]; };
 
     const CvPoint2D32f* GetUnwarpOffset() const { return &m_offset; };
-    CvSize GetImageSize() const { return cvSize(m_imageWidth, m_imageHeight); };
+    CvSize GetImageSize() const { return cvSize( m_imageWidth, m_imageHeight); };
 
     const CvMat* GetWarpGradientImage() const { return m_mapGM; };
 

@@ -20,6 +20,6 @@
 
 namespace RunSchema
 {
-    const KeyName schemaName("run");
-    const KeyName roomIdKey ("roomId");
+    const KeyName schemaName( "run" );
+    const KeyName roomIdKey ( "roomId" );
 }

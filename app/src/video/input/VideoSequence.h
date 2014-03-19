@@ -52,7 +52,7 @@ public:
     /** @brief prepare next frame internally
      */
     virtual bool ReadyNextFrame() = 0;
-    virtual bool ReadyNextFrame(double msec) = 0;
+    virtual bool ReadyNextFrame( double msec ) = 0;
 
     /** @brief get pointer to internally stored frame
      */
@@ -92,7 +92,7 @@ public:
      *
      *  @param fps The new frame rate to set.
      */
-    virtual void SetFrameRate(const double fps) = 0;
+    virtual void SetFrameRate( const double fps ) = 0;
 
     virtual double GetFrameRate() = 0;
 

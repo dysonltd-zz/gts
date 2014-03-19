@@ -22,13 +22,13 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QStatusBar>
 
-#include <QtGlobal>
-
 #include <cassert>
 
-QtMessageHandler::QtMessageHandler(QMainWindow& mainWindow)
+#include <QtGlobal>
+
+QtMessageHandler::QtMessageHandler( QMainWindow& mainWindow )
 :
-m_mainWindow(mainWindow)
+m_mainWindow( mainWindow )
 {
 }
 
@@ -36,27 +36,27 @@ QtMessageHandler::~QtMessageHandler()
 {
 }
 
-void QtMessageHandler::Show(QWidget* const parent,
-                            const QString& title,
-                            const QString& message,
-                            const Message::Severity& severity,
-                            const QString& details)
+void QtMessageHandler::Show( QWidget* const parent, const QString& title,
+                             const QString& message, const Message::Severity& severity,
+                             const QString& details )
 {
     QWidget* dialogBoxParent = parent;
-    if (dialogBoxParent == 0)
+    if ( dialogBoxParent == 0 )
     {
         dialogBoxParent = &m_mainWindow;
     }
 
-    QMessageBox::Icon msgBoxIcon;
+    QMessageBox::Icon msgBoxIcon = QMessageBox::NoIcon;
 
-    switch (severity)
+    Q_UNUSED(msgBoxIcon);
+
+    switch ( severity )
     {
         case Message::Severity_Status:
         {
             QStatusBar* const statusBar = m_mainWindow.statusBar();
-            assert(statusBar);
-            statusBar->showMessage(title % QObject::tr(": ") % message);
+            assert( statusBar );
+            statusBar->showMessage( title % QObject::tr( ": " ) % message );
             break;
         }
         case Message::Severity_Information:
@@ -77,23 +77,23 @@ void QtMessageHandler::Show(QWidget* const parent,
         }
         default:
         {
-            assert(!"Unhandled message severity");
+            assert( !"Unhandled message severity" );
             break;
         }
     }
 
-    if (severity != Message::Severity_Status)
+    if ( severity != Message::Severity_Status )
     {
-        QMessageBox* msgBox = new QMessageBox(msgBoxIcon,
-                                              title,
-                                              message,
-                                              QMessageBox::Ok,
-                                              dialogBoxParent);
+        QMessageBox* msgBox = new QMessageBox( QMessageBox::Information,
+                                               title,
+                                               message,
+                                               QMessageBox::Ok,
+                                               dialogBoxParent );
 
-        msgBox->setWindowModality(Qt::ApplicationModal);
-        msgBox->setDetailedText(details);
+        msgBox->setWindowModality( Qt::ApplicationModal );
+        msgBox->setDetailedText( details );
 
-        if (severity == Message::Severity_NonBlockingInfo)
+        if ( severity == Message::Severity_NonBlockingInfo )
         {
             msgBox->show();
         }

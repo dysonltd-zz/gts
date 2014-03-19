@@ -53,80 +53,80 @@
 
 /** @todo add newly-captured files with relative file paths
  */
-CameraCalibrationWidget::CameraCalibrationWidget(CameraHardware& cameraHardware,
-                                                      QWidget* const parent) :
-    Tool          (parent, CreateSchema()),
-    m_cameraHardware(cameraHardware),
+CameraCalibrationWidget::CameraCalibrationWidget( CameraHardware& cameraHardware,
+                                                      QWidget* const parent ) :
+    Tool          ( parent, CreateSchema() ),
+    m_cameraHardware( cameraHardware ),
     m_captureLiveBtnController(),
-    m_ui          (new Ui::CameraCalibrationWidget),
-    m_imageGridMapper(0),
-    m_imageTableMapper(0)
+    m_ui          ( new Ui::CameraCalibrationWidget ),
+    m_imageGridMapper( 0 ),
+    m_imageTableMapper( 0 )
 {
-    m_ui->setupUi(this);
+    m_ui->setupUi( this );
 
     m_captureLiveBtnController.reset(
-        new CaptureLiveBtnController(*m_ui->m_captureLiveBtn,
-                                      *m_ui->m_captureCancelBtn, *this, m_cameraHardware));
+        new CaptureLiveBtnController( *m_ui->m_captureLiveBtn,
+                                      *m_ui->m_captureCancelBtn, *this, m_cameraHardware ) );
 
     QHeaderView* horizHeader = m_ui->m_imagesTableWidget->horizontalHeader();
-    horizHeader->setResizeMode(0, QHeaderView::Stretch);
-    horizHeader->setResizeMode(1, QHeaderView::ResizeToContents);
+    horizHeader->setResizeMode( 0, QHeaderView::Stretch );
+    horizHeader->setResizeMode( 1, QHeaderView::ResizeToContents );
 
-    AddMapper(CalibrationSchema::gridSquareSizeInCmKey, m_ui->m_gridSquareSizeSpinBox);
-    AddMapper(CalibrationSchema::gridRowsKey,       m_ui->m_gridRowsSpinBox);
-    AddMapper(CalibrationSchema::gridColumnsKey,    m_ui->m_gridColumnsSpinBox);
-    AddMapper(CalibrationSchema::noTangentialDistortionKey,
-               m_ui->m_zeroTangentialCheckBox);
-    AddMapper(CalibrationSchema::fixPrincipalPointKey,    m_ui->m_fixPrincipalPtCheckBox);
-    AddMapper(CalibrationSchema::flipImagesKey,           m_ui->m_flipCheckBox);
-    AddMapper(CalibrationSchema::fixedAspectRatioKey,     m_ui->m_aspectRatioLineEdit);
-    AddMapper(CalibrationSchema::shouldFixAspectRatioKey, m_ui->m_fixAspectRatioGroup);
+    AddMapper( CalibrationSchema::gridSquareSizeInCmKey, m_ui->m_gridSquareSizeSpinBox );
+    AddMapper( CalibrationSchema::gridRowsKey,       m_ui->m_gridRowsSpinBox );
+    AddMapper( CalibrationSchema::gridColumnsKey,    m_ui->m_gridColumnsSpinBox );
+    AddMapper( CalibrationSchema::noTangentialDistortionKey,
+               m_ui->m_zeroTangentialCheckBox );
+    AddMapper( CalibrationSchema::fixPrincipalPointKey,    m_ui->m_fixPrincipalPtCheckBox );
+    AddMapper( CalibrationSchema::flipImagesKey,           m_ui->m_flipCheckBox );
+    AddMapper( CalibrationSchema::fixedAspectRatioKey,     m_ui->m_aspectRatioLineEdit );
+    AddMapper( CalibrationSchema::shouldFixAspectRatioKey, m_ui->m_fixAspectRatioGroup );
 
-    AddMapper(new ButtonLabelMapper(*m_ui->m_printGridBtn,
-                                      tr("Print Grid"),
-                                      tr(" (%1x%2)"),
+    AddMapper( new ButtonLabelMapper( *m_ui->m_printGridBtn,
+                                      tr( "Print Grid" ),
+                                      tr( " (%1x%2)" ),
                                       CalibrationSchema::gridRowsKey,
-                                      CalibrationSchema::gridColumnsKey));
+                                      CalibrationSchema::gridColumnsKey ) );
 
-    m_imageTableMapper = new CalibrationImageTableMapper(*m_ui->m_imagesTableWidget);
-    AddMapper(m_imageTableMapper);
+    m_imageTableMapper = new CalibrationImageTableMapper( *m_ui->m_imagesTableWidget );
+    AddMapper( m_imageTableMapper );
 
-    m_imageGridMapper = new CalibrationImageGridMapper(*m_ui->m_imageGrid);
-    AddMapper(m_imageGridMapper);
+    m_imageGridMapper = new CalibrationImageGridMapper( *m_ui->m_imageGrid );
+    AddMapper( m_imageGridMapper );
 
-    AddMapper(new CalibrateCameraResultsMapper(*m_ui->m_resultsTextBrowser));
+    AddMapper( new CalibrateCameraResultsMapper( *m_ui->m_resultsTextBrowser ) );
 
     QDoubleValidator* validator = new QDoubleValidator;
-    m_ui->m_aspectRatioLineEdit->setValidator(validator);
+    m_ui->m_aspectRatioLineEdit->setValidator( validator );
 
-    m_ui->m_optionsTabs->setCurrentIndex(0);
+    m_ui->m_optionsTabs->setCurrentIndex( 0 );
 
-    QObject::connect(m_ui->m_fromFileBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_fromFileBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(FromFileClicked()));
-    QObject::connect(m_ui->m_captureLiveBtn,
-                      SIGNAL(clicked()),
+                      SLOT( FromFileClicked() ) );
+    QObject::connect( m_ui->m_captureLiveBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(CaptureLiveBtnClicked()));
-    QObject::connect(m_ui->m_captureCancelBtn,
-                      SIGNAL(clicked()),
+                      SLOT( CaptureLiveBtnClicked() ) );
+    QObject::connect( m_ui->m_captureCancelBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(CaptureCancelBtnClicked()));
-    QObject::connect(m_ui->m_calibrateBtn,
-                      SIGNAL(clicked()),
+                      SLOT( CaptureCancelBtnClicked() ) );
+    QObject::connect( m_ui->m_calibrateBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(CalibrateBtnClicked()));
-    QObject::connect(m_ui->m_printGridBtn,
-                      SIGNAL(clicked()),
+                      SLOT( CalibrateBtnClicked() ) );
+    QObject::connect( m_ui->m_printGridBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(PrintGridBtnClicked()));
-    QObject::connect(m_ui->m_imagesTableWidget,
-                      SIGNAL(currentItemChanged (QTableWidgetItem*,
-                                                   QTableWidgetItem*)),
+                      SLOT( PrintGridBtnClicked() ) );
+    QObject::connect( m_ui->m_imagesTableWidget,
+                      SIGNAL( currentItemChanged ( QTableWidgetItem*,
+                                                   QTableWidgetItem* ) ),
                       this,
-                      SLOT(ImageTableItemChanged(QTableWidgetItem*,
-                                                   QTableWidgetItem*)));
+                      SLOT( ImageTableItemChanged( QTableWidgetItem*,
+                                                   QTableWidgetItem* ) ) );
 }
 
 CameraCalibrationWidget::~CameraCalibrationWidget()
@@ -144,65 +144,65 @@ void CameraCalibrationWidget::ImageTableItemChanged(QTableWidgetItem* current,
 {
     Q_UNUSED(previous);
 
-    assert(m_imageGridMapper);
-    if (m_imageGridMapper && current)
+    assert( m_imageGridMapper );
+    if ( m_imageGridMapper && current )
     {
         QTableWidgetItem* currentRowNameItem =
             m_ui->m_imagesTableWidget->item(current->row(),
-                                            CalibrationImageTableMapper::nameColumn);
+                                            CalibrationImageTableMapper::nameColumn );
         m_imageGridMapper->SetCurrentImage(
             currentRowNameItem->data(CalibrationImageTableMapper::idRoleOnName)
                                      .toString());
-        ReloadCurrentConfig(m_imageTableMapper); //must exclude table here to ensure it still has a "current row" for delete
+        ReloadCurrentConfig( m_imageTableMapper ); //must exclude table here to ensure it still has a "current row" for delete
     }
 }
 
 void CameraCalibrationWidget::FromFileClicked()
 {
     // Make sure folder is there before adding file
-    const QString fileDirPath(GetCurrentConfig().GetAbsoluteFileNameFor("calibrationImages/"));
-    const bool mkPathSuccessful = QDir().mkpath(fileDirPath);
+    const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImages/" ) );
+    const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
 
     if (!mkPathSuccessful)
     {
-        Message::Show(this,
-                       tr("Camera Calibration Tool"),
-                       tr("Folder is missing!"),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Camera Calibration Tool" ),
+                       tr( "Folder is missing!"),
+                       Message::Severity_Critical );
         return;
     }
 
     // Display file selection dialog
-    FileDialogs::ExtendedFileDialog fileDialog(this,
-                                                tr("Select Image(s) to Add"),
+    FileDialogs::ExtendedFileDialog fileDialog( this,
+                                                tr( "Select Image(s) to Add" ),
                                                 GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),
-                                                "Images(*.png *.jpg *.bmp *.ppm);;All Files(*)",
-                                                false);
+                                                "Images( *.png *.jpg *.bmp *.ppm );;All Files( * )",
+                                                false );
     const int result = fileDialog.exec();
-    if (result == QFileDialog::Accepted)
+    if ( result == QFileDialog::Accepted )
     {
-        QStringList filesToOpen(fileDialog.selectedFiles());
+        QStringList filesToOpen( fileDialog.selectedFiles() );
 
         foreach (QString imageName, filesToOpen)
         {
             WbConfigTools::FileNameMode mode = WbConfigTools::FileNameMode_RelativeInsideWorkbench;
 
-            if (FileUtilities::FileIsExternal(imageName, GetCurrentConfig()))
+            if ( FileUtilities::FileIsExternal( imageName, GetCurrentConfig() ) )
             {
-                if (fileDialog.CopyFileSelected())
+                if ( fileDialog.CopyFileSelected() )
                 {
-                    const QString dstFile = QFileInfo(imageName).fileName();
+                    const QString dstFile = QFileInfo( imageName ).fileName();
 
                     const QString newImageName(
-                        GetCurrentConfig().GetAbsoluteFileNameFor("calibrationImages/" + dstFile));
+                        GetCurrentConfig().GetAbsoluteFileNameFor( "calibrationImages/" + dstFile ) );
 
-                    QFile::copy(imageName, newImageName);
+                    QFile::copy( imageName, newImageName );
 
                     imageName = newImageName;
                 }
                 else
                 {
-                    if (fileDialog.RelativeSelected())
+                    if ( fileDialog.RelativeSelected() )
                     {
                         mode = WbConfigTools::FileNameMode_Relative;
                     }
@@ -213,7 +213,7 @@ void CameraCalibrationWidget::FromFileClicked()
                 }
             }
 
-            AddImageIfValid(imageName, mode);
+            AddImageIfValid( imageName, mode );
         }
     }
 }
@@ -221,86 +221,86 @@ void CameraCalibrationWidget::FromFileClicked()
 void CameraCalibrationWidget::CalibrateBtnClicked()
 {
     CalibrationAlgorithm alg;
-    UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg(this);
-    progressDialog->Start(tr("Calibrating"), tr(""));
-    const bool calibrationSuccessful = alg.Run(GetCurrentConfig());
+    UnknownLengthProgressDlg* const progressDialog = new UnknownLengthProgressDlg( this );
+    progressDialog->Start( tr( "Calibrating" ), tr( "" ) );
+    const bool calibrationSuccessful = alg.Run( GetCurrentConfig() );
     ReloadCurrentConfig();
 
-    if (calibrationSuccessful)
+    if ( calibrationSuccessful )
     {
-        progressDialog->Complete(tr("Camera Calibration Successful"),
-                                  tr("The camera has been calibrated.\n"
-                                      "Average reprojection error is: %1.")
-                                      .arg(GetCurrentConfig()
-                                            .GetKeyValue(CalibrationSchema::avgReprojectionErrorKey)
-                                            .ToDouble()));
+        progressDialog->Complete( tr( "Camera Calibration Successful" ),
+                                  tr( "The camera has been calibrated.\n"
+                                      "Average reprojection error is: %1." )
+                                      .arg( GetCurrentConfig()
+                                            .GetKeyValue( CalibrationSchema::avgReprojectionErrorKey )
+                                            .ToDouble() ) );
     }
     else
     {
         progressDialog->ForceClose();
 
-        Message::Show(0,
-                       tr("Camera Calibration Tool"),
-                       tr("See the log for details!"),
-                       Message::Severity_Critical);
+        Message::Show( 0,
+                       tr( "Camera Calibration Tool" ),
+                       tr( "See the log for details!" ),
+                       Message::Severity_Critical );
     }
 }
 
 void CameraCalibrationWidget::PrintGridBtnClicked()
 {
-    PrintCalibrationGrid(m_ui->m_gridRowsSpinBox->value()+1,
-                          m_ui->m_gridColumnsSpinBox->value()+1);
+    PrintCalibrationGrid( m_ui->m_gridRowsSpinBox->value()+1,
+                          m_ui->m_gridColumnsSpinBox->value()+1 );
 }
 
-ImageView* const CameraCalibrationWidget::CreateStreamingView(const QSize& imageSize)
+ImageView* const CameraCalibrationWidget::CreateStreamingView( const QSize& imageSize )
 {
     m_ui->m_imageGrid->Clear();
 
-    return m_ui->m_imageGrid->AddBlankImage(imageSize);
+    return m_ui->m_imageGrid->AddBlankImage( imageSize );
 }
 
 void CameraCalibrationWidget::ReloadCurrentConfigToolSpecific()
 {
     const WbKeyValues::ValueIdPairList calibImages(
-                GetCurrentConfig().GetKeyValues(CalibrationSchema::imageFileKey));
+                GetCurrentConfig().GetKeyValues( CalibrationSchema::imageFileKey ) );
 
-    m_ui->m_calibrateBtn->setEnabled(calibImages.size() >= 2);
+    m_ui->m_calibrateBtn->setEnabled( calibImages.size() >= 2 );
 }
 
-void CameraCalibrationWidget::AddImageIfValid(const QString& imageFileName,
-                                                 const WbConfigTools::FileNameMode& mode)
+void CameraCalibrationWidget::AddImageIfValid( const QString& imageFileName,
+                                                 const WbConfigTools::FileNameMode& mode )
 {
-    if (!imageFileName.isEmpty())
+    if ( !imageFileName.isEmpty() )
     {
-        WbConfigTools::AddFileName(GetCurrentConfig(),
+        WbConfigTools::AddFileName( GetCurrentConfig(),
                                     imageFileName,
                                     CalibrationSchema::imageFileKey,
-                                    mode);
+                                    mode );
         ReloadCurrentConfig();
     }
 }
 
 void CameraCalibrationWidget::CaptureLiveBtnClicked()
 {
-    WbConfig config(GetCurrentConfig());
-    const WbConfig cameraConfig(config.FindAncestor(KeyName("camera")));
+    WbConfig config( GetCurrentConfig() );
+    const WbConfig cameraConfig( config.FindAncestor( KeyName( "camera" ) ) );
 
-    const QString newFileNameFormat(config.GetAbsoluteFileNameFor("calibrationImages/Calib%1.png"));
+    const QString newFileNameFormat( config.GetAbsoluteFileNameFor( "calibrationImages/Calib%1.png" ) );
 
     const QString capturedImageFileName =
             m_captureLiveBtnController->CaptureLiveBtnClicked(cameraConfig,
                                                               newFileNameFormat,
 #if defined(__MINGW32__) || defined(__GNUC__)
-                                                              MakeCallback(this,
-                                                                            &CameraCalibrationWidget::CreateStreamingView));
+                                                              MakeCallback( this,
+                                                                            &CameraCalibrationWidget::CreateStreamingView ) );
 #else
 															  [this](const QSize& imageSize) -> ImageView*
                                                               {
                                                                   return CreateStreamingView(imageSize);
-                                                              });
+                                                              } );
 #endif
 
-    AddImageIfValid(capturedImageFileName, WbConfigTools::FileNameMode_RelativeInsideWorkbench);
+    AddImageIfValid( capturedImageFileName, WbConfigTools::FileNameMode_RelativeInsideWorkbench );
 }
 
 void CameraCalibrationWidget::CaptureCancelBtnClicked()
@@ -316,7 +316,7 @@ bool CameraCalibrationWidget::IsDataValid() const
 
     bool valid = true;
 
-    if (m_ui->m_gridSquareSizeSpinBox->value() == 0.0)
+    if ( m_ui->m_gridSquareSizeSpinBox->value() == 0.0 )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_gridSquareSizeLabel, true);
@@ -324,8 +324,7 @@ bool CameraCalibrationWidget::IsDataValid() const
     else {
         Tool::HighlightLabel(m_ui->m_gridSquareSizeLabel, false);
     }
-    // Grid size must be >= 3x3 or OpenCV throws exception
-    if (m_ui->m_gridRowsSpinBox->value() < 3)
+    if ( m_ui->m_gridRowsSpinBox->value() == 0 )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_gridRowsLabel, true);
@@ -333,8 +332,7 @@ bool CameraCalibrationWidget::IsDataValid() const
     else {
         Tool::HighlightLabel(m_ui->m_gridRowsLabel, false);
     }
-    // Grid size must be >= 3x3 or OpenCV throws exception
-    if (m_ui->m_gridColumnsSpinBox->value() < 3)
+    if ( m_ui->m_gridColumnsSpinBox->value() == 0 )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_gridColumnsLabel, true);
@@ -359,46 +357,46 @@ const QString CameraCalibrationWidget::CannotCloseReason() const
 const WbSchema CameraCalibrationWidget::CreateSchema()
 {
     using namespace CalibrationSchema;
-    WbSchema schema(CreateWorkbenchSubSchema(schemaName,
-                                               tr("Calibration")));
+    WbSchema schema( CreateWorkbenchSubSchema( schemaName,
+                                               tr( "Calibration" ) ) );
 
-    schema.AddKeyGroup(gridGroup,
+    schema.AddKeyGroup( gridGroup,
                         WbSchemaElement::Multiplicity::One,
                         KeyNameList() << gridSquareSizeInCmKey
                                       << gridRowsKey
                                       << gridColumnsKey,
-                        DefaultValueMap().WithDefault(gridSquareSizeInCmKey,
-                                                       KeyValue::from(0.0))
-                                         .WithDefault(gridRowsKey,
-                                                       KeyValue::from(0))
-                                         .WithDefault(gridColumnsKey,
-                                                       KeyValue::from(0)));
+                        DefaultValueMap().WithDefault( gridSquareSizeInCmKey,
+                                                       KeyValue::from( 0.0 ) )
+                                         .WithDefault( gridRowsKey,
+                                                       KeyValue::from( 0 ) )
+                                         .WithDefault( gridColumnsKey,
+                                                       KeyValue::from( 0 ) ) );
 
-    schema.AddKeyGroup(imageGroup,
+    schema.AddKeyGroup( imageGroup,
                         WbSchemaElement::Multiplicity::One,
                         KeyNameList() << imageFileKey
                                       << imageErrorKey
-                                      << imageReprojectedPointsKey);
+                                      << imageReprojectedPointsKey );
 
-    schema.AddKeyGroup(advancedGroup,
+    schema.AddKeyGroup( advancedGroup,
                         WbSchemaElement::Multiplicity::One,
                         KeyNameList() << noTangentialDistortionKey
                                       << fixPrincipalPointKey
                                       << flipImagesKey
                                       << shouldFixAspectRatioKey
                                       << fixedAspectRatioKey,
-                        DefaultValueMap().WithDefault(noTangentialDistortionKey,
-                                                       KeyValue::from(true))
-                                         .WithDefault(fixPrincipalPointKey,
-                                                       KeyValue::from(false))
-                                         .WithDefault(flipImagesKey,
-                                                       KeyValue::from(false))
-                                         .WithDefault(shouldFixAspectRatioKey,
-                                                       KeyValue::from(false))
-                                         .WithDefault(fixedAspectRatioKey,
-                                                       KeyValue::from(1.0)));
+                        DefaultValueMap().WithDefault( noTangentialDistortionKey,
+                                                       KeyValue::from( true ) )
+                                         .WithDefault( fixPrincipalPointKey,
+                                                       KeyValue::from( false ) )
+                                         .WithDefault( flipImagesKey,
+                                                       KeyValue::from( false ) )
+                                         .WithDefault( shouldFixAspectRatioKey,
+                                                       KeyValue::from( false ) )
+                                         .WithDefault( fixedAspectRatioKey,
+                                                       KeyValue::from( 1.0 ) ));
 
-    schema.AddKeyGroup(resultsGroup,
+    schema.AddKeyGroup( resultsGroup,
                         WbSchemaElement::Multiplicity::One,
                         KeyNameList() << calibrationSuccessfulKey
                                       << calibrationDateKey
@@ -410,7 +408,7 @@ const WbSchema CameraCalibrationWidget::CreateSchema()
                                       << cameraMatrixKey
                                       << distortionCoefficientsKey
                                       << invDistortionCoefficientsKey
-                                      << avgReprojectionErrorKey);
+                                      << avgReprojectionErrorKey );
 
     return schema;
 }

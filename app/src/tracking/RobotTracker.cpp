@@ -47,7 +47,7 @@
     cz (camera height) now becomes negative. This is why cz is negative in the scale calculation
     (where as in my notebook it is positive).
 **/
-CvPoint2D32f RobotTracker::AdjustTrackForRobotHeight(CvPoint2D32f pos, float heading) const
+CvPoint2D32f RobotTracker::AdjustTrackForRobotHeight( CvPoint2D32f pos, float heading ) const
 {
     // Offset takes us to calibration-plane coords (in pixels)
     pos.x += GetOffsetParams()->x;
@@ -73,8 +73,8 @@ CvPoint2D32f RobotTracker::AdjustTrackForRobotHeight(CvPoint2D32f pos, float hea
     float oy = GetMetrics()->GetYTargetOffsetPx();
 
     // rotate offset using robots orientation and SUBTRACT from position
-    float cosa = cos(-heading);
-    float sina = sin(-heading);
+    float cosa = cos( -heading );
+    float sina = sin( -heading );
     pos.x -= ox*cosa - oy*sina;
     pos.y -= ox*sina + oy*cosa;
 
@@ -94,7 +94,7 @@ const CvPoint2D32f* RobotTracker::GetOffsetParams() const
     so it is in centi-metres relative to the origin of
     the calibration plane.
 **/
-CvPoint2D32f RobotTracker::ConvertTrackToCm(CvPoint2D32f p) const
+CvPoint2D32f RobotTracker::ConvertTrackToCm( CvPoint2D32f p ) const
 {
     p.x += GetOffsetParams()->x;   // shift to calibration-plane coords (in pixels)
     p.y += GetOffsetParams()->y;
@@ -108,7 +108,7 @@ CvPoint2D32f RobotTracker::ConvertTrackToCm(CvPoint2D32f p) const
 /**
     Scale and shift a track from centimetres to image coords in pixels.
 **/
-CvPoint2D32f RobotTracker::ConvertTrackToPx(CvPoint2D32f p) const
+CvPoint2D32f RobotTracker::ConvertTrackToPx( CvPoint2D32f p ) const
 {
     p.x *= GetMetrics()->GetScaleFactor(); // multiply by scale factor (pixels per cm)
     p.y *= GetMetrics()->GetScaleFactor();
@@ -126,34 +126,34 @@ CvPoint2D32f RobotTracker::ConvertTrackToPx(CvPoint2D32f p) const
 
     Optionally converts the log so it is a relative log (if relative==true).
 **/
-void RobotTracker::ConvertLogForProcessing(TrackHistory::TrackLog& newlog, bool relative) const
+void RobotTracker::ConvertLogForProcessing( TrackHistory::TrackLog& newlog, bool relative ) const
 {
     const TrackHistory::TrackLog& history = GetHistory();
 
-    if (history.size() > 0)
+    if ( history.size() > 0 )
     {
-        newlog.resize(history.size());
+        newlog.resize( history.size() );
         CvPoint2D32f pStart = {0,0};
         float oStart        = 0;
         float cosa = 1.f;
         float sina = 0.f;
 
-        if (relative)
+        if ( relative )
         {
             oStart = history[0].GetOrientation();
-            pStart = ConvertTrackToCm(AdjustTrackForRobotHeight(history[0].GetPosition(), oStart));
+            pStart = ConvertTrackToCm( AdjustTrackForRobotHeight( history[0].GetPosition(), oStart ) );
 
             // compute rotation to undo initial orientation
-            cosa = cosf((MathsConstants::F_PI*.5f)-oStart);
-            sina = sinf((MathsConstants::F_PI*.5f)-oStart);
+            cosa = cosf( (MathsConstants::F_PI*.5f)-oStart );
+            sina = sinf( (MathsConstants::F_PI*.5f)-oStart );
         }
 
-        for (unsigned int i=0; i<history.size(); ++i)
+        for ( unsigned int i=0; i<history.size(); ++i )
         {
             {
-                CvPoint2D32f p = AdjustTrackForRobotHeight(history[i].GetPosition(),
-                                                            history[i].GetOrientation());
-                p = ConvertTrackToCm(p);
+                CvPoint2D32f p = AdjustTrackForRobotHeight( history[i].GetPosition(),
+                                                            history[i].GetOrientation() );
+                p = ConvertTrackToCm( p );
 
                 // subtract origin (will be zero so have no effect if relative is false)
                 float x =  p.x - pStart.x;
@@ -167,7 +167,7 @@ void RobotTracker::ConvertLogForProcessing(TrackHistory::TrackLog& newlog, bool 
                 double t = history[i].GetTimeStamp()/1000.0; // convert timestamp from millisecs to secs
 
                 // save conversion into the new log
-                newlog[i] = TrackEntry(p, o, history[i].GetError(), t, history[i].wgm());
+                newlog[i] = TrackEntry( p, o, history[i].GetError(), t, history[i].wgm() );
             }
         }
     }
@@ -182,20 +182,20 @@ void RobotTracker::ConvertLogForProcessing(TrackHistory::TrackLog& newlog, bool 
     with the robot's own odometry log; that is it starts at position 0,0, with
     initial orientation considered to be directly down the +ve y-axis.
 **/
-void RobotTracker::WriteTrackData(const char* trackerOutput, bool relative) const
+void RobotTracker::WriteTrackData( const char* trackerOutput, bool relative ) const
 {
     TrackHistory::TrackLog history;
 
-    ConvertLogForProcessing(history, relative);
+    ConvertLogForProcessing( history, relative );
 
-    if (history.size() == 0)
+    if ( history.size() == 0 )
     {
         LOG_WARN("Track history is empty - no log file written.");
 
         return;
     }
 
-    TrackHistory::WriteHistoryLog(trackerOutput, history);
+    TrackHistory::WriteHistoryLog( trackerOutput, history );
 }
 
 bool RobotTracker::IsActive() const
@@ -205,7 +205,7 @@ bool RobotTracker::IsActive() const
 
 bool RobotTracker::IsLost() const
 {
-    return (m_status == TRACKER_LOST || m_status == TRACKER_JUST_LOST);
+    return ( m_status == TRACKER_LOST || m_status == TRACKER_JUST_LOST );
 }
 
 bool RobotTracker::WasJustLost() const

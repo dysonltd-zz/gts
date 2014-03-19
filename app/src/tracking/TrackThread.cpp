@@ -37,23 +37,23 @@
  *
  * @param videoSeq The VideoSequence to capture from.
  */
-TrackThread::TrackThread(GtsScene& scene) :
-    m_scene   (scene),
-    m_step    (false),
-    m_stop    (false),
-    m_pause   (false),
-    m_track   (true),
-    m_paused  (false),
-    m_forward (true),
-    m_thread  (new QThread()),
+TrackThread::TrackThread( GtsScene& scene ) :
+    m_scene   ( scene ),
+    m_step    ( false ),
+    m_stop    ( false ),
+    m_pause   ( false ),
+    m_track   ( true ),
+    m_paused  ( false ),
+    m_forward ( true ),
+    m_thread  ( new QThread() ),
     m_mutex   ()
 {
-    QObject::connect(m_thread.get(),
-                      SIGNAL(started()),
+    QObject::connect( m_thread.get(),
+                      SIGNAL( started() ),
                       this,
-                      SLOT(Execute()));
+                      SLOT( Execute() ) );
 
-    moveToThread(m_thread.get());
+    moveToThread( m_thread.get() );
 
     m_thread->start();
 }
@@ -73,27 +73,27 @@ TrackThread::~TrackThread()
  */
 void TrackThread::Execute()
 {
-    while (!ShouldStop())
+    while ( !ShouldStop() )
     {
-        const GtsScene::TrackStatus status = m_scene.StepTrackers(Forwards(), Seeking());
+        const GtsScene::TrackStatus status = m_scene.StepTrackers( Forwards(), Seeking() );
 
-        bool trackingLost = (status.numTrackersActive ==
-                              status.numTrackersLost);
+        bool trackingLost = ( status.numTrackersActive ==
+                              status.numTrackersLost );
 
-        emit position(status.videoPosition);
+        emit position( status.videoPosition );
 
-        if (ShouldPause() || (ShouldTrack() && trackingLost))
+        if ( ShouldPause() || (ShouldTrack() && trackingLost) )
         {
             m_paused = true;
-            emit paused(trackingLost);
+            emit paused( trackingLost );
         }
 
-		while (m_paused)
+		while ( m_paused )
 		{
-			if (ShouldStop()) { break; }
+			if ( ShouldStop() ) { break; }
 		}
 
-        if (status.eof)
+        if ( status.eof )
 		{
 		    break;
 		}
@@ -105,67 +105,67 @@ void TrackThread::Execute()
 
 void TrackThread::SetStepFlag()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_step = true;
 }
 
 void TrackThread::ClearStepFlag()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_step = false;
 }
 
 void TrackThread::SetPauseFlag()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_pause = true;
 }
 
 void TrackThread::ClearPauseFlag()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_pause = false;
 }
 
 void TrackThread::SetStopFlag()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_stop = true;
 }
 
 void TrackThread::ClearStopFlag()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_stop = false;
 }
 
 void TrackThread::SetTrackFlag()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_track = true;
 }
 
 void TrackThread::ClearTrackFlag()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_track = false;
 }
 
 void TrackThread::SetForward()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_forward = true;
 }
 
 void TrackThread::SetBackward()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_forward = false;
 }
 
 void TrackThread::Release()
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     m_paused = false;
 }
 
@@ -190,11 +190,11 @@ void TrackThread::Pause()
 void TrackThread::Stop()
 {
     // Runs in main thread!!
-    if (m_thread && m_thread->isRunning())
+    if ( m_thread && m_thread->isRunning() )
     {
         if (!m_stop) //already stopping
         {
-            assert(QThread::currentThread() != m_thread.get());
+            assert( QThread::currentThread() != m_thread.get() );
 
             SetStopFlag();
             m_thread->wait();
@@ -235,7 +235,7 @@ void TrackThread::RunBackward()
 
 bool TrackThread::ShouldPause() const
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     return m_pause || m_step;
 }
 
@@ -247,12 +247,12 @@ bool TrackThread::ShouldPause() const
  */
 bool TrackThread::ShouldStop() const
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     return m_stop;
 }
 
 bool TrackThread::ShouldTrack() const
 {
-    QMutexLocker mutexLock(&m_mutex);
+    QMutexLocker mutexLock( &m_mutex );
     return m_track;
 }

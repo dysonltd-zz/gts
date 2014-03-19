@@ -27,29 +27,33 @@
 #include <sstream>
 #include <iostream>
 
-WorkbenchTreeWidget::WorkbenchTreeWidget(QWidget* const parent)
+WorkbenchTreeWidget::WorkbenchTreeWidget( QWidget* const parent )
 :
-QTreeWidget(parent)
+QTreeWidget( parent )
 {
 }
 
-bool WorkbenchTreeWidget::viewportEvent(QEvent* event)
+WorkbenchTreeWidget::~WorkbenchTreeWidget()
+{
+}
+
+bool WorkbenchTreeWidget::viewportEvent( QEvent* event )
 {
 #ifndef NDEBUG
-    if (event->type() == QEvent::ToolTip)
+    if ( event->type() == QEvent::ToolTip )
     {
-        QHelpEvent* helpEvent = static_cast< QHelpEvent* >(event);
-        QTreeWidgetItem* itemPointedAt = itemAt(helpEvent->pos());
-        if (itemPointedAt)
+        QHelpEvent* helpEvent = static_cast< QHelpEvent* >( event );
+        QTreeWidgetItem* itemPointedAt = itemAt( helpEvent->pos() );
+        if ( itemPointedAt )
         {
-            WbConfig itemConfig(WbConfig::FromTreeItem(*itemPointedAt));
+            WbConfig itemConfig( WbConfig::FromTreeItem( *itemPointedAt ) );
 
             std::ostringstream oss;
-            OStreamConfigFileWriter writer(oss, OStreamConfigFileWriter::NonRecursive);
-            itemConfig.WriteUsing(writer);
+            OStreamConfigFileWriter writer( oss, OStreamConfigFileWriter::NonRecursive );
+            itemConfig.WriteUsing( writer );
 
-            QToolTip::showText(helpEvent->globalPos(),
-                                QString::fromStdString(oss.str()));
+            QToolTip::showText( helpEvent->globalPos(),
+                                QString::fromStdString( oss.str() ) );
         }
         else
         {
@@ -59,5 +63,5 @@ bool WorkbenchTreeWidget::viewportEvent(QEvent* event)
         return true;
     }
 #endif
-    return QTreeWidget::viewportEvent(event);
+    return QTreeWidget::viewportEvent( event );
 }

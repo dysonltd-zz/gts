@@ -38,7 +38,7 @@
 class FileCapture : public VideoSequence
 {
 public:
-	FileCapture(const char* filenameBase);
+	FileCapture( const char* filenameBase );
 	~FileCapture();
 
 	virtual bool IsRewindable()	 const  { return true; };
@@ -47,7 +47,7 @@ public:
 	virtual bool IsLive()		 const  { return false;  };
 
 	virtual bool ReadyNextFrame();
-	virtual bool ReadyNextFrame(double msec);
+	virtual bool ReadyNextFrame( double msec );
 
 	virtual const IplImage* RetrieveNextFrame() const { return m_img; };
 
@@ -58,7 +58,7 @@ public:
 	virtual int GetFrameWidth() const  { return (int)m_img->width; };
 	virtual int GetFrameHeight() const  { return (int)m_img->height; };
 
-    virtual void SetFrameRate(const double fps) { Q_UNUSED(fps); };
+    virtual void SetFrameRate( const double fps ) { Q_UNUSED(fps); };
 
     virtual double GetFrameRate() { return 0.0; };
 

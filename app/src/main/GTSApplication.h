@@ -18,25 +18,10 @@
 
 #include <QApplication>
 
-/**
-  @brief Subclass of QApplication to allow us to catch exceptions by overriding notify function
- */
 class GTSApplication : public QApplication
 {
 public:
-    /**
-      @brief Initialise base class by direct pass of parameters from command line
-      @param argc Passed directly to base class
-      @param argv Passed directly to base class
-     */
     GTSApplication(int& argc, char* argv[]);
 
-    /**
-      @brief Re-implementation of notify function in QApplication to allow
-      catching of exceptions in app.
-      @param receiver
-      @param event
-      @return whether or not exception caught
-     */
     virtual bool notify(QObject* receiver, QEvent* event);
 };

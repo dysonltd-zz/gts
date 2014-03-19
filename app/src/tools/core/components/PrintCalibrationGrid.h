@@ -27,17 +27,17 @@
 
 namespace
 {
-    inline void PrintCalibrationGrid(const int rows, const int columns)
+    inline void PrintCalibrationGrid( const int rows, const int columns )
     {
-        ImagePrintPreviewDlg dialog(ChessboardImage::CreateImage(rows, columns));
+        ImagePrintPreviewDlg dialog( ChessboardImage::CreateImage( rows, columns ) );
         const int choice = dialog.exec();
 
-        if (choice == QDialog::Accepted)
+        if ( choice == QDialog::Accepted )
         {
-            Message::Show(0,
-                           QObject::tr("Print Calibration Grid"),
-                           QObject::tr("Warning - Please specify square size!"),
-                           Message::Severity_Warning);
+            Message::Show( 0,
+                           QObject::tr( "Print Calibration Grid" ),
+                           QObject::tr( "Warning - Please specify square size!" ),
+                           Message::Severity_Warning );
         }
     }
 }

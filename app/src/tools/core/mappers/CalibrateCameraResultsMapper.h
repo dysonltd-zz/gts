@@ -29,16 +29,16 @@ class CalibrateCameraResultsMapper: public ConfigKeyMapper
     Q_OBJECT
 
 public:
-    CalibrateCameraResultsMapper(QTextBrowser& textBrowser);
+    CalibrateCameraResultsMapper( QTextBrowser& textBrowser );
 
-    virtual void CommitData(WbConfig& config);
-    virtual void SetConfig(const WbConfig& config);
+    virtual void CommitData( WbConfig& config );
+    virtual void SetConfig( const WbConfig& config );
 
 private:
-    const QString GetSuccessOrFailureText(const WbConfig& config, bool successful) const;
+    const QString GetSuccessOrFailureText( const WbConfig& config, bool successful ) const;
 
-    const QString MatrixText(const WbConfig& config, const KeyName keyName,
-                              const int rows, const int columns);
+    const QString MatrixText( const WbConfig& config, const KeyName keyName,
+                              const int rows, const int columns );
 
     QTextBrowser& m_textBrowser;
 

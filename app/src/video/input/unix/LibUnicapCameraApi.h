@@ -31,7 +31,7 @@ public:
     virtual ~LibUnicapCameraApi();
 
     virtual const CameraList EnumerateCameras() const;
-    virtual VideoSequence* const CreateVideoSequenceForCamera(const CameraDescription& camera) const;
+    virtual VideoSequence* const CreateVideoSequenceForCamera( const CameraDescription& camera ) const;
 
 private:
 };

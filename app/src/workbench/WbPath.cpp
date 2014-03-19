@@ -20,57 +20,57 @@
 #include <cassert>
 #include "WbConfig.h"
 
-WbPathElement::WbPathElement(const KeyName name,
+WbPathElement::WbPathElement( const KeyName name,
                               const ElementType& type,
-                              const KeyId knownId)
+                              const KeyId knownId )
 :
-m_name   (name),
-m_type   (type),
-m_knownId(knownId)
+m_name   ( name ),
+m_type   ( type ),
+m_knownId( knownId )
 {
-    assert((m_type == Type_KnownId) || m_knownId.isEmpty());
+    assert( ( m_type == Type_KnownId ) || m_knownId.isEmpty() );
 }
 
 
-WbPathElement WbPathElement::Unique(const KeyName& name)
+WbPathElement WbPathElement::Unique( const KeyName& name )
 {
-    return WbPathElement(name, Type_Unique);
+    return WbPathElement( name, Type_Unique );
 }
 
-WbPathElement WbPathElement::UnknownId(const KeyName& name)
+WbPathElement WbPathElement::UnknownId( const KeyName& name )
 {
-    return WbPathElement(name, Type_UnknownId);
+    return WbPathElement( name, Type_UnknownId );
 }
 
-WbPathElement WbPathElement::KnownId  (const KeyName& name, const KeyId& id)
+WbPathElement WbPathElement::KnownId  ( const KeyName& name, const KeyId& id )
 {
-    return WbPathElement(name, Type_KnownId, id);
+    return WbPathElement( name, Type_KnownId, id );
 }
 
-WbPathElement WbPathElement::FromMultiplicity(const KeyName& name,
-                                               const WbSchemaElement::Multiplicity::Type& multiplicity)
+WbPathElement WbPathElement::FromMultiplicity( const KeyName& name,
+                                               const WbSchemaElement::Multiplicity::Type& multiplicity )
 {
-    switch (multiplicity)
+    switch ( multiplicity )
     {
         case WbSchemaElement::Multiplicity::One:
-            return WbPathElement::Unique(name);
+            return WbPathElement::Unique( name );
         case WbSchemaElement::Multiplicity::Many:
-            return WbPathElement::UnknownId(name);
+            return WbPathElement::UnknownId( name );
         default:
-            assert(!"Unhandled multiplicity");
-            return WbPathElement::Unique(KeyName("<ERROR Unhandled Multiplicity>"));
+            assert( !"Unhandled multiplicity" );
+            return WbPathElement::Unique( KeyName( "<ERROR Unhandled Multiplicity>" ) );
     }
 }
 
-bool WbPathElement::CompatibleWith(const WbPathElement& other) const
+bool WbPathElement::CompatibleWith( const WbPathElement& other ) const
 {
-    if (*this == other)
+    if ( *this == other )
     {
         return true;
     }
-    if (Name() == other.Name())
+    if ( Name() == other.Name() )
     {
-        if ((Type() == Type_KnownId) && other.Type() == Type_UnknownId)
+        if ( ( Type() == Type_KnownId ) && other.Type() == Type_UnknownId )
         {
             return true;
         }
@@ -83,11 +83,11 @@ bool WbPathElement::CompatibleWith(const WbPathElement& other) const
  * @param os
  * @return
  */
-std::ostream& operator << (std::ostream& os,
-                            const WbPathElement& element)
+std::ostream& operator << ( std::ostream& os,
+                            const WbPathElement& element )
 {
     os << element.Name();
-    switch (element.Type())
+    switch ( element.Type() )
     {
         case WbPathElement::Type_Unique:
             break;
@@ -98,35 +98,35 @@ std::ostream& operator << (std::ostream& os,
             os << ": " << element.KnownId().toStdString();
             break;
         default:
-            assert(!"Unhandled element type");
+            assert( !"Unhandled element type" );
             break;
     }
     return os;
 }
 
-const bool operator == (const WbPathElement& lhs,
-                         const WbPathElement& rhs)
+const bool operator == ( const WbPathElement& lhs,
+                         const WbPathElement& rhs )
 {
-    if (lhs.Name() != rhs.Name())
+    if ( lhs.Name() != rhs.Name() )
     {
         return false;
     }
-    if (lhs.Type() != rhs.Type())
+    if ( lhs.Type() != rhs.Type() )
     {
         return false;
     }
-    if (lhs.Type() == WbPathElement::Type_KnownId)
+    if ( lhs.Type() == WbPathElement::Type_KnownId )
     {
-        if (lhs.KnownId() != rhs.KnownId())
+        if ( lhs.KnownId() != rhs.KnownId() )
         {
             return false;
         }
     }
     return true;
 }
-const bool operator != (const WbPathElement& lhs, const WbPathElement& rhs)
+const bool operator != ( const WbPathElement& lhs, const WbPathElement& rhs )
 {
-    return !(lhs == rhs);
+    return !( lhs == rhs );
 }
 
 
@@ -138,18 +138,18 @@ const bool operator != (const WbPathElement& lhs, const WbPathElement& rhs)
  * @param config The config to get the path for
  * @return The path from the root config
  */
-WbPath WbPath::FromWbConfig(const WbConfig& config)
+WbPath WbPath::FromWbConfig( const WbConfig& config )
 {
     WbPath path;
-    WbPathElement element(WbPathElement::Unique(config.GetSchemaName()));
+    WbPathElement element( WbPathElement::Unique( config.GetSchemaName() ) );
 
-    if (!config.GetParent().IsNull())
+    if ( !config.GetParent().IsNull() )
     {
-        path = FromWbConfig(config.GetParent());
-        KeyId id = config.GetParent().FindSubConfigId(config);
-        if (!id.isEmpty())
+        path = FromWbConfig( config.GetParent() );
+        KeyId id = config.GetParent().FindSubConfigId( config );
+        if ( !id.isEmpty() )
         {
-            element = WbPathElement::KnownId(config.GetSchemaName(), id);
+            element = WbPathElement::KnownId( config.GetSchemaName(), id );
         }
     }
     path << element;
@@ -166,46 +166,46 @@ WbPath::~WbPath()
 {
 }
 
-WbPath& WbPath::operator << (const WbPathElement& element)
+WbPath& WbPath::operator << ( const WbPathElement& element )
 {
-    m_elements.push_back(element);
+    m_elements.push_back( element );
     return *this;
 }
 
-WbPath& WbPath::operator << (const WbPath& otherPath)
+WbPath& WbPath::operator << ( const WbPath& otherPath )
 {
-    assert(&otherPath != this);
-    if (&otherPath != this)
+    assert( &otherPath != this );
+    if ( &otherPath != this )
     {
-        for (size_t i = 0; i < otherPath.m_elements.size(); ++i)
+        for ( size_t i = 0; i < otherPath.m_elements.size(); ++i )
         {
-            (*this) << otherPath.m_elements.at(i);
+            (*this) << otherPath.m_elements.at( i );
         }
     }
-    return (*this);
+    return ( *this );
 }
 
 
-std::ostream& operator << (std::ostream& os, const WbPath& path)
+std::ostream& operator << ( std::ostream& os, const WbPath& path )
 {
-    for (size_t i = 0; i < path.m_elements.size(); ++i)
+    for ( size_t i = 0; i < path.m_elements.size(); ++i )
     {
-        os << path.m_elements.at(i);
-        if (i < (path.m_elements.size()-1)) os << ", ";
+        os << path.m_elements.at( i );
+        if ( i < (path.m_elements.size()-1) ) os << ", ";
     }
     return os;
 }
 
-const bool operator == (const WbPath& lhs, const WbPath& rhs)
+const bool operator == ( const WbPath& lhs, const WbPath& rhs )
 {
-    if (lhs.m_elements.size() != rhs.m_elements.size())
+    if ( lhs.m_elements.size() != rhs.m_elements.size() )
     {
         return false;
     }
 
-    for (size_t i = 0; i < lhs.m_elements.size(); ++i)
+    for ( size_t i = 0; i < lhs.m_elements.size(); ++i )
     {
-        if (lhs.m_elements.at(i) != rhs.m_elements.at(i))
+        if ( lhs.m_elements.at( i ) != rhs.m_elements.at( i ) )
         {
             return false;
         }
@@ -213,12 +213,12 @@ const bool operator == (const WbPath& lhs, const WbPath& rhs)
     return true;
 }
 
-const bool operator != (const WbPath& lhs, const WbPath& rhs)
+const bool operator != ( const WbPath& lhs, const WbPath& rhs )
 {
-    return !(lhs == rhs);
+    return !( lhs == rhs );
 }
 
-const WbPath WbPath::BestFitWith(const WbPath& desiredPath) const
+const WbPath WbPath::BestFitWith( const WbPath& desiredPath ) const
 {
     WbPath bestFitPath;
 
@@ -227,18 +227,18 @@ const WbPath WbPath::BestFitWith(const WbPath& desiredPath) const
     const ElementIterator thisEnd = m_elements.end();
     ElementIterator desiredItr = desiredPath.m_elements.begin();
     const ElementIterator desiredEnd = desiredPath.m_elements.end();
-    while ((thisItr != thisEnd) &&
-            (desiredItr != desiredEnd) &&
-              thisItr->CompatibleWith(*desiredItr))
+    while ( ( thisItr != thisEnd ) &&
+            ( desiredItr != desiredEnd ) &&
+              thisItr->CompatibleWith( *desiredItr ) )
     {
         bestFitPath << *thisItr;
         ++thisItr;
         ++desiredItr;
     }
 
-    if (desiredItr == desiredEnd)
+    if ( desiredItr == desiredEnd )
     {
-        while ((thisItr != thisEnd) && (thisItr->Type() == WbPathElement::Type_Unique))
+        while ( ( thisItr != thisEnd ) && ( thisItr->Type() == WbPathElement::Type_Unique ) )
         {
             bestFitPath << *thisItr;
             ++thisItr;
@@ -246,7 +246,7 @@ const WbPath WbPath::BestFitWith(const WbPath& desiredPath) const
     }
     else
     {
-        while (desiredItr != desiredEnd)
+        while ( desiredItr != desiredEnd )
         {
             bestFitPath << *desiredItr;
             ++desiredItr;

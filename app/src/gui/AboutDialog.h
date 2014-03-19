@@ -26,9 +26,7 @@ namespace Ui
 {
     class AboutDialog;
 }
-/**
-  @brief Handles the content and controls for the About GTS Dialog
- */
+
 class AboutDialog : public QDialog
 {
     Q_OBJECT
@@ -38,10 +36,6 @@ public:
     ~AboutDialog();
     
 private:
-    /**
-      @brief Sets the version number, date and licenses for About Dialog
-      @param The text box to be filled with relevant information
-     */
     void UpdateAboutText(QTextEdit* const aboutTextBox);
     Ui::AboutDialog* m_ui;
 };

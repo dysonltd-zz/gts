@@ -37,114 +37,114 @@
 
 namespace
 {
-    void DisableAllChildrenExcept(QList<QWidget*> const childrenToKeepEnabled,
-                                   QWidget* const parentWidget)
+    void DisableAllChildrenExcept( QList<QWidget*> const childrenToKeepEnabled,
+                                   QWidget* const parentWidget )
     {
-        if (parentWidget)
+        if ( parentWidget )
         {
-            foreach(QWidget* childWidget, parentWidget->findChildren< QWidget* >())
+            foreach( QWidget* childWidget, parentWidget->findChildren< QWidget* >() )
             {
-                childWidget->setEnabled(false);
+                childWidget->setEnabled( false );
             }
-            foreach(QWidget* widgetToReEnable, childrenToKeepEnabled)
+            foreach( QWidget* widgetToReEnable, childrenToKeepEnabled )
             {
-                while (widgetToReEnable != 0)
+                while ( widgetToReEnable != 0 )
                 {
-                    widgetToReEnable->setEnabled(true);
+                    widgetToReEnable->setEnabled( true );
                     widgetToReEnable = widgetToReEnable->parentWidget();
                 }
             }
         }
     }
 
-    void EnableAllChildren(QWidget* const parentWidget)
+    void EnableAllChildren( QWidget* const parentWidget )
     {
-        if (parentWidget)
+        if ( parentWidget )
         {
-            foreach(QWidget* childWidget, parentWidget->findChildren< QWidget* >())
+            foreach( QWidget* childWidget, parentWidget->findChildren< QWidget* >() )
             {
-                childWidget->setEnabled(true);
+                childWidget->setEnabled( true );
             }
         }
     }
 }
 
-CaptureLiveBtnController::CaptureLiveBtnController(QPushButton&    captureLiveBtn,
-                                                   QPushButton&    captureCancelBtn,
-                                                   Tool&           toolWidget,
-                                                   CameraHardware& cameraHardware) :
-    m_captureLiveBtn  (captureLiveBtn),
-    m_captureCancelBtn(captureCancelBtn),
-    m_toolWidget      (toolWidget),
-    m_capturingLive   (false),
-    m_cameraHardware  (cameraHardware),
+CaptureLiveBtnController::CaptureLiveBtnController( QPushButton&    captureLiveBtn,
+                                                    QPushButton&    captureCancelBtn,
+                                                    Tool&           toolWidget,
+                                                    CameraHardware& cameraHardware ) :
+    m_captureLiveBtn  ( captureLiveBtn ),
+    m_captureCancelBtn( captureCancelBtn ),
+    m_toolWidget      ( toolWidget ),
+    m_capturingLive   ( false ),
+    m_cameraHardware  ( cameraHardware ),
     m_videoSource     (),
-    m_liveView        (0)
+    m_liveView        ( 0 )
 {
 }
 
 void CaptureLiveBtnController::TryToStartStreamingLiveSource(
     const WbConfig& cameraConfig,
 #if defined(__MINGW32__) || defined(__GNUC__)
-	std::auto_ptr< Callback_1< ImageView* const, const QSize& > > createStreamView)
+	std::auto_ptr< Callback_1< ImageView* const, const QSize& > > createStreamView )
 #else
     CreateStreamViewCallback createStreamView)
 #endif
 {
-    CameraDescription camera(CameraTools::GetCameraForStreamingIfOk(m_cameraHardware,
-                                                                      cameraConfig));
-    if (camera.IsValid())
+    CameraDescription camera( CameraTools::GetCameraForStreamingIfOk( m_cameraHardware,
+                                                                      cameraConfig ) );
+    if ( camera.IsValid() )
     {
 #if defined(__MINGW32__) || defined(__GNUC__)
-        m_liveView = (*createStreamView)(camera.GetImageSize());
+        m_liveView = (*createStreamView)( camera.GetImageSize() );
 #else
-        m_liveView = createStreamView(camera.GetImageSize());
+        m_liveView = createStreamView( camera.GetImageSize() );
 #endif
-        if (m_liveView)
+        if ( m_liveView )
         {
-            m_videoSource.reset(new VideoSource(camera, *m_liveView));
+            m_videoSource.reset( new VideoSource( camera, *m_liveView ) );
             m_videoSource->StartUpdatingImage();
         }
     }
 }
 
-const QString CaptureLiveBtnController::CaptureLiveBtnClicked(const WbConfig& cameraConfig,
+const QString CaptureLiveBtnController::CaptureLiveBtnClicked( const WbConfig& cameraConfig,
                                                                const QString& newImageFileNameFormat,
 #if defined(__MINGW32__) || defined(__GNUC__)
-															   CreateStreamViewCallback* createStreamView )
+															   CreateStreamViewCallback* createStreamView  )
 #else
-                                                               CreateStreamViewCallback createStreamView )
+                                                               CreateStreamViewCallback createStreamView  )
 #endif
 {
     QString capturedFileName;
 
-    if (CurrentlyStreamingLiveSource())
+    if ( CurrentlyStreamingLiveSource() )
     {
         capturedFileName =
-                CaptureImageAndStopStreamingLiveSource(newImageFileNameFormat);
+                CaptureImageAndStopStreamingLiveSource( newImageFileNameFormat );
     }
     else
     {
 #if defined(__MINGW32__) || defined(__GNUC__)
-        TryToStartStreamingLiveSource(cameraConfig,
+        TryToStartStreamingLiveSource( cameraConfig,
                                        std::auto_ptr< CreateStreamViewCallback >(
-                                                       createStreamView));
+                                                       createStreamView ) );
 #else
         TryToStartStreamingLiveSource(cameraConfig, createStreamView);
 #endif
     }
 
-    // we need to check if Starting succeeded
-    if (CurrentlyStreamingLiveSource())
+    // NB: we need to check if Starting succeeded
+    if ( CurrentlyStreamingLiveSource() )
     {
-        m_captureLiveBtn.setText(tr("&Capture"));
-        DisableAllChildrenExcept(QList<QWidget*>() << &m_captureLiveBtn << &m_captureCancelBtn << m_liveView,
-                                  &m_toolWidget);
+        m_captureLiveBtn.setText( tr( "&Capture" ) );
+        DisableAllChildrenExcept( QList<QWidget*>() << &m_captureLiveBtn << &m_captureCancelBtn << m_liveView,
+                                  &m_toolWidget );
     }
     else
     {
-        m_captureLiveBtn.setText(tr("Li&ve"));
-        EnableAllChildren(&m_toolWidget);
+        m_captureLiveBtn.setText( tr( "Li&ve" ) );
+        EnableAllChildren( &m_toolWidget );
     }
 
     return capturedFileName;
@@ -152,46 +152,48 @@ const QString CaptureLiveBtnController::CaptureLiveBtnClicked(const WbConfig& ca
 
 const void CaptureLiveBtnController::CaptureCancelBtnClicked()
 {
-    if (CurrentlyStreamingLiveSource())
+    if ( CurrentlyStreamingLiveSource() )
     {
         m_videoSource.reset();
-        m_liveView->SetCaption("No Camera Streaming");
-        m_captureLiveBtn.setText(tr("Li&ve"));
+        m_liveView->SetCaption( "No Camera Streaming" );
+        m_captureLiveBtn.setText( tr( "Li&ve" ) );
     }
 }
 
-const QString CaptureLiveBtnController::CaptureImageAndStopStreamingLiveSource(const QString& newImageFileNameFormat)
+const QString CaptureLiveBtnController::CaptureImageAndStopStreamingLiveSource(
+                                            const QString& newImageFileNameFormat )
 {
     QString capturedFileName;
     m_videoSource.reset();
-    m_liveView->SetCaption("");
+    m_liveView->SetCaption( "" );
 
-    if(m_liveView)
+    if( m_liveView )
     {
         const QImage capturedImage = m_liveView->GetCurrentImage();
         const QString fileNameToCapture(
-                        FileUtilities::GetUniqueFileName(newImageFileNameFormat));
+                        FileUtilities::GetUniqueFileName( newImageFileNameFormat ) );
 
-        const QFileInfo fileInfo(fileNameToCapture);
-        const QString fileDirPath(fileInfo.absolutePath());
-        const bool mkPathSuccessful = QDir().mkpath(fileDirPath);
+        const QFileInfo fileInfo( fileNameToCapture );
+        const QString fileDirPath( fileInfo.absolutePath() );
+        const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
         bool saveSuccessful = false;
 
-        if (mkPathSuccessful)
+        if ( mkPathSuccessful )
         {
-            saveSuccessful = capturedImage.save(fileNameToCapture);
+            saveSuccessful = capturedImage.save( fileNameToCapture );
         }
 
-        if (saveSuccessful)
+        if ( saveSuccessful )
         {
             capturedFileName = fileNameToCapture;
         }
         else
         {
-            Message::Show(&m_toolWidget,
-                          tr("Capture Live (Btn) Controller"),
-                          tr("Cannot write to: %1!").arg(fileNameToCapture),
-                          Message::Severity_Critical);
+            Message::Show( &m_toolWidget,
+                           tr( "Capture Live (Btn) Controller" ),
+                           tr( "Cannot write to: %1!" )
+                               .arg( fileNameToCapture ),
+                           Message::Severity_Critical );
         }
 
     }
@@ -199,6 +201,8 @@ const QString CaptureLiveBtnController::CaptureImageAndStopStreamingLiveSource(c
 
     return capturedFileName;
 }
+
+
 
 bool CaptureLiveBtnController::CurrentlyStreamingLiveSource() const
 {

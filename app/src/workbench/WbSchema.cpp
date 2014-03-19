@@ -36,7 +36,7 @@ m_defaults()
 
 DefaultValueMap DefaultValueMap::WithDefault(const KeyName & name, const KeyValue & value)
 {
-    DefaultValueMap newMap(*this);
+    DefaultValueMap newMap( *this );
     newMap.m_defaults[ name ] = value;
     return newMap;
 }
@@ -45,8 +45,8 @@ DefaultValueMap DefaultValueMap::WithDefault(const KeyName & name, const KeyValu
 
 const KeyValue DefaultValueMap::DefaultFor(const KeyName & name) const
 {
-    DefaultsMap::const_iterator foundItr = m_defaults.find(name);
-    if (foundItr != m_defaults.end())
+    DefaultsMap::const_iterator foundItr = m_defaults.find( name );
+    if ( foundItr != m_defaults.end() )
     {
         return foundItr->second;
     }
@@ -59,20 +59,20 @@ const KeyValue DefaultValueMap::DefaultFor(const KeyName & name) const
  *
  *  @param name Application-wide unique schema name.
  */
-WbSchema::WbSchema(const KeyName& name)
+WbSchema::WbSchema( const KeyName& name )
     :
-    m_keyName(name)
+    m_keyName( name )
 {
-    assert(!m_keyName.IsNull());
+    assert( !m_keyName.IsNull() );
 }
 
 /** @brief Construct a new schema which is a copy of the current value of @a other
  *
  *  @copydetails WbSchema::operator=()
  */
-WbSchema::WbSchema(const WbSchema& other)
+WbSchema::WbSchema( const WbSchema& other )
 :
-m_keyName(other.m_keyName)
+m_keyName( other.m_keyName )
 {
     *this = other;
 }
@@ -97,24 +97,24 @@ WbSchema::~WbSchema()
  *  The individual elements are cloned or copied, not referenced, so they are no longer linked to the originals.
  *  @param other Schema to copy.
  */
-WbSchema& WbSchema::operator =(const WbSchema& other)
+WbSchema& WbSchema::operator =( const WbSchema& other )
 {
-    if (this != &other)
+    if ( this != &other )
     {
         m_keyName = other.m_keyName;
 
-        for (size_t i = 0; i < other.m_elements.size(); ++i)
+        for ( size_t i = 0; i < other.m_elements.size(); ++i )
         {
-            const SchemaElementPtr& otherElement = other.m_elements.at(i);
+            const SchemaElementPtr& otherElement = other.m_elements.at( i );
             WbSchemaElement*  thisElement(otherElement->Clone());
-            if (other.ContainsSubSchema(otherElement->GetKeyName()))
+            if ( other.ContainsSubSchema(otherElement->GetKeyName()) )
             {
                 m_subSchemas[otherElement->GetKeyName()] = dynamic_cast<WbSubSchema*>(thisElement);
             }
             m_elements.push_back(SchemaElementPtr(thisElement));
         }
 
-        for (int i = 0; i < other.m_dependants.size(); ++i)
+        for ( int i = 0; i < other.m_dependants.size(); ++i )
         {
             m_dependants.push_back(other.m_dependants.at(i));
         }
@@ -139,11 +139,11 @@ const KeyName& WbSchema::Name() const
  *  @param defaultValue The default value to use if the value is not specified by the config file.
  *  If this is set to  KeyValue() (the default) then there is no default value.
  */
-void WbSchema::AddSingleValueKey(const KeyName& keyName,
+void WbSchema::AddSingleValueKey( const KeyName& keyName,
                                   const WbSchemaElement::Multiplicity::Type& multiplicity,
-                                  const KeyValue& defaultValue)
+                                  const KeyValue& defaultValue )
 {
-    assert(!keyName.IsNull());
+    assert( !keyName.IsNull() );
     m_elements.push_back(SchemaElementPtr(new WbSchemaValueKey(keyName, multiplicity, defaultValue)));
 }
 
@@ -153,31 +153,31 @@ void WbSchema::AddSingleValueKey(const KeyName& keyName,
  *  @param multiplicity How many times the key can appear in the schema.
  *  @param keyNames The names of the keys within the group.
  */
-void WbSchema::AddKeyGroup(const KeyName& groupName,
+void WbSchema::AddKeyGroup( const KeyName& groupName,
                             const WbSchemaElement::Multiplicity::Type& multiplicity,
                             const KeyNameList& keyNames,
-                            const DefaultValueMap& defaults)
+                            const DefaultValueMap& defaults )
 {
-    assert(!groupName.IsNull());
-    WbSchemaKeyGroup* newGroup = new WbSchemaKeyGroup(groupName, multiplicity);
+    assert( !groupName.IsNull() );
+    WbSchemaKeyGroup* newGroup = new WbSchemaKeyGroup( groupName, multiplicity );
 
-    for (int i = 0; i < keyNames.size(); ++i)
+    for ( int i = 0; i < keyNames.size(); ++i )
     {
-        newGroup->AddKey(WbSchemaValueKey(keyNames.at(i),
+        newGroup->AddKey( WbSchemaValueKey( keyNames.at( i ),
                                             multiplicity,
-                                            defaults.DefaultFor(keyNames.at(i))));
+                                            defaults.DefaultFor( keyNames.at( i ) ) ) );
     }
 
     m_elements.push_back(SchemaElementPtr(newGroup));
 }
 
-void WbSchema::AddDependant(const KeyName& schemaName, const KeyName& keyName)
+void WbSchema::AddDependant( const KeyName& schemaName, const KeyName& keyName )
 {
     SchemaKeyPair p;
     p.schema = schemaName;
     p.key = keyName;
 
-    m_dependants.push_back(p);
+    m_dependants.push_back( p );
 }
 
 /** @brief Add a sub-schema.
@@ -187,14 +187,14 @@ void WbSchema::AddDependant(const KeyName& schemaName, const KeyName& keyName)
  *  @param defaultFileName The default name of the config file corresponding the this sub-schema. If
  *  this is empty there is no default config file.
  */
-void WbSchema::AddSubSchema(const WbSchema& subSchema,
+void WbSchema::AddSubSchema( const WbSchema& subSchema,
                              const WbSchemaElement::Multiplicity::Type& multiplicity,
-                             const QString& defaultFileName)
+                             const QString& defaultFileName )
 {
-    assert(!subSchema.IsNull());
-    WbSubSchema* subSchemaElement = new WbSubSchema(subSchema,
+    assert( !subSchema.IsNull() );
+    WbSubSchema* subSchemaElement = new WbSubSchema( subSchema,
                                                      multiplicity,
-                                                     defaultFileName);
+                                                     defaultFileName );
     m_elements.push_back(SchemaElementPtr(subSchemaElement));
     m_subSchemas[ subSchema.Name() ] = subSchemaElement;
 }
@@ -212,25 +212,25 @@ void WbSchema::AddSubSchema(const WbSchema& subSchema,
  *  @return whether the operation was successful (i.e. whether an appropriate schema was found to add
  *  the sub-schema to).
  */
-bool WbSchema::AddSubSchemaToSchema(const WbSchema& subSchema,
+bool WbSchema::AddSubSchemaToSchema( const WbSchema& subSchema,
                                      const KeyName& nameOfSchemaToAddTo,
                                      const WbSchemaElement::Multiplicity::Type& multiplicity,
-                                     const QString& defaultFileName)
+                                     const QString& defaultFileName )
 {
-    if (nameOfSchemaToAddTo == Name())
+    if ( nameOfSchemaToAddTo == Name() )
     {
-        AddSubSchema(subSchema, multiplicity, defaultFileName);
+        AddSubSchema( subSchema, multiplicity, defaultFileName );
         return true;
     }
     else
     {
-        for (SubSchemaIterator i = m_subSchemas.begin(); i != m_subSchemas.end(); ++i)
+        for ( SubSchemaIterator i = m_subSchemas.begin(); i != m_subSchemas.end(); ++i )
         {
-            if (i->second->ModifiableSchema()
-                            .AddSubSchemaToSchema(subSchema,
+            if ( i->second->ModifiableSchema()
+                            .AddSubSchemaToSchema( subSchema,
                                                    nameOfSchemaToAddTo,
                                                    multiplicity,
-                                                   defaultFileName))
+                                                   defaultFileName ) )
             {
                 return true;
             }
@@ -244,12 +244,12 @@ bool WbSchema::AddSubSchemaToSchema(const WbSchema& subSchema,
  *
  *  @param name name of the key representing the sub-schema.
  */
-const WbSchema WbSchema::FindSubSchema(const KeyName& name) const
+const WbSchema WbSchema::FindSubSchema( const KeyName& name ) const
 {
-    assert(!name.IsNull());
-    SubSchemaConstIterator itr = m_subSchemas.find(name);
+    assert( !name.IsNull() );
+    SubSchemaConstIterator itr = m_subSchemas.find( name );
 
-    if (itr != m_subSchemas.end())
+    if ( itr != m_subSchemas.end() )
     {
         return itr->second->ModifiableSchema();
     }
@@ -267,7 +267,7 @@ const WbSchema WbSchema::FindSubSchema(const KeyName& name) const
  */
 const WbSchema WbSchema::GetMostSpecificSubSchema() const
 {
-    if (m_subSchemas.empty())
+    if ( m_subSchemas.empty() )
     {
         return *this;
     }
@@ -286,13 +286,13 @@ const WbSchema WbSchema::GetMostSpecificSubSchema() const
  *  @param config The config structure to fill out.
  *  @return Whether we read the config or not.
  */
-bool WbSchema::ReadFrom(WbConfigFileReader& reader, WbConfig& config) const
+bool WbSchema::ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const
 {
-    if (reader.GetSchemaName() == Name())
+    if ( reader.GetSchemaName() == Name() )
     {
-        for (size_t i = 0; i < m_elements.size(); ++i)
+        for ( size_t i = 0; i < m_elements.size(); ++i )
         {
-            m_elements[ i ]->ReadFrom(reader, config);
+            m_elements[ i ]->ReadFrom( reader, config );
         }
 
         return true;
@@ -311,20 +311,20 @@ bool WbSchema::ReadFrom(WbConfigFileReader& reader, WbConfig& config) const
  *  @param config The config data to write to the writer.
  *  @return Whether we successfully wrote all keys.
  */
-bool WbSchema::WriteTo(WbConfigFileWriter& writer, const WbConfig& config) const
+bool WbSchema::WriteTo( WbConfigFileWriter& writer, const WbConfig& config ) const
 {
-    writer.StartConfigFile(m_keyName);
+    writer.StartConfigFile( m_keyName );
 
-    for (size_t i = 0; i < m_elements.size(); ++i)
+    for ( size_t i = 0; i < m_elements.size(); ++i )
     {
-        const bool successful = m_elements[ i ]->WriteTo(writer, config);
-        if (!successful)
+        const bool successful = m_elements[ i ]->WriteTo( writer, config );
+        if ( !successful )
         {
             return false;
         }
     }
 
-    writer.EndConfigFile(m_keyName);
+    writer.EndConfigFile( m_keyName );
 
     return true;
 }
@@ -334,12 +334,12 @@ bool WbSchema::WriteTo(WbConfigFileWriter& writer, const WbConfig& config) const
  *  @param os the output stream to print on.
  *  @param indent the string used before each line of the schema as an indent
  */
-void WbSchema::PrintOn(std::ostream& os, const std::string& indent) const
+void WbSchema::PrintOn( std::ostream& os, const std::string& indent ) const
 {
     os << "Schema '" << m_keyName << ":" << std::endl;
-    for (size_t i = 0; i < m_elements.size(); ++i)
+    for ( size_t i = 0; i < m_elements.size(); ++i )
     {
-        m_elements[ i ]->PrintOn(os, indent);
+        m_elements[ i ]->PrintOn( os, indent );
     }
 }
 
@@ -347,11 +347,11 @@ void WbSchema::PrintOn(std::ostream& os, const std::string& indent) const
  *
  *  @param config The config structure that needs its defaults set
  */
-void WbSchema::SetDefaultsTo(WbConfig& config) const
+void WbSchema::SetDefaultsTo( WbConfig& config ) const
 {
-    for (size_t i = 0; i < m_elements.size(); ++i)
+    for ( size_t i = 0; i < m_elements.size(); ++i )
     {
-        m_elements[ i ]->SetDefaultTo(config);
+        m_elements[ i ]->SetDefaultTo( config );
     }
 }
 
@@ -385,9 +385,9 @@ const WbSchema::SchemaKeyPairList WbSchema::GetDependants() const
  *  @return @a true if the sub-schema exists at this level otherwise @a false.
  *  Also @a false if this schema's name is @a schemaName.
  */
-bool WbSchema::ContainsSubSchema(const KeyName& schemaName) const
+bool WbSchema::ContainsSubSchema( const KeyName& schemaName ) const
 {
-    return (m_subSchemas.find(schemaName) != m_subSchemas.end());
+    return ( m_subSchemas.find( schemaName ) != m_subSchemas.end() );
 }
 
 /** @brief Returns whether the specified schema name is the name of this schema
@@ -396,16 +396,16 @@ bool WbSchema::ContainsSubSchema(const KeyName& schemaName) const
  *  @param schemaName The name of the schema to test for.
  *  @return @a true if the schema exists otherwise @a false.
  */
-bool WbSchema::ContainsSchemaAnywhere(const KeyName& schemaName) const
+bool WbSchema::ContainsSchemaAnywhere( const KeyName& schemaName ) const
 {
-    if (Name() == schemaName)
+    if ( Name() == schemaName )
     {
         return true;
     }
 
-    for (SubSchemaConstIterator i = m_subSchemas.begin(); i != m_subSchemas.end(); ++i)
+    for ( SubSchemaConstIterator i = m_subSchemas.begin(); i != m_subSchemas.end(); ++i )
     {
-        if (i->second->ModifiableSchema().ContainsSchemaAnywhere(schemaName))
+        if ( i->second->ModifiableSchema().ContainsSchemaAnywhere( schemaName ) )
         {
             return true;
         }
@@ -418,15 +418,15 @@ namespace
 {
     struct NameIs
     {
-        NameIs(const KeyName& keyName)
+        NameIs( const KeyName& keyName )
         :
-            m_keyName(keyName)
+            m_keyName( keyName )
         {
         }
 
-        bool operator() (std::unique_ptr<WbSchemaElement> const & element) const
+        bool operator() ( std::unique_ptr<WbSchemaElement> const & element ) const
         {
-            return (element->GetKeyName() == m_keyName);
+            return ( element->GetKeyName() == m_keyName );
         }
     private:
         const KeyName m_keyName;
@@ -435,11 +435,11 @@ namespace
 #endif
 
 
-bool WbSchema::ContainsKey(const KeyName& keyName) const
+bool WbSchema::ContainsKey( const KeyName& keyName ) const
 {
 #if defined(__MINGW32__) || defined(__GNUC__)
-    return (std::find_if(m_elements.begin(), m_elements.end(),
-                           NameIs(keyName)) != m_elements.end());
+    return ( std::find_if( m_elements.begin(), m_elements.end(),
+                           NameIs( keyName ) ) != m_elements.end() );
 #else
     return (std::find_if(m_elements.begin(), m_elements.end(),
                          [this, keyName](const SchemaElementPtr& element) -> bool
@@ -451,33 +451,33 @@ bool WbSchema::ContainsKey(const KeyName& keyName) const
 }
 
 
-const WbSchemaElement::Multiplicity::Type WbSchema::GetMultiplicity(const KeyName& keyName) const
+const WbSchemaElement::Multiplicity::Type WbSchema::GetMultiplicity( const KeyName& keyName ) const
 {
-    for (size_t i = 0; i < m_elements.size(); ++i)
+    for ( size_t i = 0; i < m_elements.size(); ++i )
     {
-        const SchemaElementPtr& thisElement = m_elements.at(i);
-        if (thisElement->GetKeyName() == keyName)
+        const SchemaElementPtr& thisElement = m_elements.at( i );
+        if ( thisElement->GetKeyName() == keyName )
         {
             return thisElement->GetMultiplicity();
         }
     }
-    assert(!"Key not found");
+    assert( !"Key not found" );
     return WbSchemaElement::Multiplicity::One;
 }
 
-const WbPath WbSchema::FindPathToSchema(const WbSchema& schema,
-                                         const WbSchemaElement::Multiplicity::Type& multiplicity) const
+const WbPath WbSchema::FindPathToSchema( const WbSchema& schema,
+                                         const WbSchemaElement::Multiplicity::Type& multiplicity ) const
 {
     WbPath path;
-    if (ContainsSchemaAnywhere(schema.Name()))
+    if ( ContainsSchemaAnywhere( schema.Name() ) )
     {
-        path << WbPathElement::FromMultiplicity(Name(), multiplicity);
-        for (SubSchemaConstIterator i = m_subSchemas.begin(); i != m_subSchemas.end(); ++i)
+        path << WbPathElement::FromMultiplicity( Name(), multiplicity );
+        for ( SubSchemaConstIterator i = m_subSchemas.begin(); i != m_subSchemas.end(); ++i )
         {
             path << i->second->ModifiableSchema()
-                .FindPathToSchema(schema,
+                .FindPathToSchema( schema,
                                    GetMultiplicity(
-                                       i->second->ModifiableSchema().Name()));
+                                       i->second->ModifiableSchema().Name() ) );
         }
     }
     return path;

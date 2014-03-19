@@ -32,52 +32,52 @@
 
 #include "Message.h"
 
-TargetsWidget::TargetsWidget(QWidget* parent) :
-    Tool(parent, CreateSchema()),
-    m_ui(new Ui::TargetsWidget)
+TargetsWidget::TargetsWidget( QWidget* parent ) :
+    Tool( parent, CreateSchema() ),
+    m_ui( new Ui::TargetsWidget )
 {
-    m_ui->setupUi(this);
+    m_ui->setupUi( this );
 
-	TargetRegistry::FillOutTargetTypeCombo(*m_ui->m_targetTypeComboBox);
+	TargetRegistry::FillOutTargetTypeCombo( *m_ui->m_targetTypeComboBox );
 
-    m_ui->m_imageView->SetConversionMethod(ImageView::SmoothConversion);
+    m_ui->m_imageView->SetConversionMethod( ImageView::SmoothConversion );
 
     using namespace TargetSchema;
-    AddMapper(trackImgKey, m_ui->m_trackingTargetFileNameEdit);
-    AddMapper(printImgKey, m_ui->m_printableTargetFileNameEdit);
+    AddMapper( trackImgKey, m_ui->m_trackingTargetFileNameEdit );
+    AddMapper( printImgKey, m_ui->m_printableTargetFileNameEdit );
 
-    QObject::connect(m_ui->m_useStandard,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_useStandard,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(UseStandardBtnClicked()));
+                      SLOT( UseStandardBtnClicked() ) );
 
-    QObject::connect(m_ui->m_targetTypeComboBox,
-                      SIGNAL(currentIndexChanged (int)),
+    QObject::connect( m_ui->m_targetTypeComboBox,
+                      SIGNAL( currentIndexChanged (int) ),
                       this,
-                      SLOT(TargetTypeChanged()));
+                      SLOT( TargetTypeChanged() ) );
 
-    QObject::connect(m_ui->m_browseTrackingBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_browseTrackingBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(BrowseTrackingBtnClicked()));
-    QObject::connect(m_ui->m_clearTrackingBtn,
-                      SIGNAL(clicked()),
+                      SLOT( BrowseTrackingBtnClicked() ) );
+    QObject::connect( m_ui->m_clearTrackingBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(ClearTrackingBtnClicked()));
+                      SLOT( ClearTrackingBtnClicked() ) );
 
-    QObject::connect(m_ui->m_browsePrintableBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_browsePrintableBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(BrowsePrintableBtnClicked()));
-    QObject::connect(m_ui->m_clearPrintableBtn,
-                      SIGNAL(clicked()),
+                      SLOT( BrowsePrintableBtnClicked() ) );
+    QObject::connect( m_ui->m_clearPrintableBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(ClearPrintableBtnClicked()));
+                      SLOT( ClearPrintableBtnClicked() ) );
 
-    QObject::connect(m_ui->m_printTargetBtn,
-                      SIGNAL(clicked()),
+    QObject::connect( m_ui->m_printTargetBtn,
+                      SIGNAL( clicked() ),
                       this,
-                      SLOT(PrintTargetBtnClicked()));
+                      SLOT( PrintTargetBtnClicked() ) );
 }
 
 TargetsWidget::~TargetsWidget()
@@ -91,7 +91,7 @@ bool TargetsWidget::IsDataValid() const
 
     bool valid = true;
 
-    if (m_ui->m_trackingTargetFileNameEdit->text().isEmpty())
+    if ( m_ui->m_trackingTargetFileNameEdit->text().isEmpty() )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_trackingTargetFileNameLabel, true);
@@ -99,7 +99,7 @@ bool TargetsWidget::IsDataValid() const
     else {
         Tool::HighlightLabel(m_ui->m_trackingTargetFileNameLabel, false);
     }
-    if (m_ui->m_printableTargetFileNameEdit->text().isEmpty())
+    if ( m_ui->m_printableTargetFileNameEdit->text().isEmpty() )
     {
         valid = valid && false;
         Tool::HighlightLabel(m_ui->m_printableTargetFileNameLabel, true);
@@ -124,12 +124,12 @@ const QString TargetsWidget::CannotCloseReason() const
 const WbSchema TargetsWidget::CreateSchema()
 {
    using namespace TargetSchema;
-   WbSchema schema(CreateWorkbenchSubSchema(schemaName, tr("Parameters")));
+   WbSchema schema( CreateWorkbenchSubSchema( schemaName, tr( "Parameters" ) ) );
 
-    schema.AddKeyGroup(TargetSchema::targetGroup,
+    schema.AddKeyGroup( TargetSchema::targetGroup,
                         WbSchemaElement::Multiplicity::One,
                         KeyNameList() << TargetSchema::trackImgKey
-                                      << TargetSchema::printImgKey);
+                                      << TargetSchema::printImgKey );
 
     return schema;
 }
@@ -148,13 +148,13 @@ const QString TargetsWidget::GetSelectedTargetId() const
 {
     QComboBox* const targetTypeCombo = m_ui->m_targetTypeComboBox;
     const int newTargetIndex = targetTypeCombo->currentIndex();
-    const QString targetId(targetTypeCombo->itemData(newTargetIndex).toString());
+    const QString targetId( targetTypeCombo->itemData( newTargetIndex ).toString() );
     return targetId;
 }
 
 void TargetsWidget::UseStandardBtnClicked()
 {
-    if (m_ui->m_useStandard->isChecked())
+    if ( m_ui->m_useStandard->isChecked() )
 	{
 	    m_ui->m_targetTypeComboBox->setEnabled(true);
 	    m_ui->m_browseTrackingBtn->setEnabled(false);
@@ -176,14 +176,14 @@ void TargetsWidget::UseStandardBtnClicked()
 	}
 }
 
-bool TargetsWidget::DirectoryExists(const QString& outputDirectoryName)
+bool TargetsWidget::DirectoryExists( const QString& outputDirectoryName )
 {
-    QDir outputDirectory(outputDirectoryName);
+    QDir outputDirectory( outputDirectoryName );
     bool directoryExists = outputDirectory.exists();
 
-    if (!directoryExists)
+    if ( !directoryExists )
     {
-        directoryExists = QDir().mkpath(outputDirectory.absolutePath());
+        directoryExists = QDir().mkpath( outputDirectory.absolutePath() );
     }
 
     return directoryExists;
@@ -193,10 +193,10 @@ void TargetsWidget::TargetTypeChanged()
 {
     bool successful = true;
 
-    const TargetRegistry::TargetDetails targetDetails(TargetRegistry::GetTargetById(GetSelectedTargetId()));
+    const TargetRegistry::TargetDetails targetDetails( TargetRegistry::GetTargetById( GetSelectedTargetId() ) );
 
-    const QImage trackImage(targetDetails.imageFileName);
-    const QImage printImage(targetDetails.printImageFileName);
+    const QImage trackImage( targetDetails.imageFileName );
+    const QImage printImage( targetDetails.printImageFileName );
 
 	QString trackImageName = targetDetails.imageFileName;
 	QString printImageName = targetDetails.printImageFileName;
@@ -204,97 +204,97 @@ void TargetsWidget::TargetTypeChanged()
 	trackImageName = trackImageName.remove(':');
 	printImageName = printImageName.remove(':');
 
-    if (DirectoryExists(GetCurrentConfig().GetAbsoluteFileNameFor("targetImages/")))
+    if (DirectoryExists( GetCurrentConfig().GetAbsoluteFileNameFor("targetImages/") ))
     {
         const QString trackImageFile(
-            GetCurrentConfig().GetAbsoluteFileNameFor("targetImages/" + trackImageName));
+            GetCurrentConfig().GetAbsoluteFileNameFor( "targetImages/" + trackImageName ) );
         const QString printImageFile(
-            GetCurrentConfig().GetAbsoluteFileNameFor("targetImages/" + printImageName));
+            GetCurrentConfig().GetAbsoluteFileNameFor( "targetImages/" + printImageName ) );
 
-        successful = successful && trackImage.save(trackImageFile.toAscii().data());
-        successful = successful && printImage.save(printImageFile.toAscii().data());
+        successful = successful && trackImage.save( trackImageFile.toAscii().data() );
+        successful = successful && printImage.save( printImageFile.toAscii().data() );
 
-	    if (successful)
+	    if ( successful )
 	    {
             const QString relTrackImageFile =
-                WbConfigTools::ConvertFileName(GetCurrentConfig(),
+                WbConfigTools::ConvertFileName( GetCurrentConfig(),
                                                 trackImageFile,
                                                 WbConfigTools::FileNameMode_RelativeInsideWorkbench,
-                                                true);
+                                                true );
             const QString relPrintImageFile =
-                WbConfigTools::ConvertFileName(GetCurrentConfig(),
+                WbConfigTools::ConvertFileName( GetCurrentConfig(),
                                                 printImageFile,
                                                 WbConfigTools::FileNameMode_RelativeInsideWorkbench,
-                                                true);
+                                                true );
 
             m_ui->m_trackingTargetFileNameEdit->setText(relTrackImageFile);
             m_ui->m_printableTargetFileNameEdit->setText(relPrintImageFile);
 	    }
         else
         {
-            Message::Show(this,
-                           tr("Target Tool"),
-                           tr("Failed to save target"),
-                           Message::Severity_Critical);
+            Message::Show( this,
+                           tr( "Target Tool" ),
+                           tr( "Failed to save target" ),
+                           Message::Severity_Critical );
         }
     }
     else
     {
-        Message::Show(this,
-                       tr("Target Tool"),
-                       tr("Please save workbench"),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Target Tool" ),
+                       tr( "Please save workbench" ),
+                       Message::Severity_Critical );
     }
 }
 
 QString TargetsWidget::BrowseTargetImage()
 {
     // Make sure folder is there before adding file
-    const QString fileDirPath(GetCurrentConfig().GetAbsoluteFileNameFor("targetImage/"));
-    const bool mkPathSuccessful = QDir().mkpath(fileDirPath);
+    const QString fileDirPath( GetCurrentConfig().GetAbsoluteFileNameFor( "targetImage/" ) );
+    const bool mkPathSuccessful = QDir().mkpath( fileDirPath );
 
     if (!mkPathSuccessful)
     {
-        Message::Show(this,
-                       tr("Target Configuration Tool"),
-                       tr("Target directory is missing"),
-                       Message::Severity_Critical);
+        Message::Show( this,
+                       tr( "Target Configuration Tool" ),
+                       tr( "Target directory is missing"),
+                       Message::Severity_Critical );
         return QString();
     }
 
     QString relImageFile;
 
     // Display file selection dialog
-    FileDialogs::ExtendedFileDialog fileDialog(this,
-                                                tr("Select Target File"),
+    FileDialogs::ExtendedFileDialog fileDialog( this,
+                                                tr( "Select Target File" ),
                                                 GetCurrentConfig().GetAbsoluteFileInfo().absolutePath(),
-                                                "Images(*.png *.jpg *.bmp *.ppm);;All Files(*)",
-                                                true);
+                                                "Images( *.png *.jpg *.bmp *.ppm );;All Files( * )",
+                                                true );
     const int result = fileDialog.exec();
-    if (result == QFileDialog::Accepted)
+    if ( result == QFileDialog::Accepted )
     {
-        QString imageName(fileDialog.selectedFiles().front());
+        QString imageName( fileDialog.selectedFiles().front() );
 
-        if (!imageName.isEmpty())
+        if ( !imageName.isEmpty() )
         {
             WbConfigTools::FileNameMode mode = WbConfigTools::FileNameMode_RelativeInsideWorkbench;
 
-            if (FileUtilities::FileIsExternal(imageName, GetCurrentConfig()))
+            if ( FileUtilities::FileIsExternal( imageName, GetCurrentConfig() ) )
             {
-                if (fileDialog.CopyFileSelected())
+                if ( fileDialog.CopyFileSelected() )
                 {
-                    const QString dstFile = QFileInfo(imageName).fileName();
+                    const QString dstFile = QFileInfo( imageName ).fileName();
 
                     const QString newImageName(
-                        GetCurrentConfig().GetAbsoluteFileNameFor("targetImage/" + dstFile));
+                        GetCurrentConfig().GetAbsoluteFileNameFor( "targetImage/" + dstFile ) );
 
-                    QFile::copy(imageName, newImageName);
+                    QFile::copy( imageName, newImageName );
 
                     imageName = newImageName;
                 }
                 else
                 {
-                    if (fileDialog.RelativeSelected())
+                    if ( fileDialog.RelativeSelected() )
                     {
                         mode = WbConfigTools::FileNameMode_Relative;
                     }
@@ -306,10 +306,10 @@ QString TargetsWidget::BrowseTargetImage()
             }
 
             relImageFile =
-                WbConfigTools::ConvertFileName(GetCurrentConfig(),
+                WbConfigTools::ConvertFileName( GetCurrentConfig(),
                                                 imageName,
                                                 mode,
-                                                true);
+                                                true );
         }
     }
 
@@ -340,15 +340,15 @@ void TargetsWidget::ClearPrintableBtnClicked()
 
 void TargetsWidget::TargetImageChanged()
 {
-    const QString fileName = WbConfigTools::GetFileName(GetCurrentConfig(), TargetSchema::trackImgKey);
+    const QString fileName = WbConfigTools::GetFileName( GetCurrentConfig(), TargetSchema::trackImgKey );
 
-    if (fileName.isEmpty())
+    if ( fileName.isEmpty() )
     {
         m_ui->m_imageView->Clear();
     }
     else
     {
-        m_ui->m_imageView->SetImage(fileName);
+        m_ui->m_imageView->SetImage( fileName );
     }
 
     m_ui->m_imageView->update();
@@ -356,11 +356,11 @@ void TargetsWidget::TargetImageChanged()
 
 void TargetsWidget::PrintTargetBtnClicked()
 {
-    const QString fileName = WbConfigTools::GetFileName(GetCurrentConfig(), TargetSchema::printImgKey);
+    const QString fileName = WbConfigTools::GetFileName( GetCurrentConfig(), TargetSchema::printImgKey );
 
-    if (!fileName.isEmpty())
+    if ( !fileName.isEmpty() )
     {
-        ImagePrintPreviewDlg printDlg((QImage(fileName)));
+        ImagePrintPreviewDlg printDlg( (QImage( fileName )) );
         printDlg.exec();
     }
 }

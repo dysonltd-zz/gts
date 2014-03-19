@@ -33,16 +33,16 @@ class CalibrationImageGridMapper: public ConfigKeyMapper
     Q_OBJECT
 
 public:
-    CalibrationImageGridMapper(ImageGrid& imageGrid);
+    CalibrationImageGridMapper( ImageGrid& imageGrid );
 
-    virtual void CommitData(WbConfig& config);
-    virtual void SetConfig(const WbConfig& config);
+    virtual void CommitData( WbConfig& config );
+    virtual void SetConfig( const WbConfig& config );
 
     void SetCurrentImage(const KeyId& imageId);
 
 private:
-    void UpdateImage(const WbConfig& config);
-    void OverlayCornersIfPossible(const WbConfig& config);
+    void UpdateImage( const WbConfig& config );
+    void OverlayCornersIfPossible( const WbConfig& config );
     void UpdateGrid();
     bool ImageIsFound() const;
     QImage GetRealOrNotFoundImage() const;

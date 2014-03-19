@@ -26,106 +26,106 @@ namespace WbConfigTools
 {
     namespace
     {
-        const KeyValue GetFileNameToForConfig(WbConfig config,
+        const KeyValue GetFileNameToForConfig( WbConfig config,
                                                const QString& possiblyRelativeFileName,
-                                               const FileNameMode& mode)
+                                               const FileNameMode& mode )
         {
             const QString absoluteFileName(
-                    config.GetAbsoluteFileNameFor(possiblyRelativeFileName));
+                    config.GetAbsoluteFileNameFor( possiblyRelativeFileName ) );
 
-            const WbConfig topLevelCfg(config.FindRootAncestor());
-            const QDir topLevelDir(topLevelCfg.GetAbsoluteFileInfo().absoluteDir());
+            const WbConfig topLevelCfg( config.FindRootAncestor() );
+            const QDir topLevelDir( topLevelCfg.GetAbsoluteFileInfo().absoluteDir() );
             const bool fileIsInternal =
-                        !topLevelDir.relativeFilePath(absoluteFileName).startsWith("..");
+                        !topLevelDir.relativeFilePath( absoluteFileName ).startsWith( ".." );
 
-            return KeyValue::from(ConvertFileName(config, absoluteFileName, mode, fileIsInternal));
+            return KeyValue::from( ConvertFileName( config, absoluteFileName, mode, fileIsInternal ) );
         }
     }
 
-    void AddComboBoxItemForElement(QComboBox& comboBox,
-                                    const WbConfig::SubConfigs::ValueIdPair& element)
+    void AddComboBoxItemForElement( QComboBox& comboBox,
+                                    const WbConfig::SubConfigs::ValueIdPair& element )
     {
-        const QString elementName(element
+        const QString elementName( element
                                        .value
-                                       .GetKeyValue(WbDefaultKeys::displayNameKey)
-                                       .ToQString());
+                                       .GetKeyValue( WbDefaultKeys::displayNameKey )
+                                       .ToQString() );
 
-        comboBox.addItem(elementName, QVariant(element.id));
-        comboBox.setItemData(comboBox.count()-1,
+        comboBox.addItem( elementName, QVariant( element.id ) );
+        comboBox.setItemData( comboBox.count()-1,
                               element
                                  .value
-                                 .GetKeyValue(WbDefaultKeys::descriptionKey)
+                                 .GetKeyValue( WbDefaultKeys::descriptionKey )
                                  .ToQString(),
-                              Qt::ToolTipRole);
+                              Qt::ToolTipRole );
     }
 
-    void FillOutComboBoxWithCollectionElements(QComboBox& comboBox,
-                                                const Collection& collection)
+    void FillOutComboBoxWithCollectionElements( QComboBox& comboBox,
+                                                const Collection& collection )
     {
-        for (size_t i = 0; i < collection.NumElements(); ++i)
+        for ( size_t i = 0; i < collection.NumElements(); ++i )
         {
-            AddComboBoxItemForElement(comboBox, collection.ElementAt(i));
+            AddComboBoxItemForElement( comboBox, collection.ElementAt( i ) );
         }
     }
 
-    const QString ConvertFileName(const WbConfig& config,
+    const QString ConvertFileName( const WbConfig& config,
                                    const QString& absoluteFileName,
                                    const FileNameMode& mode,
-                                   const bool fileIsInternal)
+                                   const bool fileIsInternal )
     {
-        switch (mode)
+        switch ( mode )
         {
             case FileNameMode_Relative:
                 return config.GetAbsoluteFileInfo()
-                            .absoluteDir().relativeFilePath(absoluteFileName);
+                            .absoluteDir().relativeFilePath( absoluteFileName );
 
             case FileNameMode_RelativeInsideWorkbench:
-                if (fileIsInternal)
+                if ( fileIsInternal )
                 {
                     return config.GetAbsoluteFileInfo()
-                            .absoluteDir().relativeFilePath(absoluteFileName);
+                            .absoluteDir().relativeFilePath( absoluteFileName );
                 }
                 else
                 {
-                    return config.GetAbsoluteFileNameFor(absoluteFileName);
+                    return config.GetAbsoluteFileNameFor( absoluteFileName );
                 }
 
             case FileNameMode_Absolute:
-                return config.GetAbsoluteFileNameFor(absoluteFileName);
+                return config.GetAbsoluteFileNameFor( absoluteFileName );
 
             default:
-                assert(!"Unhandled FileNameMode");
+                assert( !"Unhandled FileNameMode" );
                 return QString();
         }
     }
 
-    const QString GetFileName(const WbConfig& config, const KeyName& fileNameKeyName)
+    const QString GetFileName( const WbConfig& config, const KeyName& fileNameKeyName )
     {
-        const KeyValue fileNameKeyValue(config.GetKeyValue(fileNameKeyName));
-        const QString fileName(fileNameKeyValue.ToQString());
-        return config.GetAbsoluteFileNameFor(fileName);
+        const KeyValue fileNameKeyValue( config.GetKeyValue( fileNameKeyName ) );
+        const QString fileName( fileNameKeyValue.ToQString() );
+        return config.GetAbsoluteFileNameFor( fileName );
     }
 
-    void SetFileName(WbConfig config,
+    void SetFileName( WbConfig config,
                       const QString& possiblyRelativeFileName,
                       const KeyName& fileNameKeyName,
                       const FileNameMode& mode,
-                      const KeyId& keyId)
+                      const KeyId& keyId )
     {
-        config.SetKeyValue(fileNameKeyName, GetFileNameToForConfig(config, possiblyRelativeFileName, mode), keyId);
+        config.SetKeyValue( fileNameKeyName, GetFileNameToForConfig( config, possiblyRelativeFileName, mode ), keyId );
     }
 
-    KeyId AddFileName(WbConfig config,
+    KeyId AddFileName( WbConfig config,
                        const QString& possiblyRelativeFileName,
                        const KeyName& fileNameKeyName,
-                       const FileNameMode& mode)
+                       const FileNameMode& mode )
     {
-        return config.AddKeyValue(fileNameKeyName, GetFileNameToForConfig(config, possiblyRelativeFileName, mode));
+        return config.AddKeyValue( fileNameKeyName, GetFileNameToForConfig( config, possiblyRelativeFileName, mode ) );
     }
 
-    const QString DisplayNameOf(const WbConfig& config)
+    const QString DisplayNameOf( const WbConfig& config )
     {
-        return config.GetKeyValue(WbDefaultKeys::displayNameKey).ToQString();
+        return config.GetKeyValue( WbDefaultKeys::displayNameKey ).ToQString();
     }
 
 }

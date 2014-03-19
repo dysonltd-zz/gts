@@ -43,11 +43,11 @@ class PositionCalibrationWidget : public Tool
     Q_OBJECT
 
 public:
-    explicit PositionCalibrationWidget(CameraHardware& cameraHardware,
-                                      QWidget* parent = 0);
+    explicit PositionCalibrationWidget( CameraHardware& cameraHardware,
+                                      QWidget* parent = 0 );
     ~PositionCalibrationWidget();
 
-    virtual const QString Name() const { return tr("Calibrate Position"); }
+    virtual const QString Name() const { return tr( "Calibrate Position" ); }
     virtual bool CanClose() const;
     virtual const QString CannotCloseReason() const;
 
@@ -64,11 +64,11 @@ private:
 
     void ShowNoCameraError();
 
-    ImageView* const GetStreamingView(const QSize& imageSize);
+    ImageView* const GetStreamingView( const QSize& imageSize );
     virtual const QString GetSubSchemaDefaultFileName() const;
     virtual void ReloadCurrentConfigToolSpecific();
-    void SetCalibrationImage(const QString& imageName,
-                              const WbConfigTools::FileNameMode& mode);
+    void SetCalibrationImage( const QString& imageName,
+                              const WbConfigTools::FileNameMode& mode );
 
     static const WbSchema CreateSchema();
 

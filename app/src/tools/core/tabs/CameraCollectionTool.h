@@ -30,17 +30,17 @@ class CameraCollectionTool : public CollectionToolWidget
     Q_OBJECT
 
 public:
-    explicit CameraCollectionTool(CameraHardware& cameraHardware,
+    explicit CameraCollectionTool( CameraHardware& cameraHardware,
                                    QWidget* parent,
-                                   MainWindow& mainWindow);
+                                   MainWindow& mainWindow );
     ~CameraCollectionTool();
 
     virtual const QString Name() const;
 
 protected:
-    virtual void AddExtraNewElementWizardPages(NewElementWizard* const wizard);
-    virtual void SetToolSpecificConfigItems(WbConfig newElement,
-                                             NewElementWizard& wizard);
+    virtual void AddExtraNewElementWizardPages( NewElementWizard* const wizard );
+    virtual void SetToolSpecificConfigItems( WbConfig newElement,
+                                             NewElementWizard& wizard );
 
 private:
     virtual const QString GetSubSchemaDefaultFileName() const;

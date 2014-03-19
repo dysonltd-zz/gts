@@ -20,6 +20,6 @@
 
 Collection TargetsCollection()
 {
-    return Collection(KeyName("targets"), KeyName("target"));
+    return Collection( KeyName( "targets" ), KeyName( "target" ) );
 }
 

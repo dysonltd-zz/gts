@@ -26,26 +26,27 @@ ImageViewer::ImageViewer(const QImage& image, QWidget *parent) :
     m_ui(new Ui::ImageViewer)
 {
     m_ui->setupUi(this);
+
     ShowImage(image);
-    Connectsignals();
+
+    QObject::connect( m_ui->m_okBtn,
+                      SIGNAL( clicked() ),
+                      this,
+                      SLOT( accept() ) );
 }
 
-ImageViewer::ImageViewer(const IplImage *image, QWidget *parent) :
+ImageViewer::ImageViewer(const IplImage* image, QWidget *parent) :
     QDialog(parent),
     m_ui(new Ui::ImageViewer)
 {
     m_ui->setupUi(this);
-    ShowImage(image);
-    Connectsignals();
-}
 
-ImageViewer::ImageViewer(const cv::Mat *image, QWidget *parent) :
-    QDialog(parent),
-    m_ui(new Ui::ImageViewer)
-{
-    m_ui->setupUi(this);
     ShowImage(image);
-    Connectsignals();
+
+    QObject::connect( m_ui->m_okBtn,
+                      SIGNAL( clicked() ),
+                      this,
+                      SLOT( accept() ) );
 }
 
 ImageViewer::~ImageViewer()
@@ -56,44 +57,30 @@ ImageViewer::~ImageViewer()
 void ImageViewer::ShowImage(const QImage& image)
 {
     m_ui->m_view->Clear();
-    m_ui->m_view->SetImage(image);
+    m_ui->m_view->SetImage( image );
     m_ui->m_view->update();
 }
 
 void ImageViewer::ShowImage(const IplImage* image)
 {
     // Convert image
-    IplImage* imgTmp = cvCreateImage(cvSize(image->width, image->height), IPL_DEPTH_8U, 3);
-    cvConvertImage(image, imgTmp);
+    IplImage* imgTmp = cvCreateImage( cvSize( image->width, image->height ), IPL_DEPTH_8U, 3 );
+    cvConvertImage( image, imgTmp );
 
-    const QSize imgSize(imgTmp->width, imgTmp->height);
-    QImage qImg = QImage(imgSize, QImage::Format_RGB888);
+    const QSize imgSize( imgTmp->width, imgTmp->height );
+    QImage qImg = QImage( imgSize, QImage::Format_RGB888 );
 
     CvMat mtxWrapper;
-    cvInitMatHeader(&mtxWrapper,
+    cvInitMatHeader( &mtxWrapper,
                      imgTmp->height,
                      imgTmp->width,
                      CV_8UC3,
-                     qImg.bits());
+                     qImg.bits() );
 
-    cvConvertImage(imgTmp, &mtxWrapper, 0);
+    cvConvertImage( imgTmp, &mtxWrapper, 0 );
 
     // Display image
 	ShowImage(qImg);
-    cvReleaseImage(&imgTmp);
-}
 
-void ImageViewer::ShowImage(const cv::Mat* image)
-{
-    QImage qImg(image->data, image->cols, image->rows, image->step, QImage::Format_RGB888);
-    ShowImage(qImg);
+	cvReleaseImage( &imgTmp );
 }
-
-void ImageViewer::Connectsignals()
-{
-    QObject::connect(m_ui->m_okBtn,
-                     SIGNAL(clicked()),
-                     this,
-                     SLOT(accept()));
-}
-

@@ -27,42 +27,42 @@
 
 namespace CameraTools
 {
-    const CameraDescription GetCameraForStreamingIfOk(const CameraHardware& cameraHardware,
-                                                       const WbConfig& cameraConfig)
+    const CameraDescription GetCameraForStreamingIfOk( const CameraHardware& cameraHardware,
+                                                       const WbConfig& cameraConfig )
     {
-        const QString cameraName(cameraConfig
-                                  .GetKeyValue(WbDefaultKeys::displayNameKey)
-                                  .ToQString());
+        const QString cameraName( cameraConfig
+                                  .GetKeyValue( WbDefaultKeys::displayNameKey )
+                                  .ToQString() );
 
         CameraDescription camera;
         bool isValid = !cameraConfig.IsNull();
-        QString errorMsg = QObject::tr("No camera specified!");
+        QString errorMsg = QObject::tr( "No camera specified!" );
 
         const KeyValue uniqueIdKeyValue(
-                    cameraConfig.GetKeyValue(KeyName(CameraSchema::uniqueIdKey)));
+                    cameraConfig.GetKeyValue( KeyName( CameraSchema::uniqueIdKey ) ) );
 
-        if (isValid)
+        if ( isValid )
         {
             isValid = !uniqueIdKeyValue.IsNull();
-            errorMsg = QObject::tr("Camera %1 has no unique id!")
-                                    .arg(cameraName);
+            errorMsg = QObject::tr( "Camera %1 has no unique id!" )
+                                    .arg( cameraName );
         }
 
-        if (isValid)
+        if ( isValid )
         {
             camera = cameraHardware.GetCameraDescriptionFromUniqueId(
-                                                    uniqueIdKeyValue.ToWString());
+                                                    uniqueIdKeyValue.ToWString() );
             isValid = camera.IsValid();
-            errorMsg =  QObject::tr("Camera %1 not connected!")
-                                     .arg(cameraName);
+            errorMsg =  QObject::tr( "Camera %1 not connected!")
+                                     .arg( cameraName );
         }
 
-        if (!isValid)
+        if ( !isValid )
         {
-            Message::Show(0,
-                           QObject::tr("Camera Tools"),
+            Message::Show( 0,
+                           QObject::tr( "Camera Tools" ),
                            errorMsg,
-                           Message::Severity_Critical);
+                           Message::Severity_Critical );
         }
 
         return camera;

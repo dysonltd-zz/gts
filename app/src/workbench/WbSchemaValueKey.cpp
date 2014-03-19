@@ -25,46 +25,46 @@
 #include "WbConfigFileReader.h"
 #include "WbConfigFileWriter.h"
 
-WbSchemaValueKey::WbSchemaValueKey(const KeyName& name,
+WbSchemaValueKey::WbSchemaValueKey( const KeyName& name,
                                     const Multiplicity::Type& multiplicity,
-                                    const KeyValue& defaultValue)
+                                    const KeyValue& defaultValue )
     :
-    WbSchemaElement(name, multiplicity),
-    m_defaultValue(defaultValue)
+    WbSchemaElement( name, multiplicity ),
+    m_defaultValue( defaultValue )
 {}
 
 WbSchemaValueKey* const WbSchemaValueKey::Clone() const
 {
-    return new WbSchemaValueKey(*this);
+    return new WbSchemaValueKey( *this );
 }
 
-void WbSchemaValueKey::ReadFrom(WbConfigFileReader& reader, WbConfig& config) const
+void WbSchemaValueKey::ReadFrom( WbConfigFileReader& reader, WbConfig& config ) const
 {
     WbKeyValues keyValues;
-    reader.ReadKeyValues(GetKeyName(), keyValues);
-    config.SetKeyValues(keyValues);
+    reader.ReadKeyValues( GetKeyName(), keyValues );
+    config.SetKeyValues( keyValues );
 }
 
-bool WbSchemaValueKey::WriteTo(WbConfigFileWriter& writer, const WbConfig& config) const
+bool WbSchemaValueKey::WriteTo( WbConfigFileWriter& writer, const WbConfig& config ) const
 {
-    WbKeyValues::ValueIdPairList values(config.GetKeyValues(GetKeyName()));
+    WbKeyValues::ValueIdPairList values( config.GetKeyValues( GetKeyName() ) );
 
-    for (size_t i = 0; i < values.size(); ++i)
+    for ( size_t i = 0; i < values.size(); ++i )
     {
-        writer.WriteKey(GetKeyName(), values[ i ].value, values[ i ].id);
+        writer.WriteKey( GetKeyName(), values[ i ].value, values[ i ].id );
     }
     return true;
 }
 
-void WbSchemaValueKey::SetDefaultTo(WbConfig& config) const
+void WbSchemaValueKey::SetDefaultTo( WbConfig& config ) const
 {
-    if (!m_defaultValue.IsNull())
+    if ( !m_defaultValue.IsNull() )
     {
-        config.SetKeyValue(GetKeyName(), m_defaultValue); //defaults always have no id currently
+        config.SetKeyValue( GetKeyName(), m_defaultValue ); //defaults always have no id currently
     }
 }
 
-void WbSchemaValueKey::PrintOn(std::ostream& os, const std::string& indent) const
+void WbSchemaValueKey::PrintOn( std::ostream& os, const std::string& indent ) const
 {
     os << indent << "Key: " << GetKeyName() << std::endl;
 }

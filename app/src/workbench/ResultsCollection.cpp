@@ -20,6 +20,6 @@
 
 Collection ResultsCollection()
 {
-    return Collection(KeyName("results"), KeyName("set"));
+    return Collection( KeyName( "results" ), KeyName( "set" ) );
 }
 

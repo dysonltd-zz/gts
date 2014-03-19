@@ -27,21 +27,21 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QLabel>
 
-PositionCollectionTool::PositionCollectionTool(CameraHardware& cameraHardware,
+PositionCollectionTool::PositionCollectionTool( CameraHardware& cameraHardware,
                                                 QWidget* parent,
-                                                MainWindow& mainWindow) :
-    CollectionToolWidget(tr("Position"),
+                                                MainWindow& mainWindow ) :
+    CollectionToolWidget( tr( "Position" ),
                           CreateCollectionSchema(),
                           CreateElementSchema(),
                           parent,
-                          &mainWindow),
-    m_cameraComboBox(new QComboBox)
+                          &mainWindow ),
+    m_cameraComboBox( new QComboBox )
 {
-    AddSubTool(new PositionCalibrationWidget(cameraHardware, this));
-    AddToolDetail(new QLabel(tr("Camera")), m_cameraComboBox);
-    AddMapper(CameraPositionSchema::cameraIdKey, m_cameraComboBox);
+    AddSubTool( new PositionCalibrationWidget( cameraHardware, this ) );
+    AddToolDetail( new QLabel( tr( "Camera" ) ), m_cameraComboBox );
+    AddMapper( CameraPositionSchema::cameraIdKey, m_cameraComboBox );
 
-    RegisterCollectionCombo(m_cameraComboBox, CamerasCollection());
+    RegisterCollectionCombo( m_cameraComboBox, CamerasCollection() );
 }
 
 PositionCollectionTool::~PositionCollectionTool()
@@ -61,20 +61,20 @@ const QString PositionCollectionTool::GetSubSchemaDefaultFileName() const
 
 const WbSchema PositionCollectionTool::CreateCollectionSchema()
 {
-    WbSchema cameraPositionsSchema(CreateWorkbenchSubSchema(KeyName("cameraPositions"),
-                                                              tr("Positions")));
+    WbSchema cameraPositionsSchema( CreateWorkbenchSubSchema( KeyName( "cameraPositions" ),
+                                                              tr( "Positions" ) ) );
     return cameraPositionsSchema;
 }
 
 const WbSchema PositionCollectionTool::CreateElementSchema()
 {
-    WbSchema schema(CreateElementWorkbenchSubSchema(CameraPositionSchema::schemaName,
-                                                      Unnamed(tr("CameraPos"))));
-    schema.AddSingleValueKey(CameraPositionSchema::cameraIdKey,
-                              WbSchemaElement::Multiplicity::One);
+    WbSchema schema( CreateElementWorkbenchSubSchema( CameraPositionSchema::schemaName,
+                                                      Unnamed( tr( "CameraPos" ) ) ) );
+    schema.AddSingleValueKey( CameraPositionSchema::cameraIdKey,
+                              WbSchemaElement::Multiplicity::One );
 
-    schema.AddDependant(RoomLayoutSchema::schemaName,
-                         RoomLayoutSchema::cameraPositionIdsKey);
+    schema.AddDependant( RoomLayoutSchema::schemaName,
+                         RoomLayoutSchema::cameraPositionIdsKey );
 
     return schema;
 }

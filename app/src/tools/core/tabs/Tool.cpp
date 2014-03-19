@@ -27,38 +27,38 @@
 #include "ScopedQtSignalsBlocker.h"
 #include "WbConfigTools.h"
 
-const QString Tool::selectItemString(tr("Select"));
+const QString Tool::selectItemString( tr( "Select" ) );
 
 /** @brief construct with the schema handled.
  *
  *  This schema does NOT include sub-schemas handled by sub-tools
  */
-Tool::Tool(QWidget* const parent, const WbSchema& schema) :
-    QWidget(parent),
-    m_schema (schema),
+Tool::Tool( QWidget* const parent, const WbSchema& schema ) :
+    QWidget( parent ),
+    m_schema ( schema ),
     m_mappers()
 {
 }
 
-bool Tool::TryToOpenTool(const WbConfig& config)
+bool Tool::TryToOpenTool( const WbConfig& config )
 {
-    WbConfig configToOpen(GetConfigToOpen(config));
+    WbConfig configToOpen( GetConfigToOpen( config ) );
 
     return !configToOpen.IsNull();
 }
 
-const WbConfig Tool::GetConfigToOpen(const WbConfig& config) const
+const WbConfig Tool::GetConfigToOpen( const WbConfig& config ) const
 {
     WbConfig configToOpen;
-    if (CanHandleSchema(config.GetSchemaName()))
+    if ( CanHandleSchema( config.GetSchemaName() ) )
     {
         configToOpen = config;
     }
 
-    if (configToOpen.IsNull())
+    if ( configToOpen.IsNull() )
     {
         configToOpen = config.FindAncestor(
-            GetHandledSchema().GetMostSpecificSubSchema().Name());
+            GetHandledSchema().GetMostSpecificSubSchema().Name() );
     }
     return configToOpen;
 }
@@ -68,20 +68,20 @@ const WbSchema Tool::GetMostSpecificSubSchema() const
     return m_schema.GetMostSpecificSubSchema();
 }
 
-void Tool::UpdateToolMenu(QMenu& toolMenu)
+void Tool::UpdateToolMenu( QMenu& toolMenu )
 {
     Q_UNUSED(toolMenu);
 }
 
-void Tool::AddFullWorkbenchSchemaSubTreeTo(WbSchema& parentSchema, const KeyName& schemaToAttachTo) const
+void Tool::AddFullWorkbenchSchemaSubTreeTo( WbSchema& parentSchema, const KeyName& schemaToAttachTo ) const
 {
-    const WbSchema fullSubTree(GetFullWorkbenchSchemaSubTree());
-    if (!fullSubTree.IsNull())
+    const WbSchema fullSubTree( GetFullWorkbenchSchemaSubTree() );
+    if ( !fullSubTree.IsNull() )
     {
-        parentSchema.AddSubSchemaToSchema(fullSubTree,
+        parentSchema.AddSubSchemaToSchema( fullSubTree,
                                            schemaToAttachTo,
                                            WbSchemaElement::Multiplicity::One,
-                                           GetSubSchemaDefaultFileName());
+                                           GetSubSchemaDefaultFileName() );
     }
 }
 
@@ -90,13 +90,13 @@ const WbSchema Tool::GetFullWorkbenchSchemaSubTree() const
     return m_schema;
 }
 
-const WbSchema Tool::AddKeysRequiredByWorkbench(const WbSchema& schema,
-                                                 const QString& defaultName)
+const WbSchema Tool::AddKeysRequiredByWorkbench( const WbSchema& schema,
+                                                 const QString& defaultName )
 {
-    WbSchema newSchema(schema);
-    newSchema.AddSingleValueKey(WbDefaultKeys::displayNameKey,
+    WbSchema newSchema( schema );
+    newSchema.AddSingleValueKey( WbDefaultKeys::displayNameKey,
                                  WbSchemaElement::Multiplicity::One,
-                                 KeyValue::from(defaultName));
+                                 KeyValue::from( defaultName ) );
     return newSchema;
 }
 
@@ -105,9 +105,9 @@ const QString Tool::GetSubSchemaDefaultFileName() const
     return QString();
 }
 
-const QString Tool::Unnamed(const QString& typeName)
+const QString Tool::Unnamed( const QString& typeName )
 {
-    return QObject::tr("Unnamed ") + typeName;
+    return QObject::tr( "Unnamed " ) + typeName;
 }
 
 WbConfig& Tool::GetCurrentConfig()
@@ -120,37 +120,37 @@ const WbConfig Tool::GetCurrentConfig() const
     return m_currentConfig;
 }
 
-const WbSchema Tool::CreateWorkbenchSubSchema(const KeyName& schemaName,
-                                               const QString& defaultName)
+const WbSchema Tool::CreateWorkbenchSubSchema( const KeyName& schemaName,
+                                               const QString& defaultName )
 {
-    return AddKeysRequiredByWorkbench(WbSchema(schemaName), defaultName);
+    return AddKeysRequiredByWorkbench( WbSchema( schemaName ), defaultName );
 }
 
-void Tool::CallOnSelfAndActiveSubTools(ToolFunction& func)
+void Tool::CallOnSelfAndActiveSubTools( ToolFunction& func )
 {
-    func(*this);
+    func( *this );
 }
 
-bool Tool::CanHandleSchema(const KeyName& schemaName) const
+bool Tool::CanHandleSchema( const KeyName& schemaName ) const
 {
-    return GetHandledSchema().ContainsSchemaAnywhere(schemaName);
+    return GetHandledSchema().ContainsSchemaAnywhere( schemaName );
 }
 
-void Tool::SetCurrentConfigFrom(const WbConfig & config)
+void Tool::SetCurrentConfigFrom(const WbConfig & config )
 {
-    m_currentConfig = GetConfigToOpen(config);
+    m_currentConfig = GetConfigToOpen( config );
 }
 
-void Tool::Reload(const WbConfig& config)
+void Tool::Reload( const WbConfig& config )
 {
-    SetCurrentConfigFrom(config);
-    SetEnabled(ShouldEnableForConfig(config));
+    SetCurrentConfigFrom( config );
+    SetEnabled( ShouldEnableForConfig( config ) );
     ReloadCurrentConfig();
 }
 
-void Tool::SetEnabled(const bool shouldEnable)
+void Tool::SetEnabled( const bool shouldEnable )
 {
-    Widget()->setEnabled(shouldEnable);
+    Widget()->setEnabled( shouldEnable );
 }
 
 const KeyName Tool::EnableToolSchemaName() const
@@ -158,9 +158,9 @@ const KeyName Tool::EnableToolSchemaName() const
     return GetHandledSchema().GetMostSpecificSubSchema().Name();
 }
 
-bool Tool::ShouldEnableForConfig(const WbConfig& configToCheck) const
+bool Tool::ShouldEnableForConfig( const WbConfig& configToCheck ) const
 {
-    if (configToCheck.FindAncestor(EnableToolSchemaName()).IsNull())
+    if ( configToCheck.FindAncestor( EnableToolSchemaName() ).IsNull() )
     {
         return false;
     }
@@ -175,44 +175,44 @@ void Tool::BlockAllMapperSignalsUsing(BlockerVector& blockers)
     }
 }
 
-void Tool::ReloadCurrentConfig(const ConfigKeyMapper* const excludeMapper)
+void Tool::ReloadCurrentConfig( const ConfigKeyMapper* const excludeMapper )
 {
     BlockerVector blockAllMapperSignals;
-    BlockAllMapperSignalsUsing(blockAllMapperSignals);
+    BlockAllMapperSignalsUsing( blockAllMapperSignals );
 
-    FillOutComboBoxes(excludeMapper);
-    for (size_t i = 0; i < m_mappers.size(); ++i)
+    FillOutComboBoxes( excludeMapper );
+    for ( size_t i = 0; i < m_mappers.size(); ++i )
     {
-        if (m_mappers.at(i).get() != excludeMapper)
+        if ( m_mappers.at( i ).get() != excludeMapper )
         {
-            m_mappers.at(i)->SetConfig(GetMappedConfig());
+            m_mappers.at( i )->SetConfig( GetMappedConfig() );
         }
     }
     ReloadCurrentConfigToolSpecific();
 }
 
-void Tool::FillOutComboBoxes(const ConfigKeyMapper* const requester)
+void Tool::FillOutComboBoxes( const ConfigKeyMapper* const requester )
 {
-    for (size_t i = 0; i < m_collectionCombos.size(); ++i)
+    for ( size_t i = 0; i < m_collectionCombos.size(); ++i )
     {
-        CollectionCombo& collectionCombo(m_collectionCombos.at(i));
+        CollectionCombo& collectionCombo( m_collectionCombos.at( i ) );
 
         QComboBox* const comboBox = collectionCombo.comboBox;
 
-        if (!requester || !requester->Maps(comboBox))
+        if ( !requester || !requester->Maps( comboBox ) )
         {
             comboBox->clear();
 
-            if (collectionCombo.hasSelect)
+            if ( collectionCombo.hasSelect )
             {
-                comboBox->addItem(selectItemString);
+                comboBox->addItem( selectItemString );
             }
             const Collection::StatusType collectionStatus =
-                        collectionCombo.collection.SetConfig(GetCurrentConfig());
-            if (collectionStatus == Collection::Status_Ok)
+                        collectionCombo.collection.SetConfig( GetCurrentConfig() );
+            if ( collectionStatus == Collection::Status_Ok )
             {
-                WbConfigTools::FillOutComboBoxWithCollectionElements(*comboBox,
-                                                            collectionCombo.collection);
+                WbConfigTools::FillOutComboBoxWithCollectionElements( *comboBox,
+                                                            collectionCombo.collection );
             }
         }
     }
@@ -228,31 +228,31 @@ const WbConfig Tool::GetMappedConfig() const
     return GetCurrentConfig();
 }
 
-void Tool::AddMapper(ConfigKeyMapper* const mapper)
+void Tool::AddMapper( ConfigKeyMapper* const mapper )
 {
     m_mappers.push_back(std::unique_ptr<ConfigKeyMapper>(mapper));
 
-    QObject::connect(mapper,
-                      SIGNAL(RequestCommit(ConfigKeyMapper&)),
+    QObject::connect( mapper,
+                      SIGNAL( RequestCommit( ConfigKeyMapper& ) ),
                       this,
-                      SLOT(CommitDataAndUpdate(ConfigKeyMapper&)));
+                      SLOT( CommitDataAndUpdate( ConfigKeyMapper& ) ) );
 }
 
-void Tool::CommitDataAndUpdate(ConfigKeyMapper& mapper)
+void Tool::CommitDataAndUpdate( ConfigKeyMapper& mapper )
 {
     WbConfig& config = GetCurrentConfig();
     mapper.CommitData(config);
     config.ChangeCompleted();
-    ReloadCurrentConfig(&mapper);
+    ReloadCurrentConfig( &mapper );
 }
 
 void Tool::Activated()
 {
 }
 
-void Tool::RegisterCollectionCombo(QComboBox* const comboBox,
+void Tool::RegisterCollectionCombo( QComboBox* const comboBox,
                                     const Collection& collection,
-                                    const bool hasSelect)
+                                    const bool hasSelect )
 {
     const CollectionCombo collectionCombo =
     {
@@ -260,7 +260,7 @@ void Tool::RegisterCollectionCombo(QComboBox* const comboBox,
          collection,
          hasSelect
     };
-    m_collectionCombos.push_back(collectionCombo);
+    m_collectionCombos.push_back( collectionCombo );
 }
 
 bool Tool::CanClose() const
@@ -273,7 +273,7 @@ const QString Tool::CannotCloseReason() const
     return QString();
 }
 
-void Tool::HighlightLabel(QLabel* label, bool highlight) const
+void Tool::HighlightLabel( QLabel* label, bool highlight ) const
 {
     if (highlight)
     {

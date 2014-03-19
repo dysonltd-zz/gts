@@ -24,22 +24,15 @@
 class WorkbenchTreeWidget : public QTreeWidget
 {
 public:
-    /**
-      @brief Constructs a QTreeWidget with additional functionality
-     **/
-    WorkbenchTreeWidget(QWidget* const parent);
+    WorkbenchTreeWidget( QWidget* const parent );
+    virtual ~WorkbenchTreeWidget();
 
-protected: 
-    /**
-      @brief Debugging function to print to std::out which tab we are in
-      @param event Fired event from viewport
-      @return viewport Event
-     */
-    virtual bool viewportEvent(QEvent* event);
+protected:
+    virtual bool viewportEvent( QEvent* event );
 
 private:
-    WorkbenchTreeWidget(const WorkbenchTreeWidget&);
-    WorkbenchTreeWidget& operator =(const WorkbenchTreeWidget&);
+    WorkbenchTreeWidget( const WorkbenchTreeWidget& );
+    WorkbenchTreeWidget& operator =( const WorkbenchTreeWidget& );
 };
 
 #endif

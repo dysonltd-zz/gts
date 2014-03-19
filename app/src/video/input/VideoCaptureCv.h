@@ -44,9 +44,9 @@ public:
      *
      *  @param vidname The name of the video file.
      */
-    VideoCaptureCv(const char* vidname) : VideoSequence(), m_capture(0), m_avi(true) { m_capture = cvCaptureFromAVI(vidname); }
+    VideoCaptureCv( const char* vidname ) : VideoSequence(), m_capture(0), m_avi(true) { m_capture = cvCaptureFromAVI( vidname ); }
 
-    ~VideoCaptureCv() { cvReleaseCapture(&m_capture); }
+    ~VideoCaptureCv() { cvReleaseCapture( &m_capture ); }
 
     /** @brief @copybrief VideoSequence::IsRewindable
      *  @copydetails VideoSequence::IsRewindable
@@ -71,51 +71,51 @@ public:
     /** @brief @copybrief VideoSequence::ReadyNextFrame
      *  @copydetails VideoSequence::ReadyNextFrame
      */
-    virtual bool ReadyNextFrame() { return 0 != cvGrabFrame(m_capture); }
+    virtual bool ReadyNextFrame() { return 0 != cvGrabFrame( m_capture ); }
 
-    virtual bool ReadyNextFrame(double msec)
+    virtual bool ReadyNextFrame( double msec)
     {
-        cvSetCaptureProperty(m_capture, CV_CAP_PROP_POS_MSEC, msec);
+        cvSetCaptureProperty( m_capture, CV_CAP_PROP_POS_MSEC, msec );
 
-        return 0 != cvGrabFrame(m_capture);
+        return 0 != cvGrabFrame( m_capture );
     }
 
     /** @brief @copybrief VideoSequence::RetrieveNextFrame
      *  @copydetails VideoSequence::RetrieveNextFrame
      */
-    virtual const IplImage* RetrieveNextFrame() const { return cvRetrieveFrame(m_capture); }
+    virtual const IplImage* RetrieveNextFrame() const { return cvRetrieveFrame( m_capture ); }
 
     /** @brief @copybrief VideoSequence::GetTimeStamp
      *  @copydetails VideoSequence::GetTimeStamp
      */
-    virtual double GetTimeStamp()  const { return cvGetCaptureProperty(m_capture, CV_CAP_PROP_POS_MSEC); }
+    virtual double GetTimeStamp()  const { return cvGetCaptureProperty( m_capture, CV_CAP_PROP_POS_MSEC ); }
 
     /** @brief @copybrief VideoSequence::GetFrameIndex
      *  @copydetails VideoSequence::GetFrameIndex
      */
-    virtual double GetFrameIndex() const { return cvGetCaptureProperty(m_capture, CV_CAP_PROP_POS_FRAMES); }
+    virtual double GetFrameIndex() const { return cvGetCaptureProperty( m_capture, CV_CAP_PROP_POS_FRAMES ); }
 
     /** @brief @copybrief VideoSequence::GetNumFrames
      *  @copydetails VideoSequence::GetNumFrames
      */
-    virtual double GetNumFrames()  const { return cvGetCaptureProperty(m_capture, CV_CAP_PROP_FRAME_COUNT); }
+    virtual double GetNumFrames()  const { return cvGetCaptureProperty( m_capture, CV_CAP_PROP_FRAME_COUNT ); }
 
     /** @brief @copybrief VideoSequence::GetFrameWidth
      *  @copydetails VideoSequence::GetFrameWidth
      */
-    virtual int GetFrameWidth() const  { return (int)cvGetCaptureProperty(m_capture, CV_CAP_PROP_FRAME_WIDTH); }
+    virtual int GetFrameWidth() const  { return (int)cvGetCaptureProperty( m_capture, CV_CAP_PROP_FRAME_WIDTH ); }
 
     /** @brief @copybrief VideoSequence::GetFrameHeight
      *  @copydetails VideoSequence::GetFrameHeight
      */
-    virtual int GetFrameHeight() const { return (int)cvGetCaptureProperty(m_capture, CV_CAP_PROP_FRAME_HEIGHT); }
+    virtual int GetFrameHeight() const { return (int)cvGetCaptureProperty( m_capture, CV_CAP_PROP_FRAME_HEIGHT ); }
 
     /** @brief @copybrief VideoSequence::SetFrameRate
      *  @copydetails VideoSequence::SetFrameRate
      */
-    virtual void SetFrameRate(const double fps) { cvSetCaptureProperty(m_capture, CV_CAP_PROP_FPS, fps); }
+    virtual void SetFrameRate( const double fps ) { cvSetCaptureProperty( m_capture, CV_CAP_PROP_FPS, fps ); }
 
-    double GetFrameRate() { return cvGetCaptureProperty(m_capture, CV_CAP_PROP_FPS); }
+    double GetFrameRate() { return cvGetCaptureProperty( m_capture, CV_CAP_PROP_FPS ); }
 
     /** @brief @copybrief VideoSequence::IsSetup
      *  @copydetails VideoSequence::IsSetup
