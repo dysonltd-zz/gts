@@ -64,6 +64,7 @@ PostProcessWidget::PostProcessWidget( QWidget* const parent ) :
     Tool( parent, CreateSchema() ),
     m_ui( new Ui::PostProcessWidget )
 {
+    m_resultsModel=NULL;
     m_ui->setupUi( this );
 
     QObject::connect( m_ui->m_loadDataBtn,
