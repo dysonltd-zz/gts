@@ -519,6 +519,12 @@ void GtsView::StepTracker( bool forward, CoverageSystem* coverage )
         if ( m_tracker->IsActive() )
         {
             tracking = m_tracker->Track( videoTimeStampInMillisecs );
+	    // If active but cannot track then go to lossRecovery
+	    if(!tracking)
+	    {
+		  m_tracker->DoInactiveProcessing( videoTimeStampInMillisecs );
+                  m_tracker->LossRecovery();
+	    }
         }
         else
         {

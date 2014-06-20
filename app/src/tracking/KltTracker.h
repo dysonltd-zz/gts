@@ -177,6 +177,7 @@ private:
     void SwapPyramids();
 
     void PredictTargetAppearance( float angleInRadians, float offsetAngleDegrees );
+    void PredictTargetAppearance2( float angleInRadians, float offsetAngleDegrees, float x, float y );
     bool TrackStage2( CvPoint2D32f initialPosition, bool flipCorrect, bool init );
 
     void InitialiseRecoverySystem();
