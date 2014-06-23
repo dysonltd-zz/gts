@@ -24,7 +24,7 @@ __Unicap__ (0.9.12)
 
 	sudo apt-get install libunicap2-dev
 
-__Compiling OpenCV on Windows__ (2.4.6)
+__Compiling OpenCV on Linux__ (2.4.6)
 
 	git clone https://github.com/Itseez/opencv.git 
 	git checkout 2.4.6
@@ -52,8 +52,7 @@ __OpenCV__ (2.4.6)
 	cd opencv
 	mkdir build && cd build
 	cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="C:\opencv\install" ..
-	cmake --build .
-	cmake --target . install
+	cmake --build . --target install
 
 __MinGW Only__
 
@@ -75,10 +74,9 @@ __Installer__
 
 ## Compiling
 
-## LINUX
-From root directory:
 
 __Linux__
+From root directory:
 
 	$ mkdir build && cd build
 	$ cmake [options] ../
