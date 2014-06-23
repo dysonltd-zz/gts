@@ -76,11 +76,9 @@ void TrackThread::Execute()
     while ( !ShouldStop() )
     {
         const GtsScene::TrackStatus status = m_scene.StepTrackers( Forwards(), Seeking() );
-
-        bool trackingLost = ( status.numTrackersActive ==
-                              status.numTrackersLost );
-
-        emit position( status.videoPosition );
+		
+        bool trackingLost = ( status.numTrackersActive == status.numTrackersLost && status.numTrackersActive==0  );
+       emit position( status.videoPosition );
 
         if ( ShouldPause() || (ShouldTrack() && trackingLost) )
         {

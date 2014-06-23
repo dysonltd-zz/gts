@@ -18,14 +18,18 @@ __CMake__ (2.8.10.1)
 
 __Qt__ (4.8.1)
 	
-	sudo apt-get install libqt4-dev
+	sudo apt-get install libqt4-dev qt4-dev-tools
+	
+__Unicap__ (0.9.12)
 
-__OpenCV__ (2.4.6)
+	sudo apt-get install libunicap2-dev
+
+__Compiling OpenCV on Linux__ (2.4.6)
 
 	git clone https://github.com/Itseez/opencv.git 
 	git checkout 2.4.6
 	mkdir build && cd build
-	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/path/to/opencv/install
+	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/path/to/opencv/install ..
 	cmake --build . --target install
 
 __Unicap__ (0.9.12)
@@ -39,6 +43,16 @@ __Unicap__ (0.9.12)
 * [Xvid](http://www.xvid.org/) (1.3.2)
 
 * [OpenCV](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/) (2.4.6)
+ 
+__OpenCV__ (2.4.6)
+
+	cd C:\
+	git clone https://github.com/Itseez/opencv.git 
+	git checkout 2.4.6
+	cd opencv
+	mkdir build && cd build
+	cmake -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="C:\opencv\install" ..
+	cmake --build . --target install
 
 __MinGW Only__
 
@@ -60,20 +74,20 @@ __Installer__
 
 ## Compiling
 
-From root directory:
 
 __Linux__
+From root directory:
 
 	$ mkdir build && cd build
 	$ cmake [options] ../
-	    e.g. cmake -DOpenCV_ROOT_DIR=/path/to/opencv/install -DCMAKE_BUILD_TYPE=Debug -DGTS_TESTS=ON -DCMAKE_INSTALL_PREFIX=/home/username/gts/ ../
+	    e.g. cmake -DOpenCV_ROOT_DIR=/path/to/opencv/install -DCMAKE_BUILD_TYPE=Debug -DGTS_TESTS=ON ../
 	$ cmake --build . --target install
 
 __Windows (MinGW)__
 
 	mkdir build
 	cd build
-	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR=C:\PATH-TO-OPENCV-INSTALL ..   
+	cmake.exe -G"MinGW Makefiles" -DOpenCV_ROOT_DIR="C:\opencv\install" -DCMAKE_INSTALL_PREFIX="C:\GTS" ..   
 	cmake --build . --target install
 
 Alternatively, call [scripts/minGW_app.bat](scripts/minGW_app.bat) from root directory.

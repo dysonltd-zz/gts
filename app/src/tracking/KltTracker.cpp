@@ -304,16 +304,26 @@ bool KltTracker::Track( double timestampInMillisecs, bool flipCorrect, bool init
         }
 
         // If we found a good track and the 2nd stage was a success then store the result
-        const float error = GetError();
+       // const float error = GetError();
         
-	assert( error >= -1.0 );
-        assert( error <= 1.0 );
-
-        m_history.emplace_back( TrackEntry( GetPosition(), GetHeading(), GetError(), timestampInMillisecs, warpGradient ) );
+        //assert( error >= -1.0 );
+        //assert( error <= 1.0 );warp gradient magnitude at the tracked position to store in TrackEntry for later use.
+        //const CvMat* w
+	m_history.emplace_back( TrackEntry( GetPosition(), GetHeading(), GetError(), timestampInMillisecs, warpGradient ) );
 
         return true;
     }
-
+    /*if ( !IsLost() )
+    {
+      LOG_WARN("Lost.");
+      SetJustLost(); // tracker has transitioned into lost state
+    }
+    else
+    {
+       LOG_WARN("Still lost.");
+       SetLost(); // ttacker is still lost
+    }
+    */
     return false;
 }
 
@@ -669,6 +679,34 @@ void KltTracker::PredictTargetAppearance( float angleInRadians, float offsetAngl
     cvSmooth( m_appearanceImg, m_appearanceImg, CV_GAUSSIAN, smoothing );
 }
 
+
+/**
+ Predicts the appearance of the target using computed heading, using
+ an extra parameter for specifying the position
+
+ **/
+void KltTracker::PredictTargetAppearance2( float angleInRadians, float offsetAngleDegrees, float x, float y )
+{
+    if ( !m_targetImg )
+        return;
+
+    float angle = (float)((180 + MathsConstants::R2D * angleInRadians) + offsetAngleDegrees);
+    int smoothing = 5;
+    // Set the background 'color' that will be used for pixels in the
+    // appearance model outside the radius of the target.
+    cvSet( m_appearanceImg, cvScalar( m_targetBackGroundGreyLevel ) );
+
+    float R[6];
+    CvMat rot = cvMat( 2, 3, CV_32F, R );
+    CvPoint2D32f centre = cvPoint2D32f( m_targetImg->width / 2.f, m_targetImg->height / 2.f );
+    cv2DRotationMatrix( centre, angle, 1, &rot );
+    R[2] += x - m_targetImg->width / 2.f;
+    R[5] += y - m_targetImg->height / 2.f;
+    cvWarpAffine( m_targetImg, m_appearanceImg, &rot, CV_INTER_LINEAR );
+
+    cvSmooth( m_appearanceImg, m_appearanceImg, CV_GAUSSIAN, smoothing );
+}
+
 /**
  Motion detection.
 
@@ -713,15 +751,15 @@ void KltTracker::LossRecovery()
 
     //cvConvertScale( m_avgFloat, m_avg, 1.0, 0.0 );
     cvAbsDiff(m_currImg, m_prevImg, m_diff);
-
     cvThreshold(m_diff, m_diff, 15, 255, CV_THRESH_BINARY);
 
     cvSetZero(m_filtered);
     OpenCvUtility::MotionFilter(m_diff, m_filtered, 24, 24);
 
     cvConvertScale(m_filtered, m_avg, 1, 0.0);
-
+    // Search for target in the mask region using cross-correlation
     cvThreshold(m_avg, m_avg, 200, 255, CV_THRESH_BINARY);
+    // Look for target in search zone.
     TargetSearch( m_avg );
 
     IplImage* colImg = cvCreateImage( cvSize( m_currImg->width, m_currImg->height ), IPL_DEPTH_8U, 3 );
@@ -729,7 +767,6 @@ void KltTracker::LossRecovery()
 
     cvSetImageCOI( colImg, 1 );
     cvCopy( m_avg, colImg );
-
     cvReleaseImage(&colImg);
 }
 
@@ -752,30 +789,39 @@ void KltTracker::TargetSearch( const IplImage* mask )
 
     float maxVal = -1.f;
     CvPoint2D32f maxPos;
-
-    for ( int j = r; j < h - r; ++j )
+  
+    //Correct m_pos when lost near the limits of the window due to offsets.
+    //Otherwise it get in a state where ncc2 returns 0 and lossRecovery never recovers
+    float x_lost = std::min( std::max(float(ws/2), m_pos.x) , float(m_appearanceImg->width-ws/2));
+    float y_lost = std::min( std::max(float(ws/2), m_pos.y) , float(m_appearanceImg->height-ws/2));
+    
+    PredictTargetAppearance2(0,0,x_lost, y_lost);
+    for ( int j = r; j < h - r; j = j+2 )
     {
-        for ( int i = r; i < w - r; ++i )
+        for ( int i = r; i < w - r; i = i + 2 )
         {
             char* pMask = mask->imageData;
             float* pNcc = reinterpret_cast< float* > ( ncc->imageData );
 
             pMask += j * iStep + i;
             pNcc += j * fStep + i;
-
-            if ( *pMask )
-            {
-                //ComputeHeading( cvPoint2D32f(i,j) );
-                float val = CrossCorrelation::Ncc2d/*Radial*/( m_appearanceImg, m_currImg, m_pos.x, m_pos.y, i, j, ws, ws );
-
-                *pNcc = val;
-                if ( val > maxVal )
-                {
-                    maxVal = val;
-                    maxPos.x = i;
-                    maxPos.y = j;
-                }
-            }
+	    if ( *pMask )
+	    { 
+	      //Compute the heading of the robot for a given candidate position 
+	      // and creates a patch taking into account the orientation
+	      float newAngle = ComputeHeading(cvPoint2D32f( (float)i, (float)j ));
+	      PredictTargetAppearance2(newAngle,0,x_lost, y_lost);
+	      //Compare candidate with target appearance
+	      float val = CrossCorrelation::Ncc2dRadial( m_appearanceImg, m_currImg, x_lost, y_lost, i, j, ws, ws );
+	      *pNcc = val;
+	      if ( val > maxVal )
+	      {
+		maxVal = val;
+		maxPos.x = i;
+		maxPos.y = j;
+		m_angle = newAngle;
+	       }
+	    }
         }
     }
 
