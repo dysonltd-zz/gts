@@ -18,8 +18,10 @@
 
 #include "CalibrationAlgorithm.h"
 
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <opencv2/core.hpp>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 
 #include <stdio.h>
 #include <string.h>
@@ -556,17 +558,18 @@ void CalibrationAlgorithm::SetupParameters( const WbConfig& config )
     m_fileNamesAndIds = config.GetKeyValues( imageFileKey );
 }
 
-IplImage* const CalibrationAlgorithm::TryToLoadImage(const WbConfig& config, const int imgIndex) const
+cv::Mat CalibrationAlgorithm::TryToLoadImage(const WbConfig& config, const int imgIndex) const
 {
+    cv::Mat image;
+
     QApplication::processEvents();
-    IplImage* image = 0;
     QString imagename(config.GetAbsoluteFileNameFor(m_fileNamesAndIds.at(imgIndex).value.ToQString()));
     if (QFileInfo(imagename).exists())
     {
-        image = cvLoadImage(imagename.toAscii(), CV_LOAD_IMAGE_GRAYSCALE);
+        image = cv::imread(imagename.toStdString(), cv::IMREAD_GRAYSCALE);// cvLoadImage(imagename.toAscii(), CV_LOAD_IMAGE_GRAYSCALE);
     }
 
-    if (!image)
+    if (image.empty())
     {
         Message::Show( 0,
                        QObject::tr("Calibration Algorithm"),
@@ -577,27 +580,23 @@ IplImage* const CalibrationAlgorithm::TryToLoadImage(const WbConfig& config, con
     return image;
 }
 
-void CalibrationAlgorithm::FlipImageIfNecessary( IplImage& image ) const
+void CalibrationAlgorithm::FlipImageIfNecessary( cv::Mat& image ) const
 {
     const int FLIP_AROUND_HORIZONTAL = 0;
     if ( m_flipVertical )
     {
         QApplication::processEvents();
-        cvFlip( &image, &image, FLIP_AROUND_HORIZONTAL );
+        cv::flip(image, image, FLIP_AROUND_HORIZONTAL);
     }
 }
 
-bool CalibrationAlgorithm::TryToFindImagePoints( IplImage&    image,
-                                                       PointsVec2D& imagePoints,
-                                                       const int    imageIndex ) const
+bool CalibrationAlgorithm::TryToFindImagePoints( cv::Mat& image,
+                                                 PointsVec2D& imagePoints,
+                                                 const int    imageIndex ) const
 {
     QApplication::processEvents();
 
-#ifdef Deprecated_OpenCV
-    const bool foundCorners = cv::findChessboardCorners( &image,
-#else
-    const bool foundCorners = cv::findChessboardCorners( cv::Mat( &image ),
-#endif
+    const bool foundCorners = cv::findChessboardCorners( image,
                                                          m_gridSize,
                                                          imagePoints,
                                                          CV_CALIB_CB_ADAPTIVE_THRESH );
@@ -629,53 +628,49 @@ bool CalibrationAlgorithm::TryToFindImagePoints( IplImage&    image,
     return found;
 }
 
-void CalibrationAlgorithm::ImproveCornerAccuracy( IplImage&    image,
+void CalibrationAlgorithm::ImproveCornerAccuracy( cv::Mat& image,
                                                   PointsVec2D& imagePoints )
 {
     QApplication::processEvents();
 
-#ifdef Deprecated_OpenCV
-    cv::cornerSubPix( &image,
-#else
-    cv::cornerSubPix( cv::Mat( &image ),
-#endif
-                      imagePoints,
-                      cv::Size( 11, 11 ),
-                      cv::Size( -1, -1 ),
-                      cvTermCriteria( CV_TERMCRIT_EPS + CV_TERMCRIT_ITER,
-                                      30,
-                                      0.1 ) );
+    cv::cornerSubPix(
+                image,
+                imagePoints,
+                cv::Size( 11, 11 ),
+                cv::Size( -1, -1 ),
+                cvTermCriteria( CV_TERMCRIT_EPS + CV_TERMCRIT_ITER,
+                                30,
+                                0.1 )
+    );
 }
 
 bool CalibrationAlgorithm::TryToCapturePoints( const WbConfig& config,
-                                                     cv::Size&       imgSize )
+                                                     cv::Size& imgSize )
 {
     bool pointsCaptureSuccessful = true;
     for ( int imgIndex = 0;
           ( imgIndex < NumInputImages() ) && pointsCaptureSuccessful;
           ++imgIndex )
     {
-        IplImage* currentImage = TryToLoadImage( config, imgIndex );
-        if ( currentImage )
+        cv::Mat currentImage = TryToLoadImage( config, imgIndex );
+        if ( !currentImage.empty() )
         {
-            imgSize = cvGetSize( currentImage );
+            imgSize = currentImage.size();
 
-            FlipImageIfNecessary( *currentImage );
+            FlipImageIfNecessary( currentImage );
 
             PointsVec2D currentImagePoints;
-            pointsCaptureSuccessful = TryToFindImagePoints( *currentImage,
+            pointsCaptureSuccessful = TryToFindImagePoints( currentImage,
                                                             currentImagePoints,
                                                             imgIndex );
 
             if ( pointsCaptureSuccessful )
             {
-                ImproveCornerAccuracy( *currentImage, currentImagePoints );
+                ImproveCornerAccuracy( currentImage, currentImagePoints );
 
                 m_imageWithCornersIds.push_back( m_fileNamesAndIds.at( imgIndex ).id );
                 m_imageGridPoints.push_back( currentImagePoints );
             }
-
-            cvReleaseImage( &currentImage );
         }
     }
     return pointsCaptureSuccessful;

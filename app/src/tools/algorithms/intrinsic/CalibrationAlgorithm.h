@@ -71,15 +71,16 @@ private:
     bool TryToCapturePoints( const WbConfig& config,
                                    cv::Size& imgSize );
 
-    IplImage* const TryToLoadImage( const WbConfig& config,
+    cv::Mat TryToLoadImage( const WbConfig& config,
                                     const int       imgIndex ) const;
 
-    void FlipImageIfNecessary( IplImage& image ) const;
+    void FlipImageIfNecessary(cv::Mat& image ) const;
 
-    bool TryToFindImagePoints( IplImage& image, PointsVec2D& imagePoints,
-                                     const int imageIndex ) const;
+    bool TryToFindImagePoints(cv::Mat& image,
+                              PointsVec2D& imagePoints,
+                              const int imageIndex ) const;
 
-    void ImproveCornerAccuracy( IplImage& image, PointsVec2D& imagePoints );
+    void ImproveCornerAccuracy(cv::Mat& image, PointsVec2D& imagePoints );
 
 
     cv::Size                     m_gridSize;

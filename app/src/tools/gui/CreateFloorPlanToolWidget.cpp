@@ -67,6 +67,8 @@
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d.hpp>
 
 #include <QFileDialog>
 #include <QtGlobal>
@@ -622,7 +624,8 @@ void CreateFloorPlanToolWidget::BtnRotateClicked()
 
     cvReleaseMat( &rotMat );
 #else
-    cv::Mat imgCpy = rotateImage( m_cam2Img, 0, cv::Rect(0, 0, m_cam2Img->width, m_cam2Img->height), 90.0 );
+    cv::Mat matImg = cv::cvarrToMat(m_cam2Img,false);
+    cv::Mat imgCpy = rotateImage( matImg, 0, cv::Rect(0, 0, m_cam2Img->width, m_cam2Img->height), 90.0 );
 
     cvReleaseImage( &m_cam2Img );
 
@@ -647,12 +650,14 @@ void CreateFloorPlanToolWidget::BtnMatchClicked()
     cv::Size gridSize = cv::Size( GetCurrentConfig().GetKeyValue( calGridColsKey ).ToInt(),
                                   GetCurrentConfig().GetKeyValue( calGridRowsKey ).ToInt() );
 
-    const bool foundCorners1 = cv::findChessboardCorners( cv::Mat( m_cam1Img ),
+    cv::Mat cam1 = cv::cvarrToMat(m_cam1Img);
+    cv::Mat cam2 = cv::cvarrToMat(m_cam2Img);
+    const bool foundCorners1 = cv::findChessboardCorners( cam1,
                                                           gridSize,
                                                           imagePoints1,
                                                           CV_CALIB_CB_ADAPTIVE_THRESH );
 
-    const bool foundCorners2 = cv::findChessboardCorners( cv::Mat( m_cam2Img ),
+    const bool foundCorners2 = cv::findChessboardCorners( cam2,
                                                           gridSize,
                                                           imagePoints2,
                                                           CV_CALIB_CB_ADAPTIVE_THRESH );
@@ -697,8 +702,8 @@ void CreateFloorPlanToolWidget::DisplayMatched( std::vector< cv::Point2f > ip1,
 
     cv::Mat img_composite;
 
-    cv::Mat frm_1 = cv::Mat( m_cam1Img );
-    cv::Mat frm_2 = cv::Mat( m_cam2Img );
+    cv::Mat frm_1 = cv::cvarrToMat( m_cam1Img );
+    cv::Mat frm_2 = cv::cvarrToMat( m_cam2Img );
 
     cv::drawMatches( frm_1, keypoints1,
                      frm_2, keypoints2,
@@ -727,12 +732,14 @@ void CreateFloorPlanToolWidget::BtnStitchClicked()
     cv::Size gridSize = cv::Size( GetCurrentConfig().GetKeyValue( calGridColsKey ).ToInt(),
                                   GetCurrentConfig().GetKeyValue( calGridRowsKey ).ToInt() );
 
-    const bool foundCorners1 = cv::findChessboardCorners( cv::Mat( m_cam1Img ),
+    cv::Mat cam1 = cv::cvarrToMat(m_cam1Img);
+    cv::Mat cam2 = cv::cvarrToMat(m_cam2Img);
+    const bool foundCorners1 = cv::findChessboardCorners( cam1,
                                                           gridSize,
                                                           imagePoints1,
                                                           CV_CALIB_CB_ADAPTIVE_THRESH );
 
-    const bool foundCorners2 = cv::findChessboardCorners( cv::Mat( m_cam2Img ),
+    const bool foundCorners2 = cv::findChessboardCorners( cam2,
                                                           gridSize,
                                                           imagePoints2,
                                                           CV_CALIB_CB_ADAPTIVE_THRESH );

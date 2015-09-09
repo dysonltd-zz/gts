@@ -19,6 +19,7 @@
 #include "CalibrationImageGridMapper.h"
 
 #include <opencv/cv.h>
+#include <opencv2/calib3d.hpp>
 
 CalibrationImageGridMapper::CalibrationImageGridMapper( ImageGrid& imageGrid ) :
     ConfigKeyMapper( CalibrationSchema::imageFileKey ),
